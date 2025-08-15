@@ -35,30 +35,52 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
         }
 
         .header {
-            text-align: center;
-            padding: 30px 20px;
-            background: var(--card-bg);
-            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
             margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .header h1 {
-            color: var(--primary-color);
-            font-size: 2.2rem;
-            margin-bottom: 10px;
+        .back-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--secondary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s;
         }
 
-        .meta {
-            color: #6c757d;
-            font-size: 0.9rem;
-            margin-bottom: 20px;
+        .back-home:hover {
+            background: #2980b9;
+        }
+
+        .github-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #24292e;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .github-link:hover {
+            background: #000;
         }
 
         .post {
@@ -71,15 +93,15 @@
         }
 
         .post-header {
-            margin-bottom: 20px;
-            padding-bottom: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
             border-bottom: 1px solid var(--border-color);
         }
 
         .post-title {
             color: var(--primary-color);
-            font-size: 1.8rem;
-            margin-bottom: 10px;
+            font-size: 2rem;
+            margin-bottom: 15px;
         }
 
         .post-meta {
@@ -87,13 +109,21 @@
             justify-content: space-between;
             align-items: center;
             color: #6c757d;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
 
         .post-date {
             background-color: #e3f2fd;
             color: var(--secondary-color);
-            padding: 4px 12px;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .post-category {
+            background-color: #e8f5e9;
+            color: #4caf50;
+            padding: 5px 15px;
             border-radius: 20px;
             font-weight: 500;
         }
@@ -101,6 +131,14 @@
         .post-content {
             font-size: 1.05rem;
             line-height: 1.7;
+        }
+
+        .post-content h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin: 35px 0 25px 0;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
         }
 
         .post-content h2 {
@@ -118,21 +156,21 @@
         }
 
         .post-content p {
-            margin-bottom: 16px;
+            margin-bottom: 18px;
         }
 
         .post-content ul, .post-content ol {
-            margin: 15px 0;
-            padding-left: 30px;
+            margin: 20px 0;
+            padding-left: 35px;
         }
 
         .post-content li {
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
 
         .post-content code {
             background-color: #e8eaed;
-            padding: 2px 6px;
+            padding: 3px 7px;
             border-radius: 4px;
             font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
             color: #c0392b;
@@ -145,8 +183,9 @@
             padding: 20px;
             border-radius: 8px;
             overflow-x: auto;
-            margin: 20px 0;
+            margin: 25px 0;
             font-size: 0.9em;
+            line-height: 1.5;
         }
 
         .post-content pre code {
@@ -158,15 +197,15 @@
         .post-content blockquote {
             background-color: #eaf2f8;
             border-left: 5px solid var(--secondary-color);
-            padding: 15px 20px;
-            margin: 20px 0;
+            padding: 20px;
+            margin: 25px 0;
             border-radius: 0 5px 5px 0;
         }
 
         .post-content table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
+            margin: 25px 0;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
@@ -200,33 +239,79 @@
             text-decoration: underline;
         }
 
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 25px 0;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
         .footer {
             text-align: center;
-            padding: 20px;
+            padding: 30px 20px;
             color: #6c757d;
             font-size: 0.9rem;
-            margin-top: 30px;
+            margin-top: 40px;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--secondary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
         }
 
         @media (max-width: 768px) {
             .container {
-                padding: 10px;
+                padding: 15px;
             }
             
             .post {
                 padding: 20px;
             }
             
-            .header h1 {
-                font-size: 1.8rem;
+            .post-title {
+                font-size: 1.6rem;
             }
             
-            .post-title {
-                font-size: 1.5rem;
+            .header {
+                flex-direction: column;
+                gap: 15px;
             }
             
             .post-content {
                 font-size: 1rem;
+            }
+            
+            .post-content h1 {
+                font-size: 1.5rem;
+            }
+            
+            .post-content h2 {
+                font-size: 1.3rem;
+            }
+            
+            .post-content h3 {
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -234,18 +319,28 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1>Spring Boot/Cloud 启动流程诊断报告</h1>
-            <div class="meta">AI 技术笔记 - 仅供参考学习</div>
+            <a href="../../index.html" class="back-home">
+                ← 返回首页
+            </a>
+            <a href="https://github.com/yourusername/ai-note/blob/main/markdown/2025-08/springboot-start.md" class="github-link" target="_blank">
+                <svg height="16" viewBox="0 0 16 16" width="16" fill="currentColor">
+                    <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                </svg>
+                查看源码
+            </a>
         </header>
         
         <article class="post">
             <header class="post-header">
                 <h1 class="post-title">Spring Boot/Cloud 启动流程诊断报告</h1>
                 <div class="post-meta">
-                    <div>AI 协助生成内容</div>
                     <div class="post-date">2025/8/15</div>
+                    <div class="post-category">2025-08</div>
                 </div>
             </header>
+            <div class="warning">
+                ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+            </div>
             <div class="post-content">
                 <h1 id="spring-bootcloud-启动流程诊断报告">Spring Boot/Cloud 启动流程诊断报告</h1>
 
@@ -253,9 +348,30 @@
         </article>
         
         <footer class="footer">
-            <p>⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用</p>
-            <p>AI 技术笔记 &copy; 2025</p>
+            <p>AI 技术笔记 &copy; 2025 | 所有内容均由 AI 协助生成</p>
         </footer>
     </div>
+    
+    <a href="#" class="back-to-top" id="backToTop">↑</a>
+    
+    <script>
+        // Back to top button
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        });
+        
+        console.log("页面加载完成，AI 技术笔记已就绪");
+    </script>
 </body>
 </html>

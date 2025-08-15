@@ -35,14 +35,14 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
 
         .header {
             text-align: center;
-            padding: 40px 20px;
+            padding: 30px 20px;
             background: var(--card-bg);
             border-bottom: 1px solid var(--border-color);
             margin-bottom: 30px;
@@ -58,8 +58,54 @@
         .header p {
             color: #6c757d;
             font-size: 1.1rem;
-            max-width: 600px;
-            margin: 0 auto;
+            max-width: 800px;
+            margin: 0 auto 20px;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        }
+
+        .github-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #24292e;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .github-link:hover {
+            background: #000;
         }
 
         .warning {
@@ -74,18 +120,19 @@
         }
 
         .feed {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
             gap: 25px;
         }
 
         .feed-item {
             background: var(--card-bg);
             border-radius: 8px;
-            padding: 25px;
+            padding: 20px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             border: 1px solid var(--border-color);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+            height: fit-content;
         }
 
         .feed-item:hover {
@@ -99,7 +146,7 @@
 
         .feed-item-title {
             color: var(--primary-color);
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             margin-bottom: 10px;
         }
 
@@ -118,6 +165,7 @@
             align-items: center;
             color: #6c757d;
             font-size: 0.9rem;
+            margin-bottom: 15px;
         }
 
         .feed-item-date {
@@ -157,6 +205,36 @@
             text-decoration: underline;
         }
 
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 40px 0 30px;
+        }
+
+        .pagination a {
+            display: inline-block;
+            padding: 10px 15px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: all 0.2s;
+        }
+
+        .pagination a:hover {
+            background: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+
+        .pagination .current {
+            background: var(--secondary-color);
+            color: white;
+            border-color: var(--secondary-color);
+        }
+
         .footer {
             text-align: center;
             padding: 30px 20px;
@@ -165,21 +243,47 @@
             margin-top: 40px;
         }
 
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--secondary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
             }
             
             .header {
-                padding: 30px 15px;
+                padding: 20px 15px;
             }
             
             .header h1 {
                 font-size: 2rem;
             }
             
+            .feed {
+                grid-template-columns: 1fr;
+            }
+            
             .feed-item {
-                padding: 20px;
+                padding: 15px;
             }
             
             .feed-item-title {
@@ -191,6 +295,11 @@
                 align-items: flex-start;
                 gap: 8px;
             }
+            
+            .header-actions {
+                flex-direction: column;
+                align-items: center;
+            }
         }
     </style>
 </head>
@@ -199,6 +308,18 @@
         <header class="header">
             <h1>AI 技术笔记</h1>
             <p>记录 AI 协助解决的各种技术问题和学习笔记</p>
+            
+            <div class="header-actions">
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="搜索技术笔记..." id="searchInput">
+                </div>
+                <a href="#" class="github-link" id="githubLink">
+                    <svg height="16" viewBox="0 0 16 16" width="16" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                    </svg>
+                    GitHub
+                </a>
+            </div>
         </header>
         
         <div class="warning">
@@ -389,12 +510,61 @@
             </div>
         </div>
         
+        <div class="pagination">
+            <a href="#" class="current">1</a>
+            <a href="#">2</a>
+            <a href="#">3</a>
+            <a href="#">下一页 →</a>
+        </div>
+        
         <footer class="footer">
             <p>AI 技术笔记 &copy; 2025 | 所有内容均由 AI 协助生成</p>
         </footer>
     </div>
     
+    <a href="#" class="back-to-top" id="backToTop">↑</a>
+    
     <script>
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const feedItems = document.querySelectorAll('.feed-item');
+            
+            feedItems.forEach(item => {
+                const title = item.querySelector('.feed-item-title').textContent.toLowerCase();
+                const content = item.querySelector('.feed-item-content').textContent.toLowerCase();
+                
+                if (title.includes(searchTerm) || content.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        });
+        
+        // Back to top button
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        });
+        
+        // GitHub link - replace with your actual GitHub URL
+        document.getElementById('githubLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            // Replace with your actual GitHub repository URL
+            window.open('https://github.com/yourusername/ai-note', '_blank');
+        });
+        
         console.log("页面加载完成，AI 技术笔记已就绪");
     </script>
 </body>
