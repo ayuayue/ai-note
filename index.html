@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>技术文档目录</title>
+    <style>
+        /* Google Fonts for better typography */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
+
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --bg-color: #ecf0f1;
+            --text-color: #34495e;
+            --border-color: #bdc3c7;
+            --card-bg: #ffffff;
+            --hover-color: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', 'Noto Sans SC', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 30px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: var(--secondary-color);
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+        }
+
+        .description {
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto;
+            color: #7f8c8d;
+        }
+
+        .docs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .doc-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .doc-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+            border-color: var(--secondary-color);
+        }
+
+        .doc-title {
+            color: var(--primary-color);
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .doc-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            flex-grow: 1;
+        }
+
+        .doc-link:hover {
+            color: inherit;
+        }
+
+        .doc-link:hover .doc-title {
+            color: var(--secondary-color);
+        }
+
+        .doc-preview {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+            flex-grow: 1;
+        }
+
+        .doc-file {
+            background-color: #e3f2fd;
+            color: var(--secondary-color);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-family: 'Courier New', monospace;
+            display: inline-block;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .doc-card {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .docs-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>技术文档目录</h1>
+            <p class="subtitle">Java & JVM 技术深度解析文档</p>
+            <p class="description">这里包含了关于 JVM 内部机制、Spring Boot 启动流程、类加载机制等技术主题的详细文档。点击下方链接查看具体内容。</p>
+        </header>
+
+        <div class="docs-grid">
+            <div class="doc-card">
+                <a href="html/jvm-desc.html" class="doc-link">
+                    <h2 class="doc-title">JVM内部类型描述符深度报告</h2>
+                    <p class="doc-preview">深入探讨JVM中所有类型的描述符，包括基础类型、对象类型、数组类型以及方法描述符，并提供详尽的示例。</p>
+                    <span class="doc-file">jvm-desc.html</span>
+                </a>
+            </div>
+
+            <div class="doc-card">
+                <a href="html/classloader.html" class="doc-link">
+                    <h2 class="doc-title">Java Classpath 与类加载机制深度报告</h2>
+                    <p class="doc-preview">从 JVM 启动到自定义实现的全景透视，详细解析类加载器的工作原理和双亲委派机制。</p>
+                    <span class="doc-file">classloader.html</span>
+                </a>
+            </div>
+
+            <div class="doc-card">
+                <a href="html/springboot-start.html" class="doc-link">
+                    <h2 class="doc-title">Spring Boot/Cloud 启动流程诊断报告</h2>
+                    <p class="doc-preview">详细分析 Spring Boot/Cloud 应用的启动流程，包括上下文层级结构和环境属性源的优先级。</p>
+                    <span class="doc-file">springboot-start.html</span>
+                </a>
+            </div>
+
+            <div class="doc-card">
+                <a href="html/report.html" class="doc-link">
+                    <h2 class="doc-title">JVM 类加载与执行子系统</h2>
+                    <p class="doc-preview">关于 JVM 类加载和执行子系统的详细技术报告。</p>
+                    <span class="doc-file">report.html</span>
+                </a>
+            </div>
+
+            <div class="doc-card">
+                <a href="html/myclassloader.html" class="doc-link">
+                    <h2 class="doc-title">自定义类加载器实现</h2>
+                    <p class="doc-preview">自定义类加载器的实现方式和应用场景分析。</p>
+                    <span class="doc-file">myclassloader.html</span>
+                </a>
+            </div>
+
+            <div class="doc-card">
+                <a href="html/loaderDemo.html" class="doc-link">
+                    <h2 class="doc-title">类加载器演示</h2>
+                    <p class="doc-preview">类加载器工作原理的演示和实例分析。</p>
+                    <span class="doc-file">loaderDemo.html</span>
+                </a>
+            </div>
+
+            <div class="doc-card">
+                <a href="html/maven-report.html" class="doc-link">
+                    <h2 class="doc-title">Maven 项目报告</h2>
+                    <p class="doc-preview">Maven 项目的依赖分析和技术报告。</p>
+                    <span class="doc-file">maven-report.html</span>
+                </a>
+            </div>
+
+            <div class="doc-card">
+                <a href="html/t6-manage-spring.context.html" class="doc-link">
+                    <h2 class="doc-title">Spring 上下文管理</h2>
+                    <p class="doc-preview">Spring 应用上下文的管理和配置分析。</p>
+                    <span class="doc-file">t6-manage-spring.context.html</span>
+                </a>
+            </div>
+
+            <div class="doc-card">
+                <a href="html/java.net.preferIPv4Stack.html" class="doc-link">
+                    <h2 class="doc-title">网络协议栈配置</h2>
+                    <p class="doc-preview">Java 网络协议栈配置参数详解。</p>
+                    <span class="doc-file">java.net.preferIPv4Stack.html</span>
+                </a>
+            </div>
+        </div>
+
+        <footer>
+            <p>技术文档目录 &copy; 2025 | 静态文档站点</p>
+        </footer>
+    </div>
+</body>
+</html>
