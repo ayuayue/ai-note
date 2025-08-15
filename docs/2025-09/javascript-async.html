@@ -1,19 +1,9 @@
-const fs = require('fs');
-const path = require('path');
-const marked = require('marked');
-
-// Function to convert Markdown to HTML with feed-style layout
-function markdownToHtml(markdownContent, title, date) {
-    // Convert markdown to HTML
-    const htmlContent = marked.parse(markdownContent);
-    
-    // Wrap in HTML template with feed-style layout
-    return `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${title}</title>
+    <title>JavaScript 异步编程指南</title>
     <style>
         /* Google Fonts for better typography */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
@@ -244,20 +234,59 @@ function markdownToHtml(markdownContent, title, date) {
 <body>
     <div class="container">
         <header class="header">
-            <h1>${title}</h1>
+            <h1>JavaScript 异步编程指南</h1>
             <div class="meta">AI 技术笔记 - 仅供参考学习</div>
         </header>
         
         <article class="post">
             <header class="post-header">
-                <h1 class="post-title">${title}</h1>
+                <h1 class="post-title">JavaScript 异步编程指南</h1>
                 <div class="post-meta">
                     <div>AI 协助生成内容</div>
-                    <div class="post-date">${date}</div>
+                    <div class="post-date">2025/8/15</div>
                 </div>
             </header>
             <div class="post-content">
-                ${htmlContent}
+                <h1 id="javascript-异步编程指南">JavaScript 异步编程指南</h1>
+<p>JavaScript 异步编程是现代 Web 开发中的核心概念。随着应用复杂度的增加，理解并正确使用异步编程模式变得至关重要。</p>
+<h2 id="异步编程的历史">异步编程的历史</h2>
+<p>JavaScript 异步编程经历了几个重要的发展阶段：</p>
+<ol>
+<li>回调函数 (Callbacks)</li>
+<li>Promise</li>
+<li>Async/Await</li>
+</ol>
+<h2 id="promise-基础">Promise 基础</h2>
+<p>Promise 是 JavaScript 中处理异步操作的一种方式，它代表了一个异步操作的最终完成或失败。</p>
+<pre><code class="language-javascript">const myPromise = new Promise((resolve, reject) =&gt; {
+  setTimeout(() =&gt; {
+    resolve(&quot;操作成功完成&quot;);
+  }, 1000);
+});
+
+myPromise.then(result =&gt; {
+  console.log(result);
+});
+</code></pre>
+<h2 id="asyncawait-语法">Async/Await 语法</h2>
+<p>Async/Await 是基于 Promise 的语法糖，让异步代码看起来像同步代码。</p>
+<pre><code class="language-javascript">async function fetchData() {
+  try {
+    const response = await fetch(&#39;https://api.example.com/data&#39;);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(&#39;获取数据失败:&#39;, error);
+  }
+}
+</code></pre>
+<h2 id="最佳实践">最佳实践</h2>
+<ol>
+<li>总是使用 try/catch 处理 async/await 错误</li>
+<li>避免回调地狱，使用 Promise 或 async/await</li>
+<li>合理使用 Promise.all() 并行处理多个异步操作</li>
+</ol>
+
             </div>
         </article>
         
@@ -267,86 +296,4 @@ function markdownToHtml(markdownContent, title, date) {
         </footer>
     </div>
 </body>
-</html>`;
-}
-
-// Main function
-function main() {
-    const markdownDir = "markdown";
-    const docsDir = "docs";
-    
-    // Check if markdown directory exists
-    if (!fs.existsSync(markdownDir)) {
-        console.error(`Directory ${markdownDir} does not exist`);
-        return;
-    }
-    
-    // Create docs directory if it doesn't exist
-    if (!fs.existsSync(docsDir)) {
-        fs.mkdirSync(docsDir);
-    }
-    
-    // Get all month directories
-    const monthDirs = fs.readdirSync(markdownDir)
-        .filter(file => fs.statSync(path.join(markdownDir, file)).isDirectory() && /^\d{4}-\d{2}$/.test(file));
-    
-    if (monthDirs.length === 0) {
-        console.log("No month directories found in the markdown directory");
-        return;
-    }
-    
-    let totalFiles = 0;
-    
-    // Process each month directory
-    monthDirs.forEach(monthDir => {
-        const monthPath = path.join(markdownDir, monthDir);
-        const docsMonthPath = path.join(docsDir, monthDir);
-        
-        // Create corresponding docs directory
-        if (!fs.existsSync(docsMonthPath)) {
-            fs.mkdirSync(docsMonthPath, { recursive: true });
-        }
-        
-        // Get all Markdown files in the month directory
-        const markdownFiles = fs.readdirSync(monthPath)
-            .filter(file => path.extname(file) === '.md');
-        
-        if (markdownFiles.length === 0) {
-            console.log(`No Markdown files found in ${monthPath}`);
-            return;
-        }
-        
-        // Convert each Markdown file to HTML
-        markdownFiles.forEach(filename => {
-            try {
-                const filePath = path.join(monthPath, filename);
-                const markdownContent = fs.readFileSync(filePath, 'utf8');
-                
-                // Extract title from first line (assuming it's a # heading)
-                const titleLine = markdownContent.split('\n')[0];
-                const title = titleLine.startsWith('# ') ? titleLine.substring(2) : path.basename(filename, '.md');
-                
-                // Get file date
-                const fileStats = fs.statSync(filePath);
-                const date = fileStats.mtime.toLocaleDateString('zh-CN');
-                
-                const htmlContent = markdownToHtml(markdownContent, title, date);
-                
-                // Create HTML filename
-                const htmlFilename = path.basename(filename, '.md') + '.html';
-                const htmlPath = path.join(docsMonthPath, htmlFilename);
-                
-                fs.writeFileSync(htmlPath, htmlContent, 'utf8');
-                console.log(`Converted ${monthDir}/${filename} to ${monthDir}/${htmlFilename}`);
-                totalFiles++;
-            } catch (error) {
-                console.error(`Error converting ${monthDir}/${filename}: ${error.message}`);
-            }
-        });
-    });
-    
-    console.log(`\nConversion complete! ${totalFiles} files converted.`);
-}
-
-// Run the main function
-main();
+</html>

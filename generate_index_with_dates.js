@@ -38,39 +38,32 @@ function formatDate(date) {
     });
 }
 
-// Function to generate a document card HTML snippet
-function generateDocCard(filename, title, date) {
-    // Simple preview text - in a real implementation, you might extract this from the file
-    const previews = {
-        "jvm-desc.md": "深入探讨JVM中所有类型的描述符，包括基础类型、对象类型、数组类型以及方法描述符，并提供详尽的示例。",
-        "classloader.md": "从 JVM 启动到自定义实现的全景透视，详细解析类加载器的工作原理和双亲委派机制。",
-        "springboot-start.md": "详细分析 Spring Boot/Cloud 应用的启动流程，包括上下文层级结构和环境属性源的优先级。",
-        "report.md": "关于 JVM 类加载和执行子系统的详细技术报告。",
-        "myclassloader.md": "自定义类加载器的实现方式和应用场景分析。",
-        "loaderDemo.md": "类加载器工作原理的演示和实例分析。",
-        "maven-report.md": "Maven 项目的依赖分析和技术报告。",
-        "t6-manage-spring.context.md": "Spring 应用上下文的管理和配置分析。",
-        "java.net.preferIPv4Stack.md": "Java 网络协议栈配置参数详解。"
-    };
-    
-    const preview = previews[filename] || "技术文档内容";
+// Function to generate a document card HTML snippet for feed style
+function generateDocCard(monthDir, filename, title, date) {
     const htmlFilename = filename.replace('.md', '.html');
+    const formattedDate = formatDate(date);
     
-    return `            <div class="doc-card">
-                <a href="docs/${htmlFilename}" class="doc-link">
-                    <h2 class="doc-title">${title}</h2>
-                    <p class="doc-preview">${preview}</p>
-                    <div class="doc-meta">
-                        <span class="doc-file">${htmlFilename}</span>
-                        <span class="doc-date">${formatDate(date)}</span>
+    return `            <div class="feed-item">
+                <div class="feed-item-header">
+                    <h2 class="feed-item-title"><a href="docs/${monthDir}/${htmlFilename}">${title}</a></h2>
+                    <div class="feed-item-meta">
+                        <span class="feed-item-date">${formattedDate}</span>
+                        <span class="feed-item-category">${monthDir}</span>
                     </div>
-                </a>
+                </div>
+                <div class="feed-item-content">
+                    <p>AI 协助生成的技术笔记内容，包含关于 ${title} 的详细解析。</p>
+                </div>
+                <div class="feed-item-footer">
+                    <a href="docs/${monthDir}/${htmlFilename}" class="read-more">阅读更多 →</a>
+                </div>
             </div>`;
 }
 
 // Main function
 function main() {
     const markdownDir = "markdown";
+    const docsDir = "docs";
     
     // Check if markdown directory exists
     if (!fs.existsSync(markdownDir)) {
@@ -78,52 +71,76 @@ function main() {
         return;
     }
     
-    // Get all Markdown files in the markdown directory
-    const markdownFiles = fs.readdirSync(markdownDir)
-        .filter(file => path.extname(file) === '.md');
+    // Get all month directories
+    const monthDirs = fs.readdirSync(markdownDir)
+        .filter(file => fs.statSync(path.join(markdownDir, file)).isDirectory() && /^\d{4}-\d{2}$/.test(file))
+        .sort()
+        .reverse(); // Sort by newest first
     
-    if (markdownFiles.length === 0) {
-        console.log("No Markdown files found in the markdown directory");
+    if (monthDirs.length === 0) {
+        console.log("No month directories found in the markdown directory");
         return;
     }
     
-    // Generate doc cards with dates
-    const docCards = [];
-    markdownFiles.sort().forEach(filename => {
-        const filePath = path.join(markdownDir, filename);
-        const title = extractTitleFromMarkdown(filePath);
-        const date = getFileDate(filePath);
-        docCards.push({
-            filename,
-            title,
-            date,
-            html: generateDocCard(filename, title, date)
+    // Collect all documents with their dates
+    const allDocuments = [];
+    
+    // Process each month directory
+    monthDirs.forEach(monthDir => {
+        const monthPath = path.join(markdownDir, monthDir);
+        
+        // Get all Markdown files in the month directory
+        const markdownFiles = fs.readdirSync(monthPath)
+            .filter(file => path.extname(file) === '.md');
+        
+        if (markdownFiles.length === 0) {
+            console.log(`No Markdown files found in ${monthPath}`);
+            return;
+        }
+        
+        // Collect document info
+        markdownFiles.forEach(filename => {
+            const filePath = path.join(monthPath, filename);
+            const title = extractTitleFromMarkdown(filePath);
+            const date = getFileDate(filePath);
+            
+            allDocuments.push({
+                monthDir,
+                filename,
+                title,
+                date
+            });
         });
     });
     
-    // Sort by date (newest first)
-    docCards.sort((a, b) => b.date - a.date);
+    // Sort all documents by date (newest first)
+    allDocuments.sort((a, b) => b.date - a.date);
+    
+    // Generate feed items
+    const feedItems = allDocuments.map(doc => 
+        generateDocCard(doc.monthDir, doc.filename, doc.title, doc.date)
+    );
     
     // Read template
     let template;
     try {
-        template = fs.readFileSync("template.html", "utf8");
+        template = fs.readFileSync("template_with_dates.html", "utf8");
     } catch (error) {
-        console.error("template.html not found");
+        console.error("template_with_dates.html not found");
         return;
     }
     
-    // Replace placeholder with doc cards
-    const docCardsHtml = docCards.map(card => card.html).join('\n');
-    const updatedContent = template.replace("{{DOC_CARDS}}", docCardsHtml);
+    // Replace placeholder with feed items
+    const feedItemsHtml = feedItems.join('\n');
+    const updatedContent = template.replace("{{DOC_CARDS}}", feedItemsHtml);
     
     // Write to index.html
     fs.writeFileSync("index.html", updatedContent, "utf8");
     
-    console.log(`Generated index.html with ${docCards.length} documents`);
+    console.log(`Generated index.html with ${allDocuments.length} documents`);
     console.log("Files included:");
-    docCards.forEach(card => {
-        console.log(`  - ${card.filename} (${formatDate(card.date)})`);
+    allDocuments.forEach(doc => {
+        console.log(`  - ${doc.monthDir}/${doc.filename} (${formatDate(doc.date)})`);
     });
 }
 

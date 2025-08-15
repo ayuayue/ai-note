@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>技术文档目录</title>
+    <title>AI 技术笔记</title>
     <style>
         /* Google Fonts for better typography */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
@@ -12,9 +12,9 @@
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
             --accent-color: #e74c3c;
-            --bg-color: #ecf0f1;
+            --bg-color: #f8f9fa;
             --text-color: #34495e;
-            --border-color: #bdc3c7;
+            --border-color: #e9ecef;
             --card-bg: #ffffff;
             --hover-color: #f8f9fa;
         }
@@ -30,158 +30,163 @@
             line-height: 1.6;
             color: var(--text-color);
             background-color: var(--bg-color);
-            background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 0;
         }
 
         .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 30px;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-            padding: 30px;
-            background: var(--card-bg);
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            animation: fadeIn 0.8s ease-out;
-        }
-
-        h1 {
-            color: var(--primary-color);
-            font-size: 2.8rem;
-            margin-bottom: 15px;
-            font-weight: 700;
-        }
-
-        .subtitle {
-            color: var(--secondary-color);
-            font-size: 1.3rem;
-            margin-bottom: 25px;
-        }
-
-        .description {
-            font-size: 1.1rem;
             max-width: 800px;
             margin: 0 auto;
-            color: #7f8c8d;
-        }
-
-        .docs-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 25px;
-            margin-top: 30px;
-        }
-
-        .doc-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            border: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        .doc-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-            border-color: var(--secondary-color);
-        }
-
-        .doc-title {
-            color: var(--primary-color);
-            font-size: 1.4rem;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        .doc-link {
-            text-decoration: none;
-            color: inherit;
-            display: block;
-            flex-grow: 1;
-        }
-
-        .doc-link:hover {
-            color: inherit;
-        }
-
-        .doc-link:hover .doc-title {
-            color: var(--secondary-color);
-        }
-
-        .doc-preview {
-            color: #7f8c8d;
-            font-size: 0.95rem;
-            margin-bottom: 20px;
-            flex-grow: 1;
-        }
-
-        .doc-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.85rem;
-        }
-
-        .doc-file {
-            background-color: #e3f2fd;
-            color: var(--secondary-color);
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-family: 'Courier New', monospace;
-        }
-
-        .doc-date {
-            color: #7f8c8d;
-            font-weight: 500;
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 50px;
             padding: 20px;
-            color: #7f8c8d;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            color: #6c757d;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            text-align: center;
             font-size: 0.9rem;
         }
 
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .feed {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
         }
 
-        .doc-card {
-            animation: fadeIn 0.5s ease-out;
+        .feed-item {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .feed-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .feed-item-header {
+            margin-bottom: 15px;
+        }
+
+        .feed-item-title {
+            color: var(--primary-color);
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+        }
+
+        .feed-item-title a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .feed-item-title a:hover {
+            color: var(--secondary-color);
+        }
+
+        .feed-item-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .feed-item-date {
+            font-weight: 500;
+        }
+
+        .feed-item-category {
+            background-color: #e3f2fd;
+            color: var(--secondary-color);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .feed-item-content {
+            margin-bottom: 20px;
+            color: #495057;
+        }
+
+        .feed-item-content p {
+            margin-bottom: 0;
+            line-height: 1.6;
+        }
+
+        .feed-item-footer {
+            text-align: right;
+        }
+
+        .read-more {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .read-more:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 40px;
         }
 
         @media (max-width: 768px) {
-            .docs-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            h1 {
-                font-size: 2.2rem;
-            }
-            
             .container {
-                padding: 15px;
+                padding: 10px;
             }
             
-            .doc-meta {
+            .header {
+                padding: 30px 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .feed-item {
+                padding: 20px;
+            }
+            
+            .feed-item-title {
+                font-size: 1.2rem;
+            }
+            
+            .feed-item-meta {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 8px;
@@ -191,27 +196,27 @@
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>技术文档目录</h1>
-            <p class="subtitle">Java & JVM 技术深度解析文档</p>
-            <p class="description">这里包含了关于 JVM 内部机制、Spring Boot 启动流程、类加载机制等技术主题的详细文档。点击下方链接查看具体内容。</p>
+        <header class="header">
+            <h1>AI 技术笔记</h1>
+            <p>记录 AI 协助解决的各种技术问题和学习笔记</p>
         </header>
-
-        <div class="docs-grid">
+        
+        <div class="warning">
+            ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+        </div>
+        
+        <div class="feed">
             <!-- This section will be automatically populated -->
             {{DOC_CARDS}}
         </div>
-
-        <footer>
-            <p>技术文档目录 &copy; 2025 | 静态文档站点</p>
+        
+        <footer class="footer">
+            <p>AI 技术笔记 &copy; 2025 | 所有内容均由 AI 协助生成</p>
         </footer>
     </div>
     
     <script>
-        // Simple script to automatically populate the document cards
-        // In a real implementation, this would read the directory and generate content
-        // For now, we're manually maintaining the links in the HTML
-        console.log("页面加载完成，文档目录已就绪");
+        console.log("页面加载完成，AI 技术笔记已就绪");
     </script>
 </body>
 </html>
