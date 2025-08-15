@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Java 动态编译与加载深度报告</title>
+    <style>
+        /* Google Fonts for better typography */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
+
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --bg-color: #ecf0f1;
+            --text-color: #34495e;
+            --border-color: #bdc3c7;
+            --card-bg: #ffffff;
+            --hover-color: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', 'Noto Sans SC', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 40px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .meta {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h3 {
+            color: #2980b9;
+            font-size: 1.4rem;
+            margin: 25px 0 15px 0;
+        }
+
+        p {
+            margin-bottom: 16px;
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        code {
+            background-color: #e8eaed;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            color: #c0392b;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            font-size: 0.9em;
+        }
+
+        pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        blockquote {
+            background-color: #eaf2f8;
+            border-left: 5px solid var(--secondary-color);
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #e1e1e1;
+        }
+
+        th {
+            background-color: #3498db;
+            color: #ffffff;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        tbody tr:hover {
+            background-color: #e9ecef;
+        }
+
+        a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        hr {
+            margin: 30px 0;
+            border: 0;
+            border-top: 1px solid var(--border-color);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 20px auto;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Java 动态编译与加载深度报告</h1>
+            <div class="meta">更新时间: 2025/8/15 15:19:41</div>
+        </header>
+        <main>
+            <h1 id="java-动态编译与加载深度报告">Java 动态编译与加载深度报告</h1>
+<p>Java 动态编译与加载深度报告
+            从 .java 源码到运行时实例的全过程揭秘</p>
+<p>一、核心原理：JVM 不认识 .java</p>
+<pre><code>                JVM：一个只懂字节码的“施工队”
+                Java 虚拟机 (JVM) 的设计目标是成为一个高效的、跨平台的**字节码执行引擎**。它并不关心这些字节码最初是用 Java、Kotlin 还是 Scala 写的。
+                因此，任何 .java 源代码都必须先通过编译器 (javac) 这个“翻译官”，转换成 JVM 能看懂的 .class 文件（字节码）。这个过程是**强制性**的。
+            
+        
+        
+        
+            二、解决方案：在运行时扮演“翻译官”
+            既然编译是必须的，那么我们可以在程序运行时，调用 Java 开发工具包 (JDK) 中内置的编译器 API，来动态完成这个编译过程。这个强大的工具就是 javax.tools.JavaCompiler。
+            
+            实现流程：
+            
+                **准备源代码：** 将 .java 文件的内容作为字符串或从文件中读取。
+                调用编译器 API：** 在内存中将源代码字符串编译成字节码 (byte[])。
+                创建自定义类加载器：** 这个加载器可以直接从内存中的字节码数组加载类。
+                加载并使用：** 使用自定义加载器加载这个新编译的类，并通过反射创建实例和调用方法。
+            
+        
+
+        
+            三、实战 Demo：动态编译并执行代码
+            下面的 Demo 将一个包含 .java 源代码的字符串，在运行时编译、加载，并执行其中的方法。这个例子是完全自包含的，可以直接复制运行。
+            
+            
+                运行环境要求：此代码必须在 **JDK (Java Development Kit)**环境下运行，而不是 JRE (Java Runtime Environment)，因为它需要调用 JDK 内置的编译器工具。
+            
+
+            import javax.tools.*;
+</code></pre>
+<p>import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.reflect.Method;
+import java.net.URI;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;</p>
+<p>public class DynamicCompilerAndLoader {</p>
+<pre><code>public static void main(String[] args) throws Exception {
+    
+    // --- 1. 准备要动态编译的 .java 源代码 ---
+    String sourceCode = &quot;package com.example.dynamic;&quot; +
+                        &quot;public class DynamicGreeter {&quot; +
+                        &quot;    public void greet() {&quot; +
+                        &quot;        System.out.println(\&quot;Hello from a dynamically compiled and loaded class!\&quot;);&quot; +
+                        &quot;    }&quot; +
+                        &quot;}&quot;;
+
+    String className = &quot;com.example.dynamic.DynamicGreeter&quot;;
+
+    // --- 2. 动态编译源代码 ---
+    System.out.println(&quot;--&gt; Step 1: Compiling source code in memory...&quot;);
+    Map&lt;String, byte[]&gt; compiledBytecodes = compile(className, sourceCode);
+    byte[] greeterBytecode = compiledBytecodes.get(className);
+    System.out.println(&quot;--&gt; Compilation successful!&quot;);
+
+    // --- 3. 使用自定义类加载器加载字节码 ---
+    System.out.println(&quot;\n--&gt; Step 2: Loading bytecode with MemoryClassLoader...&quot;);
+    MemoryClassLoader classLoader = new MemoryClassLoader(compiledBytecodes);
+    Class&lt;?&gt; dynamicGreeterClass = classLoader.loadClass(className);
+    System.out.println(&quot;--&gt; Class loaded successfully: &quot; + dynamicGreeterClass.getName());
+    System.out.println(&quot;--&gt; Loaded by: &quot; + dynamicGreeterClass.getClassLoader());
+
+
+    // --- 4. 通过反射创建实例并调用方法 ---
+    System.out.println(&quot;\n--&gt; Step 3: Creating instance and invoking method via reflection...&quot;);
+    Object instance = dynamicGreeterClass.getDeclaredConstructor().newInstance();
+    Method method = dynamicGreeterClass.getMethod(&quot;greet&quot;);
+    method.invoke(instance);
+}
+
+/**
+ * 内存中的字节码类加载器
+ */
+static class MemoryClassLoader extends ClassLoader {
+    private final Map&lt;String, byte[]&gt; classBytes;
+
+    public MemoryClassLoader(Map&lt;String, byte[]&gt; classBytes) {
+        // 使用 AppClassLoader 作为父加载器
+        super(DynamicCompilerAndLoader.class.getClassLoader());
+        this.classBytes = classBytes != null ? classBytes : Collections.emptyMap();
+    }
+
+    @Override
+    protected Class&lt;?&gt; findClass(String name) throws ClassNotFoundException {
+        byte[] buf = classBytes.get(name);
+        if (buf != null) {
+            // 关键步骤：将字节码数组定义为 Class 对象
+            return defineClass(name, buf, 0, buf.length);
+        }
+        return super.findClass(name); // 遵循双亲委派
+    }
+}
+
+/**
+ * 动态编译方法
+ */
+public static Map&lt;String, byte[]&gt; compile(String className, String sourceCode) {
+    JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+    if (compiler == null) {
+        throw new IllegalStateException(&quot;Cannot find the system Java compiler. &quot; +
+                &quot;Please run this code with a JDK, not a JRE.&quot;);
+    }
+
+    // 用于接收编译后的字节码
+    final Map&lt;String, ByteArrayOutputStream&gt; outputStreamMap = new HashMap&lt;&gt;();
+
+    JavaFileManager fileManager = new ForwardingJavaFileManager&lt;JavaFileManager&gt;(
+            compiler.getStandardFileManager(null, null, null)) {
+        @Override
+        public JavaFileObject getJavaFileForOutput(Location location, String className,
+                                                   JavaFileObject.Kind kind, FileObject sibling) {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            outputStreamMap.put(className, bos);
+            return new SimpleJavaFileObject(URI.create(&quot;&quot;), kind) {
+                @Override
+                public OutputStream openOutputStream() {
+                    return bos;
+                }
+            };
+        }
+    };
+
+    JavaFileObject sourceFile = new SimpleJavaFileObject(URI.create(&quot;&quot;), JavaFileObject.Kind.SOURCE) {
+        @Override
+        public CharSequence getCharContent(boolean ignoreEncodingErrors) {
+            return sourceCode;
+        }
+        @Override
+        public String getName() {
+            return className.replace(&#39;.&#39;, &#39;/&#39;) + Kind.SOURCE.extension;
+        }
+    };
+
+    JavaCompiler.CompilationTask task = compiler.getTask(null, fileManager, null, null,
+            null, Collections.singletonList(sourceFile));
+
+    boolean success = task.call();
+    if (!success) {
+        throw new RuntimeException(&quot;Compilation failed!&quot;);
+    }
+
+    Map&lt;String, byte[]&gt; result = new HashMap&lt;&gt;();
+    outputStreamMap.forEach((name, bos) -&gt; result.put(name, bos.toByteArray()));
+    return result;
+}
+</code></pre>
+<p>}</p>
+<pre><code>            四、专家级分析
+            
+                为什么必须用反射？
+                在 `main` 方法中，我们加载了 `DynamicGreeter` 类，但我们不能像这样直接使用它：
+                // 下面这行代码无法通过编译！
+</code></pre>
+<p>DynamicGreeter greeter = new DynamicGreeter();
+                    这是因为 <code>DynamicCompilerAndLoader</code> 这个类本身是由 AppClassLoader 加载的。在<strong>编译</strong> <code>DynamicCompilerAndLoader.java</code> 时，编译器（<code>javac</code>）在它的 classpath 中根本找不到一个叫 <code>DynamicGreeter</code> 的类，所以会直接报错“找不到符号”。
+                    <code>DynamicGreeter</code> 这个类只在<strong>运行时</strong>才存在，并且存在于我们的 <code>MemoryClassLoader</code> 中。AppClassLoader 对它一无所知。因此，我们必须使用<strong>反射 (Reflection)</strong> 这种“在运行时查找和调用”的机制来与这个动态加载的类进行交互。</p>
+<pre><code>                总结：从源码到运行的完整路径
+                这个 Demo 完整地展示了 Java 动态性的强大之处：
+                
+                    源代码 (String) -&gt; Java 是一种静态类型语言，但其源代码可以动态生成或获取。
+                    -&gt; `JavaCompiler` API -&gt; 这是连接源码和字节码的桥梁，是实现动态性的关键。
+                    -&gt; 字节码 (byte[]) -&gt; 这是 JVM 的“母语”，是所有类加载的基础。
+                    -&gt; `CustomClassLoader` -&gt; 这是将字节码注入到运行中 JVM 的“注射器”。
+                    -&gt; `Class` 对象 -&gt; 字节码被加载后在 JVM 中的体现，是所有操作的入口。
+                    -&gt; `Reflection` -&gt; 这是在编译时类型未知的情况下，与动态加载的 `Class` 对象进行交互的唯一手段。
+                
+                理解了这个流程，就掌握了 Java 中许多高级框架（如热部署、AOP、规则引擎）的底层实现原理。
+</code></pre>
+<p>Java 动态编译与加载深度报告 © 2025</p>
+
+        </main>
+    </div>
+</body>
+</html>

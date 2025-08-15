@@ -6,22 +6,55 @@
 
 ```
 .
-├── index.html          # 主页，包含所有文档的链接
-├── template.html       # 用于生成主页的模板
-├── generate_index.js   # 自动生成主页的脚本
-├── html/              # 所有技术文档
-└── img/               # 图片资源目录
+├── index.html              # 主页，包含所有文档的链接
+├── template.html           # 用于生成主页的模板
+├── template_with_dates.html # 带日期功能的模板
+├── package.json            # 项目依赖和脚本
+├── markdown/              # Markdown 格式的文档源文件
+├── docs/                  # 从 Markdown 生成的 HTML 文件
+├── html/                  # 原始 HTML 文档
+└── img/                   # 图片资源目录
 ```
 
-## 自动目录生成
+## 工作流程
 
-当您添加新的 HTML 文档到 `html/` 目录时，可以运行以下命令自动更新主页链接：
+### 1. HTML 转 Markdown
+
+将现有的 HTML 文档转换为 Markdown 格式，便于编辑和维护：
 
 ```bash
-node generate_index.js
+npm run convert-html
 ```
 
-这将根据 `html/` 目录中的文件自动更新 `index.html` 文件。
+这将把 `html/` 目录中的所有 HTML 文件转换为 Markdown 格式，并保存在 `markdown/` 目录中。
+
+### 2. Markdown 转 HTML
+
+将 Markdown 文件转换为 HTML 格式，用于网站展示：
+
+```bash
+npm run convert-md
+```
+
+这将把 `markdown/` 目录中的所有 Markdown 文件转换为 HTML 格式，并保存在 `docs/` 目录中。
+
+### 3. 生成索引页面
+
+生成带有文档链接和更新日期的主页：
+
+```bash
+npm run generate-index
+```
+
+这将根据 `markdown/` 目录中的文件生成 `index.html`，包含每个文档的链接和最后修改日期。
+
+### 4. 完整构建
+
+执行完整的构建过程，包括 Markdown 转 HTML 和生成索引：
+
+```bash
+npm run build
+```
 
 ## 自定义样式
 
@@ -32,8 +65,9 @@ node generate_index.js
 3. 悬停动画效果
 4. 自定义颜色主题
 5. Google Fonts 字体优化
+6. 显示文档更新日期
 
-要自定义样式，可以修改 `index.html` 或 `template.html` 文件中的 CSS 部分：
+要自定义样式，可以修改 `template_with_dates.html` 文件中的 CSS 部分：
 
 ```css
 :root {
@@ -55,3 +89,13 @@ node generate_index.js
 - 或任何支持静态文件托管的服务
 
 只需将整个项目目录上传到服务器即可。
+
+## 编辑文档
+
+现在您可以直接编辑 `markdown/` 目录中的 Markdown 文件，然后运行构建命令来更新网站：
+
+1. 编辑 Markdown 文件
+2. 运行 `npm run build`
+3. 提交更改到 Git
+
+这比直接编辑 HTML 文件要简单得多！

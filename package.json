@@ -1,0 +1,24 @@
+{
+  "name": "ai-note-converter",
+  "version": "1.0.0",
+  "description": "Convert HTML documentation to Markdown and generate static site",
+  "main": "generate_index.js",
+  "scripts": {
+    "convert-html": "node convert_html_to_md.js",
+    "convert-md": "node convert_md_to_html.js",
+    "generate-index": "node generate_index_with_dates.js",
+    "build": "npm run convert-md && npm run generate-index"
+  },
+  "keywords": [
+    "markdown",
+    "html",
+    "converter",
+    "documentation"
+  ],
+  "author": "AI Note Developer",
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12",
+    "marked": "^4.3.0"
+  }
+}
