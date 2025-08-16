@@ -7,7 +7,9 @@
     "convert-html": "node convert_html_to_md.js",
     "convert-md": "node convert_md_to_html.js",
     "generate-index": "node generate_index_with_dates.js",
-    "build": "npm run convert-md && npm run generate-index"
+    "generate-sitemap": "node generate_sitemap.js",
+    "generate-overview": "node generate_overview.js",
+    "build": "npm run convert-md && npm run generate-index && npm run generate-sitemap && npm run generate-overview"
   },
   "keywords": [
     "markdown",

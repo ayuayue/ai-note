@@ -83,7 +83,7 @@ function generateDocCard(doc) {
                     <h2 class="feed-item-title"><a href="docs/${doc.monthDir}/${htmlFilename}">${doc.title}</a></h2>
                     <div class="feed-item-meta">
                         <span class="feed-item-date">${formattedDate}</span>
-                        <span class="feed-item-category">${doc.monthDir}</span>
+                        <span class="feed-item-category">Markdown 文档</span>
                     </div>
                 </div>
                 <div class="feed-item-content">
