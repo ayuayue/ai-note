@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 技术笔记</title>
+    <title>HTML 文档汇总</title>
     <style>
         /* Google Fonts for better typography */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
@@ -35,7 +35,7 @@
         }
 
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -70,25 +70,21 @@
             flex-wrap: wrap;
         }
 
-        .search-container {
-            position: relative;
-            max-width: 500px;
-            width: 100%;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 12px 20px;
-            border: 1px solid var(--border-color);
+        .back-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--secondary-color);
+            color: white;
+            padding: 10px 20px;
             border-radius: 30px;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.3s;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s;
         }
 
-        .search-input:focus {
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+        .back-home:hover {
+            background: #2980b9;
         }
 
         .github-link {
@@ -121,7 +117,7 @@
 
         .feed {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(600px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
             gap: 25px;
         }
 
@@ -159,32 +155,9 @@
             color: var(--secondary-color);
         }
 
-        .feed-item-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: #6c757d;
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-        }
-
-        .feed-item-date {
-            font-weight: 500;
-        }
-
-        .feed-item-category {
-            background-color: #e3f2fd;
-            color: var(--secondary-color);
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-weight: 500;
-        }
-
         .feed-item-content {
             margin-bottom: 20px;
             color: #495057;
-            font-size: 1.1rem;
-            line-height: 1.7;
         }
 
         .feed-item-content p {
@@ -205,36 +178,6 @@
 
         .read-more:hover {
             text-decoration: underline;
-        }
-
-        .pagination {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin: 40px 0 30px;
-        }
-
-        .pagination a {
-            display: inline-block;
-            padding: 10px 15px;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 5px;
-            text-decoration: none;
-            color: var(--text-color);
-            transition: all 0.2s;
-        }
-
-        .pagination a:hover {
-            background: var(--secondary-color);
-            color: white;
-            border-color: var(--secondary-color);
-        }
-
-        .pagination .current {
-            background: var(--secondary-color);
-            color: white;
-            border-color: var(--secondary-color);
         }
 
         .footer {
@@ -292,12 +235,6 @@
                 font-size: 1.2rem;
             }
             
-            .feed-item-meta {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-            
             .header-actions {
                 flex-direction: column;
                 align-items: center;
@@ -308,13 +245,19 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1>AI 技术笔记</h1>
-            <p>记录 AI 协助解决的各种技术问题和学习笔记</p>
+            <h1>HTML 文档汇总</h1>
+            <p>以下是由 AI 协助生成的技术文档</p>
             
             <div class="header-actions">
-                <div class="search-container">
-                    <input type="text" class="search-input" placeholder="搜索技术笔记..." id="searchInput">
-                </div>
+                <a href="index.html" class="back-home">
+                    ← 返回首页
+                </a>
+                <a href="https://github.com/YOUR_USERNAME/YOUR_REPO" class="github-link" target="_blank">
+                    <svg height="16" viewBox="0 0 16 16" width="16" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                    </svg>
+                    GitHub
+                </a>
             </div>
         </header>
         
@@ -322,16 +265,8 @@
             ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
         </div>
         
-        <div class="feed">
-            <!-- This section will be automatically populated -->
-            {{DOC_CARDS}}
-        </div>
-        
-        <div class="pagination">
-            <a href="#" class="current">1</a>
-            <a href="#">2</a>
-            <a href="#">3</a>
-            <a href="#">下一页 →</a>
+        <div class="feed" id="htmlDocuments">
+            <!-- HTML documents will be populated here -->
         </div>
         
         <footer class="footer">
@@ -342,23 +277,35 @@
     <a href="#" class="back-to-top" id="backToTop">↑</a>
     
     <script>
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const feedItems = document.querySelectorAll('.feed-item');
-            
-            feedItems.forEach(item => {
-                const title = item.querySelector('.feed-item-title').textContent.toLowerCase();
-                const content = item.querySelector('.feed-item-content').textContent.toLowerCase();
-                
-                if (title.includes(searchTerm) || content.includes(searchTerm)) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        });
-        
+        // HTML documents data
+        const htmlDocuments = [
+            { filename: "classloader.html", title: "Java 类加载机制深度解析", description: "深入分析 Java Classpath 与类加载机制的技术文档" },
+            { filename: "jvm-desc.html", title: "JVM 内部类型描述符详解", description: "JVM 字节码层面的类型描述符技术报告" },
+            { filename: "springboot-start.html", title: "Spring Boot/Cloud 启动流程分析", description: "Spring Boot/Cloud 应用启动流程和上下文层次结构的诊断报告" },
+            { filename: "maven-report.html", title: "Maven 项目分析报告", description: "Maven 项目构建和依赖管理的技术分析" },
+            { filename: "myclassloader.html", title: "自定义类加载器实现", description: "自定义类加载器的设计与实现详解" },
+            { filename: "loaderDemo.html", title: "类加载器演示案例", description: "类加载器工作原理的演示和案例分析" },
+            { filename: "report.html", title: "系统诊断报告", description: "Java 系统运行时的综合诊断报告" },
+            { filename: "t6-manage-spring.context.html", title: "Spring 上下文管理", description: "Spring 应用上下文管理和配置详解" },
+            { filename: "java.net.preferIPv4Stack.html", title: "网络协议栈配置指南", description: "Java 网络编程中 IPv4/IPv6 协议栈配置的技术说明" }
+        ];
+
+        // Populate HTML documents
+        const container = document.getElementById('htmlDocuments');
+        container.innerHTML = htmlDocuments.map(doc => `
+            <div class="feed-item">
+                <div class="feed-item-header">
+                    <h2 class="feed-item-title"><a href="html/${doc.filename}">${doc.title}</a></h2>
+                </div>
+                <div class="feed-item-content">
+                    <p>${doc.description}</p>
+                </div>
+                <div class="feed-item-footer">
+                    <a href="html/${doc.filename}" class="read-more">阅读更多 →</a>
+                </div>
+            </div>
+        `).join('');
+
         // Back to top button
         const backToTopButton = document.getElementById('backToTop');
         
@@ -375,7 +322,7 @@
             window.scrollTo({top: 0, behavior: 'smooth'});
         });
         
-        console.log("页面加载完成，AI 技术笔记已就绪");
+        console.log("页面加载完成，HTML 文档汇总已就绪");
     </script>
 </body>
 </html>

@@ -19,6 +19,39 @@ function extractTitleFromMarkdown(filePath) {
     }
 }
 
+// Function to extract title from HTML file
+function extractTitleFromHTML(filePath) {
+    try {
+        const content = fs.readFileSync(filePath, 'utf8');
+        // Look for title tag
+        const titleMatch = content.match(/<title>(.*?)<\/title>/i);
+        if (titleMatch) {
+            return titleMatch[1];
+        }
+        
+        // If no title tag, use filename
+        return path.basename(filePath, '.html');
+    } catch (error) {
+        console.error(`Error reading ${filePath}: ${error.message}`);
+        return path.basename(filePath, '.html');
+    }
+}
+
+// Function to extract excerpt from Markdown file (first 30 characters)
+function extractExcerptFromMarkdown(filePath) {
+    try {
+        const content = fs.readFileSync(filePath, 'utf8');
+        // Remove the first line (title) and get the next lines
+        const contentWithoutTitle = content.split('\n').slice(1).join(' ');
+        // Remove markdown formatting and extra whitespace
+        const cleanContent = contentWithoutTitle.replace(/[#*\-_`]/g, '').trim();
+        // Return first 30 characters
+        return cleanContent.substring(0, 30);
+    } catch (error) {
+        return "AI 协助生成的技术笔记内容";
+    }
+}
+
 // Function to get file modification date
 function getFileDate(filePath) {
     try {
@@ -39,31 +72,53 @@ function formatDate(date) {
 }
 
 // Function to generate a document card HTML snippet for feed style
-function generateDocCard(monthDir, filename, title, date) {
-    const htmlFilename = filename.replace('.md', '.html');
-    const formattedDate = formatDate(date);
+function generateDocCard(doc) {
+    const formattedDate = formatDate(doc.date);
     
-    return `            <div class="feed-item">
+    // Different handling for markdown and html files
+    if (doc.type === 'markdown') {
+        const htmlFilename = doc.filename.replace('.md', '.html');
+        return `            <div class="feed-item">
                 <div class="feed-item-header">
-                    <h2 class="feed-item-title"><a href="docs/${monthDir}/${htmlFilename}">${title}</a></h2>
+                    <h2 class="feed-item-title"><a href="docs/${doc.monthDir}/${htmlFilename}">${doc.title}</a></h2>
                     <div class="feed-item-meta">
                         <span class="feed-item-date">${formattedDate}</span>
-                        <span class="feed-item-category">${monthDir}</span>
+                        <span class="feed-item-category">${doc.monthDir}</span>
                     </div>
                 </div>
                 <div class="feed-item-content">
-                    <p>AI 协助生成的技术笔记内容，包含关于 ${title} 的详细解析。</p>
+                    <p>${doc.excerpt}...</p>
                 </div>
                 <div class="feed-item-footer">
-                    <a href="docs/${monthDir}/${htmlFilename}" class="read-more">阅读更多 →</a>
+                    <a href="docs/${doc.monthDir}/${htmlFilename}" class="read-more">阅读更多 →</a>
                 </div>
             </div>`;
+    } else {
+        // HTML files
+        return `            <div class="feed-item">
+                <div class="feed-item-header">
+                    <h2 class="feed-item-title"><a href="html/${doc.filename}">${doc.title}</a></h2>
+                    <div class="feed-item-meta">
+                        <span class="feed-item-date">${formattedDate}</span>
+                        <span class="feed-item-category">HTML 文档</span>
+                    </div>
+                </div>
+                <div class="feed-item-content">
+                    <p>此文章为HTML格式内容，无特殊布局设计，阅读后请使用浏览器的返回功能回到首页。</p>
+                </div>
+                <div class="feed-item-footer">
+                    <a href="html/${doc.filename}" class="read-more">阅读更多 →</a>
+                </div>
+            </div>`;
+    }
 }
 
 // Main function
 function main() {
     const markdownDir = "markdown";
     const docsDir = "docs";
+    const htmlDir = "html";
+    const ITEMS_PER_PAGE = 15;
     
     // Check if markdown directory exists
     if (!fs.existsSync(markdownDir)) {
@@ -71,21 +126,16 @@ function main() {
         return;
     }
     
-    // Get all month directories
+    // Get all month directories for markdown files
     const monthDirs = fs.readdirSync(markdownDir)
         .filter(file => fs.statSync(path.join(markdownDir, file)).isDirectory() && /^\d{4}-\d{2}$/.test(file))
         .sort()
         .reverse(); // Sort by newest first
     
-    if (monthDirs.length === 0) {
-        console.log("No month directories found in the markdown directory");
-        return;
-    }
-    
     // Collect all documents with their dates
     const allDocuments = [];
     
-    // Process each month directory
+    // Process each month directory for markdown files
     monthDirs.forEach(monthDir => {
         const monthPath = path.join(markdownDir, monthDir);
         
@@ -102,23 +152,48 @@ function main() {
         markdownFiles.forEach(filename => {
             const filePath = path.join(monthPath, filename);
             const title = extractTitleFromMarkdown(filePath);
+            const excerpt = extractExcerptFromMarkdown(filePath);
             const date = getFileDate(filePath);
             
             allDocuments.push({
+                type: 'markdown',
                 monthDir,
                 filename,
                 title,
+                excerpt,
                 date
             });
         });
     });
     
+    // Process HTML files
+    if (fs.existsSync(htmlDir)) {
+        const htmlFiles = fs.readdirSync(htmlDir)
+            .filter(file => path.extname(file) === '.html');
+        
+        htmlFiles.forEach(filename => {
+            const filePath = path.join(htmlDir, filename);
+            const title = extractTitleFromHTML(filePath);
+            const date = getFileDate(filePath);
+            
+            allDocuments.push({
+                type: 'html',
+                filename,
+                title,
+                date
+            });
+        });
+    }
+    
     // Sort all documents by date (newest first)
     allDocuments.sort((a, b) => b.date - a.date);
     
-    // Generate feed items
-    const feedItems = allDocuments.map(doc => 
-        generateDocCard(doc.monthDir, doc.filename, doc.title, doc.date)
+    // Calculate pagination
+    const totalPages = Math.ceil(allDocuments.length / ITEMS_PER_PAGE);
+    
+    // Generate feed items for the first page
+    const feedItems = allDocuments.slice(0, ITEMS_PER_PAGE).map(doc => 
+        generateDocCard(doc)
     );
     
     // Read template
@@ -130,17 +205,48 @@ function main() {
         return;
     }
     
+    // Generate pagination HTML
+    let paginationHtml = '';
+    if (totalPages > 1) {
+        paginationHtml += '<div class="pagination">\n';
+        paginationHtml += '            <a href="#" class="current">1</a>\n';
+        for (let i = 2; i <= totalPages; i++) {
+            paginationHtml += `            <a href="#" data-page="${i}">${i}</a>\n`;
+        }
+        paginationHtml += '            <a href="#" data-page="next">下一页 →</a>\n';
+        paginationHtml += '        </div>';
+    } else {
+        // Even if there's only one page, we still need to replace the placeholder
+        paginationHtml = '<div class="pagination">\n            <a href="#" class="current">1</a>\n        </div>';
+    }
+    
+        
     // Replace placeholder with feed items
-    const feedItemsHtml = feedItems.join('\n');
-    const updatedContent = template.replace("{{DOC_CARDS}}", feedItemsHtml);
+    let updatedContent = template.replace("{{DOC_CARDS}}", feedItems.join('\n'));
+    
+    // Replace pagination placeholder
+    const paginationPlaceholder = '<div class="pagination">\n            <a href="#" class="current">1</a>\n            <a href="#">2</a>\n            <a href="#">3</a>\n            <a href="#">下一页 →</a>\n        </div>';
+    // Also try with Windows line endings
+    const paginationPlaceholderWindows = '<div class="pagination">\r\n            <a href="#" class="current">1</a>\r\n            <a href="#">2</a>\r\n            <a href="#">3</a>\r\n            <a href="#">下一页 →</a>\r\n        </div>';
+    
+    // Try both placeholders
+    if (updatedContent.includes(paginationPlaceholder)) {
+        updatedContent = updatedContent.replace(paginationPlaceholder, paginationHtml);
+    } else if (updatedContent.includes(paginationPlaceholderWindows)) {
+        updatedContent = updatedContent.replace(paginationPlaceholderWindows, paginationHtml);
+    } else {
+        console.log("Warning: Could not find pagination placeholder in template");
+    }
     
     // Write to index.html
     fs.writeFileSync("index.html", updatedContent, "utf8");
     
     console.log(`Generated index.html with ${allDocuments.length} documents`);
+    console.log(`Total pages: ${totalPages}`);
     console.log("Files included:");
     allDocuments.forEach(doc => {
-        console.log(`  - ${doc.monthDir}/${doc.filename} (${formatDate(doc.date)})`);
+        const dir = doc.type === 'markdown' ? `${doc.monthDir}/` : 'html/';
+        console.log(`  - ${dir}${doc.filename} (${formatDate(doc.date)})`);
     });
 }
 

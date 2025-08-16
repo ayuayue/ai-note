@@ -334,7 +334,7 @@
             <header class="post-header">
                 <h1 class="post-title">Java Classpath 与类加载机制深度报告</h1>
                 <div class="post-meta">
-                    <div class="post-date">2025/8/15</div>
+                    <div class="post-date">2025/8/16</div>
                     <div class="post-category">2025-08</div>
                 </div>
             </header>
@@ -343,249 +343,247 @@
             </div>
             <div class="post-content">
                 <h1 id="java-classpath-与类加载机制深度报告">Java Classpath 与类加载机制深度报告</h1>
-<p>Java Classpath 与类加载机制深度报告
-            从 JVM 启动到自定义实现的全景透视</p>
-<p>核心加载器
-            双亲委派
-            加载过程演示
-            自定义与打破
-            专家洞察</p>
-<p>一、JVM启动：三级仓储管理员体系
-                当一个 Java 程序启动时，JVM 并不会一次性加载所有类，而是按需加载。负责这项工作的，就是类加载器 (ClassLoader)。我们可以把它们想象成一个分工明确的三级仓储管理员体系。</p>
-<pre><code>            1. Bootstrap ClassLoader (启动类加载器)
-            角色：顶级仓储管理员 (总库管理员)。
-            职责：负责加载 Java 最核心的类库，它们是 JVM 运行的基础。例如 java.lang.String, java.util.List 等。
-            特殊性：它不是一个 Java 类，而是由 C++ 实现，内嵌在 JVM 中。因此，在 Java 代码中尝试获取它的引用会返回 null。
-            它的 Classpath (加载路径)：由系统属性 sun.boot.class.path 指定，通常指向 %JRE_HOME%/lib/rt.jar (Java 8) 或 JRE 内部的模块文件 (Java 9+)。
-
-            2. Extension / Platform ClassLoader (扩展/平台类加载器)
-            角色：二级仓储管理员 (区域库管理员)。
-            职责：负责加载 Java 的一些扩展功能库。
-            名称变更：在 Java 8 及以前被称为 Extension ClassLoader，从 Java 9 开始，由于模块化系统的引入，被 Platform ClassLoader 取代。
-            它的 Classpath (加载路径)：由系统属性 java.ext.dirs 指定，通常指向 %JRE_HOME%/lib/ext 目录下的所有 JAR 包。
-
-            3. Application ClassLoader (应用程序类加载器)
-            角色：一线仓储管理员 (我们应用的专属管理员)。
-            职责：负责加载我们自己编写的应用程序类以及项目依赖的第三方 JAR 包。这是我们打交道最多的 ClassLoader。
-            它的 Classpath (加载路径)：大名鼎鼎的 java.class.path 系统属性！它的值就是我们常说的 **classpath**。这个 classpath 是在你启动程序时动态构建的，来源包括：
-            
-                执行 `java -cp` 或 `-classpath` 参数指定的所有路径。
-                在 IDE 中运行时，IDE 自动将项目的编译输出目录 (如 `target/classes`) 和所有 Maven/Gradle 依赖的 JAR 包路径拼接起来，形成一个超长的 classpath。
-            
-        
-
-        
-            二、双亲委派机制：一套严谨的汇报制度
-            这套“仓储管理员体系”有一套严格的工作流程，被称为“双亲委派机制”(Parent Delegation Model)。
-            
-                核心思想：当一个类加载器收到加载类的请求时，它不会自己先去尝试加载，而是先把这个请求**层层向上委托**给父加载器去完成，直到顶层的 Bootstrap ClassLoader。只有当所有父加载器都表示“我的仓库里没有这个货”时，子加载器才会自己动手去自己的路径下查找。
-            
-            
-            工作流程图解：
-            
-                App ClassLoader
-                ↑
-                Ext/Platform ClassLoader
-                ↑
-                Bootstrap ClassLoader
-                (尝试加载)
-                找不到
-                ↓
-                 Ext/Platform ClassLoader
-                (尝试加载)
-                找不到
-                ↓
-                App ClassLoader
-                 (尝试加载)
-            
-
-            为什么需要这套机制？
-            
-                安全，防止核心API被篡改：想象一下，如果没有这套机制，有人可以自己写一个 java.lang.String 类，并放在 classpath 里。如果 AppClassLoader 先加载，那么 JVM 的核心 String 类就被恶意替换了，后果不堪设想。双亲委派保证了所有对 java.lang.String 的加载请求最终都会被顶层的 Bootstrap ClassLoader 处理，确保了核心类的安全。
-                避免重复加载：如果两个类加载器都加载了同一个类，那么在 JVM 内部会存在两个不同的 Class 对象。这会导致类型转换异常等问题。双亲委派保证了一个类只会被一个加载器加载一次。
-            
-        
-
-        
-            三、加载过程演示：一个 Demo 见真章
-            类的生命周期包括加载、验证、准备、解析、初始化等阶段。我们关注的“加载”是第一步。那么类到底在什么时候被加载呢？
-            
-            
-                加载时机：Java 虚拟机规范并没有严格规定类的“加载”必须在什么时候发生，但“初始化”阶段是被严格规定的。一个类的初始化会在首次“主动使用”它时触发。主动使用包括：
-                
-                    new一个类的实例 (最常见)。
-                    访问类的静态变量或调用静态方法。
-                    通过反射调用 Class.forName(&quot;...&quot;)。
-                    初始化一个类的子类。
-                
-                在初始化之前，加载、验证、准备等阶段必须已经完成。所以，我们可以近似认为，**类的加载发生在第一次被真正使用之前**。
-            
-
-            示例代码
-            假设我们有一个自定义类 com.myapp.Developer。
-            package com.myapp;
+<p><em>从 JVM 启动到自定义实现的全景透视</em></p>
+<hr>
+<h3 id="目录">目录</h3>
+<ol>
+<li><a href="#%E4%B8%80jvm%E5%90%AF%E5%8A%A8%E4%B8%89%E7%BA%A7%E4%BB%93%E5%82%A8%E7%AE%A1%E7%90%86%E5%91%98%E4%BD%93%E7%B3%BB">JVM启动：三级仓储管理员体系</a></li>
+<li><a href="#%E4%BA%8C%E5%8F%8C%E4%BA%B2%E5%A7%94%E6%B4%BE%E6%9C%BA%E5%88%B6%E4%B8%80%E5%A5%97%E4%B8%A5%E8%B0%A8%E7%9A%84%E6%B1%87%E6%8A%A5%E5%88%B6%E5%BA%A6">双亲委派机制：一套严谨的汇报制度</a></li>
+<li><a href="#%E4%B8%89%E5%8A%A0%E8%BD%BD%E8%BF%87%E7%A8%8B%E6%BC%94%E7%A4%BA%E4%B8%80%E4%B8%AA-demo-%E8%A7%81%E7%9C%9F%E7%AB%A0">加载过程演示：一个 Demo 见真章</a></li>
+<li><a href="#%E5%9B%9B%E8%87%AA%E5%AE%9A%E4%B9%89%E4%B8%8E%E6%89%93%E7%A0%B4%E8%A7%84%E5%88%99%E4%B9%8B%E5%A4%96%E7%9A%84%E4%B8%96%E7%95%8C">自定义与打破：规则之外的世界</a></li>
+<li><a href="#%E4%BA%94%E4%B8%93%E5%AE%B6%E6%B4%9E%E5%AF%9F%E4%B8%8E%E5%AE%9E%E8%B7%B5%E8%A6%81%E7%82%B9">专家洞察与实践要点</a></li>
+</ol>
+<hr>
+<h2 id="一、jvm启动：三级仓储管理员体系">一、JVM启动：三级仓储管理员体系</h2>
+<p>当一个 Java 程序启动时，JVM 并不会一次性加载所有类，而是按需加载。负责这项工作的，就是类加载器 (ClassLoader)。我们可以把它们想象成一个分工明确的三级仓储管理员体系。</p>
+<h3 id="1-bootstrap-classloader-启动类加载器">1. Bootstrap ClassLoader (启动类加载器)</h3>
+<ul>
+<li><strong>角色：</strong> 顶级仓储管理员 (总库管理员)。</li>
+<li><strong>职责：</strong> 负责加载 Java 最核心的类库，它们是 JVM 运行的基础。例如 <code>java.lang.String</code>, <code>java.util.List</code> 等。</li>
+<li><strong>特殊性：</strong> 它不是一个 Java 类，而是由 C++ 实现，内嵌在 JVM 中。因此，在 Java 代码中尝试获取它的引用会返回 <code>null</code>。</li>
+<li><strong>它的 Classpath (加载路径)：</strong> 由系统属性 <code>sun.boot.class.path</code> 指定，通常指向 <code>%JRE_HOME%/lib/rt.jar</code> (Java 8) 或 JRE 内部的模块文件 (Java 9+)。</li>
+</ul>
+<h3 id="2-extension--platform-classloader-扩展平台类加载器">2. Extension / Platform ClassLoader (扩展/平台类加载器)</h3>
+<ul>
+<li><strong>角色：</strong> 二级仓储管理员 (区域库管理员)。</li>
+<li><strong>职责：</strong> 负责加载 Java 的一些扩展功能库。</li>
+<li><strong>名称变更：</strong> 在 Java 8 及以前被称为 Extension ClassLoader，从 Java 9 开始，由于模块化系统的引入，被 Platform ClassLoader 取代。</li>
+<li><strong>它的 Classpath (加载路径)：</strong> 由系统属性 <code>java.ext.dirs</code> 指定，通常指向 <code>%JRE_HOME%/lib/ext</code> 目录下的所有 JAR 包。</li>
+</ul>
+<h3 id="3-application-classloader-应用程序类加载器">3. Application ClassLoader (应用程序类加载器)</h3>
+<ul>
+<li><strong>角色：</strong> 一线仓储管理员 (我们应用的专属管理员)。</li>
+<li><strong>职责：</strong> 负责加载我们自己编写的应用程序类以及项目依赖的第三方 JAR 包。这是我们打交道最多的 ClassLoader。</li>
+<li><strong>它的 Classpath (加载路径)：</strong> 大名鼎鼎的 <code>java.class.path</code> 系统属性！它的值就是我们常说的 <strong>classpath</strong>。这个 classpath 是在你启动程序时动态构建的，来源包括：<ul>
+<li>执行 <code>java -cp</code> 或 <code>-classpath</code> 参数指定的所有路径。</li>
+<li>在 IDE 中运行时，IDE 自动将项目的编译输出目录 (如 <code>target/classes</code>) 和所有 Maven/Gradle 依赖的 JAR 包路径拼接起来，形成一个超长的 classpath。</li>
+</ul>
+</li>
+</ul>
+<h2 id="二、双亲委派机制：一套严谨的汇报制度">二、双亲委派机制：一套严谨的汇报制度</h2>
+<p>这套“仓储管理员体系”有一套严格的工作流程，被称为“双亲委派机制”(Parent Delegation Model)。</p>
+<blockquote>
+<p>[!WARNING]
+<strong>⚠️ 核心思想：</strong>
+当一个类加载器收到加载类的请求时，它不会自己先去尝试加载，而是先把这个请求<strong>层层向上委托</strong>给父加载器去完成，直到顶层的 Bootstrap ClassLoader。只有当所有父加载器都表示“我的仓库里没有这个货”时，子加载器才会自己动手去自己的路径下查找。</p>
+</blockquote>
+<h4 id="工作流程图解：">工作流程图解：</h4>
+<pre><code class="language-mermaid">graph TD
+    subgraph &quot;加载请求 ↑&quot;
+        A[App ClassLoader] --&gt;|委托| B(Ext/Platform ClassLoader)
+        B --&gt;|委托| C(Bootstrap ClassLoader)
+    end
+    subgraph &quot;加载响应 ↓&quot;
+        C --&gt;|尝试加载, 找不到| B_res(Ext/Platform ClassLoader)
+        B_res --&gt;|尝试加载, 找不到| A_res(App ClassLoader)
+        A_res --&gt;|在自己的Classpath查找, 成功| D{加载类 ✅}
+    end
 </code></pre>
-<p>public class Developer {
+<h3 id="为什么需要这套机制？">为什么需要这套机制？</h3>
+<ol>
+<li><strong>安全，防止核心API被篡改：</strong>
+想象一下，如果没有这套机制，有人可以自己写一个 <code>java.lang.String</code> 类，并放在 classpath 里。如果 AppClassLoader 先加载，那么 JVM 的核心 String 类就被恶意替换了，后果不堪设想。双亲委派保证了所有对 <code>java.lang.String</code> 的加载请求最终都会被顶层的 Bootstrap ClassLoader 处理，确保了核心类的安全。</li>
+<li><strong>避免重复加载：</strong>
+如果两个类加载器都加载了同一个类，那么在 JVM 内部会存在两个不同的 Class 对象。这会导致类型转换异常等问题。双亲委派保证了一个类只会被一个加载器加载一次。</li>
+</ol>
+<h2 id="三、加载过程演示：一个-demo-见真章">三、加载过程演示：一个 Demo 见真章</h2>
+<p>类的生命周期包括加载、验证、准备、解析、初始化等阶段。我们关注的“加载”是第一步。那么类到底在什么时候被加载呢？</p>
+<blockquote>
+<p>[!NOTE]
+<strong>💡 专家洞察：加载时机</strong>
+Java 虚拟机规范并没有严格规定类的“加载”必须在什么时候发生，但“初始化”阶段是被严格规定的。一个类的初始化会在首次“主动使用”它时触发。主动使用包括：</p>
+<ul>
+<li><code>new</code>一个类的实例 (最常见)。</li>
+<li>访问类的静态变量或调用静态方法。</li>
+<li>通过反射调用 <code>Class.forName(&quot;...&quot;)</code>。</li>
+<li>初始化一个类的子类。</li>
+</ul>
+<p>在初始化之前，加载、验证、准备等阶段必须已经完成。所以，我们可以近似认为，<strong>类的加载发生在第一次被真正使用之前</strong>。</p>
+</blockquote>
+<h3 id="示例代码">示例代码</h3>
+<p>假设我们有一个自定义类 <code>com.myapp.Developer</code>。</p>
+<pre><code class="language-java">package com.myapp;
+
+public class Developer {
     public Developer() {
         System.out.println(&quot;Developer instance created by: &quot; + this.getClass().getClassLoader());
     }
-}</p>
-<pre><code>            主程序如下：
-            public class ClassLoaderDemo {
-public static void main(String[] args) throws ClassNotFoundException {
-    System.out.println(&quot;--- 1. 探索核心类的加载器 ---&quot;);
-    // String 是核心类库，看看是谁加载的
-    System.out.println(&quot;String.class.getClassLoader() -&gt; &quot; + String.class.getClassLoader());
-
-    System.out.println(&quot;\n--- 2. 探索我们自己类的加载器 ---&quot;);
-    // new 一个实例，触发 Developer 类的加载和初始化
-    Developer dev = new Developer();
-    System.out.println(&quot;Developer.class.getClassLoader() -&gt; &quot; + dev.getClass().getClassLoader());
-    
-    System.out.println(&quot;\n--- 3. 查看加载器层级关系 ---&quot;);
-    ClassLoader appClassLoader = ClassLoaderDemo.class.getClassLoader();
-    System.out.println(&quot;App ClassLoader: &quot; + appClassLoader);
-    System.out.println(&quot;Parent of App: &quot; + appClassLoader.getParent());
-    System.out.println(&quot;Grandparent of App: &quot; + appClassLoader.getParent().getParent());
 }
 </code></pre>
-<p>}</p>
-<pre><code>            加载过程追踪
-            1. 加载 java.lang.String
-            
-                AppClassLoader 收到加载 java.lang.String 的请求。
-                它委托给父加载器 Platform ClassLoader。
-                Platform ClassLoader 继续委托给它的父加载器 Bootstrap ClassLoader。
-                Bootstrap ClassLoader 在自己的“总库” (rt.jar 等) 中查找，**找到了！**
-                加载成功，返回 Class 对象。由于 Bootstrap 是 C++ 实现的，所以 String.class.getClassLoader() 返回 null。
-            
+<p>主程序如下：</p>
+<pre><code class="language-java">public class ClassLoaderDemo {
+    public static void main(String[] args) throws ClassNotFoundException {
+        System.out.println(&quot;--- 1. 探索核心类的加载器 ---&quot;);
+        // String 是核心类库，看看是谁加载的
+        System.out.println(&quot;String.class.getClassLoader() -&gt; &quot; + String.class.getClassLoader());
 
-            2. 加载 com.myapp.Developer (通过 new Developer() 触发)
-            
-                AppClassLoader 收到加载 com.myapp.Developer 的请求。
-                它委托给父加载器 Platform ClassLoader。
-                Platform ClassLoader 在它的“区域库” (ext 目录) 中查找，没找到，告诉 AppClassLoader：“我这没有”。
-                Platform ClassLoader 继续委托给 Bootstrap ClassLoader。
-                Bootstrap ClassLoader 在它的“总库”里也找不到，告诉 Platform ClassLoader：“我这也没有”。
-                现在，请求回到了 AppClassLoader。父加载器们都表示无能为力，于是 AppClassLoader 开始在自己的地盘 (我们设置的 classpath) 中查找。
-                它在 target/classes 目录下找到了 com/myapp/Developer.class 文件，**加载成功！**
-                所以，Developer.class.getClassLoader() 返回的是 AppClassLoader 的实例。
-            
+        System.out.println(&quot;\n--- 2. 探索我们自己类的加载器 ---&quot;);
+        // new 一个实例，触发 Developer 类的加载和初始化
+        Developer dev = new Developer();
+        System.out.println(&quot;Developer.class.getClassLoader() -&gt; &quot; + dev.getClass().getClassLoader());
         
-
-        
-            四、自定义与打破：规则之外的世界
-            1. 为什么要自定义 ClassLoader？
-            在某些高级场景下，我们需要自定义类加载器来实现特殊功能：
-            
-                热部署/热加载：例如，在服务器不重启的情况下，更新一个类的实现。这需要创建一个新的 ClassLoader 来加载新版本的类。
-                
-                代码加密：为了保护代码，可以先将 `.class` 文件加密，然后用自定义的 ClassLoader 在加载时进行解密。
-                从非标准来源加载：从网络、数据库或其他任何地方加载类的字节码。
-            
-
-            2. 如何实现 (遵循双亲委派)
-            最标准的做法是继承 java.lang.ClassLoader 并重写 findClass() 方法。loadClass() 方法中已经包含了双亲委派的逻辑，我们不应该去碰它。
-            import java.io.*;
-</code></pre>
-<p>public class CustomClassLoader extends ClassLoader {
-    private String rootPath;</p>
-<pre><code>public CustomClassLoader(String rootPath) {
-    this.rootPath = rootPath;
-}
-
-@Override
-protected Class&lt;?&gt; findClass(String name) throws ClassNotFoundException {
-    // 1. 将类名转换为文件路径
-    String filePath = rootPath + File.separator + name.replace(&#39;.&#39;, File.separatorChar) + &quot;.class&quot;;
-    
-    try {
-        // 2. 读取加密或非标准来源的字节码
-        byte[] classBytes = loadClassBytes(filePath);
-        if (classBytes == null) {
-            throw new ClassNotFoundException(name);
-        }
-        // 3. 调用 defineClass 将字节数组转换为 Class 对象
-        return defineClass(name, classBytes, 0, classBytes.length);
-    } catch (IOException e) {
-        throw new ClassNotFoundException(&quot;Failed to load class &quot; + name, e);
+        System.out.println(&quot;\n--- 3. 查看加载器层级关系 ---&quot;);
+        ClassLoader appClassLoader = ClassLoaderDemo.class.getClassLoader();
+        System.out.println(&quot;App ClassLoader: &quot; + appClassLoader);
+        System.out.println(&quot;Parent of App: &quot; + appClassLoader.getParent());
+        System.out.println(&quot;Grandparent of App: &quot; + appClassLoader.getParent().getParent());
     }
 }
-
-private byte[] loadClassBytes(String filePath) throws IOException {
-    // 在这里实现从文件、网络读取字节码，甚至解密的逻辑
-    InputStream is = new FileInputStream(filePath);
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    int b;
-    while ((b = is.read()) != -1) {
-        baos.write(b);
-    }
-    is.close();
-    return baos.toByteArray();
-}
 </code></pre>
-<p>}</p>
-<pre><code>            3. 如何打破双亲委派机制？
-            在某些极端情况下，我们需要“反向委托”。即子加载器需要加载一个类，而这个类又依赖于父加载器无法访问的类。最典型的例子是 **JDBC 的 SPI (Service Provider Interface) 机制**。
-            
-            
-            JDBC 场景：java.sql.DriverManager 是由 Bootstrap ClassLoader 加载的。但它需要加载由第三方厂商提供的、位于 AppClassLoader classpath 下的数据库驱动 (如 com.mysql.cj.jdbc.Driver)。顶层的 Bootstrap 无法“向下”看到底层的 AppClassLoader，这该怎么办？
-            
-            
-            答案是使用**线程上下文类加载器 (Thread Context ClassLoader)**，这是一种巧妙的“打破”方式。
-            而另一种更直接的打破方式，就是**重写 loadClass() 方法**，改变其原有的委托顺序。
-            public class DisruptiveClassLoader extends ClassLoader {
-@Override
-public Class&lt;?&gt; loadClass(String name) throws ClassNotFoundException {
-    synchronized (getClassLoadingLock(name)) {
-        // 1. 先检查这个类是否已经被加载过了
-        Class&lt;?&gt; c = findLoadedClass(name);
-        if (c == null) {
-            // 2. 打破规则！自己先尝试加载
-            try {
-                c = findClass(name); 
-            } catch (ClassNotFoundException e) {
-                // 自己找不到，再交给父加载器 (回归正常流程)
+<h3 id="加载过程追踪">加载过程追踪</h3>
+<h4 id="1-加载-javalangstring">1. 加载 <code>java.lang.String</code></h4>
+<ol>
+<li>AppClassLoader 收到加载 <code>java.lang.String</code> 的请求。</li>
+<li>它委托给父加载器 Platform ClassLoader。</li>
+<li>Platform ClassLoader 继续委托给它的父加载器 Bootstrap ClassLoader。</li>
+<li>Bootstrap ClassLoader 在自己的“总库” (<code>rt.jar</code> 等) 中查找，<strong>找到了！</strong></li>
+<li>加载成功，返回 Class 对象。由于 Bootstrap 是 C++ 实现的，所以 <code>String.class.getClassLoader()</code> 返回 <code>null</code>。</li>
+</ol>
+<h4 id="2-加载-commyappdeveloper-通过-new-developer-触发">2. 加载 <code>com.myapp.Developer</code> (通过 <code>new Developer()</code> 触发)</h4>
+<ol>
+<li>AppClassLoader 收到加载 <code>com.myapp.Developer</code> 的请求。</li>
+<li>它委托给父加载器 Platform ClassLoader。</li>
+<li>Platform ClassLoader 在它的“区域库” (<code>ext</code> 目录) 中查找，没找到，告诉 AppClassLoader：“我这没有”。</li>
+<li>Platform ClassLoader 继续委托给 Bootstrap ClassLoader。</li>
+<li>Bootstrap ClassLoader 在它的“总库”里也找不到，告诉 Platform ClassLoader：“我这也没有”。</li>
+<li>现在，请求回到了 AppClassLoader。父加载器们都表示无能为力，于是 AppClassLoader 开始在自己的地盘 (我们设置的 classpath) 中查找。</li>
+<li>它在 <code>target/classes</code> 目录下找到了 <code>com/myapp/Developer.class</code> 文件，<strong>加载成功！</strong></li>
+<li>所以，<code>Developer.class.getClassLoader()</code> 返回的是 AppClassLoader 的实例。</li>
+</ol>
+<h2 id="四、自定义与打破：规则之外的世界">四、自定义与打破：规则之外的世界</h2>
+<h3 id="1-为什么要自定义-classloader？">1. 为什么要自定义 ClassLoader？</h3>
+<p>在某些高级场景下，我们需要自定义类加载器来实现特殊功能：</p>
+<ul>
+<li><strong>热部署/热加载：</strong> 例如，在服务器不重启的情况下，更新一个类的实现。这需要创建一个新的 ClassLoader 来加载新版本的类。</li>
+<li><strong>代码加密：</strong> 为了保护代码，可以先将 <code>.class</code> 文件加密，然后用自定义的 ClassLoader 在加载时进行解密。</li>
+<li><strong>从非标准来源加载：</strong> 从网络、数据库或其他任何地方加载类的字节码。</li>
+</ul>
+<h3 id="2-如何实现-遵循双亲委派">2. 如何实现 (遵循双亲委派)</h3>
+<p>最标准的做法是继承 <code>java.lang.ClassLoader</code> 并重写 <code>findClass()</code> 方法。<code>loadClass()</code> 方法中已经包含了双亲委派的逻辑，我们不应该去碰它。</p>
+<pre><code class="language-java">import java.io.*;
+
+public class CustomClassLoader extends ClassLoader {
+    private String rootPath;
+
+    public CustomClassLoader(String rootPath) {
+        this.rootPath = rootPath;
+    }
+
+    @Override
+    protected Class&lt;?&gt; findClass(String name) throws ClassNotFoundException {
+        // 1. 将类名转换为文件路径
+        String filePath = rootPath + File.separator + name.replace(&#39;.&#39;, File.separatorChar) + &quot;.class&quot;;
+        
+        try {
+            // 2. 读取加密或非标准来源的字节码
+            byte[] classBytes = loadClassBytes(filePath);
+            if (classBytes == null) {
+                throw new ClassNotFoundException(name);
             }
+            // 3. 调用 defineClass 将字节数组转换为 Class 对象
+            return defineClass(name, classBytes, 0, classBytes.length);
+        } catch (IOException e) {
+            throw new ClassNotFoundException(&quot;Failed to load class &quot; + name, e);
+        }
+    }
 
+    private byte[] loadClassBytes(String filePath) throws IOException {
+        // 在这里实现从文件、网络读取字节码，甚至解密的逻辑
+        InputStream is = new FileInputStream(filePath);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        int b;
+        while ((b = is.read()) != -1) {
+            baos.write(b);
+        }
+        is.close();
+        return baos.toByteArray();
+    }
+}
+</code></pre>
+<h3 id="3-如何打破双亲委派机制？">3. 如何打破双亲委派机制？</h3>
+<p>在某些极端情况下，我们需要“反向委托”。即子加载器需要加载一个类，而这个类又依赖于父加载器无法访问的类。最典型的例子是 <strong>JDBC 的 SPI (Service Provider Interface) 机制</strong>。</p>
+<blockquote>
+<p>[!WARNING]
+<strong>⚠️ JDBC 场景：</strong>
+<code>java.sql.DriverManager</code> 是由 Bootstrap ClassLoader 加载的。但它需要加载由第三方厂商提供的、位于 AppClassLoader classpath 下的数据库驱动 (如 <code>com.mysql.cj.jdbc.Driver</code>)。顶层的 Bootstrap 无法“向下”看到底层的 AppClassLoader，这该怎么办？</p>
+</blockquote>
+<p>答案是使用**线程上下文类加载器 (Thread Context ClassLoader)**，这是一种巧妙的“打破”方式。</p>
+<p>而另一种更直接的打破方式，就是<strong>重写 <code>loadClass()</code> 方法</strong>，改变其原有的委托顺序。</p>
+<pre><code class="language-java">public class DisruptiveClassLoader extends ClassLoader {
+    @Override
+    public Class&lt;?&gt; loadClass(String name) throws ClassNotFoundException {
+        synchronized (getClassLoadingLock(name)) {
+            // 1. 先检查这个类是否已经被加载过了
+            Class&lt;?&gt; c = findLoadedClass(name);
             if (c == null) {
-                if (getParent() != null) {
-                    c = getParent().loadClass(name);
-                } else {
-                    // 如果父加载器也没有，就到此为止
-                    throw new ClassNotFoundException(name);
+                // 2. 打破规则！自己先尝试加载
+                try {
+                    c = findClass(name); 
+                } catch (ClassNotFoundException e) {
+                    // 自己找不到，再交给父加载器 (回归正常流程)
+                }
+
+                if (c == null) {
+                    if (getParent() != null) {
+                        c = getParent().loadClass(name);
+                    } else {
+                        // 如果父加载器也没有，就到此为止
+                        throw new ClassNotFoundException(name);
+                    }
                 }
             }
+            return c;
         }
-        return c;
+    }
+    
+    @Override
+    protected Class&lt;?&gt; findClass(String name) throws ClassNotFoundException {
+        // ... 自定义加载逻辑 ...
+        return super.findClass(name); // or throw exception
     }
 }
-
-@Override
-protected Class&lt;?&gt; findClass(String name) throws ClassNotFoundException {
-    // ... 自定义加载逻辑 ...
-    return super.findClass(name); // or throw exception
-}
 </code></pre>
-<p>}
-                Tomcat 的 WebappClassLoader 就是一个典型的打破双亲委派的例子。它会优先加载自己 Web 应用目录 (WEB-INF/classes 和 WEB-INF/lib) 下的类，以实现不同 Web 应用之间的类隔离。</p>
-<pre><code>            五、专家洞察与实践要点
-            
-                1. 类加载器与 `instanceof` 的陷阱
-                在 JVM 中，一个类的唯一性是由**它的全限定名和加载它的 ClassLoader** 共同决定的。这意味着，即使是同一个 .class 文件，如果被两个不同的 ClassLoader 实例加载，那么你得到的将是两个完全不同、互不兼容的 Class 对象。
-                这将导致 instanceof 判断返回 false，并且在类型转换时抛出 ClassCastException。这是在热部署和复杂插件化系统中非常常见的、难以排查的“坑”。
-            
-            
-            
-                2. 资源加载 `getResourceAsStream`
-                ClassLoader 不仅能加载类，还能加载资源文件（如配置文件、图片）。class.getResourceAsStream(&quot;my.properties&quot;) 是最常用的资源加载方式。它的查找路径也遵循与类加载相似的委派模型，从当前类的 ClassLoader 开始向上查找。
-            
-            
-            
-                3. Java 9+ 模块化系统 (JPMS) 的影响
-                Java 9 的模块化系统对类加载机制进行了重构。Extension ClassLoader 被 Platform ClassLoader 替代。AppClassLoader 的父加载器变成了 Platform ClassLoader。更重要的是，模块之间存在明确的可见性规则，一个模块默认无法访问另一个模块未导出的包，这在某种程度上是比双亲委派更严格的隔离机制。
-</code></pre>
-<p>Java Classpath 与类加载机制深度报告 © 2025</p>
+<p><strong>Tomcat 的 WebappClassLoader 就是一个典型的打破双亲委派的例子</strong>。它会优先加载自己 Web 应用目录 (<code>WEB-INF/classes</code> 和 <code>WEB-INF/lib</code>) 下的类，以实现不同 Web 应用之间的类隔离。</p>
+<h2 id="五、专家洞察与实践要点">五、专家洞察与实践要点</h2>
+<blockquote>
+<p>[!NOTE]
+<strong>💡 1. 类加载器与 <code>instanceof</code> 的陷阱</strong></p>
+<p>在 JVM 中，一个类的唯一性是由<strong>它的全限定名和加载它的 ClassLoader</strong> 共同决定的。这意味着，即使是同一个 <code>.class</code> 文件，如果被两个不同的 ClassLoader 实例加载，那么你得到的将是两个完全不同、互不兼容的 Class 对象。</p>
+<p>这将导致 <code>instanceof</code> 判断返回 <code>false</code>，并且在类型转换时抛出 <code>ClassCastException</code>。这是在热部署和复杂插件化系统中非常常见的、难以排查的“坑”。</p>
+</blockquote>
+<blockquote>
+<p>[!NOTE]
+<strong>💡 2. 资源加载 <code>getResourceAsStream</code></strong></p>
+<p>ClassLoader 不仅能加载类，还能加载资源文件（如配置文件、图片）。<code>class.getResourceAsStream(&quot;my.properties&quot;)</code> 是最常用的资源加载方式。它的查找路径也遵循与类加载相似的委派模型，从当前类的 ClassLoader 开始向上查找。</p>
+</blockquote>
+<blockquote>
+<p>[!NOTE]
+<strong>💡 3. Java 9+ 模块化系统 (JPMS) 的影响</strong></p>
+<p>Java 9 的模块化系统对类加载机制进行了重构。Extension ClassLoader 被 Platform ClassLoader 替代。AppClassLoader 的父加载器变成了 Platform ClassLoader。更重要的是，模块之间存在明确的可见性规则，一个模块默认无法访问另一个模块未导出的包，这在某种程度上是比双亲委派更严格的隔离机制。</p>
+</blockquote>
+<hr>
+<p>© 2025 Java Classpath 与类加载机制深度报告
+```</p>
 
             </div>
         </article>
