@@ -15,7 +15,9 @@
       "Bash(npm run build:*)",
       "Bash(mv:*)",
       "Bash(grep:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(del:*)",
+      "Bash(rm:*)"
     ],
     "defaultMode": "acceptEdits"
   }
