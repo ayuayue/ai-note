@@ -9,6 +9,8 @@
     "generate-index": "node generate_index_with_dates.js",
     "generate-sitemap": "node generate_sitemap.js",
     "generate-overview": "node generate_overview.js",
+    "new-md": "node new_markdown.js",
+    "new-html": "node new_html.js",
     "build": "npm run convert-md && npm run generate-index && npm run generate-sitemap && npm run generate-overview"
   },
   "keywords": [
