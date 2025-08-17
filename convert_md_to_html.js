@@ -48,9 +48,11 @@ function markdownToHtml(markdownContent, title, date, monthDir, filename) {
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
+            display: flex;
+            gap: 30px;
         }
 
         .header {
@@ -96,6 +98,11 @@ function markdownToHtml(markdownContent, title, date, monthDir, filename) {
             background: #000;
         }
 
+        .main-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
         .post {
             background: var(--card-bg);
             border-radius: 8px;
@@ -152,6 +159,62 @@ function markdownToHtml(markdownContent, title, date, monthDir, filename) {
             margin: 35px 0 25px 0;
             padding-bottom: 15px;
             border-bottom: 2px solid var(--border-color);
+        }
+        
+        /* Table of Contents */
+        .toc-container {
+            width: 300px;
+            flex-shrink: 0;
+        }
+        
+        .toc {
+            position: sticky;
+            top: 20px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+        
+        .toc h2 {
+            color: var(--primary-color);
+            font-size: 1.4rem;
+            margin-top: 0;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .toc ul ul {
+            padding-left: 20px;
+        }
+        
+        .toc li {
+            margin-bottom: 8px;
+        }
+        
+        .toc a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+        
+        .toc a:hover {
+            color: var(--secondary-color);
+        }
+        
+        .toc a.active {
+            color: var(--secondary-color);
+            font-weight: 500;
         }
 
         .post-content h2 {
@@ -331,36 +394,83 @@ function markdownToHtml(markdownContent, title, date, monthDir, filename) {
 </head>
 <body>
     <div class="container">
-        <header class="header">
-            <a href="../../index.html" class="back-home">
-                ← 返回首页
-            </a>
-        </header>
+        <div class="toc-container">
+            <nav class="toc">
+                <h2>目录</h2>
+                <div id="toc-content"></div>
+            </nav>
+        </div>
         
-        <article class="post">
-            <header class="post-header">
-                <h1 class="post-title">${title}</h1>
-                <div class="post-meta">
-                    <div class="post-date">${date}</div>
-                    <div class="post-category">${monthDir}</div>
-                </div>
+        <div class="main-content">
+            <header class="header">
+                <a href="../../index.html" class="back-home">
+                    ← 返回首页
+                </a>
             </header>
-            <div class="warning">
-                ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
-            </div>
-            <div class="post-content">
-                ${htmlContent}
-            </div>
-        </article>
-        
-        <footer class="footer">
-            <p>AI 技术笔记 &copy; 2025 | 所有内容均由 AI 协助生成</p>
-        </footer>
+            
+            <article class="post">
+                <header class="post-header">
+                    <h1 class="post-title">${title}</h1>
+                    <div class="post-meta">
+                        <div class="post-date">${date}</div>
+                        <div class="post-category">${monthDir}</div>
+                    </div>
+                </header>
+                <div class="warning">
+                    ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+                </div>
+                <div class="post-content">
+                    ${htmlContent}
+                </div>
+            </article>
+            
+            <footer class="footer">
+                <p>AI 技术笔记 &copy; 2025 | 所有内容均由 AI 协助生成</p>
+            </footer>
+        </div>
     </div>
     
     <a href="#" class="back-to-top" id="backToTop">↑</a>
     
     <script>
+        // Generate Table of Contents
+        function generateTOC() {
+            const tocContainer = document.getElementById('toc-content');
+            const content = document.querySelector('.post-content');
+            const headers = content.querySelectorAll('h1, h2, h3');
+            
+            if (headers.length === 0) {
+                tocContainer.innerHTML = '<p>暂无目录</p>';
+                return;
+            }
+            
+            const toc = document.createElement('ul');
+            
+            headers.forEach((header, index) => {
+                // Add an id to the header if it doesn't have one
+                if (!header.id) {
+                    header.id = 'heading-' + index;
+                }
+                
+                const li = document.createElement('li');
+                li.className = 'toc-item';
+                
+                const link = document.createElement('a');
+                link.href = '#' + header.id;
+                link.textContent = header.textContent;
+                link.className = 'toc-link';
+                
+                // Set indentation based on header level
+                const level = parseInt(header.tagName.charAt(1)) - 1;
+                li.style.marginLeft = (level * 20) + 'px';
+                
+                li.appendChild(link);
+                toc.appendChild(li);
+            });
+            
+            tocContainer.appendChild(toc);
+        }
+        
         // Back to top button
         const backToTopButton = document.getElementById('backToTop');
         
@@ -376,6 +486,9 @@ function markdownToHtml(markdownContent, title, date, monthDir, filename) {
             e.preventDefault();
             window.scrollTo({top: 0, behavior: 'smooth'});
         });
+        
+        // Initialize TOC when page loads
+        document.addEventListener('DOMContentLoaded', generateTOC);
         
         console.log("页面加载完成，AI 技术笔记已就绪");
     </script>
