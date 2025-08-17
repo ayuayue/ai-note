@@ -1,0 +1,170 @@
+const fs = require('fs');
+const path = require('path');
+
+// Function to get file modification date
+function getFileDate(filePath) {
+    try {
+        const stats = fs.statSync(filePath);
+        return stats.mtime;
+    } catch (error) {
+        return new Date();
+    }
+}
+
+// Function to format date
+function formatDate(date) {
+    return date.toLocaleString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    });
+}
+
+// Function to extract title from Markdown file
+function extractTitleFromMarkdown(filePath) {
+    try {
+        const content = fs.readFileSync(filePath, 'utf8');
+        // Look for first # heading
+        const titleMatch = content.match(/^#\s+(.*?)$/m);
+        if (titleMatch) {
+            return titleMatch[1];
+        }
+        
+        // If no # heading, use filename
+        return path.basename(filePath, '.md');
+    } catch (error) {
+        console.error(`Error reading ${filePath}: ${error.message}`);
+        return path.basename(filePath, '.md');
+    }
+}
+
+// Function to extract title from HTML file
+function extractTitleFromHTML(filePath) {
+    try {
+        const content = fs.readFileSync(filePath, 'utf8');
+        // Look for title tag
+        const titleMatch = content.match(/<title>(.*?)<\/title>/i);
+        if (titleMatch) {
+            return titleMatch[1];
+        }
+        
+        // If no title tag, use filename
+        return path.basename(filePath, '.html');
+    } catch (error) {
+        console.error(`Error reading ${filePath}: ${error.message}`);
+        return path.basename(filePath, '.html');
+    }
+}
+
+// Main function
+function main() {
+    const markdownDir = "markdown";
+    const docsDir = "docs";
+    const htmlDir = "html";
+    
+    // Collect all documents with their dates
+    const allDocuments = [];
+    
+    // Get all month directories for markdown files
+    if (fs.existsSync(markdownDir)) {
+        const monthDirs = fs.readdirSync(markdownDir)
+            .filter(file => fs.statSync(path.join(markdownDir, file)).isDirectory() && /^\d{4}-\d{2}$/.test(file))
+            .sort()
+            .reverse(); // Sort by newest first
+        
+        // Process each month directory for markdown files
+        monthDirs.forEach(monthDir => {
+            const monthPath = path.join(markdownDir, monthDir);
+            
+            // Get all Markdown files in the month directory
+            const markdownFiles = fs.readdirSync(monthPath)
+                .filter(file => path.extname(file) === '.md');
+            
+            if (markdownFiles.length === 0) {
+                console.log(`No Markdown files found in ${monthPath}`);
+                return;
+            }
+            
+            // Collect document info
+            markdownFiles.forEach(filename => {
+                const filePath = path.join(monthPath, filename);
+                const htmlFilename = filename.replace('.md', '.html');
+                const title = extractTitleFromMarkdown(filePath);
+                const date = getFileDate(filePath);
+                const formattedDate = formatDate(date);
+                
+                allDocuments.push({
+                    type: 'markdown',
+                    url: `docs/${monthDir}/${htmlFilename}`,
+                    title: title,
+                    date: formattedDate,
+                    category: 'Markdown 文档'
+                });
+            });
+        });
+    }
+    
+    // Process HTML files
+    if (fs.existsSync(htmlDir)) {
+        const htmlFiles = fs.readdirSync(htmlDir)
+            .filter(file => path.extname(file) === '.html');
+        
+        htmlFiles.forEach(filename => {
+            const filePath = path.join(htmlDir, filename);
+            const title = extractTitleFromHTML(filePath);
+            const date = getFileDate(filePath);
+            const formattedDate = formatDate(date);
+            
+            allDocuments.push({
+                type: 'html',
+                url: `html/${filename}`,
+                title: title,
+                date: formattedDate,
+                category: 'HTML 文档'
+            });
+        });
+    }
+    
+    // Sort all documents by date (newest first)
+    allDocuments.sort((a, b) => {
+        // Convert date strings back to Date objects for comparison
+        const dateA = new Date(a.date.replace(/(\d+)\/(\d+)\/(\d+)/, '$1-$2-$3'));
+        const dateB = new Date(b.date.replace(/(\d+)\/(\d+)\/(\d+)/, '$1-$2-$3'));
+        return dateB - dateA;
+    });
+    
+    // Generate JavaScript array for the overview page
+    const articlesJs = `const articles = ${JSON.stringify(allDocuments, null, 2)};`;
+    
+    // Read the overview.html file
+    let overviewHtml = fs.readFileSync("overview.html", "utf8");
+    
+    // Replace the placeholder script with the actual data
+    const placeholderScript = '<script>\n        // Sample data - in real implementation, this would be generated by a script\n        const articles = [\n            { title: "JavaScript 异步编程指南", url: "docs/2025-09/javascript-async.html", date: "2025/08/16", category: "2025-09" },\n            { title: "测试文档", url: "docs/2025-08/test.html", date: "2025/08/16", category: "2025-08" },\n            { title: "深度研究报告：Spring Boot 启动全流程解析", url: "html/report.html", date: "2025/08/16", category: "HTML 文档" },\n            { title: "Java 自定义类加载器实战深度报告", url: "html/myclassloader.html", date: "2025/08/16", category: "HTML 文档" },\n            { title: "JVM内部类型描述符深度报告", url: "html/jvm-desc.html", date: "2025/08/16", category: "HTML 文档" },\n            { title: "Java 动态编译与加载深度报告", url: "html/loaderDemo.html", date: "2025/08/16", category: "HTML 文档" },\n            { title: "Maven 深度探索报告", url: "html/maven-report.html", date: "2025/08/16", category: "HTML 文档" },\n            { title: "Java Classpath 与类加载机制深度报告", url: "html/classloader.html", date: "2025/08/16", category: "HTML 文档" },\n            { title: "Feign / IDEA IPv4 解决方案与双栈套接字动画讲解", url: "html/java.net.preferIPv4Stack.html", date: "2025/08/16", category: "HTML 文档" }\n        ];';
+    // Also try with Windows line endings
+    const placeholderScriptWindows = '<script>\r\n        // Sample data - in real implementation, this would be generated by a script\r\n        const articles = [\r\n            { title: "JavaScript 异步编程指南", url: "docs/2025-09/javascript-async.html", date: "2025/08/16", category: "2025-09" },\r\n            { title: "测试文档", url: "docs/2025-08/test.html", date: "2025/08/16", category: "2025-08" },\r\n            { title: "深度研究报告：Spring Boot 启动全流程解析", url: "html/report.html", date: "2025/08/16", category: "HTML 文档" },\r\n            { title: "Java 自定义类加载器实战深度报告", url: "html/myclassloader.html", date: "2025/08/16", category: "HTML 文档" },\r\n            { title: "JVM内部类型描述符深度报告", url: "html/jvm-desc.html", date: "2025/08/16", category: "HTML 文档" },\r\n            { title: "Java 动态编译与加载深度报告", url: "html/loaderDemo.html", date: "2025/08/16", category: "HTML 文档" },\r\n            { title: "Maven 深度探索报告", url: "html/maven-report.html", date: "2025/08/16", category: "HTML 文档" },\r\n            { title: "Java Classpath 与类加载机制深度报告", url: "html/classloader.html", date: "2025/08/16", category: "HTML 文档" },\r\n            { title: "Feign / IDEA IPv4 解决方案与双栈套接字动画讲解", url: "html/java.net.preferIPv4Stack.html", date: "2025/08/16", category: "HTML 文档" }\r\n        ];';
+    
+    const newScript = `<script>
+        ${articlesJs}`;
+    
+    // Try both placeholders
+    if (overviewHtml.includes(placeholderScript)) {
+        overviewHtml = overviewHtml.replace(placeholderScript, newScript);
+    } else if (overviewHtml.includes(placeholderScriptWindows)) {
+        overviewHtml = overviewHtml.replace(placeholderScriptWindows, newScript);
+    } else {
+        console.log("Warning: Could not find placeholder script in overview.html");
+    }
+    
+    // Write the updated overview.html file
+    fs.writeFileSync("overview.html", overviewHtml, "utf8");
+    
+    console.log(`Generated overview.html with ${allDocuments.length} articles`);
+    console.log("Articles included:");
+    allDocuments.forEach(doc => {
+        console.log(`  - ${doc.title} (${doc.date})`);
+    });
+}
+
+// Run the main function
+main();
