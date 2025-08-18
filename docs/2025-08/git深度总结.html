@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Git 深度报告：从入门到协同开发的完全指南</title>
+    <title>Git 深度报告：从入门到协同开发的完全指南</title>
     <style>
         /* Google Fonts for better typography */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
@@ -397,7 +397,7 @@
             
             <article class="post">
                 <header class="post-header">
-                    <h1 class="post-title">Git 深度报告：从入门到协同开发的完全指南</h1>
+                    <h1 class="post-title">Git 深度报告：从入门到协同开发的完全指南</h1>
                     <div class="post-meta">
                         <div class="post-date">2025/8/18</div>
                         <div class="post-category">2025-08</div>
@@ -824,6 +824,65 @@ git pull origin --tags -f
 </ul>
 </blockquote>
 <p><strong>总结：</strong> 虽然技术上可以覆盖远程标签，但在团队协作中，这通常被认为是一个不良实践。<strong>除非情况特殊且已充分沟通，否则请坚持创建新的版本标签。</strong></p>
+<hr>
+<h3 id="补充章节：强制推送与本地同步远程">补充章节：强制推送与本地同步远程</h3>
+<p>在日常开发中，我们可能会遇到需要强制推送覆盖远程分支或本地放弃所有提交与远程保持一致的情况。以下是相关操作方法：</p>
+<h4 id="1-git-强制推送覆盖远程分支">1. Git 强制推送覆盖远程分支</h4>
+<p>有时候我们需要用本地的提交历史强制覆盖远程分支，这通常在以下场景中使用：</p>
+<ul>
+<li>本地执行了交互式变基（rebase -i）修改了提交历史</li>
+<li>本地执行了提交重置（reset）回退了多个提交</li>
+<li>需要用本地版本完全替换远程分支</li>
+</ul>
+<pre><code class="language-bash"># 强制推送当前分支到远程同名分支
+git push --force origin &lt;branch-name&gt;
+
+# 更安全的强制推送（如果远程分支有其他人推送的提交，则推送失败）
+git push --force-with-lease origin &lt;branch-name&gt;
+</code></pre>
+<blockquote>
+<p>[!WARNING]
+<strong>强制推送的风险</strong></p>
+<ol>
+<li><strong>丢失他人工作</strong>：如果其他开发者已经基于被覆盖的提交进行了开发，他们的工作可能会丢失</li>
+<li><strong>破坏协作流程</strong>：会改写远程分支的历史，影响团队其他成员</li>
+<li><strong>引起冲突</strong>：其他开发者下次推送时可能会遇到问题</li>
+</ol>
+<p><strong>最佳实践：</strong></p>
+<ul>
+<li>仅在确保没有其他人在该分支上工作时使用</li>
+<li>优先使用 <code>--force-with-lease</code> 而不是 <code>--force</code>，它更安全</li>
+<li>在强制推送前与团队成员沟通</li>
+<li>主要用于个人功能分支，避免在主分支（如 main/master）上强制推送</li>
+</ul>
+</blockquote>
+<h4 id="2-本地放弃所有提交与远程保持一致">2. 本地放弃所有提交与远程保持一致</h4>
+<p>当你本地的提交历史与远程不一致，需要完全放弃本地所有更改并同步到远程最新状态时：</p>
+<pre><code class="language-bash"># 方法一：获取远程最新状态并重置本地分支
+git fetch origin
+git reset --hard origin/&lt;branch-name&gt;
+
+# 方法二：拉取远程分支强制覆盖本地
+git pull --force
+
+# 方法三：如果本地有未提交的更改也需要丢弃
+git clean -fd  # 删除未追踪的文件和目录
+git fetch origin
+git reset --hard origin/&lt;branch-name&gt;
+</code></pre>
+<blockquote>
+<p>[!NOTE]
+<strong>参数说明</strong></p>
+<ul>
+<li><code>--hard</code>：重置工作区、暂存区和本地分支指针到指定状态</li>
+<li><code>--force</code>：强制执行，忽略一些安全检查</li>
+<li><code>git clean -fd</code>：<ul>
+<li><code>-f</code>：强制删除</li>
+<li><code>-d</code>：删除目录</li>
+</ul>
+</li>
+</ul>
+</blockquote>
 
                 </div>
             </article>
