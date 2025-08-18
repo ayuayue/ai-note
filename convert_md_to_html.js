@@ -8,7 +8,7 @@ function markdownToHtml(markdownContent, title, date, monthDir, filename) {
     const htmlContent = marked.parse(markdownContent);
     
     // Generate GitHub URL - placeholder that users can replace
-    const githubUrl = `https://github.com/YOUR_USERNAME/YOUR_REPO/blob/main/markdown/${monthDir}/${filename}`;
+    const githubUrl = `https://github.com/ayuayue/ai-note/blob/main/markdown/${monthDir}/${filename}`;
     
     // Wrap in HTML template with feed-style layout
     return `<!DOCTYPE html>
