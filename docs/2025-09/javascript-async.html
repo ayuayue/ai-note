@@ -156,13 +156,13 @@
         
         .toc {
             position: sticky;
-            top: 20px;
+            top: 135px;
             background: var(--card-bg);
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             border: 1px solid var(--border-color);
-            max-height: calc(100vh - 40px);
+            max-height: calc(100vh - 150px);
             overflow-y: auto;
         }
         
@@ -381,13 +381,6 @@
 </head>
 <body>
     <div class="container">
-        <div class="toc-container">
-            <nav class="toc">
-                <h2>目录</h2>
-                <div id="toc-content"></div>
-            </nav>
-        </div>
-        
         <div class="main-content">
             <header class="header">
                 <a href="../../index.html" class="back-home">
@@ -406,7 +399,7 @@
                 <div class="warning">
                     ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
                 </div>
-                <div class="post-content">
+                <div class="post-content" id="post-content">
                     <h1 id="javascript-异步编程指南">JavaScript 异步编程指南</h1>
 <p>JavaScript 异步编程是现代 Web 开发中的核心概念。随着应用复杂度的增加，理解并正确使用异步编程模式变得至关重要。</p>
 <h2 id="异步编程的历史">异步编程的历史</h2>
@@ -451,8 +444,15 @@ myPromise.then(result =&gt; {
             </article>
             
             <footer class="footer">
-                <p>AI 技术笔记 &copy; 2025 | 所有内容均由 AI 协助生成</p>
+                <p>AI 个人笔记 &copy; 2025 | 所有内容均由 AI 协助生成</p>
             </footer>
+        </div>
+        
+        <div class="toc-container">
+            <nav class="toc" id="table-of-contents">
+                <h2>目录</h2>
+                <div id="toc-content"></div>
+            </nav>
         </div>
     </div>
     
@@ -497,6 +497,21 @@ myPromise.then(result =&gt; {
             tocContainer.appendChild(toc);
         }
         
+        // Adjust TOC height to match content
+        function adjustTOCHeight() {
+            const toc = document.getElementById('table-of-contents');
+            const post = document.querySelector('.post');
+            
+            if (toc && post) {
+                // Get the height of the post area
+                const postHeight = post.offsetHeight;
+                
+                // Set the max-height of the TOC to match the post height
+                // Leave some space for top margin and padding
+                toc.style.maxHeight = Math.min(postHeight - 30, window.innerHeight * 0.8) + 'px';
+            }
+        }
+        
         // Back to top button
         const backToTopButton = document.getElementById('backToTop');
         
@@ -513,8 +528,14 @@ myPromise.then(result =&gt; {
             window.scrollTo({top: 0, behavior: 'smooth'});
         });
         
-        // Initialize TOC when page loads
-        document.addEventListener('DOMContentLoaded', generateTOC);
+        // Initialize TOC when page loads and adjust height
+        document.addEventListener('DOMContentLoaded', function() {
+            generateTOC();
+            adjustTOCHeight();
+            
+            // Adjust height on window resize
+            window.addEventListener('resize', adjustTOCHeight);
+        });
         
         console.log("页面加载完成，AI 技术笔记已就绪");
     </script>

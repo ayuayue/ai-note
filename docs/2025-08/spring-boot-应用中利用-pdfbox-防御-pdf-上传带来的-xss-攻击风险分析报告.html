@@ -156,13 +156,13 @@
         
         .toc {
             position: sticky;
-            top: 20px;
+            top: 135px;
             background: var(--card-bg);
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             border: 1px solid var(--border-color);
-            max-height: calc(100vh - 40px);
+            max-height: calc(100vh - 150px);
             overflow-y: auto;
         }
         
@@ -381,13 +381,6 @@
 </head>
 <body>
     <div class="container">
-        <div class="toc-container">
-            <nav class="toc">
-                <h2>目录</h2>
-                <div id="toc-content"></div>
-            </nav>
-        </div>
-        
         <div class="main-content">
             <header class="header">
                 <a href="../../index.html" class="back-home">
@@ -406,7 +399,7 @@
                 <div class="warning">
                     ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
                 </div>
-                <div class="post-content">
+                <div class="post-content" id="post-content">
                     <h3 id="spring-boot-应用中利用-pdfbox-防御-pdf-上传带来的-xss-攻击风险分析报告">Spring Boot 应用中利用 PDFBox 防御 PDF 上传带来的 XSS 攻击风险分析报告</h3>
 <p><strong>摘要</strong></p>
 <p>本报告详细阐述了在 Spring Boot Web 应用中，如何运用 Apache PDFBox 库来检测并防范用户上传的 PDF 文件中潜藏的跨站脚本（XSS）攻击。报告将深入探讨并提供多种解决方案的实现细节，包括在现有上传功能中集成验证工具类、采用过滤器（Filter）进行全局拦截，以及介绍拦截器（Interceptor）和面向切面编程（AOP）等更高级的实现方案，旨在为不同应用场景提供全面且可行的安全增强指导。</p>
@@ -662,8 +655,15 @@ public class PdfXssValidationFilter implements Filter {
             </article>
             
             <footer class="footer">
-                <p>AI 技术笔记 &copy; 2025 | 所有内容均由 AI 协助生成</p>
+                <p>AI 个人笔记 &copy; 2025 | 所有内容均由 AI 协助生成</p>
             </footer>
+        </div>
+        
+        <div class="toc-container">
+            <nav class="toc" id="table-of-contents">
+                <h2>目录</h2>
+                <div id="toc-content"></div>
+            </nav>
         </div>
     </div>
     
@@ -708,6 +708,21 @@ public class PdfXssValidationFilter implements Filter {
             tocContainer.appendChild(toc);
         }
         
+        // Adjust TOC height to match content
+        function adjustTOCHeight() {
+            const toc = document.getElementById('table-of-contents');
+            const post = document.querySelector('.post');
+            
+            if (toc && post) {
+                // Get the height of the post area
+                const postHeight = post.offsetHeight;
+                
+                // Set the max-height of the TOC to match the post height
+                // Leave some space for top margin and padding
+                toc.style.maxHeight = Math.min(postHeight - 30, window.innerHeight * 0.8) + 'px';
+            }
+        }
+        
         // Back to top button
         const backToTopButton = document.getElementById('backToTop');
         
@@ -724,8 +739,14 @@ public class PdfXssValidationFilter implements Filter {
             window.scrollTo({top: 0, behavior: 'smooth'});
         });
         
-        // Initialize TOC when page loads
-        document.addEventListener('DOMContentLoaded', generateTOC);
+        // Initialize TOC when page loads and adjust height
+        document.addEventListener('DOMContentLoaded', function() {
+            generateTOC();
+            adjustTOCHeight();
+            
+            // Adjust height on window resize
+            window.addEventListener('resize', adjustTOCHeight);
+        });
         
         console.log("页面加载完成，AI 技术笔记已就绪");
     </script>
