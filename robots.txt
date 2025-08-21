@@ -2,3 +2,4 @@ User-agent: *
 Allow: /
 
 Sitemap: https://ayuayue.github.io/ai-note/sitemap.xml
+Sitemap: https://www.caoayu.top/sitemap.xml

@@ -57,7 +57,7 @@ function main() {
     const markdownDir = "markdown";
     const docsDir = "docs";
     const htmlDir = "html";
-    const baseUrl = "https://your-domain.com"; // TODO: Replace with your actual domain
+    const baseUrl = "https://www.caoayu.top"; // TODO: Replace with your actual domain
     
     // Collect all documents with their dates
     const allDocuments = [];
