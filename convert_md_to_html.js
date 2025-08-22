@@ -2,10 +2,27 @@ const fs = require('fs');
 const path = require('path');
 const marked = require('marked');
 
+// 创建自定义渲染器
+const renderer = new marked.Renderer();
+
+// 重写 code 方法以处理 Mermaid 代码块
+renderer.code = function(code, infostring, escaped) {
+    if (infostring === 'mermaid') {
+        // 对于 Mermaid 代码块，返回特殊的 div 标签
+        return `<div class="mermaid">\n${code}\n</div>`;
+    }
+    // 对于其他代码块，使用默认渲染
+    const lang = (infostring || '').match(/\S*/)[0];
+    if (!lang) {
+        return `<pre><code>${escaped ? code : escape(code)}</code></pre>`;
+    }
+    return `<pre><code class="language-${escape(lang)}">${escaped ? code : escape(code)}</code></pre>`;
+};
+
 // Function to convert Markdown to HTML with feed-style layout
 function markdownToHtml(markdownContent, title, date, monthDir, filename) {
-    // Convert markdown to HTML
-    const htmlContent = marked.parse(markdownContent);
+    // Convert markdown to HTML using custom renderer
+    const htmlContent = marked.parse(markdownContent, { renderer: renderer });
     
     // Generate GitHub URL - placeholder that users can replace
     const githubUrl = `https://github.com/ayuayue/ai-note/blob/main/markdown/${monthDir}/${filename}`;
@@ -356,6 +373,16 @@ function markdownToHtml(markdownContent, title, date, monthDir, filename) {
             opacity: 1;
         }
 
+        /* Mermaid 图表样式 */
+        .mermaid {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -391,6 +418,17 @@ function markdownToHtml(markdownContent, title, date, monthDir, filename) {
             }
         }
     </style>
+    <!-- 引入本地 Mermaid 库 -->
+    <script src="../../js/mermaid.min.js"></script>
+    <script>
+        // 初始化 Mermaid
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            // 可以根据需要添加更多配置选项
+            securityLevel: 'loose'
+        });
+    </script>
 </head>
 <body>
     <div class="container">

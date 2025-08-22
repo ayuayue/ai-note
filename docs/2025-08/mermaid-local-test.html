@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>测试文档</title>
+    <title>Mermaid 图表测试</title>
     <style>
         /* Google Fonts for better typography */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
@@ -398,25 +398,6 @@
             // 可以根据需要添加更多配置选项
             securityLevel: 'loose'
         });
-        
-        // 处理 Pandoc 生成的 Mermaid 代码块
-        // Pandoc 将 Mermaid 代码块转换为 <pre class="mermaid"><code>... 格式
-        // 我们需要将其转换为 <div class="mermaid">... 格式以便 Mermaid 渲染
-        document.addEventListener('DOMContentLoaded', function() {
-            const mermaidBlocks = document.querySelectorAll('pre.mermaid code');
-            mermaidBlocks.forEach(function(codeElement) {
-                // 创建新的 div 元素
-                const mermaidDiv = document.createElement('div');
-                mermaidDiv.className = 'mermaid';
-                // 将代码内容移到 div 中
-                mermaidDiv.textContent = codeElement.textContent;
-                // 替换原来的 pre 元素
-                codeElement.parentNode.parentNode.replaceChild(mermaidDiv, codeElement.parentNode);
-            });
-            
-            // 重新启动 Mermaid 渲染
-            mermaid.init(undefined, document.querySelectorAll('.mermaid'));
-        });
     </script>
 </head>
 <body>
@@ -430,9 +411,9 @@
             
             <article class="post">
                 <header class="post-header">
-                    <h1 class="post-title">测试文档</h1>
+                    <h1 class="post-title">Mermaid 图表测试</h1>
                     <div class="post-meta">
-                        <div class="post-date">2025/8/15</div>
+                        <div class="post-date">2025/8/22</div>
                         <div class="post-category">2025-08</div>
                     </div>
                 </header>
@@ -440,55 +421,27 @@
                     ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
                 </div>
                 <div class="post-content" id="post-content">
-                    <h1 id="测试文档">测试文档</h1>
-<p>这是一个测试文档，用于验证 Markdown 到 HTML 的转换功能。</p>
-<h2 id="功能特性">功能特性</h2>
-<ul>
-<li>支持标题转换</li>
-<li>支持列表</li>
-<li>支持代码块</li>
-<li>支持表格</li>
-<li>支持引用</li>
-</ul>
-<h2 id="代码示例">代码示例</h2>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> HelloWorld <span class="op">{</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Hello, World!&quot;</span><span class="op">);</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<h2 id="表格示例">表格示例</h2>
-<table>
-<thead>
-<tr>
-<th>功能</th>
-<th>状态</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>标题转换</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>列表转换</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>代码块</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>表格</td>
-<td>✅</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p>这是一个引用块，用于显示重要信息。</p>
-</blockquote>
-<p>更新时间: 2025年8月15日</p>
+                    <h1 id="mermaid-图表测试">Mermaid 图表测试</h1>
+<p>这是一个测试 Mermaid 图表功能的示例文档。</p>
+<h2 id="流程图示例">流程图示例</h2>
+<div class="mermaid">
+graph TD
+    A[开始] --> B[初始化]
+    B --> C[处理数据]
+    C --> D[输出结果]
+    D --> E[结束]
+</div>
 
+<h2 id="序列图示例">序列图示例</h2>
+<div class="mermaid">
+sequenceDiagram
+    participant 用户
+    participant 系统
+    用户->>系统: 登录请求
+    系统->>用户: 验证通过
+    用户->>系统: 数据请求
+    系统->>用户: 返回数据
+</div>
                 </div>
             </article>
             

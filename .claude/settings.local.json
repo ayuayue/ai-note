@@ -18,7 +18,9 @@
       "Bash(findstr:*)",
       "Bash(del:*)",
       "Bash(rm:*)",
-      "Bash(npm run convert-md:*)"
+      "Bash(npm run convert-md:*)",
+      "Bash(curl:*)",
+      "Bash(powershell -Command:*)"
     ],
     "defaultMode": "acceptEdits"
   }

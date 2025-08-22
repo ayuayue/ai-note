@@ -343,6 +343,16 @@
             opacity: 1;
         }
 
+        /* Mermaid 图表样式 */
+        .mermaid {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -378,6 +388,36 @@
             }
         }
     </style>
+    <!-- 引入本地 Mermaid 库 -->
+    <script src="../../js/mermaid.min.js"></script>
+    <script>
+        // 初始化 Mermaid
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            // 可以根据需要添加更多配置选项
+            securityLevel: 'loose'
+        });
+        
+        // 处理 Pandoc 生成的 Mermaid 代码块
+        // Pandoc 将 Mermaid 代码块转换为 <pre class="mermaid"><code>... 格式
+        // 我们需要将其转换为 <div class="mermaid">... 格式以便 Mermaid 渲染
+        document.addEventListener('DOMContentLoaded', function() {
+            const mermaidBlocks = document.querySelectorAll('pre.mermaid code');
+            mermaidBlocks.forEach(function(codeElement) {
+                // 创建新的 div 元素
+                const mermaidDiv = document.createElement('div');
+                mermaidDiv.className = 'mermaid';
+                // 将代码内容移到 div 中
+                mermaidDiv.textContent = codeElement.textContent;
+                // 替换原来的 pre 元素
+                codeElement.parentNode.parentNode.replaceChild(mermaidDiv, codeElement.parentNode);
+            });
+            
+            // 重新启动 Mermaid 渲染
+            mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+        });
+    </script>
 </head>
 <body>
     <div class="container">
@@ -401,40 +441,38 @@
                 </div>
                 <div class="post-content" id="post-content">
                     <h1 id="javascript-异步编程指南">JavaScript 异步编程指南</h1>
-<p>JavaScript 异步编程是现代 Web 开发中的核心概念。随着应用复杂度的增加，理解并正确使用异步编程模式变得至关重要。</p>
+<p>JavaScript 异步编程是现代 Web
+开发中的核心概念。随着应用复杂度的增加，理解并正确使用异步编程模式变得至关重要。</p>
 <h2 id="异步编程的历史">异步编程的历史</h2>
-<p>JavaScript 异步编程经历了几个重要的发展阶段：</p>
-<ol>
-<li>回调函数 (Callbacks)</li>
-<li>Promise</li>
-<li>Async/Await</li>
-</ol>
+<p>JavaScript 异步编程经历了几个重要的发展阶段： 1. 回调函数 (Callbacks)
+2. Promise 3. Async/Await</p>
 <h2 id="promise-基础">Promise 基础</h2>
-<p>Promise 是 JavaScript 中处理异步操作的一种方式，它代表了一个异步操作的最终完成或失败。</p>
-<pre><code class="language-javascript">const myPromise = new Promise((resolve, reject) =&gt; {
-  setTimeout(() =&gt; {
-    resolve(&quot;操作成功完成&quot;);
-  }, 1000);
-});
-
-myPromise.then(result =&gt; {
-  console.log(result);
-});
-</code></pre>
+<p>Promise 是 JavaScript
+中处理异步操作的一种方式，它代表了一个异步操作的最终完成或失败。</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> myPromise <span class="op">=</span> <span class="kw">new</span> <span class="bu">Promise</span>((resolve<span class="op">,</span> reject) <span class="kw">=&gt;</span> {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="pp">setTimeout</span>(() <span class="kw">=&gt;</span> {</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">resolve</span>(<span class="st">&quot;操作成功完成&quot;</span>)<span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  }<span class="op">,</span> <span class="dv">1000</span>)<span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>myPromise<span class="op">.</span><span class="fu">then</span>(result <span class="kw">=&gt;</span> {</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(result)<span class="op">;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
 <h2 id="asyncawait-语法">Async/Await 语法</h2>
 <p>Async/Await 是基于 Promise 的语法糖，让异步代码看起来像同步代码。</p>
-<pre><code class="language-javascript">async function fetchData() {
-  try {
-    const response = await fetch(&#39;https://api.example.com/data&#39;);
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error(&#39;获取数据失败:&#39;, error);
-  }
-}
-</code></pre>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">fetchData</span>() {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">try</span> {</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> response <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="st">&#39;https://api.example.com/data&#39;</span>)<span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> data <span class="op">=</span> <span class="cf">await</span> response<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> data<span class="op">;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">catch</span> (error) {</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">console</span><span class="op">.</span><span class="fu">error</span>(<span class="st">&#39;获取数据失败:&#39;</span><span class="op">,</span> error)<span class="op">;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h2 id="最佳实践">最佳实践</h2>
-<ol>
+<ol type="1">
 <li>总是使用 try/catch 处理 async/await 错误</li>
 <li>避免回调地狱，使用 Promise 或 async/await</li>
 <li>合理使用 Promise.all() 并行处理多个异步操作</li>

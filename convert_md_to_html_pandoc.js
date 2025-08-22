@@ -1,9 +1,25 @@
-<!DOCTYPE html>
+const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
+
+// Function to convert Markdown to HTML with feed-style layout using Pandoc
+function markdownToHtmlWithPandoc(markdownFilePath, title, date, monthDir, filename) {
+    try {
+        // 使用 Pandoc 转换 Markdown 到 HTML
+        // 注意：我们使用 --mathjax 来支持数学公式，--highlight-style 来设置代码高亮
+        const pandocCommand = `pandoc "${markdownFilePath}" -f markdown -t html --mathjax --highlight-style=tango`;
+        const htmlContent = execSync(pandocCommand, { encoding: 'utf8' });
+        
+        // Generate GitHub URL - placeholder that users can replace
+        const githubUrl = `https://github.com/ayuayue/ai-note/blob/main/markdown/${monthDir}/${filename}`;
+        
+        // Wrap in HTML template with feed-style layout
+        return `<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>测试文档</title>
+    <title>${title}</title>
     <style>
         /* Google Fonts for better typography */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
@@ -430,65 +446,17 @@
             
             <article class="post">
                 <header class="post-header">
-                    <h1 class="post-title">测试文档</h1>
+                    <h1 class="post-title">${title}</h1>
                     <div class="post-meta">
-                        <div class="post-date">2025/8/15</div>
-                        <div class="post-category">2025-08</div>
+                        <div class="post-date">${date}</div>
+                        <div class="post-category">${monthDir}</div>
                     </div>
                 </header>
                 <div class="warning">
                     ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
                 </div>
                 <div class="post-content" id="post-content">
-                    <h1 id="测试文档">测试文档</h1>
-<p>这是一个测试文档，用于验证 Markdown 到 HTML 的转换功能。</p>
-<h2 id="功能特性">功能特性</h2>
-<ul>
-<li>支持标题转换</li>
-<li>支持列表</li>
-<li>支持代码块</li>
-<li>支持表格</li>
-<li>支持引用</li>
-</ul>
-<h2 id="代码示例">代码示例</h2>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> HelloWorld <span class="op">{</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Hello, World!&quot;</span><span class="op">);</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<h2 id="表格示例">表格示例</h2>
-<table>
-<thead>
-<tr>
-<th>功能</th>
-<th>状态</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>标题转换</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>列表转换</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>代码块</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>表格</td>
-<td>✅</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p>这是一个引用块，用于显示重要信息。</p>
-</blockquote>
-<p>更新时间: 2025年8月15日</p>
-
+                    ${htmlContent}
                 </div>
             </article>
             
@@ -589,4 +557,90 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="
         console.log("页面加载完成，AI 技术笔记已就绪");
     </script>
 </body>
-</html>
+</html>`;
+    } catch (error) {
+        console.error(`Error converting ${markdownFilePath} with Pandoc: ${error.message}`);
+        throw error;
+    }
+}
+
+// Main function
+function main() {
+    const markdownDir = "markdown";
+    const docsDir = "docs";
+    
+    // Check if markdown directory exists
+    if (!fs.existsSync(markdownDir)) {
+        console.error(`Directory ${markdownDir} does not exist`);
+        return;
+    }
+    
+    // Create docs directory if it doesn't exist
+    if (!fs.existsSync(docsDir)) {
+        fs.mkdirSync(docsDir);
+    }
+    
+    // Get all month directories
+    const monthDirs = fs.readdirSync(markdownDir)
+        .filter(file => fs.statSync(path.join(markdownDir, file)).isDirectory() && /^\d{4}-\d{2}$/.test(file));
+    
+    if (monthDirs.length === 0) {
+        console.log("No month directories found in the markdown directory");
+        return;
+    }
+    
+    let totalFiles = 0;
+    
+    // Process each month directory
+    monthDirs.forEach(monthDir => {
+        const monthPath = path.join(markdownDir, monthDir);
+        const docsMonthPath = path.join(docsDir, monthDir);
+        
+        // Create corresponding docs directory
+        if (!fs.existsSync(docsMonthPath)) {
+            fs.mkdirSync(docsMonthPath, { recursive: true });
+        }
+        
+        // Get all Markdown files in the month directory
+        const markdownFiles = fs.readdirSync(monthPath)
+            .filter(file => path.extname(file) === '.md');
+        
+        if (markdownFiles.length === 0) {
+            console.log(`No Markdown files found in ${monthPath}`);
+            return;
+        }
+        
+        // Convert each Markdown file to HTML
+        markdownFiles.forEach(filename => {
+            try {
+                const filePath = path.join(monthPath, filename);
+                
+                // Extract title from first line (assuming it's a # heading)
+                const markdownContent = fs.readFileSync(filePath, 'utf8');
+                const titleLine = markdownContent.split('\n')[0];
+                const title = titleLine.startsWith('# ') ? titleLine.substring(2) : path.basename(filename, '.md');
+                
+                // Get file date
+                const fileStats = fs.statSync(filePath);
+                const date = fileStats.mtime.toLocaleDateString('zh-CN');
+                
+                const htmlContent = markdownToHtmlWithPandoc(filePath, title, date, monthDir, filename);
+                
+                // Create HTML filename
+                const htmlFilename = path.basename(filename, '.md') + '.html';
+                const htmlPath = path.join(docsMonthPath, htmlFilename);
+                
+                fs.writeFileSync(htmlPath, htmlContent, 'utf8');
+                console.log(`Converted ${monthDir}/${filename} to ${monthDir}/${htmlFilename}`);
+                totalFiles++;
+            } catch (error) {
+                console.error(`Error converting ${monthDir}/${filename}: ${error.message}`);
+            }
+        });
+    });
+    
+    console.log(`\nConversion complete! ${totalFiles} files converted.`);
+}
+
+// Run the main function
+main();

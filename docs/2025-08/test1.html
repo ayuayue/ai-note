@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>测试文档</title>
+    <title>test1</title>
     <style>
         /* Google Fonts for better typography */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
@@ -398,25 +398,6 @@
             // 可以根据需要添加更多配置选项
             securityLevel: 'loose'
         });
-        
-        // 处理 Pandoc 生成的 Mermaid 代码块
-        // Pandoc 将 Mermaid 代码块转换为 <pre class="mermaid"><code>... 格式
-        // 我们需要将其转换为 <div class="mermaid">... 格式以便 Mermaid 渲染
-        document.addEventListener('DOMContentLoaded', function() {
-            const mermaidBlocks = document.querySelectorAll('pre.mermaid code');
-            mermaidBlocks.forEach(function(codeElement) {
-                // 创建新的 div 元素
-                const mermaidDiv = document.createElement('div');
-                mermaidDiv.className = 'mermaid';
-                // 将代码内容移到 div 中
-                mermaidDiv.textContent = codeElement.textContent;
-                // 替换原来的 pre 元素
-                codeElement.parentNode.parentNode.replaceChild(mermaidDiv, codeElement.parentNode);
-            });
-            
-            // 重新启动 Mermaid 渲染
-            mermaid.init(undefined, document.querySelectorAll('.mermaid'));
-        });
     </script>
 </head>
 <body>
@@ -430,9 +411,9 @@
             
             <article class="post">
                 <header class="post-header">
-                    <h1 class="post-title">测试文档</h1>
+                    <h1 class="post-title">test1</h1>
                     <div class="post-meta">
-                        <div class="post-date">2025/8/15</div>
+                        <div class="post-date">2025/8/21</div>
                         <div class="post-category">2025-08</div>
                     </div>
                 </header>
@@ -440,55 +421,255 @@
                     ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
                 </div>
                 <div class="post-content" id="post-content">
-                    <h1 id="测试文档">测试文档</h1>
-<p>这是一个测试文档，用于验证 Markdown 到 HTML 的转换功能。</p>
-<h2 id="功能特性">功能特性</h2>
-<ul>
-<li>支持标题转换</li>
-<li>支持列表</li>
-<li>支持代码块</li>
-<li>支持表格</li>
-<li>支持引用</li>
+                    <p>这是一张 <strong>Spring框架核心组件的UML类图</strong>，用于展示Spring中<strong>资源加载（ResourceLoader）</strong>和<strong>容器管理（BeanFactory/ApplicationContext）</strong>两大核心体系的结构关系。以下是逐层解析指南：</p>
+<hr>
+<h3 id="一、这张图是什么？"><strong>一、这张图是什么？</strong></h3>
+<ol>
+<li><strong>类型</strong>：标准的UML类图（Unified Modeling Language）</li>
+<li><strong>主题</strong>：Spring框架的核心接口与实现类继承关系</li>
+<li><strong>核心内容</strong>：<ul>
+<li>左侧：资源加载体系（<code>ResourceLoader</code>及其子类）</li>
+<li>右侧：容器管理体系（<code>BeanFactory</code>及其子类）</li>
+<li>底部：综合功能的<code>ApplicationContext</code>及其实现</li>
 </ul>
-<h2 id="代码示例">代码示例</h2>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> HelloWorld <span class="op">{</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Hello, World!&quot;</span><span class="op">);</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<h2 id="表格示例">表格示例</h2>
+</li>
+</ol>
+<hr>
+<h3 id="二、图中元素含义"><strong>二、图中元素含义</strong></h3>
+<h4 id="1-矩形框">1. <strong>矩形框</strong></h4>
+<ul>
+<li><strong>灰色矩形</strong>：表示<strong>接口（Interface）</strong>或<strong>抽象类（Abstract Class）</strong><ul>
+<li>例如：<code>ResourceLoader</code>（接口）、<code>AbstractApplicationContext</code>（抽象类）</li>
+</ul>
+</li>
+<li><strong>无斜体类名</strong>：具体实现类（如<code>DefaultResourceLoader</code>）</li>
+</ul>
+<h4 id="2-箭头类型与含义">2. <strong>箭头类型与含义</strong></h4>
 <table>
 <thead>
 <tr>
-<th>功能</th>
-<th>状态</th>
+<th><strong>箭头样式</strong></th>
+<th><strong>颜色</strong></th>
+<th><strong>方向</strong></th>
+<th><strong>关系类型</strong></th>
+<th><strong>示例</strong></th>
 </tr>
 </thead>
-<tbody>
-<tr>
-<td>标题转换</td>
-<td>✅</td>
+<tbody><tr>
+<td>绿色实线箭头</td>
+<td>绿色</td>
+<td>子类指向父类</td>
+<td><strong>类继承类</strong>（<code>extends</code>）</td>
+<td><code>AbstractApplicationContext</code> → <code>ApplicationContext</code></td>
 </tr>
 <tr>
-<td>列表转换</td>
-<td>✅</td>
+<td>蓝色虚线箭头</td>
+<td>蓝色</td>
+<td>子接口指向父接口</td>
+<td><strong>接口继承接口</strong>（<code>extends</code>）</td>
+<td><code>ListableBeanFactory</code> → <code>BeanFactory</code></td>
 </tr>
 <tr>
-<td>代码块</td>
-<td>✅</td>
+<td>绿色虚线箭头</td>
+<td>绿色</td>
+<td>实现类指向接口</td>
+<td><strong>类实现接口</strong>（<code>implements</code>）</td>
+<td><code>DefaultResourceLoader</code> → <code>ResourceLoader</code></td>
 </tr>
-<tr>
-<td>表格</td>
-<td>✅</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p>这是一个引用块，用于显示重要信息。</p>
-</blockquote>
-<p>更新时间: 2025年8月15日</p>
+</tbody></table>
+<hr>
+<h3 id="三、核心体系分层解析"><strong>三、核心体系分层解析</strong></h3>
+<h4 id="1-资源加载体系（左侧）">1. <strong>资源加载体系（左侧）</strong></h4>
+<div class="mermaid">
+classDiagram
+    class ResourceLoader {
+        <<interface>>
+        +getResource(String location) Resource
+    }
+    class ResourcePatternResolver {
+        <<interface>>
+        +getResources(String pattern) Resource[]
+    }
+    class DefaultResourceLoader {
+        +getResource() Resource
+    }
+    ResourcePatternResolver --|> ResourceLoader
+    DefaultResourceLoader ..|> ResourceLoader
+</div>
+- **关键点**：
+  - `ResourceLoader`：定义单个资源加载能力（如`classpath:app.xml`）
+  - `ResourcePatternResolver`：扩展支持批量加载（如`classpath*:/*.xml`）
+  - `DefaultResourceLoader`：默认实现类，处理基础资源路径
 
+<h4 id="2-容器管理体系（右侧）">2. <strong>容器管理体系（右侧）</strong></h4>
+<div class="mermaid">
+classDiagram
+    class BeanFactory {
+        <<interface>>
+        +getBean(String name) Object
+    }
+    class ListableBeanFactory {
+        <<interface>>
+        +getBeanNamesForType(Class type) String[]
+    }
+    class ApplicationContext {
+        <<interface>>
+        +getEnvironment() Environment
+    }
+    ListableBeanFactory --|> BeanFactory
+    ApplicationContext --|> ListableBeanFactory
+</div>
+- **关键点**：
+  - `BeanFactory`：最基础的容器接口（如获取Bean）
+  - `ListableBeanFactory`：增强批量操作能力（如按类型获取所有Bean）
+  - `ApplicationContext`：聚合了容器、资源加载、事件发布等综合能力
+
+<h4 id="3-综合功能层（底部）">3. <strong>综合功能层（底部）</strong></h4>
+<div class="mermaid">
+classDiagram
+    class ApplicationContext {
+        <<interface>>
+    }
+    class ConfigurableApplicationContext {
+        <<interface>>
+        +refresh() void
+    }
+    class AbstractApplicationContext {
+        +refresh() void
+    }
+    ApplicationContext <|-- ConfigurableApplicationContext
+    ConfigurableApplicationContext <|.. AbstractApplicationContext
+</div>
+- **关键点**：
+  - `ApplicationContext`：继承了`BeanFactory`、`ResourceLoader`等六大接口
+  - `ConfigurableApplicationContext`：增加可配置方法（如`refresh()`）
+  - `AbstractApplicationContext`：模板类实现核心流程（如容器刷新）
+
+<hr>
+<h3 id="四、如何利用这张图学习？"><strong>四、如何利用这张图学习？</strong></h3>
+<ol>
+<li><p><strong>纵向追踪</strong>：选择一个接口（如<code>BeanFactory</code>），沿箭头向下查看所有子类/实现类</p>
+<ul>
+<li>示例路径：<code>BeanFactory</code> → <code>ListableBeanFactory</code> → <code>ApplicationContext</code> → <code>ConfigurableApplicationContext</code></li>
+</ul>
+</li>
+<li><p><strong>横向对比</strong>：比较同级接口差异</p>
+<ul>
+<li>例如：<code>ResourceLoader</code>（单资源） vs <code>ResourcePatternResolver</code>（多资源）</li>
+</ul>
+</li>
+<li><p><strong>调试验证</strong>：</p>
+<pre><code class="language-java">// 验证DefaultResourceLoader如何实现ResourceLoader
+ResourceLoader loader = new DefaultResourceLoader();
+Resource resource = loader.getResource(&quot;classpath:app.xml&quot;);
+</code></pre>
+</li>
+<li><p><strong>设计模式观察</strong>：</p>
+<ul>
+<li><strong>模板模式</strong>：<code>AbstractApplicationContext.refresh()</code>定义骨架流程</li>
+<li><strong>组合模式</strong>：<code>ApplicationContext</code>聚合多个独立功能接口</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h3 id="五、快速记忆口诀"><strong>五、快速记忆口诀</strong></h3>
+<pre><code>资源加载向左看（ResourceLoader），
+容器管理向右转（BeanFactory）。
+绿箭向上是继承，
+蓝箭虚线接口连。
+ApplicationContext最强大，
+六大能力它全占！
+</code></pre>
+<p>通过这张图，你可以清晰看到Spring如何通过接口分层实现「高内聚低耦合」。建议结合<code>AnnotationConfigApplicationContext</code>源码对照理解图中的实际调用链路。</p>
+<div class="mermaid">
+classDiagram
+    class ResourceLoader {
+        <<interface>>
+        +getResource(String location) Resource
+    }
+    class DefaultResourceLoader {
+        +getResource() Resource
+    }
+    DefaultResourceLoader ..|> ResourceLoader
+</div>
+
+<div class="mermaid">
+classDiagram
+    class ResourceLoader {
+        <<interface>>
+        +getResource(String location) Resource
+    }
+    class ResourcePatternResolver {
+        <<interface>>
+        +getResources(String pattern) Resource[]
+    }
+    class DefaultResourceLoader {
+        +getResource() Resource
+    }
+    ResourcePatternResolver --|> ResourceLoader
+    DefaultResourceLoader ..|> ResourceLoader
+</div>
+
+
+<div class="mermaid">
+classDiagram
+    direction TB
+
+<pre><code>%% JVM内存整体结构
+class JVM {
+    &lt;&lt;JVM内存模型&gt;&gt;
+}
+
+%% 线程私有区
+class ThreadPrivateArea {
+    &lt;&lt;线程私有区&gt;&gt;
+    +程序计数器(PC Register): 记录指令地址
+    +虚拟机栈(VM Stack): 栈帧(局部变量/操作数栈)
+    +本地方法栈(Native Stack): JNI方法调用
+}
+
+%% 线程共享区
+class ThreadSharedArea {
+    &lt;&lt;线程共享区&gt;&gt;
+    +堆(Heap): 对象实例存储
+    +元空间(Metaspace): 类元数据/静态变量
+}
+
+%% 堆内存细分
+class Heap {
+    +年轻代(Young Generation)
+    +老年代(Old Generation)
+}
+
+class YoungGeneration {
+    +Eden区: 新对象分配
+    +Survivor0(S0): MinorGC存活对象
+    +Survivor1(S1): MinorGC存活对象
+}
+
+class OldGeneration {
+    +长期存活对象
+    +大对象直接分配
+}
+
+%% 非堆内存
+class NonHeap {
+    +代码缓存(Code Cache): JIT编译代码
+    +压缩类空间(Compressed Class Space)
+}
+
+%% 关系定义
+JVM --&gt; ThreadPrivateArea : 包含
+JVM --&gt; ThreadSharedArea : 包含
+ThreadSharedArea --&gt; Heap : 主存储区
+ThreadSharedArea --&gt; NonHeap : 非堆内存
+Heap --&gt; YoungGeneration : 新生代
+Heap --&gt; OldGeneration : 老年代
+YoungGeneration --&gt; Eden区
+YoungGeneration --&gt; Survivor0
+YoungGeneration --&gt; Survivor1
+</code></pre>
+</div>
                 </div>
             </article>
             

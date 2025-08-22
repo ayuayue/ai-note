@@ -343,6 +343,16 @@
             opacity: 1;
         }
 
+        /* Mermaid 图表样式 */
+        .mermaid {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -378,6 +388,36 @@
             }
         }
     </style>
+    <!-- 引入本地 Mermaid 库 -->
+    <script src="../../js/mermaid.min.js"></script>
+    <script>
+        // 初始化 Mermaid
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            // 可以根据需要添加更多配置选项
+            securityLevel: 'loose'
+        });
+        
+        // 处理 Pandoc 生成的 Mermaid 代码块
+        // Pandoc 将 Mermaid 代码块转换为 <pre class="mermaid"><code>... 格式
+        // 我们需要将其转换为 <div class="mermaid">... 格式以便 Mermaid 渲染
+        document.addEventListener('DOMContentLoaded', function() {
+            const mermaidBlocks = document.querySelectorAll('pre.mermaid code');
+            mermaidBlocks.forEach(function(codeElement) {
+                // 创建新的 div 元素
+                const mermaidDiv = document.createElement('div');
+                mermaidDiv.className = 'mermaid';
+                // 将代码内容移到 div 中
+                mermaidDiv.textContent = codeElement.textContent;
+                // 替换原来的 pre 元素
+                codeElement.parentNode.parentNode.replaceChild(mermaidDiv, codeElement.parentNode);
+            });
+            
+            // 重新启动 Mermaid 渲染
+            mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+        });
+    </script>
 </head>
 <body>
     <div class="container">
@@ -400,201 +440,268 @@
                     ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
                 </div>
                 <div class="post-content" id="post-content">
-                    <h3 id="gradle-vs-maven-终极对决，为什么-spring-也选择了它？"><strong>Gradle vs. Maven: 终极对决，为什么 Spring 也选择了它？</strong></h3>
-<p>在 Java 的世界里，构建工具是项目的基石。多年来，Apache Maven 以其强大的依赖管理和标准化的生命周期，稳坐头把交椅。然而，一个更年轻、更灵活、更高效的挑战者——Gradle——正以前所未有的势头崛起，甚至赢得了像 Spring、Android 这样的顶级项目的青睐。</p>
-<p>这篇文章将带你深入了解 Gradle，将它与 Maven 进行全方位的“终极对决”，并告诉你为什么 Spring 会做出迁移的决定。最后，我们会通过实战，看看如何用这两种工具创建一个全新的 Spring Boot 项目。</p>
-<h4 id="核心理念：一张图看懂-gradle-和-maven"><strong>核心理念：一张图看懂 Gradle 和 Maven</strong></h4>
+                    <h3
+id="gradle-vs.-maven-终极对决为什么-spring-也选择了它"><strong>Gradle
+vs. Maven: 终极对决，为什么 Spring 也选择了它？</strong></h3>
+<p>在 Java 的世界里，构建工具是项目的基石。多年来，Apache Maven
+以其强大的依赖管理和标准化的生命周期，稳坐头把交椅。然而，一个更年轻、更灵活、更高效的挑战者——Gradle——正以前所未有的势头崛起，甚至赢得了像
+Spring、Android 这样的顶级项目的青睐。</p>
+<p>这篇文章将带你深入了解 Gradle，将它与 Maven
+进行全方位的“终极对决”，并告诉你为什么 Spring
+会做出迁移的决定。最后，我们会通过实战，看看如何用这两种工具创建一个全新的
+Spring Boot 项目。</p>
+<h4 id="核心理念一张图看懂-gradle-和-maven"><strong>核心理念：一张图看懂
+Gradle 和 Maven</strong></h4>
 <ul>
-<li><strong>Maven</strong>: **“约定优于配置” (Convention over Configuration)**。它像一本严格的指导手册，为项目提供了标准化的目录结构、构建生命周期和插件绑定。你只需要遵守规则，就能轻松构建项目。它的核心是 <strong>XML</strong>。</li>
-<li><strong>Gradle</strong>: **“用代码构建一切” (Build by Code)**。它是一个更灵活的工具集，将构建过程视为一个由任务（Tasks）组成的有向无环图（DAG）。你可以用编程语言（Groovy 或 Kotlin）来描述和定制任何你能想到的构建逻辑。它的核心是 **DSL (领域特定语言)**。</li>
+<li><strong>Maven</strong>: <strong>“约定优于配置” (Convention over
+Configuration)</strong>。它像一本严格的指导手册，为项目提供了标准化的目录结构、构建生命周期和插件绑定。你只需要遵守规则，就能轻松构建项目。它的核心是
+<strong>XML</strong>。</li>
+<li><strong>Gradle</strong>: <strong>“用代码构建一切” (Build by
+Code)</strong>。它是一个更灵活的工具集，将构建过程视为一个由任务（Tasks）组成的有向无环图（DAG）。你可以用编程语言（Groovy
+或 Kotlin）来描述和定制任何你能想到的构建逻辑。它的核心是 <strong>DSL
+(领域特定语言)</strong>。</li>
 </ul>
-<h4 id="全方位对决：gradle-vs-maven"><strong>全方位对决：Gradle vs. Maven</strong></h4>
+<h4 id="全方位对决gradle-vs.-maven"><strong>全方位对决：Gradle
+vs. Maven</strong></h4>
 <table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
 <thead>
 <tr>
-<th align="left">特性</th>
-<th align="left">Maven</th>
-<th align="left">Gradle</th>
-<th align="left">优胜者 &amp; 原因</th>
+<th style="text-align: left;">特性</th>
+<th style="text-align: left;">Maven</th>
+<th style="text-align: left;">Gradle</th>
+<th style="text-align: left;">优胜者 &amp; 原因</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left"><strong>配置文件</strong></td>
-<td align="left"><code>pom.xml</code></td>
-<td align="left"><code>build.gradle</code> (Groovy) 或 <code>build.gradle.kts</code> (Kotlin)</td>
-<td align="left"><strong>Gradle</strong>。XML 极其冗长，而 Gradle 的 DSL 脚本非常简洁、易读。一个 50 行的 <code>build.gradle</code> 文件可能需要 200 行 <code>pom.xml</code> 来实现相同的功能。</td>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>配置文件</strong></td>
+<td style="text-align: left;"><code>pom.xml</code></td>
+<td style="text-align: left;"><code>build.gradle</code> (Groovy) 或
+<code>build.gradle.kts</code> (Kotlin)</td>
+<td style="text-align: left;"><strong>Gradle</strong>。XML 极其冗长，而
+Gradle 的 DSL 脚本非常简洁、易读。一个 50 行的 <code>build.gradle</code>
+文件可能需要 200 行 <code>pom.xml</code> 来实现相同的功能。</td>
 </tr>
 <tr>
-<td align="left"><strong>配置语言</strong></td>
-<td align="left"><strong>XML</strong>：声明式，结构清晰，但非常啰嗦，缺乏逻辑处理能力。</td>
-<td align="left"><strong>Groovy / Kotlin DSL</strong>：命令式，像写代码一样配置构建。支持条件、循环、函数等，极其灵活。</td>
-<td align="left"><strong>Gradle</strong>。编程语言的灵活性完胜静态的 XML，尤其是在处理复杂逻辑时。</td>
+<td style="text-align: left;"><strong>配置语言</strong></td>
+<td
+style="text-align: left;"><strong>XML</strong>：声明式，结构清晰，但非常啰嗦，缺乏逻辑处理能力。</td>
+<td style="text-align: left;"><strong>Groovy / Kotlin
+DSL</strong>：命令式，像写代码一样配置构建。支持条件、循环、函数等，极其灵活。</td>
+<td
+style="text-align: left;"><strong>Gradle</strong>。编程语言的灵活性完胜静态的
+XML，尤其是在处理复杂逻辑时。</td>
 </tr>
 <tr>
-<td align="left"><strong>依赖管理</strong></td>
-<td align="left"><code>&lt;dependencies&gt;</code> 块，通过 <code>&lt;scope&gt;</code> (compile, test, provided) 管理。</td>
-<td align="left"><code>dependencies {}</code> 块，提供更细粒度的配置，如 <code>implementation</code>, <code>api</code>, <code>testImplementation</code>。</td>
-<td align="left"><strong>Gradle</strong>。<code>implementation</code> 能够隐藏传递性依赖，避免依赖泄漏，加快编译速度，这是 Maven 无法做到的。</td>
+<td style="text-align: left;"><strong>依赖管理</strong></td>
+<td style="text-align: left;"><code>&lt;dependencies&gt;</code> 块，通过
+<code>&lt;scope&gt;</code> (compile, test, provided) 管理。</td>
+<td style="text-align: left;"><code>dependencies {}</code>
+块，提供更细粒度的配置，如 <code>implementation</code>,
+<code>api</code>, <code>testImplementation</code>。</td>
+<td
+style="text-align: left;"><strong>Gradle</strong>。<code>implementation</code>
+能够隐藏传递性依赖，避免依赖泄漏，加快编译速度，这是 Maven
+无法做到的。</td>
 </tr>
 <tr>
-<td align="left"><strong>构建生命周期</strong></td>
-<td align="left"><strong>固定生命周期</strong>：<code>validate</code> -&gt; <code>compile</code> -&gt; <code>test</code> -&gt; <code>package</code> -&gt; <code>install</code> -&gt; <code>deploy</code>。阶段是线性的，插件只能绑定到这些阶段上。</td>
-<td align="left"><strong>任务驱动</strong>：一切皆为任务（Task）。任务之间可以定义依赖关系，形成一个有向无环图（DAG）。生命周期只是预定义的一系列任务。</td>
-<td align="left"><strong>Gradle</strong>。任务驱动的模型更加灵活和直观，你可以轻松创建、扩展或替换任何任务，而不受固定生命周期的束缚。</td>
+<td style="text-align: left;"><strong>构建生命周期</strong></td>
+<td
+style="text-align: left;"><strong>固定生命周期</strong>：<code>validate</code>
+-&gt; <code>compile</code> -&gt; <code>test</code> -&gt;
+<code>package</code> -&gt; <code>install</code> -&gt;
+<code>deploy</code>。阶段是线性的，插件只能绑定到这些阶段上。</td>
+<td
+style="text-align: left;"><strong>任务驱动</strong>：一切皆为任务（Task）。任务之间可以定义依赖关系，形成一个有向无环图（DAG）。生命周期只是预定义的一系列任务。</td>
+<td
+style="text-align: left;"><strong>Gradle</strong>。任务驱动的模型更加灵活和直观，你可以轻松创建、扩展或替换任何任务，而不受固定生命周期的束缚。</td>
 </tr>
 <tr>
-<td align="left"><strong>性能</strong></td>
-<td align="left">较慢。每次构建都会执行完整的生命周期阶段。</td>
-<td align="left"><strong>极快</strong>。得益于三大法宝：<strong>增量构建</strong>（只构建变化的部分）、<strong>构建缓存</strong>（重用之前构建的输出）和 <strong>Gradle 守护进程</strong>（一个常驻内存的后台进程，避免每次都启动 JVM）。</td>
-<td align="left"><strong>Gradle</strong>。在大型多模块项目中，Gradle 的性能优势是压倒性的，构建速度可能是 Maven 的数倍甚至数十倍。</td>
+<td style="text-align: left;"><strong>性能</strong></td>
+<td
+style="text-align: left;">较慢。每次构建都会执行完整的生命周期阶段。</td>
+<td
+style="text-align: left;"><strong>极快</strong>。得益于三大法宝：<strong>增量构建</strong>（只构建变化的部分）、<strong>构建缓存</strong>（重用之前构建的输出）和
+<strong>Gradle 守护进程</strong>（一个常驻内存的后台进程，避免每次都启动
+JVM）。</td>
+<td
+style="text-align: left;"><strong>Gradle</strong>。在大型多模块项目中，Gradle
+的性能优势是压倒性的，构建速度可能是 Maven 的数倍甚至数十倍。</td>
 </tr>
 <tr>
-<td align="left"><strong>灵活性与定制</strong></td>
-<td align="left">较低。复杂的构建逻辑需要编写自定义的 Maven 插件（用 Java），门槛高。</td>
-<td align="left"><strong>极高</strong>。可以直接在 <code>build.gradle</code> 文件中编写 Groovy 或 Kotlin 代码来实现任何自定义逻辑，无需创建单独的插件。</td>
-<td align="left"><strong>Gradle</strong>。无与伦比的灵活性是 Gradle 最大的王牌。</td>
+<td style="text-align: left;"><strong>灵活性与定制</strong></td>
+<td style="text-align: left;">较低。复杂的构建逻辑需要编写自定义的 Maven
+插件（用 Java），门槛高。</td>
+<td style="text-align: left;"><strong>极高</strong>。可以直接在
+<code>build.gradle</code> 文件中编写 Groovy 或 Kotlin
+代码来实现任何自定义逻辑，无需创建单独的插件。</td>
+<td
+style="text-align: left;"><strong>Gradle</strong>。无与伦比的灵活性是
+Gradle 最大的王牌。</td>
 </tr>
 <tr>
-<td align="left"><strong>社区与生态</strong></td>
-<td align="left">极其成熟。拥有海量的插件、文档和社区支持，几乎所有问题都能找到答案。</td>
-<td align="left">发展迅速。社区非常活跃，尤其是在 Android 和现代后端开发领域。主流 IDE 支持已非常完善。</td>
-<td align="left"><strong>Maven</strong>。在历史积淀和资源广度上，Maven 依然领先。但 Gradle 正在快速追赶。</td>
+<td style="text-align: left;"><strong>社区与生态</strong></td>
+<td
+style="text-align: left;">极其成熟。拥有海量的插件、文档和社区支持，几乎所有问题都能找到答案。</td>
+<td style="text-align: left;">发展迅速。社区非常活跃，尤其是在 Android
+和现代后端开发领域。主流 IDE 支持已非常完善。</td>
+<td
+style="text-align: left;"><strong>Maven</strong>。在历史积淀和资源广度上，Maven
+依然领先。但 Gradle 正在快速追赶。</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <h4 id="优缺点总结"><strong>优缺点总结</strong></h4>
-<p><strong>Gradle 的优点:</strong></p>
-<ul>
-<li><strong>极致性能</strong>：增量构建和缓存机制让构建速度飞快。</li>
-<li><strong>超高灵活性</strong>：代码化的构建脚本可以实现任何你想要的逻辑。</li>
-<li><strong>简洁易读</strong>：DSL 语法远比 XML 清爽。</li>
-<li><strong>现代依赖管理</strong>：<code>implementation</code> 提供了更好的依赖隔离。</li>
-</ul>
-<p><strong>Gradle 的缺点:</strong></p>
-<ul>
-<li><strong>学习曲线</strong>：需要理解 Groovy/Kotlin DSL 和其任务模型，入门门槛比 Maven 稍高。</li>
-<li><strong>自由的代价</strong>：过度的灵活性可能导致构建脚本变得混乱和难以维护（“Build script from hell”）。</li>
-</ul>
-<p><strong>Maven 的优点:</strong></p>
-<ul>
-<li><strong>标准化</strong>：严格的约定让任何熟悉 Maven 的人都能快速上手一个新项目。</li>
-<li><strong>生态成熟</strong>：资源、插件和文档极其丰富。</li>
-<li><strong>简单可靠</strong>：对于标准化的项目，Maven 的配置非常简单，不易出错。</li>
-</ul>
-<p><strong>Maven 的缺点:</strong></p>
-<ul>
-<li><strong>冗长</strong>：XML 配置非常啰嗦。</li>
-<li><strong>僵化</strong>：固定的生命周期难以应对复杂的构建需求。</li>
-<li><strong>性能瓶颈</strong>：在大型项目中，构建速度较慢。</li>
-</ul>
-<h4 id="案例分析：为什么-spring-framework-最终选择了-gradle？"><strong>案例分析：为什么 Spring Framework 最终选择了 Gradle？</strong></h4>
-<p>Spring 是一个拥有数十个子模块的巨型项目，其构建过程极其复杂。他们在早期使用 Ant，后来迁移到 Maven，最终在 2012 年左右全面转向 Gradle。原因正是我们上面分析的 Gradle 的核心优势：</p>
-<ol>
-<li><strong>管理复杂的多模块构建</strong>：Gradle 的脚本化配置让定义模块间的复杂依赖关系、执行特定的子模块构建任务变得异常简单，而这在 Maven 的父子 POM 继承模型中会变得非常笨拙。</li>
-<li><strong>极致的性能需求</strong>：对于 Spring 团队来说，每天都要进行无数次构建。Gradle 的增量构建和缓存能力，将原本可能需要数十分钟的完整构建缩短到几分钟甚至几十秒，极大地提升了开发效率。</li>
-<li><strong>高度的定制化需求</strong>：Spring 的构建需要处理很多特殊任务，比如生成特殊的文档、打包特定的发行版、运行复杂的测试套件等。这些在 Gradle 中可以通过编写简单的脚本任务实现，但在 Maven 中则需要开发和维护复杂的自定义插件。</li>
+<p><strong>Gradle 的优点:</strong> *
+<strong>极致性能</strong>：增量构建和缓存机制让构建速度飞快。 *
+<strong>超高灵活性</strong>：代码化的构建脚本可以实现任何你想要的逻辑。
+* <strong>简洁易读</strong>：DSL 语法远比 XML 清爽。 *
+<strong>现代依赖管理</strong>：<code>implementation</code>
+提供了更好的依赖隔离。</p>
+<p><strong>Gradle 的缺点:</strong> * <strong>学习曲线</strong>：需要理解
+Groovy/Kotlin DSL 和其任务模型，入门门槛比 Maven 稍高。 *
+<strong>自由的代价</strong>：过度的灵活性可能导致构建脚本变得混乱和难以维护（“Build
+script from hell”）。</p>
+<p><strong>Maven 的优点:</strong> *
+<strong>标准化</strong>：严格的约定让任何熟悉 Maven
+的人都能快速上手一个新项目。 *
+<strong>生态成熟</strong>：资源、插件和文档极其丰富。 *
+<strong>简单可靠</strong>：对于标准化的项目，Maven
+的配置非常简单，不易出错。</p>
+<p><strong>Maven 的缺点:</strong> * <strong>冗长</strong>：XML
+配置非常啰嗦。 *
+<strong>僵化</strong>：固定的生命周期难以应对复杂的构建需求。 *
+<strong>性能瓶颈</strong>：在大型项目中，构建速度较慢。</p>
+<h4
+id="案例分析为什么-spring-framework-最终选择了-gradle"><strong>案例分析：为什么
+Spring Framework 最终选择了 Gradle？</strong></h4>
+<p>Spring
+是一个拥有数十个子模块的巨型项目，其构建过程极其复杂。他们在早期使用
+Ant，后来迁移到 Maven，最终在 2012 年左右全面转向
+Gradle。原因正是我们上面分析的 Gradle 的核心优势：</p>
+<ol type="1">
+<li><strong>管理复杂的多模块构建</strong>：Gradle
+的脚本化配置让定义模块间的复杂依赖关系、执行特定的子模块构建任务变得异常简单，而这在
+Maven 的父子 POM 继承模型中会变得非常笨拙。</li>
+<li><strong>极致的性能需求</strong>：对于 Spring
+团队来说，每天都要进行无数次构建。Gradle
+的增量构建和缓存能力，将原本可能需要数十分钟的完整构建缩短到几分钟甚至几十秒，极大地提升了开发效率。</li>
+<li><strong>高度的定制化需求</strong>：Spring
+的构建需要处理很多特殊任务，比如生成特殊的文档、打包特定的发行版、运行复杂的测试套件等。这些在
+Gradle 中可以通过编写简单的脚本任务实现，但在 Maven
+中则需要开发和维护复杂的自定义插件。</li>
 </ol>
-<h4 id="实战：用-maven-和-gradle-创建-spring-boot-项目"><strong>实战：用 Maven 和 Gradle 创建 Spring Boot 项目</strong></h4>
-<p>现在，让我们通过最流行的 <strong>Spring Initializr</strong> (<code>start.spring.io</code>) 来创建项目，直观感受一下二者的不同。</p>
-<ol>
-<li>**访问 <code>start.spring.io</code>**。</li>
-<li><strong>选择依赖</strong>：我们选择 <code>Spring Web</code> 作为示例。</li>
+<h4 id="实战用-maven-和-gradle-创建-spring-boot-项目"><strong>实战：用
+Maven 和 Gradle 创建 Spring Boot 项目</strong></h4>
+<p>现在，让我们通过最流行的 <strong>Spring Initializr</strong>
+(<code>start.spring.io</code>) 来创建项目，直观感受一下二者的不同。</p>
+<ol type="1">
+<li><strong>访问 <code>start.spring.io</code></strong>。</li>
+<li><strong>选择依赖</strong>：我们选择 <code>Spring Web</code>
+作为示例。</li>
 </ol>
 <h5 id="如果你选择-maven"><strong>如果你选择 Maven</strong></h5>
-<ol>
+<ol type="1">
 <li><strong>项目类型</strong>：选择 <strong>Maven</strong>。</li>
 <li><strong>填写元数据</strong>：Group, Artifact 等。</li>
-<li><strong>生成并下载</strong>：解压后，你会看到核心配置文件 <code>pom.xml</code>。</li>
+<li><strong>生成并下载</strong>：解压后，你会看到核心配置文件
+<code>pom.xml</code>。</li>
 </ol>
-<pre><code class="language-xml">&lt;!-- pom.xml (关键部分) --&gt;
-&lt;parent&gt;
-    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-    &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
-    &lt;version&gt;3.x.x&lt;/version&gt;
-&lt;/parent&gt;
-
-&lt;dependencies&gt;
-    &lt;dependency&gt;
-        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
-    &lt;/dependency&gt;
-    &lt;dependency&gt;
-        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-        &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
-        &lt;scope&gt;test&lt;/scope&gt;
-    &lt;/dependency&gt;
-&lt;/dependencies&gt;
-
-&lt;build&gt;
-    &lt;plugins&gt;
-        &lt;plugin&gt;
-            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
-            &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
-        &lt;/plugin&gt;
-    &lt;/plugins&gt;
-&lt;/build&gt;
-</code></pre>
-<ol start="4">
-<li><strong>如何运行？</strong>
-   在项目根目录下打开终端，运行：</li>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- pom.xml (关键部分) --&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">parent</span>&gt;</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">groupId</span>&gt;org.springframework.boot&lt;/<span class="kw">groupId</span>&gt;</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">artifactId</span>&gt;spring-boot-starter-parent&lt;/<span class="kw">artifactId</span>&gt;</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">version</span>&gt;3.x.x&lt;/<span class="kw">version</span>&gt;</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">parent</span>&gt;</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">dependencies</span>&gt;</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">dependency</span>&gt;</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">groupId</span>&gt;org.springframework.boot&lt;/<span class="kw">groupId</span>&gt;</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">artifactId</span>&gt;spring-boot-starter-web&lt;/<span class="kw">artifactId</span>&gt;</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">dependency</span>&gt;</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">dependency</span>&gt;</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">groupId</span>&gt;org.springframework.boot&lt;/<span class="kw">groupId</span>&gt;</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">artifactId</span>&gt;spring-boot-starter-test&lt;/<span class="kw">artifactId</span>&gt;</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">scope</span>&gt;test&lt;/<span class="kw">scope</span>&gt;</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">dependency</span>&gt;</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">dependencies</span>&gt;</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">build</span>&gt;</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">plugins</span>&gt;</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">plugin</span>&gt;</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>            &lt;<span class="kw">groupId</span>&gt;org.springframework.boot&lt;/<span class="kw">groupId</span>&gt;</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>            &lt;<span class="kw">artifactId</span>&gt;spring-boot-maven-plugin&lt;/<span class="kw">artifactId</span>&gt;</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>        &lt;/<span class="kw">plugin</span>&gt;</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">plugins</span>&gt;</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">build</span>&gt;</span></code></pre></div>
+<ol start="4" type="1">
+<li><strong>如何运行？</strong> 在项目根目录下打开终端，运行：</li>
 </ol>
-<pre><code class="language-sh">mvn spring-boot:run
-</code></pre>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mvn</span> spring-boot:run</span></code></pre></div>
 <h5 id="如果你选择-gradle"><strong>如果你选择 Gradle</strong></h5>
-<ol>
-<li><strong>项目类型</strong>：选择 <strong>Gradle - Groovy</strong> (或 Kotlin)。</li>
+<ol type="1">
+<li><strong>项目类型</strong>：选择 <strong>Gradle - Groovy</strong> (或
+Kotlin)。</li>
 <li><strong>填写元数据</strong>：Group, Artifact 等。</li>
-<li><strong>生成并下载</strong>：解压后，你会看到核心配置文件 <code>build.gradle</code>。</li>
+<li><strong>生成并下载</strong>：解压后，你会看到核心配置文件
+<code>build.gradle</code>。</li>
 </ol>
-<pre><code class="language-groovy">// build.gradle (关键部分)
-plugins {
-    id &#39;java&#39;
-    id &#39;org.springframework.boot&#39; version &#39;3.x.x&#39;
-    id &#39;io.spring.dependency-management&#39; version &#39;1.1.x&#39;
-}
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    implementation &#39;org.springframework.boot:spring-boot-starter-web&#39;
-    testImplementation &#39;org.springframework.boot:spring-boot-starter-test&#39;
-}
-
-tasks.named(&#39;test&#39;) {
-    useJUnitPlatform()
-}
-</code></pre>
-<p>   <strong>看到了吗？同样的功能，代码行数少了将近一半，而且更像代码，不是吗？</strong></p>
-<ol start="4">
-<li><strong>如何运行？</strong>
-   在项目根目录下打开终端，运行：</li>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode groovy"><code class="sourceCode groovy"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// build.gradle (关键部分)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>plugins <span class="op">{</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    id <span class="st">&#39;java&#39;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    id <span class="st">&#39;org.springframework.boot&#39;</span> version <span class="st">&#39;3.x.x&#39;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    id <span class="st">&#39;io.spring.dependency-management&#39;</span> version <span class="st">&#39;1.1.x&#39;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>repositories <span class="op">{</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mavenCentral</span><span class="op">()</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>dependencies <span class="op">{</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    implementation <span class="st">&#39;org.springframework.boot:spring-boot-starter-web&#39;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    testImplementation <span class="st">&#39;org.springframework.boot:spring-boot-starter-test&#39;</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>tasks<span class="op">.</span><span class="fu">named</span><span class="op">(</span><span class="st">&#39;test&#39;</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">useJUnitPlatform</span><span class="op">()</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>看到了吗？同样的功能，代码行数少了将近一半，而且更像代码，不是吗？</strong></p>
+<ol start="4" type="1">
+<li><strong>如何运行？</strong> 在项目根目录下打开终端，运行：</li>
 </ol>
-<pre><code class="language-sh"># Windows
-.\gradlew.bat bootRun
-
-# Linux / macOS
-./gradlew bootRun
-</code></pre>
-<h4 id="结论：我应该选择谁？"><strong>结论：我应该选择谁？</strong></h4>
+<div class="sourceCode" id="cb4"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Windows</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">.</span><span class="dt">\g</span>radlew.bat bootRun</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Linux / macOS</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradlew</span> bootRun</span></code></pre></div>
+<h4 id="结论我应该选择谁"><strong>结论：我应该选择谁？</strong></h4>
 <ul>
-<li><p><strong>选择 Maven，如果</strong>：</p>
+<li><strong>选择 Maven，如果</strong>：
 <ul>
 <li>你是一个 Java 新手，希望从一个标准化的、规则明确的工具开始。</li>
 <li>你的项目是比较常规的 Web 应用或库，没有复杂的构建需求。</li>
 <li>你所在的团队非常看重“约定”和“标准化”，希望限制构建过程的“自由度”。</li>
-</ul>
-</li>
-<li><p><strong>选择 Gradle，如果</strong>：</p>
+</ul></li>
+<li><strong>选择 Gradle，如果</strong>：
 <ul>
 <li>你追求极致的构建性能，尤其是在大型、多模块项目中。</li>
 <li>你的项目有复杂的、非标准的构建需求，需要高度定制化。</li>
-<li>你和你的团队更喜欢用代码（而不是 XML）来管理和定义构建过程，欣赏其简洁性和灵活性。</li>
+<li>你和你的团队更喜欢用代码（而不是
+XML）来管理和定义构建过程，欣赏其简洁性和灵活性。</li>
 <li>你正在开发 Android 应用（Gradle 是官方指定工具）。</li>
+</ul></li>
 </ul>
-</li>
-</ul>
-<p>总而言之，Maven 是一个久经考验、稳定可靠的“老兵”，而 Gradle 则是一个更现代化、更强大、更灵活的“未来战士”。对于新项目，尤其是那些可能变得复杂的项目，<strong>我强烈建议你尝试一下 Gradle</strong>，它所带来的效率和灵活性提升，绝对会让你物有所值。</p>
+<p>总而言之，Maven 是一个久经考验、稳定可靠的“老兵”，而 Gradle
+则是一个更现代化、更强大、更灵活的“未来战士”。对于新项目，尤其是那些可能变得复杂的项目，<strong>我强烈建议你尝试一下
+Gradle</strong>，它所带来的效率和灵活性提升，绝对会让你物有所值。</p>
 
                 </div>
             </article>

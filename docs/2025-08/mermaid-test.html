@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>测试文档</title>
+    <title>Mermaid 图表测试</title>
     <style>
         /* Google Fonts for better typography */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
@@ -430,9 +430,9 @@
             
             <article class="post">
                 <header class="post-header">
-                    <h1 class="post-title">测试文档</h1>
+                    <h1 class="post-title">Mermaid 图表测试</h1>
                     <div class="post-meta">
-                        <div class="post-date">2025/8/15</div>
+                        <div class="post-date">2025/8/22</div>
                         <div class="post-category">2025-08</div>
                     </div>
                 </header>
@@ -440,54 +440,158 @@
                     ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
                 </div>
                 <div class="post-content" id="post-content">
-                    <h1 id="测试文档">测试文档</h1>
-<p>这是一个测试文档，用于验证 Markdown 到 HTML 的转换功能。</p>
-<h2 id="功能特性">功能特性</h2>
-<ul>
-<li>支持标题转换</li>
-<li>支持列表</li>
-<li>支持代码块</li>
-<li>支持表格</li>
-<li>支持引用</li>
-</ul>
-<h2 id="代码示例">代码示例</h2>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> HelloWorld <span class="op">{</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Hello, World!&quot;</span><span class="op">);</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<h2 id="表格示例">表格示例</h2>
-<table>
-<thead>
-<tr>
-<th>功能</th>
-<th>状态</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>标题转换</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>列表转换</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>代码块</td>
-<td>✅</td>
-</tr>
-<tr>
-<td>表格</td>
-<td>✅</td>
-</tr>
-</tbody>
-</table>
-<blockquote>
-<p>这是一个引用块，用于显示重要信息。</p>
-</blockquote>
-<p>更新时间: 2025年8月15日</p>
+                    <h1 id="mermaid-图表测试">Mermaid 图表测试</h1>
+<p>这是一个测试 Mermaid 图表功能的示例文档。</p>
+<h2 id="流程图示例">流程图示例</h2>
+<pre class="mermaid"><code>graph TD
+    A[开始] --&gt; B[初始化]
+    B --&gt; C[处理数据]
+    C --&gt; D[输出结果]
+    D --&gt; E[结束]</code></pre>
+<h2 id="序列图示例">序列图示例</h2>
+<pre class="mermaid"><code>sequenceDiagram
+    participant 用户
+    participant 系统
+    用户-&gt;&gt;系统: 登录请求
+    系统-&gt;&gt;用户: 验证通过
+    用户-&gt;&gt;系统: 数据请求
+    系统-&gt;&gt;用户: 返回数据</code></pre>
+<h2 id="类图示例">类图示例</h2>
+<pre class="mermaid"><code>classDiagram
+    Animal &lt;|-- Duck
+    Animal &lt;|-- Fish
+    Animal &lt;|-- Zebra
+    Animal : +int age
+    Animal : +String gender
+    Animal: +isMammal()
+    
+    class Duck{
+        +String beakColor
+        +swim()
+        +quack()
+    }
+    
+    class Fish{
+        -int sizeInFeet
+        -canEat()
+    }
+    
+    class Zebra{
+        +bool is_wild
+        +run()
+    }</code></pre>
+<h2 id="状态图示例">状态图示例</h2>
+<pre class="mermaid"><code>stateDiagram-v2
+    [*] --&gt; Still
+    Still --&gt; [*]
+    
+    Still --&gt; Moving
+    Moving --&gt; Still
+    Moving --&gt; Crash
+    Crash --&gt; [*]</code></pre>
+<h2 id="饼图示例">饼图示例</h2>
+<pre class="mermaid"><code>pie title 2025年技术趋势分布
+    &quot;人工智能&quot; : 42.86
+    &quot;云计算&quot; : 14.29
+    &quot;大数据&quot; : 14.29
+    &quot;物联网&quot; : 14.29
+    &quot;区块链&quot; : 14.29</code></pre>
+<h2 id="甘特图示例">甘特图示例</h2>
+<pre class="mermaid"><code>gantt
+    title 项目开发计划
+    dateFormat  YYYY-MM-DD
+    section 设计
+    需求分析           :done,    des1, 2025-01-06,2025-01-08
+    原型设计           :active,  des2, 2025-01-09, 3d
+    UI设计            :         des3, after des2, 5d
+    section 开发
+    前端开发           :2025-01-12, 10d
+    后端开发           :2025-01-15, 12d</code></pre>
+<h2 id="实体关系图示例">实体关系图示例</h2>
+<pre class="mermaid"><code>erDiagram
+    CUSTOMER ||--o{ ORDER : places
+    ORDER ||--|{ LINE-ITEM : contains
+    CUSTOMER }|..|{ DELIVERY-ADDRESS : uses</code></pre>
+<h2 id="spring框架核心组件uml类图">spring框架核心组件UML类图</h2>
+<pre class="mermaid"><code>classDiagram
+    direction TB
+
+    %% --- 顶层结构 ---
+    class JVM {
+        &lt;&lt;JVM Memory Model&gt;&gt;
+    }
+
+    class ThreadPrivateArea {
+        &lt;&lt;Thread-Private Area&gt;&gt;
+        + Program Counter (PC) Register
+        + JVM Stack
+        + Native Method Stack
+    }
+
+    class ThreadSharedArea {
+        &lt;&lt;Thread-Shared Area&gt;&gt;
+    }
+
+    JVM *-- ThreadPrivateArea : contains
+    JVM *-- ThreadSharedArea : contains
+
+    %% --- 线程共享区分解 ---
+    class Heap {
+        &lt;&lt;Heap&gt;&gt;
+        + Stores all object instances
+    }
+
+    class Metaspace {
+        &lt;&lt;Metaspace / Permanent Generation (pre-JDK8)&gt;&gt;
+        + Stores class metadata
+        + Stores static variables
+        + Runtime constant pool
+    }
+
+    ThreadSharedArea *-- Heap : contains
+    ThreadSharedArea *-- Metaspace : contains
+
+    %% --- 堆内存分解 ---
+    class YoungGeneration {
+        &lt;&lt;Young Generation&gt;&gt;
+    }
+
+    class OldGeneration {
+        &lt;&lt;Old Generation&gt;&gt;
+        + Stores long-lived objects
+        + Stores large objects
+    }
+
+    Heap *-- YoungGeneration : composed of
+    Heap *-- OldGeneration : composed of
+
+    %% --- 年轻代分解 ---
+    class EdenSpace {
+        &lt;&lt;Eden Space&gt;&gt;
+        + Where new objects are allocated
+    }
+
+    class SurvivorSpace {
+        &lt;&lt;Survivor Space (S0 &amp; S1)&gt;&gt;
+        + Stores objects surviving Minor GC
+    }
+
+    YoungGeneration *-- EdenSpace : composed of
+    YoungGeneration *-- SurvivorSpace : composed of</code></pre>
+<pre class="mermaid"><code>timeline
+    title 大模型发展史
+    section 萌芽期 (2017-2018)
+        Transformer架构提出 : 2017: Vaswani等提出自注意力机制
+        GPT-1诞生 : 2018: OpenAI发布1.17亿参数模型
+    section 快速发展期 (2019-2020)
+        BERT崛起 : 2019: Google提出双向Transformer
+        GPT-3突破 : 2020: 1750亿参数模型问世
+    section 多模态时代 (2021-2022)
+        CLIP模型 : 2021: 图文跨模态理解
+        ChatGPT发布 : 2022: 对话能力突破
+    section 生态竞争期 (2023-)
+        开源模型爆发 : LLaMA/PaLM等竞品
+        多模态大模型 : GPT-4V/Gemini</code></pre>
 
                 </div>
             </article>

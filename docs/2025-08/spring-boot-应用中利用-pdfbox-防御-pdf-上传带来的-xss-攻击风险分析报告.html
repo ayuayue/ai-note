@@ -343,6 +343,16 @@
             opacity: 1;
         }
 
+        /* Mermaid 图表样式 */
+        .mermaid {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -378,6 +388,36 @@
             }
         }
     </style>
+    <!-- 引入本地 Mermaid 库 -->
+    <script src="../../js/mermaid.min.js"></script>
+    <script>
+        // 初始化 Mermaid
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            // 可以根据需要添加更多配置选项
+            securityLevel: 'loose'
+        });
+        
+        // 处理 Pandoc 生成的 Mermaid 代码块
+        // Pandoc 将 Mermaid 代码块转换为 <pre class="mermaid"><code>... 格式
+        // 我们需要将其转换为 <div class="mermaid">... 格式以便 Mermaid 渲染
+        document.addEventListener('DOMContentLoaded', function() {
+            const mermaidBlocks = document.querySelectorAll('pre.mermaid code');
+            mermaidBlocks.forEach(function(codeElement) {
+                // 创建新的 div 元素
+                const mermaidDiv = document.createElement('div');
+                mermaidDiv.className = 'mermaid';
+                // 将代码内容移到 div 中
+                mermaidDiv.textContent = codeElement.textContent;
+                // 替换原来的 pre 元素
+                codeElement.parentNode.parentNode.replaceChild(mermaidDiv, codeElement.parentNode);
+            });
+            
+            // 重新启动 Mermaid 渲染
+            mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+        });
+    </script>
 </head>
 <body>
     <div class="container">
@@ -400,255 +440,321 @@
                     ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
                 </div>
                 <div class="post-content" id="post-content">
-                    <h3 id="spring-boot-应用中利用-pdfbox-防御-pdf-上传带来的-xss-攻击风险分析报告">Spring Boot 应用中利用 PDFBox 防御 PDF 上传带来的 XSS 攻击风险分析报告</h3>
+                    <h3
+id="spring-boot-应用中利用-pdfbox-防御-pdf-上传带来的-xss-攻击风险分析报告">Spring
+Boot 应用中利用 PDFBox 防御 PDF 上传带来的 XSS 攻击风险分析报告</h3>
 <p><strong>摘要</strong></p>
-<p>本报告详细阐述了在 Spring Boot Web 应用中，如何运用 Apache PDFBox 库来检测并防范用户上传的 PDF 文件中潜藏的跨站脚本（XSS）攻击。报告将深入探讨并提供多种解决方案的实现细节，包括在现有上传功能中集成验证工具类、采用过滤器（Filter）进行全局拦截，以及介绍拦截器（Interceptor）和面向切面编程（AOP）等更高级的实现方案，旨在为不同应用场景提供全面且可行的安全增强指导。</p>
-<hr>
+<p>本报告详细阐述了在 Spring Boot Web 应用中，如何运用 Apache PDFBox
+库来检测并防范用户上传的 PDF
+文件中潜藏的跨站脚本（XSS）攻击。报告将深入探讨并提供多种解决方案的实现细节，包括在现有上传功能中集成验证工具类、采用过滤器（Filter）进行全局拦截，以及介绍拦截器（Interceptor）和面向切面编程（AOP）等更高级的实现方案，旨在为不同应用场景提供全面且可行的安全增强指导。</p>
+<hr />
 <p><strong>1. 引言：PDF 与 XSS 的安全风险</strong></p>
-<p>在现代 Web 应用中，文件上传功能极为普遍。然而，PDF 文件格式的灵活性也带来了潜在的安全隐患。PDF 规范允许在文档的多个位置嵌入 JavaScript 脚本，例如在文档打开时、用户点击链接或与表单域交互时自动执行。攻击者可以精心构造一个含有恶意 JavaScript 的 PDF 文件，一旦其他用户在浏览器中打开此文件，嵌入的脚本便可能被执行。这会引发一系列严重的安全问题，包括但不限于：</p>
+<p>在现代 Web 应用中，文件上传功能极为普遍。然而，PDF
+文件格式的灵活性也带来了潜在的安全隐患。PDF 规范允许在文档的多个位置嵌入
+JavaScript
+脚本，例如在文档打开时、用户点击链接或与表单域交互时自动执行。攻击者可以精心构造一个含有恶意
+JavaScript 的 PDF
+文件，一旦其他用户在浏览器中打开此文件，嵌入的脚本便可能被执行。这会引发一系列严重的安全问题，包括但不限于：</p>
 <ul>
-<li><strong>会话劫持</strong>: 恶意脚本可能窃取用户的 Session Cookies，并发送到攻击者的服务器。</li>
+<li><strong>会话劫持</strong>: 恶意脚本可能窃取用户的 Session
+Cookies，并发送到攻击者的服务器。</li>
 <li><strong>数据窃取</strong>: 脚本可以读取并篡改页面上的敏感信息。</li>
 <li><strong>恶意跳转</strong>: 用户可能被重定向到钓鱼网站。</li>
 </ul>
-<p>因此，对用户上传的 PDF 文件进行严格的安全校验，是保护应用和用户安全的关键环节。Apache PDFBox 作为一个功能强大的开源 Java 库，为我们提供了深入解析和操作 PDF 文档的能力，使其成为检测嵌入脚本的理想工具。</p>
+<p>因此，对用户上传的 PDF
+文件进行严格的安全校验，是保护应用和用户安全的关键环节。Apache PDFBox
+作为一个功能强大的开源 Java 库，为我们提供了深入解析和操作 PDF
+文档的能力，使其成为检测嵌入脚本的理想工具。</p>
 <p><strong>2. 环境准备：集成 Apache PDFBox</strong></p>
-<p>首先，在您的 Spring Boot 项目的 <code>pom.xml</code> 文件中添加 Apache PDFBox 的依赖。建议选用最新的稳定版本以获取更好的性能和安全更新。</p>
-<pre><code class="language-xml">&lt;dependency&gt;
-    &lt;groupId&gt;org.apache.pdfbox&lt;/groupId&gt;
-    &lt;artifactId&gt;pdfbox&lt;/artifactId&gt;
-    &lt;version&gt;2.0.31&lt;/version&gt; &lt;!-- 请关注并使用最新的稳定版本 --&gt;
-&lt;/dependency&gt;
-</code></pre>
-<hr>
-<h3 id="方案一：为现有上传功能增加验证工具类-utils"><strong>方案一：为现有上传功能增加验证工具类 (Utils)</strong></h3>
+<p>首先，在您的 Spring Boot 项目的 <code>pom.xml</code> 文件中添加
+Apache PDFBox
+的依赖。建议选用最新的稳定版本以获取更好的性能和安全更新。</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">dependency</span>&gt;</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">groupId</span>&gt;org.apache.pdfbox&lt;/<span class="kw">groupId</span>&gt;</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">artifactId</span>&gt;pdfbox&lt;/<span class="kw">artifactId</span>&gt;</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">version</span>&gt;2.0.31&lt;/<span class="kw">version</span>&gt; <span class="co">&lt;!-- 请关注并使用最新的稳定版本 --&gt;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">dependency</span>&gt;</span></code></pre></div>
+<hr />
+<h3
+id="方案一为现有上传功能增加验证工具类-utils"><strong>方案一：为现有上传功能增加验证工具类
+(Utils)</strong></h3>
 <p>此方案适用于希望以最小的代码侵入性，为已存在的特定上传接口快速添加验证逻辑的场景。</p>
-<p><strong>核心思想</strong>：创建一个独立的工具类，封装所有使用 PDFBox 进行 XSS 脚本检测的逻辑。然后在相应的 Controller 方法中，文件处理之前调用此工具类进行验证。</p>
+<p><strong>核心思想</strong>：创建一个独立的工具类，封装所有使用 PDFBox
+进行 XSS 脚本检测的逻辑。然后在相应的 Controller
+方法中，文件处理之前调用此工具类进行验证。</p>
 <p><strong>实现步骤</strong>：</p>
-<ol>
-<li><p><strong>创建 <code>PdfXssValidationUtils.java</code> 工具类</strong></p>
-<p>该工具类将包含一个核心静态方法 <code>containsXssScript</code>，负责接收 <code>MultipartFile</code> 对象并执行检测。检测逻辑主要覆盖以下几个方面：</p>
+<ol type="1">
+<li><p><strong>创建 <code>PdfXssValidationUtils.java</code>
+工具类</strong></p>
+<p>该工具类将包含一个核心静态方法
+<code>containsXssScript</code>，负责接收 <code>MultipartFile</code>
+对象并执行检测。检测逻辑主要覆盖以下几个方面：</p>
 <ul>
 <li>检查文档打开时是否有关联的 JavaScript 动作。</li>
 <li>遍历所有页面，检查页面级别的注解（如链接）是否触发 JavaScript。</li>
-<li>检查交互式表单（AcroForm）中的各个字段是否绑定了 JavaScript 动作。</li>
+<li>检查交互式表单（AcroForm）中的各个字段是否绑定了 JavaScript
+动作。</li>
 </ul>
-<pre><code class="language-java">import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.interactive.action.PDActionJavaScript;
-import org.apache.pdfbox.pdmodel.interactive.annotation.PDAnnotation;
-import org.apache.pdfbox.pdmodel.interactive.form.PDField;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-public class PdfXssValidationUtils {
-
-    private static final Logger logger = LoggerFactory.getLogger(PdfXssValidationUtils.class);
-
-    public static boolean containsXssScript(MultipartFile file) {
-        if (file == null || file.isEmpty() || !&quot;application/pdf&quot;.equals(file.getContentType())) {
-            return false;
-        }
-
-        try (InputStream inputStream = file.getInputStream();
-             PDDocument document = PDDocument.load(inputStream)) {
-
-            // 1. 检查文档级别的 JavaScript (例如文档打开时的动作)
-            if (document.getDocumentCatalog().getOpenAction() instanceof PDActionJavaScript) {
-                logger.warn(&quot;检测到文档级别的 JavaScript。&quot;);
-                return true;
-            }
-
-            // 2. 遍历页面，检查注解中的 JavaScript
-            for (var page : document.getPages()) {
-                for (PDAnnotation annotation : page.getAnnotations()) {
-                    if (annotation.getAction() instanceof PDActionJavaScript) {
-                        logger.warn(&quot;在页面注解中检测到 JavaScript。&quot;);
-                        return true;
-                    }
-                }
-            }
-
-            // 3. 检查交互式表单字段中的 JavaScript
-            if (document.getDocumentCatalog().getAcroForm() != null) {
-                for (PDField field : document.getDocumentCatalog().getAcroForm().getFields()) {
-                    if (field.getAction() instanceof PDActionJavaScript) {
-                        logger.warn(&quot;在表单字段中检测到 JavaScript。&quot;);
-                        return true;
-                    }
-                }
-            }
-
-            return false;
-
-        } catch (IOException e) {
-            logger.error(&quot;解析PDF文件时发生错误。&quot;, e);
-            // 为安全起见，当解析失败时，可选择拒绝该文件
-            return true;
-        }
-    }
-}
-</code></pre>
-</li>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">apache</span><span class="op">.</span><span class="im">pdfbox</span><span class="op">.</span><span class="im">pdmodel</span><span class="op">.</span><span class="im">PDDocument</span><span class="op">;</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">apache</span><span class="op">.</span><span class="im">pdfbox</span><span class="op">.</span><span class="im">pdmodel</span><span class="op">.</span><span class="im">interactive</span><span class="op">.</span><span class="im">action</span><span class="op">.</span><span class="im">PDActionJavaScript</span><span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">apache</span><span class="op">.</span><span class="im">pdfbox</span><span class="op">.</span><span class="im">pdmodel</span><span class="op">.</span><span class="im">interactive</span><span class="op">.</span><span class="im">annotation</span><span class="op">.</span><span class="im">PDAnnotation</span><span class="op">;</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">apache</span><span class="op">.</span><span class="im">pdfbox</span><span class="op">.</span><span class="im">pdmodel</span><span class="op">.</span><span class="im">interactive</span><span class="op">.</span><span class="im">form</span><span class="op">.</span><span class="im">PDField</span><span class="op">;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">slf4j</span><span class="op">.</span><span class="im">Logger</span><span class="op">;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">slf4j</span><span class="op">.</span><span class="im">LoggerFactory</span><span class="op">;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">web</span><span class="op">.</span><span class="im">multipart</span><span class="op">.</span><span class="im">MultipartFile</span><span class="op">;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">io</span><span class="op">.</span><span class="im">IOException</span><span class="op">;</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">io</span><span class="op">.</span><span class="im">InputStream</span><span class="op">;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> PdfXssValidationUtils <span class="op">{</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">final</span> <span class="bu">Logger</span> logger <span class="op">=</span> LoggerFactory<span class="op">.</span><span class="fu">getLogger</span><span class="op">(</span>PdfXssValidationUtils<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">boolean</span> <span class="fu">containsXssScript</span><span class="op">(</span>MultipartFile file<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>file <span class="op">==</span> <span class="kw">null</span> <span class="op">||</span> file<span class="op">.</span><span class="fu">isEmpty</span><span class="op">()</span> <span class="op">||</span> <span class="op">!</span><span class="st">&quot;application/pdf&quot;</span><span class="op">.</span><span class="fu">equals</span><span class="op">(</span>file<span class="op">.</span><span class="fu">getContentType</span><span class="op">()))</span> <span class="op">{</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span> <span class="op">(</span><span class="bu">InputStream</span> inputStream <span class="op">=</span> file<span class="op">.</span><span class="fu">getInputStream</span><span class="op">();</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>             PDDocument document <span class="op">=</span> PDDocument<span class="op">.</span><span class="fu">load</span><span class="op">(</span>inputStream<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>            <span class="co">// 1. 检查文档级别的 JavaScript (例如文档打开时的动作)</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(</span>document<span class="op">.</span><span class="fu">getDocumentCatalog</span><span class="op">().</span><span class="fu">getOpenAction</span><span class="op">()</span> <span class="kw">instanceof</span> PDActionJavaScript<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>                logger<span class="op">.</span><span class="fu">warn</span><span class="op">(</span><span class="st">&quot;检测到文档级别的 JavaScript。&quot;</span><span class="op">);</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>            <span class="co">// 2. 遍历页面，检查注解中的 JavaScript</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> <span class="op">(</span><span class="dt">var</span> page <span class="op">:</span> document<span class="op">.</span><span class="fu">getPages</span><span class="op">())</span> <span class="op">{</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> <span class="op">(</span>PDAnnotation annotation <span class="op">:</span> page<span class="op">.</span><span class="fu">getAnnotations</span><span class="op">())</span> <span class="op">{</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> <span class="op">(</span>annotation<span class="op">.</span><span class="fu">getAction</span><span class="op">()</span> <span class="kw">instanceof</span> PDActionJavaScript<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>                        logger<span class="op">.</span><span class="fu">warn</span><span class="op">(</span><span class="st">&quot;在页面注解中检测到 JavaScript。&quot;</span><span class="op">);</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">return</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>            <span class="co">// 3. 检查交互式表单字段中的 JavaScript</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(</span>document<span class="op">.</span><span class="fu">getDocumentCatalog</span><span class="op">().</span><span class="fu">getAcroForm</span><span class="op">()</span> <span class="op">!=</span> <span class="kw">null</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>                <span class="cf">for</span> <span class="op">(</span>PDField field <span class="op">:</span> document<span class="op">.</span><span class="fu">getDocumentCatalog</span><span class="op">().</span><span class="fu">getAcroForm</span><span class="op">().</span><span class="fu">getFields</span><span class="op">())</span> <span class="op">{</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> <span class="op">(</span>field<span class="op">.</span><span class="fu">getAction</span><span class="op">()</span> <span class="kw">instanceof</span> PDActionJavaScript<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>                        logger<span class="op">.</span><span class="fu">warn</span><span class="op">(</span><span class="st">&quot;在表单字段中检测到 JavaScript。&quot;</span><span class="op">);</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">return</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span> <span class="op">(</span><span class="bu">IOException</span> e<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>            logger<span class="op">.</span><span class="fu">error</span><span class="op">(</span><span class="st">&quot;解析PDF文件时发生错误。&quot;</span><span class="op">,</span> e<span class="op">);</span></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>            <span class="co">// 为安全起见，当解析失败时，可选择拒绝该文件</span></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></li>
 <li><p><strong>在 Controller 中集成验证逻辑</strong></p>
 <p>在您的文件上传 Controller 方法中，直接调用上述工具类。</p>
-<pre><code class="language-java">import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
-@RestController
-public class FileUploadController {
-
-    @PostMapping(&quot;/upload-pdf&quot;)
-    public ResponseEntity&lt;String&gt; handlePdfUpload(@RequestParam(&quot;file&quot;) MultipartFile file) {
-        // 在处理文件前进行验证
-        if (PdfXssValidationUtils.containsXssScript(file)) {
-            return ResponseEntity.badRequest().body(&quot;上传的 PDF 文件包含潜在的恶意脚本，已被拒绝。&quot;);
-        }
-
-        // ... 文件验证通过，执行正常的保存或业务处理逻辑 ...
-        
-        return ResponseEntity.ok(&quot;文件上传成功并通过安全验证。&quot;);
-    }
-}
-</code></pre>
-</li>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">http</span><span class="op">.</span><span class="im">ResponseEntity</span><span class="op">;</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">web</span><span class="op">.</span><span class="im">bind</span><span class="op">.</span><span class="im">annotation</span><span class="op">.</span><span class="im">PostMapping</span><span class="op">;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">web</span><span class="op">.</span><span class="im">bind</span><span class="op">.</span><span class="im">annotation</span><span class="op">.</span><span class="im">RequestParam</span><span class="op">;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">web</span><span class="op">.</span><span class="im">bind</span><span class="op">.</span><span class="im">annotation</span><span class="op">.</span><span class="im">RestController</span><span class="op">;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">web</span><span class="op">.</span><span class="im">multipart</span><span class="op">.</span><span class="im">MultipartFile</span><span class="op">;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="at">@RestController</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> FileUploadController <span class="op">{</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">@PostMapping</span><span class="op">(</span><span class="st">&quot;/upload-pdf&quot;</span><span class="op">)</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> ResponseEntity<span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> <span class="fu">handlePdfUpload</span><span class="op">(</span><span class="at">@RequestParam</span><span class="op">(</span><span class="st">&quot;file&quot;</span><span class="op">)</span> MultipartFile file<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 在处理文件前进行验证</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>PdfXssValidationUtils<span class="op">.</span><span class="fu">containsXssScript</span><span class="op">(</span>file<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> ResponseEntity<span class="op">.</span><span class="fu">badRequest</span><span class="op">().</span><span class="fu">body</span><span class="op">(</span><span class="st">&quot;上传的 PDF 文件包含潜在的恶意脚本，已被拒绝。&quot;</span><span class="op">);</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        <span class="co">// ... 文件验证通过，执行正常的保存或业务处理逻辑 ...</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ResponseEntity<span class="op">.</span><span class="fu">ok</span><span class="op">(</span><span class="st">&quot;文件上传成功并通过安全验证。&quot;</span><span class="op">);</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></li>
 </ol>
 <ul>
 <li><strong>优点</strong>：实现简单、快速，对现有代码结构影响极小。</li>
-<li><strong>缺点</strong>：若存在多个 PDF 上传接口，需要在每个接口中重复调用验证逻辑，不利于维护。</li>
+<li><strong>缺点</strong>：若存在多个 PDF
+上传接口，需要在每个接口中重复调用验证逻辑，不利于维护。</li>
 </ul>
-<hr>
-<h3 id="方案二：使用-servlet-filter-进行全局验证"><strong>方案二：使用 Servlet Filter 进行全局验证</strong></h3>
+<hr />
+<h3 id="方案二使用-servlet-filter-进行全局验证"><strong>方案二：使用
+Servlet Filter 进行全局验证</strong></h3>
 <p>当希望为应用中所有（或一类）文件上传请求强制执行统一的安全策略时，过滤器（Filter）是理想的选择。</p>
-<p><strong>核心思想</strong>：创建一个自定义的 Servlet Filter，它会拦截所有 multipart/form-data 类型的请求。在 Filter 内部，它会检查请求中是否包含 PDF 文件，并对其实施 XSS 脚本验证。</p>
+<p><strong>核心思想</strong>：创建一个自定义的 Servlet
+Filter，它会拦截所有 multipart/form-data 类型的请求。在 Filter
+内部，它会检查请求中是否包含 PDF 文件，并对其实施 XSS 脚本验证。</p>
 <p><strong>实现步骤</strong>：</p>
-<ol>
-<li><p><strong>创建 <code>PdfXssValidationFilter.java</code></strong></p>
-<pre><code class="language-java">import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-
-@Component
-@Order(1) // 确保此过滤器在高优先级执行
-public class PdfXssValidationFilter implements Filter {
-
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
-        
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-
-        // 仅对 multipart 请求进行处理
-        if (httpRequest.getContentType() != null &amp;&amp; httpRequest.getContentType().startsWith(&quot;multipart/&quot;)) {
-            MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) httpRequest;
-
-            for (MultipartFile file : multipartRequest.getFileMap().values()) {
-                if (&quot;application/pdf&quot;.equals(file.getContentType())) {
-                    if (PdfXssValidationUtils.containsXssScript(file)) {
-                        HttpServletResponse httpResponse = (HttpServletResponse) response;
-                        httpResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, &quot;上传的 PDF 文件包含潜在的恶意脚本，已被拒绝。&quot;);
-                        return; // 中断请求链
-                    }
-                }
-            }
-        }
-
-        chain.doFilter(request, response);
-    }
-}
-</code></pre>
-</li>
+<ol type="1">
+<li><p><strong>创建
+<code>PdfXssValidationFilter.java</code></strong></p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">core</span><span class="op">.</span><span class="im">annotation</span><span class="op">.</span><span class="im">Order</span><span class="op">;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">stereotype</span><span class="op">.</span><span class="im">Component</span><span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">web</span><span class="op">.</span><span class="im">multipart</span><span class="op">.</span><span class="im">MultipartFile</span><span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">web</span><span class="op">.</span><span class="im">multipart</span><span class="op">.</span><span class="im">MultipartHttpServletRequest</span><span class="op">;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">javax</span><span class="op">.</span><span class="im">servlet</span><span class="op">.*;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">javax</span><span class="op">.</span><span class="im">servlet</span><span class="op">.</span><span class="im">http</span><span class="op">.</span><span class="im">HttpServletRequest</span><span class="op">;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">javax</span><span class="op">.</span><span class="im">servlet</span><span class="op">.</span><span class="im">http</span><span class="op">.</span><span class="im">HttpServletResponse</span><span class="op">;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">io</span><span class="op">.</span><span class="im">IOException</span><span class="op">;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="at">@Component</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="at">@Order</span><span class="op">(</span><span class="dv">1</span><span class="op">)</span> <span class="co">// 确保此过滤器在高优先级执行</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> PdfXssValidationFilter <span class="kw">implements</span> <span class="bu">Filter</span> <span class="op">{</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">doFilter</span><span class="op">(</span>ServletRequest request<span class="op">,</span> ServletResponse response<span class="op">,</span> FilterChain chain<span class="op">)</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>            <span class="kw">throws</span> <span class="bu">IOException</span><span class="op">,</span> ServletException <span class="op">{</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        HttpServletRequest httpRequest <span class="op">=</span> <span class="op">(</span>HttpServletRequest<span class="op">)</span> request<span class="op">;</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 仅对 multipart 请求进行处理</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>httpRequest<span class="op">.</span><span class="fu">getContentType</span><span class="op">()</span> <span class="op">!=</span> <span class="kw">null</span> <span class="op">&amp;&amp;</span> httpRequest<span class="op">.</span><span class="fu">getContentType</span><span class="op">().</span><span class="fu">startsWith</span><span class="op">(</span><span class="st">&quot;multipart/&quot;</span><span class="op">))</span> <span class="op">{</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>            MultipartHttpServletRequest multipartRequest <span class="op">=</span> <span class="op">(</span>MultipartHttpServletRequest<span class="op">)</span> httpRequest<span class="op">;</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> <span class="op">(</span>MultipartFile file <span class="op">:</span> multipartRequest<span class="op">.</span><span class="fu">getFileMap</span><span class="op">().</span><span class="fu">values</span><span class="op">())</span> <span class="op">{</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="op">(</span><span class="st">&quot;application/pdf&quot;</span><span class="op">.</span><span class="fu">equals</span><span class="op">(</span>file<span class="op">.</span><span class="fu">getContentType</span><span class="op">()))</span> <span class="op">{</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">if</span> <span class="op">(</span>PdfXssValidationUtils<span class="op">.</span><span class="fu">containsXssScript</span><span class="op">(</span>file<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>                        HttpServletResponse httpResponse <span class="op">=</span> <span class="op">(</span>HttpServletResponse<span class="op">)</span> response<span class="op">;</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>                        httpResponse<span class="op">.</span><span class="fu">sendError</span><span class="op">(</span>HttpServletResponse<span class="op">.</span><span class="fu">SC_BAD_REQUEST</span><span class="op">,</span> <span class="st">&quot;上传的 PDF 文件包含潜在的恶意脚本，已被拒绝。&quot;</span><span class="op">);</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>                        <span class="cf">return</span><span class="op">;</span> <span class="co">// 中断请求链</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>        chain<span class="op">.</span><span class="fu">doFilter</span><span class="op">(</span>request<span class="op">,</span> response<span class="op">);</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></li>
 <li><p><strong>注册 Filter</strong></p>
-<p>在 Spring Boot 中，只需为 Filter 类添加 <code>@Component</code> 注解，它就会被自动扫描并注册到应用上下文中。使用 <code>@Order</code> 注解可以控制过滤器的执行顺序。</p>
-</li>
+<p>在 Spring Boot 中，只需为 Filter 类添加 <code>@Component</code>
+注解，它就会被自动扫描并注册到应用上下文中。使用 <code>@Order</code>
+注解可以控制过滤器的执行顺序。</p></li>
 </ol>
 <ul>
-<li><strong>优点</strong>：<ul>
+<li><strong>优点</strong>：
+<ul>
 <li><strong>全局性与解耦</strong>：将安全验证逻辑从业务控制器中完全分离，一次配置即可对所有相关请求生效。</li>
 <li><strong>易于管理</strong>：安全策略集中管理，方便后续的更新和维护。</li>
+</ul></li>
+<li><strong>缺点</strong>：
+<ul>
+<li><strong>粒度较粗</strong>：默认对所有 multipart
+请求生效。如果需要更精细的控制（例如只对特定 URL 生效），则需要在 Filter
+内部增加路径判断逻辑或通过 <code>FilterRegistrationBean</code>
+进行更复杂的配置。</li>
+</ul></li>
 </ul>
-</li>
-<li><strong>缺点</strong>：<ul>
-<li><strong>粒度较粗</strong>：默认对所有 multipart 请求生效。如果需要更精细的控制（例如只对特定 URL 生效），则需要在 Filter 内部增加路径判断逻辑或通过 <code>FilterRegistrationBean</code> 进行更复杂的配置。</li>
-</ul>
-</li>
-</ul>
-<hr>
+<hr />
 <h3 id="其他可选方案"><strong>其他可选方案</strong></h3>
-<p>除了上述两种主流方案，Spring 框架还提供了其他几种强大的机制，可以根据项目的具体架构和需求进行选择。</p>
-<h4 id="方案三：使用-spring-interceptor"><strong>方案三：使用 Spring Interceptor</strong></h4>
-<p>拦截器与 Filter 类似，但它更深入地集成在 Spring MVC 的工作流程中，可以访问到即将处理请求的 <code>Handler</code>（即 Controller 方法）等上下文信息。</p>
+<p>除了上述两种主流方案，Spring
+框架还提供了其他几种强大的机制，可以根据项目的具体架构和需求进行选择。</p>
+<h4 id="方案三使用-spring-interceptor"><strong>方案三：使用 Spring
+Interceptor</strong></h4>
+<p>拦截器与 Filter 类似，但它更深入地集成在 Spring MVC
+的工作流程中，可以访问到即将处理请求的 <code>Handler</code>（即
+Controller 方法）等上下文信息。</p>
 <ul>
-<li><strong>实现思路</strong>：<ol>
+<li><strong>实现思路</strong>：
+<ol type="1">
 <li>创建一个类实现 <code>HandlerInterceptor</code> 接口。</li>
-<li>在 <code>preHandle()</code> 方法中，获取 <code>HttpServletRequest</code> 并将其转换为 <code>MultipartHttpServletRequest</code>，然后执行与 Filter 中相同的验证逻辑。</li>
-<li>创建一个配置类并实现 <code>WebMvcConfigurer</code> 接口，通过重写 <code>addInterceptors()</code> 方法来注册你的拦截器，并可以精确地指定需要拦截的 URL 模式。</li>
-</ol>
-</li>
+<li>在 <code>preHandle()</code> 方法中，获取
+<code>HttpServletRequest</code> 并将其转换为
+<code>MultipartHttpServletRequest</code>，然后执行与 Filter
+中相同的验证逻辑。</li>
+<li>创建一个配置类并实现 <code>WebMvcConfigurer</code> 接口，通过重写
+<code>addInterceptors()</code>
+方法来注册你的拦截器，并可以精确地指定需要拦截的 URL 模式。</li>
+</ol></li>
 </ul>
-<h4 id="方案四：使用-spring-aop-面向切面编程"><strong>方案四：使用 Spring AOP (面向切面编程)</strong></h4>
-<p>AOP 是处理横切关注点（如日志、安全、事务）的绝佳方式，它能以非侵入的方式将通用逻辑织入到业务代码中。</p>
+<h4 id="方案四使用-spring-aop-面向切面编程"><strong>方案四：使用 Spring
+AOP (面向切面编程)</strong></h4>
+<p>AOP
+是处理横切关注点（如日志、安全、事务）的绝佳方式，它能以非侵入的方式将通用逻辑织入到业务代码中。</p>
 <ul>
-<li><strong>实现思路</strong>：<ol>
-<li><strong>定义一个自定义注解</strong>，例如 <code>@RequiresPdfXssValidation</code>。</li>
-<li><strong>创建一个 Aspect 类</strong>，并使用 <code>@Aspect</code> 和 <code>@Component</code> 注解。</li>
-<li><strong>定义一个 &quot;Before&quot; 或 &quot;Around&quot; 通知（Advice）</strong>，并编写一个切点表达式（Pointcut），使其精确匹配所有被 <code>@RequiresPdfXssValidation</code> 注解标记的 Controller 方法。</li>
-<li>在通知的实现中，通过 <code>JoinPoint</code> 对象获取到被拦截方法的参数列表，找到其中的 <code>MultipartFile</code> 对象，并调用 <code>PdfXssValidationUtils</code> 进行验证。</li>
-</ol>
-</li>
+<li><strong>实现思路</strong>：
+<ol type="1">
+<li><strong>定义一个自定义注解</strong>，例如
+<code>@RequiresPdfXssValidation</code>。</li>
+<li><strong>创建一个 Aspect 类</strong>，并使用 <code>@Aspect</code> 和
+<code>@Component</code> 注解。</li>
+<li><strong>定义一个 “Before” 或 “Around”
+通知（Advice）</strong>，并编写一个切点表达式（Pointcut），使其精确匹配所有被
+<code>@RequiresPdfXssValidation</code> 注解标记的 Controller 方法。</li>
+<li>在通知的实现中，通过 <code>JoinPoint</code>
+对象获取到被拦截方法的参数列表，找到其中的 <code>MultipartFile</code>
+对象，并调用 <code>PdfXssValidationUtils</code> 进行验证。</li>
+</ol></li>
 </ul>
-<h3 id="7-方案对比与总结"><strong>7. 方案对比与总结</strong></h3>
+<h3 id="方案对比与总结"><strong>7. 方案对比与总结</strong></h3>
 <table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
 <thead>
 <tr>
-<th align="left">方案</th>
-<th align="left">优点</th>
-<th align="left">缺点</th>
-<th align="left">适用场景</th>
+<th style="text-align: left;">方案</th>
+<th style="text-align: left;">优点</th>
+<th style="text-align: left;">缺点</th>
+<th style="text-align: left;">适用场景</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left"><strong>工具类 (Utils)</strong></td>
-<td align="left">实现简单，对现有代码影响最小</td>
-<td align="left">代码分散，不易于统一管理，存在重复调用</td>
-<td align="left">针对个别、已存在的上传接口进行快速安全加固。</td>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>工具类 (Utils)</strong></td>
+<td style="text-align: left;">实现简单，对现有代码影响最小</td>
+<td
+style="text-align: left;">代码分散，不易于统一管理，存在重复调用</td>
+<td
+style="text-align: left;">针对个别、已存在的上传接口进行快速安全加固。</td>
 </tr>
 <tr>
-<td align="left"><strong>过滤器 (Filter)</strong></td>
-<td align="left">全局性强，与业务逻辑完全解耦，配置简单</td>
-<td align="left">默认配置下灵活性稍差，粒度较粗</td>
-<td align="left">需要对应用中绝大多数文件上传实施统一安全策略的通用场景。</td>
+<td style="text-align: left;"><strong>过滤器 (Filter)</strong></td>
+<td
+style="text-align: left;">全局性强，与业务逻辑完全解耦，配置简单</td>
+<td style="text-align: left;">默认配置下灵活性稍差，粒度较粗</td>
+<td
+style="text-align: left;">需要对应用中绝大多数文件上传实施统一安全策略的通用场景。</td>
 </tr>
 <tr>
-<td align="left"><strong>拦截器 (Interceptor)</strong></td>
-<td align="left">结合 Spring MVC 更紧密，可根据 Controller 方法信息做更灵活的判断</td>
-<td align="left">配置比 Filter 略微复杂</td>
-<td align="left">需要基于请求的后端处理器（Handler）信息来动态决定是否执行验证的复杂场景。</td>
+<td style="text-align: left;"><strong>拦截器 (Interceptor)</strong></td>
+<td style="text-align: left;">结合 Spring MVC 更紧密，可根据 Controller
+方法信息做更灵活的判断</td>
+<td style="text-align: left;">配置比 Filter 略微复杂</td>
+<td
+style="text-align: left;">需要基于请求的后端处理器（Handler）信息来动态决定是否执行验证的复杂场景。</td>
 </tr>
 <tr>
-<td align="left"><strong>AOP</strong></td>
-<td align="left"><strong>无侵入性</strong>，代码优雅，高度可复用，可精确控制验证点</td>
-<td align="left">概念和初次实现相对复杂，需要对 AOP 有一定了解</td>
-<td align="left">追求极致的代码整洁度和模块化，希望将安全验证作为可插拔的、高度复用的功能模块。</td>
+<td style="text-align: left;"><strong>AOP</strong></td>
+<td
+style="text-align: left;"><strong>无侵入性</strong>，代码优雅，高度可复用，可精确控制验证点</td>
+<td style="text-align: left;">概念和初次实现相对复杂，需要对 AOP
+有一定了解</td>
+<td
+style="text-align: left;">追求极致的代码整洁度和模块化，希望将安全验证作为可插拔的、高度复用的功能模块。</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <p><strong>最终建议</strong>：</p>
 <ul>
 <li>对于<strong>初学者或需要快速解决问题的场景</strong>，<strong>工具类</strong>方案最为直接。</li>
-<li>对于<strong>大多数企业级应用</strong>，<strong>Filter</strong> 提供了一个健壮且标准的解决方案。</li>
-<li>如果您的团队熟悉并推崇 AOP 思想，或者项目对代码的<strong>优雅性和无侵入性有较高要求</strong>，那么<strong>AOP</strong> 无疑是最佳选择。</li>
+<li>对于<strong>大多数企业级应用</strong>，<strong>Filter</strong>
+提供了一个健壮且标准的解决方案。</li>
+<li>如果您的团队熟悉并推崇 AOP
+思想，或者项目对代码的<strong>优雅性和无侵入性有较高要求</strong>，那么<strong>AOP</strong>
+无疑是最佳选择。</li>
 </ul>
 
                 </div>
