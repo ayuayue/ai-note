@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.caoayu.top/index.html</loc>
-    <lastmod>2025-08-22T09:34:04.595Z</lastmod>
+    <lastmod>2025-08-22T10:46:10.999Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -57,6 +57,12 @@
   <url>
     <loc>https://www.caoayu.top/docs/2025-08/在-2025-年用-idea-编译-spring-5.1.x-源码的终极指南.html</loc>
     <lastmod>2025-08-22T09:09:23.443Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.caoayu.top/docs/2025-08/揭秘-spring-中的-context-id-的组成.html</loc>
+    <lastmod>2025-08-22T10:45:02.219Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
