@@ -191,11 +191,6 @@ function main() {
     // Calculate pagination
     const totalPages = Math.ceil(allDocuments.length / ITEMS_PER_PAGE);
     
-    // Generate feed items for the first page
-    const feedItems = allDocuments.slice(0, ITEMS_PER_PAGE).map(doc => 
-        generateDocCard(doc)
-    );
-    
     // Read template
     let template;
     try {
@@ -205,44 +200,82 @@ function main() {
         return;
     }
     
-    // Generate pagination HTML
-    let paginationHtml = '';
-    if (totalPages > 1) {
-        paginationHtml += '<div class="pagination">\n';
-        paginationHtml += '            <a href="#" class="current">1</a>\n';
-        for (let i = 2; i <= totalPages; i++) {
-            paginationHtml += `            <a href="#" data-page="${i}">${i}</a>\n`;
-        }
-        paginationHtml += '            <a href="#" data-page="next">下一页 →</a>\n';
-        paginationHtml += '        </div>';
-    } else {
-        // Even if there's only one page, we still need to replace the placeholder
-        paginationHtml = '<div class="pagination">\n            <a href="#" class="current">1</a>\n        </div>';
-    }
-    
+    // Generate each page
+    for (let page = 1; page <= totalPages; page++) {
+        const startIndex = (page - 1) * ITEMS_PER_PAGE;
+        const endIndex = startIndex + ITEMS_PER_PAGE;
+        const pageDocuments = allDocuments.slice(startIndex, endIndex);
         
-    // Replace placeholder with feed items
-    let updatedContent = template.replace("{{DOC_CARDS}}", feedItems.join('\n'));
-    
-    // Replace pagination placeholder
-    const paginationPlaceholder = '<div class="pagination">\n            <a href="#" class="current">1</a>\n            <a href="#">2</a>\n            <a href="#">3</a>\n            <a href="#">下一页 →</a>\n        </div>';
-    // Also try with Windows line endings
-    const paginationPlaceholderWindows = '<div class="pagination">\r\n            <a href="#" class="current">1</a>\r\n            <a href="#">2</a>\r\n            <a href="#">3</a>\r\n            <a href="#">下一页 →</a>\r\n        </div>';
-    
-    // Try both placeholders
-    if (updatedContent.includes(paginationPlaceholder)) {
-        updatedContent = updatedContent.replace(paginationPlaceholder, paginationHtml);
-    } else if (updatedContent.includes(paginationPlaceholderWindows)) {
-        updatedContent = updatedContent.replace(paginationPlaceholderWindows, paginationHtml);
-    } else {
-        console.log("Warning: Could not find pagination placeholder in template");
+        // Generate feed items for this page
+        const feedItems = pageDocuments.map(doc => 
+            generateDocCard(doc)
+        );
+        
+        // Generate pagination HTML for this specific page
+        let paginationHtml = '';
+        if (totalPages > 1) {
+            paginationHtml += '<div class="pagination">\n';
+            // Previous page link
+            if (page > 1) {
+                const prevPage = page === 2 ? '../index.html' : `index${page-1}.html`;
+                paginationHtml += `            <a href="${prevPage}">← 上一页</a>\n`;
+            }
+            
+            // Page links
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === page) {
+                    paginationHtml += `            <a href="#" class="current">${i}</a>\n`;
+                } else {
+                    const pageLink = i === 1 ? (page === 2 ? '../index.html' : 'index.html') : `pages/index${i}.html`;
+                    paginationHtml += `            <a href="${pageLink}">${i}</a>\n`;
+                }
+            }
+            
+            // Next page link
+            if (page < totalPages) {
+                const nextPage = page === 1 ? `pages/index${page+1}.html` : `index${page+1}.html`;
+                paginationHtml += `            <a href="${nextPage}">下一页 →</a>\n`;
+            }
+            paginationHtml += '        </div>';
+        } else {
+            // This case shouldn't happen since we're generating multiple pages
+            paginationHtml = '<div class="pagination">\n            <a href="../index.html" class="current">1</a>\n        </div>';
+        }
+        
+        // Replace placeholder with feed items
+        let updatedContent = template.replace("{{DOC_CARDS}}", feedItems.join('\n'));
+        
+        // Replace pagination placeholder
+        const paginationPlaceholder = '<div class="pagination">\n            <a href="#" class="current">1</a>\n            <a href="#">2</a>\n            <a href="#">3</a>\n            <a href="#">下一页 →</a>\n        </div>';
+        // Also try with Windows line endings
+        const paginationPlaceholderWindows = '<div class="pagination">\r\n            <a href="#" class="current">1</a>\r\n            <a href="#">2</a>\r\n            <a href="#">3</a>\r\n            <a href="#">下一页 →</a>\r\n        </div>';
+        
+        // Try both placeholders
+        if (updatedContent.includes(paginationPlaceholder)) {
+            updatedContent = updatedContent.replace(paginationPlaceholder, paginationHtml);
+        } else if (updatedContent.includes(paginationPlaceholderWindows)) {
+            updatedContent = updatedContent.replace(paginationPlaceholderWindows, paginationHtml);
+        } else {
+            console.log("Warning: Could not find pagination placeholder in template");
+        }
+        
+        // Write to index.html (first page) or pages/indexN.html (other pages)
+        let filename;
+        if (page === 1) {
+            filename = "index.html";
+        } else {
+            // Ensure pages directory exists
+            if (!fs.existsSync("pages")) {
+                fs.mkdirSync("pages");
+            }
+            filename = `pages/index${page}.html`;
+        }
+        fs.writeFileSync(filename, updatedContent, "utf8");
+        
+        console.log(`Generated ${filename} with ${pageDocuments.length} documents`);
     }
     
-    // Write to index.html
-    fs.writeFileSync("index.html", updatedContent, "utf8");
-    
-    console.log(`Generated index.html with ${allDocuments.length} documents`);
-    console.log(`Total pages: ${totalPages}`);
+    console.log(`Generated ${totalPages} pages with ${allDocuments.length} total documents`);
     console.log("Files included:");
     allDocuments.forEach(doc => {
         const dir = doc.type === 'markdown' ? `${doc.monthDir}/` : 'html/';

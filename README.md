@@ -42,9 +42,15 @@
 │   └── ...             # 其他月份
 ├── html/               # 原始 HTML 文档
 ├── img/                # 图片资源
-├── generate_index_with_dates.js  # 主页生成脚本
-├── generate_overview.js          # 概览页生成脚本
-└── generate_sitemap.js           # Sitemap生成脚本
+├── src/                # 构建脚本目录
+│   ├── generate_index_with_dates.js  # 主页生成脚本
+│   ├── generate_overview.js          # 概览页生成脚本
+│   ├── generate_sitemap.js           # Sitemap生成脚本
+│   ├── convert_md_to_html_pandoc.js  # Markdown转HTML脚本
+│   ├── convert_html_to_md.js         # HTML转Markdown脚本
+│   ├── new_markdown.js               # 创建新Markdown文章脚本
+│   ├── new_html.js                   # 创建新HTML文章脚本
+│   └── ...                           # 其他辅助脚本
 ```
 
 ## 🚀 快速开始

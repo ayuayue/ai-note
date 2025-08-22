@@ -21,7 +21,10 @@
       "Bash(npm run convert-md:*)",
       "Bash(curl:*)",
       "Bash(powershell -Command:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(sed:*)",
+      "Bash(npm run generate-index:*)",
+      "Bash(npm run generate-sitemap:*)"
     ],
     "defaultMode": "acceptEdits"
   }
