@@ -1,6 +1,22 @@
 
 ### **官方正解：告别踩坑，在 2025 年用 IDEA 编译 Spring 5.1.x 源码**
 
+#### **全文流程概览图**
+
+```mermaid
+graph TB
+    A[开始编译Spring 5.1.x源码] --> B[环境准备]
+    B --> C[清理环境<br/>.idea和.gradle文件夹]
+    C --> D[修正仓库配置<br/>解决401错误]
+    D --> E[预编译关键模块<br/>.\\gradlew :spring-oxm:compileTestJava]
+    E --> F[导入IDEA项目<br/>File -> New -> Project from Existing Sources]
+    F --> G[排除问题模块<br/>移除spring-aspects模块]
+    G --> H[创建调试模块<br/>spring-my-playground]
+    H --> I[配置IDEA代理<br/>Build and run using: Gradle]
+    I --> J[编写测试代码<br/>设置断点开始调试]
+    J --> K[成功调试Spring源码]
+```
+
 #### **前言**
 
 在尝试编译 Spring Framework 5.1.x 源码的路上，我曾掉入过无数个陷阱：修改 Kotlin 版本、调整构建脚本、与循环依赖作斗争……在几乎要放弃的时候，我回到了起点，找到了那份藏在源码中的官方指南 `import-into-idea.md`。

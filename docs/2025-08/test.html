@@ -432,7 +432,7 @@
                 <header class="post-header">
                     <h1 class="post-title">测试文档</h1>
                     <div class="post-meta">
-                        <div class="post-date">2025/8/15</div>
+                        <div class="post-date">2025/8/22</div>
                         <div class="post-category">2025-08</div>
                     </div>
                 </header>
@@ -488,6 +488,62 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="
 <p>这是一个引用块，用于显示重要信息。</p>
 </blockquote>
 <p>更新时间: 2025年8月15日</p>
+<h2 id="mermaid-示例">mermaid 示例</h2>
+<pre class="mermaid"><code>classDiagram
+    direction TB
+
+    %% JVM 内存整体结构
+    class JVM {
+        &lt;&lt;Java虚拟机内存模型&gt;&gt;
+    }
+
+    %% 线程私有区
+    class ThreadPrivateArea {
+        &lt;&lt;线程私有内存&gt;&gt;
+        +程序计数器(PC Register): 当前指令地址
+        +虚拟机栈(VM Stack): 方法调用栈帧
+        +本地方法栈(Native Stack): JNI方法调用
+    }
+
+    %% 线程共享区
+    class ThreadSharedArea {
+        &lt;&lt;线程共享内存&gt;&gt;
+        +堆(Heap): 对象实例存储
+        +方法区(Method Area): 类元数据/静态变量
+    }
+
+    %% 堆内存细分
+    class Heap {
+        +年轻代(Young Generation)
+        +老年代(Old Generation)
+    }
+
+    class YoungGeneration {
+        +Eden区: 新对象分配
+        +Survivor0(S0): MinorGC存活对象
+        +Survivor1(S1): MinorGC存活对象
+    }
+
+    class OldGeneration {
+        +长期存活对象
+    }
+
+    %% 方法区细分（JDK8+）
+    class MethodArea {
+        +元空间(Metaspace): 类元数据
+        +运行时常量池: 字面量/符号引用
+    }
+
+    %% 关系定义
+    JVM --&gt; ThreadPrivateArea : 包含
+    JVM --&gt; ThreadSharedArea : 包含
+    ThreadSharedArea --&gt; Heap : 主存储区
+    ThreadSharedArea --&gt; MethodArea : 类/常量存储
+    Heap --&gt; YoungGeneration : 新生代
+    Heap --&gt; OldGeneration : 老年代
+    YoungGeneration --&gt; Eden区
+    YoungGeneration --&gt; Survivor0
+    YoungGeneration --&gt; Survivor1</code></pre>
 
                 </div>
             </article>

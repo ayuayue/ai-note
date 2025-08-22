@@ -432,7 +432,7 @@
                 <header class="post-header">
                     <h1 class="post-title">在-2025-年用-idea-编译-spring-5.1.x-源码的终极指南</h1>
                     <div class="post-meta">
-                        <div class="post-date">2025/8/21</div>
+                        <div class="post-date">2025/8/22</div>
                         <div class="post-category">2025-08</div>
                     </div>
                 </header>
@@ -443,6 +443,18 @@
                     <h3
 id="官方正解告别踩坑在-2025-年用-idea-编译-spring-5.1.x-源码"><strong>官方正解：告别踩坑，在
 2025 年用 IDEA 编译 Spring 5.1.x 源码</strong></h3>
+<h4 id="全文流程概览图"><strong>全文流程概览图</strong></h4>
+<pre class="mermaid"><code>graph TB
+    A[开始编译Spring 5.1.x源码] --&gt; B[环境准备]
+    B --&gt; C[清理环境&lt;br/&gt;.idea和.gradle文件夹]
+    C --&gt; D[修正仓库配置&lt;br/&gt;解决401错误]
+    D --&gt; E[预编译关键模块&lt;br/&gt;.\\gradlew :spring-oxm:compileTestJava]
+    E --&gt; F[导入IDEA项目&lt;br/&gt;File -&gt; New -&gt; Project from Existing Sources]
+    F --&gt; G[排除问题模块&lt;br/&gt;移除spring-aspects模块]
+    G --&gt; H[创建调试模块&lt;br/&gt;spring-my-playground]
+    H --&gt; I[配置IDEA代理&lt;br/&gt;Build and run using: Gradle]
+    I --&gt; J[编写测试代码&lt;br/&gt;设置断点开始调试]
+    J --&gt; K[成功调试Spring源码]</code></pre>
 <h4 id="前言"><strong>前言</strong></h4>
 <p>在尝试编译 Spring Framework 5.1.x
 源码的路上，我曾掉入过无数个陷阱：修改 Kotlin
@@ -476,30 +488,30 @@ id="第一部分官方导入圣典"><strong>第一部分：官方导入圣典</s
 <p><strong>操作</strong>：打开项目根目录下的 <code>build.gradle</code>
 文件，找到 <code>buildscript</code> -&gt; <code>repositories</code>
 部分，将其替换为国内镜像：</p>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode gradle"><code class="sourceCode groovy"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>buildscript <span class="op">{</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    repositories <span class="op">{</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        <span class="fu">gradlePluginPortal</span><span class="op">()</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 注释或删除下面这行官方仓库</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">// maven { url &quot;https://repo.spring.io/plugins-release&quot; }</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 添加阿里云的插件镜像</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        maven <span class="op">{</span> url <span class="st">&quot;https://maven.aliyun.com/repository/gradle-plugin&quot;</span> <span class="op">}</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        maven <span class="op">{</span> url <span class="st">&quot;https://maven.aliyun.com/repository/spring-plugin&quot;</span> <span class="op">}</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// ... dependencies</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode gradle"><code class="sourceCode groovy"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>buildscript <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    repositories <span class="op">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="fu">gradlePluginPortal</span><span class="op">()</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 注释或删除下面这行官方仓库</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">// maven { url &quot;https://repo.spring.io/plugins-release&quot; }</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 添加阿里云的插件镜像</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        maven <span class="op">{</span> url <span class="st">&quot;https://maven.aliyun.com/repository/gradle-plugin&quot;</span> <span class="op">}</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        maven <span class="op">{</span> url <span class="st">&quot;https://maven.aliyun.com/repository/spring-plugin&quot;</span> <span class="op">}</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// ... dependencies</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h4 id="第-2-步预编译魔法最关键的一步"><strong>第 2
 步：预编译魔法（最关键的一步！）</strong></h4>
 <p>这是官方指南的核心，也是解决绝大多数编译错误的秘诀。</p>
 <p><strong>操作</strong>：在项目根目录打开终端，执行以下命令：</p>
 <ul>
 <li><p><strong>Windows:</strong></p>
-<div class="sourceCode" id="cb2"><pre
-class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>.\gradlew.bat :spring<span class="at">-oxm:</span>compileTestJava</span></code></pre></div></li>
-<li><p><strong>Linux / macOS:</strong></p>
 <div class="sourceCode" id="cb3"><pre
-class="sourceCode sh"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradlew</span> :spring-oxm:compileTestJava</span></code></pre></div></li>
+class="sourceCode cmd"><code class="sourceCode dosbat"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>.\gradlew.bat :spring<span class="at">-oxm:</span>compileTestJava</span></code></pre></div></li>
+<li><p><strong>Linux / macOS:</strong></p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode sh"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradlew</span> :spring-oxm:compileTestJava</span></code></pre></div></li>
 </ul>
 <p><strong>原因揭秘</strong>：<code>spring-oxm</code> 和
 <code>spring-core</code>
@@ -543,19 +555,19 @@ id="第二部分搭建你的私人调试实验室"><strong>第二部分：搭建
 <code>src/main/java</code> 目录结构。</p></li>
 <li><p>在 <code>spring-my-playground</code> 文件夹下创建一个
 <code>build.gradle</code> 文件，内容如下：</p>
-<div class="sourceCode" id="cb4"><pre
-class="sourceCode groovy"><code class="sourceCode groovy"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>plugins <span class="op">{</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    id <span class="st">&#39;java&#39;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>dependencies <span class="op">{</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 依赖 spring-context，它会自动引入 beans, core 等核心模块</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    implementation <span class="fu">project</span><span class="op">(</span><span class="st">&#39;:spring-context&#39;</span><span class="op">)</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode groovy"><code class="sourceCode groovy"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>plugins <span class="op">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    id <span class="st">&#39;java&#39;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>dependencies <span class="op">{</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 依赖 spring-context，它会自动引入 beans, core 等核心模块</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    implementation <span class="fu">project</span><span class="op">(</span><span class="st">&#39;:spring-context&#39;</span><span class="op">)</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></li>
 <li><p>打开根目录的 <strong><code>settings.gradle</code></strong>
 文件，在<strong>最末尾</strong>加上你的模块：</p>
-<div class="sourceCode" id="cb5"><pre
-class="sourceCode groovy"><code class="sourceCode groovy"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">include</span><span class="op">(</span><span class="st">&quot;spring-my-playground&quot;</span><span class="op">)</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode groovy"><code class="sourceCode groovy"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">include</span><span class="op">(</span><span class="st">&quot;spring-my-playground&quot;</span><span class="op">)</span></span></code></pre></div></li>
 <li><p>回到 IDEA，打开 Gradle 工具窗口，点击 <strong>“Reload All Gradle
 Projects”</strong>。</p></li>
 </ol>
@@ -585,30 +597,30 @@ Projects”</strong>。</p></li>
 <code>src/main/java</code> 下创建你的测试类，例如
 <code>com.mytests.Main</code>。</p></li>
 <li><p>贴入以下代码：</p>
-<div class="sourceCode" id="cb6"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span><span class="im"> com</span><span class="op">.</span><span class="im">mytests</span><span class="op">;</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">context</span><span class="op">.</span><span class="im">annotation</span><span class="op">.</span><span class="im">AnnotationConfigApplicationContext</span><span class="op">;</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">context</span><span class="op">.</span><span class="im">annotation</span><span class="op">.</span><span class="im">Bean</span><span class="op">;</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">context</span><span class="op">.</span><span class="im">annotation</span><span class="op">.</span><span class="im">Configuration</span><span class="op">;</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="at">@Configuration</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Main <span class="op">{</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Bean</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="bu">String</span> <span class="fu">myCustomBean</span><span class="op">()</span> <span class="op">{</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">&quot;Hello from a correctly imported project!&quot;</span><span class="op">;</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 在下一行设置断点，开始你的源码探索之旅！</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>        AnnotationConfigApplicationContext context <span class="op">=</span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>                <span class="kw">new</span> <span class="fu">AnnotationConfigApplicationContext</span><span class="op">(</span>Main<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;容器已成功启动！&quot;</span><span class="op">);</span></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        context<span class="op">.</span><span class="fu">close</span><span class="op">();</span></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span><span class="im"> com</span><span class="op">.</span><span class="im">mytests</span><span class="op">;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">context</span><span class="op">.</span><span class="im">annotation</span><span class="op">.</span><span class="im">AnnotationConfigApplicationContext</span><span class="op">;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">context</span><span class="op">.</span><span class="im">annotation</span><span class="op">.</span><span class="im">Bean</span><span class="op">;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">context</span><span class="op">.</span><span class="im">annotation</span><span class="op">.</span><span class="im">Configuration</span><span class="op">;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="at">@Configuration</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Main <span class="op">{</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Bean</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="bu">String</span> <span class="fu">myCustomBean</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">&quot;Hello from a correctly imported project!&quot;</span><span class="op">;</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 在下一行设置断点，开始你的源码探索之旅！</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        AnnotationConfigApplicationContext context <span class="op">=</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>                <span class="kw">new</span> <span class="fu">AnnotationConfigApplicationContext</span><span class="op">(</span>Main<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;容器已成功启动！&quot;</span><span class="op">);</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>        context<span class="op">.</span><span class="fu">close</span><span class="op">();</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></li>
 <li><p>在 <code>new AnnotationConfigApplicationContext(...)</code>
 这一行设置断点，点击旁边的<strong>甲虫图标 “Debug”</strong>，你就可以按
 <code>F7</code> (Step Into) 自由地进入 Spring 源码的深处了！</p></li>
