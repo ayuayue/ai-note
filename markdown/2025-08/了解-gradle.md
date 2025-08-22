@@ -2,6 +2,42 @@
 
 ### **Gradle vs. Maven: 终极对决，为什么 Spring 也选择了它？**
 
+#### **Gradle vs Maven 核心差异对比图**
+
+```mermaid
+graph LR
+    A[Maven] -- "XML配置" --> B[冗长复杂]
+    A -- "固定生命周期" --> C[不够灵活]
+    A -- "依赖管理" --> D[scope机制]
+    
+    E[Gradle] -- "DSL脚本" --> F[简洁易读]
+    E -- "任务驱动" --> G[高度灵活]
+    E -- "依赖管理" --> H[implementation/api]
+    
+    subgraph 核心理念
+        A
+        E
+    end
+    
+    subgraph 配置方式
+        B
+        F
+    end
+    
+    subgraph 构建模型
+        C
+        G
+    end
+    
+    subgraph 依赖管理
+        D
+        H
+    end
+    
+    style A fill:#e3f2fd
+    style E fill:#e8f5e8
+```
+
 在 Java 的世界里，构建工具是项目的基石。多年来，Apache Maven 以其强大的依赖管理和标准化的生命周期，稳坐头把交椅。然而，一个更年轻、更灵活、更高效的挑战者——Gradle——正以前所未有的势头崛起，甚至赢得了像 Spring、Android 这样的顶级项目的青睐。
 
 这篇文章将带你深入了解 Gradle，将它与 Maven 进行全方位的“终极对决”，并告诉你为什么 Spring 会做出迁移的决定。最后，我们会通过实战，看看如何用这两种工具创建一个全新的 Spring Boot 项目。

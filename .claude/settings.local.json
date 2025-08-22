@@ -20,7 +20,8 @@
       "Bash(rm:*)",
       "Bash(npm run convert-md:*)",
       "Bash(curl:*)",
-      "Bash(powershell -Command:*)"
+      "Bash(powershell -Command:*)",
+      "Bash(dir:*)"
     ],
     "defaultMode": "acceptEdits"
   }

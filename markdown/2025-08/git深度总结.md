@@ -2,6 +2,20 @@
 
 ---
 
+#### **Git 三大核心区域概念图**
+
+```mermaid
+graph TD
+    A[工作区<br/>Working Directory] -- "git add" --> B[暂存区<br/>Staging Area]
+    B -- "git commit" --> C[本地仓库<br/>Local Repository]
+    C -- "git push" --> D[远程仓库<br/>Remote Repository]
+    
+    style A fill:#e1f5fe
+    style B fill:#f3e5f5
+    style C fill:#e8f5e8
+    style D fill:#fff3e0
+```
+
 ## 目录
 1. [什么是 Git？为什么它如此重要？](#一什么是-git为什么它如此重要)
 2. [核心概念：理解 Git 的三大区域](#二核心概念理解-git-的三大区域)
