@@ -249,6 +249,41 @@
             margin: 25px 0;
             font-size: 0.9em;
             line-height: 1.5;
+            position: relative;
+            overflow: visible;
+        }
+        
+        /* Copy button styles */
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #444;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 0.8em;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: all 0.2s ease;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        /* 为 Pandoc 生成的代码块容器添加定位上下文 */
+        .sourceCode {
+            position: relative;
+        }
+        
+        .copy-button:hover {
+            background-color: #555;
+            opacity: 1;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .copy-button.copied {
+            background-color: #27ae60;
         }
 
         .post-content pre code {
@@ -417,6 +452,98 @@
             // 重新启动 Mermaid 渲染
             mermaid.init(undefined, document.querySelectorAll('.mermaid'));
         });
+        
+        // 为代码块添加复制按钮
+        function addCopyButtons() {
+            // 处理 Pandoc 生成的代码块结构 (<div class="sourceCode"><pre><code>)
+            const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
+            sourceCodeBlocks.forEach(function(block) {
+                // 检查是否已经有复制按钮
+                if (block.querySelector('.copy-button')) return;
+                
+                // 获取 pre 元素
+                const preElement = block.querySelector('pre');
+                if (!preElement) return;
+                
+                // 创建复制按钮
+                const button = document.createElement('button');
+                button.className = 'copy-button';
+                button.textContent = '复制';
+                button.setAttribute('aria-label', '复制代码');
+                
+                // 添加点击事件
+                button.addEventListener('click', function() {
+                    // 获取代码文本
+                    const code = preElement.querySelector('code');
+                    const text = code ? code.innerText : preElement.innerText;
+                    
+                    // 复制到剪贴板
+                    navigator.clipboard.writeText(text).then(function() {
+                        // 更新按钮状态
+                        button.textContent = '已复制';
+                        button.classList.add('copied');
+                        
+                        // 3秒后恢复原始状态
+                        setTimeout(function() {
+                            button.textContent = '复制';
+                            button.classList.remove('copied');
+                        }, 3000);
+                    }).catch(function(err) {
+                        console.error('复制失败: ', err);
+                        button.textContent = '失败';
+                        setTimeout(function() {
+                            button.textContent = '复制';
+                        }, 3000);
+                    });
+                });
+                
+                // 将按钮添加到 sourceCode div 中
+                block.appendChild(button);
+            });
+            
+            // 处理普通的 pre 代码块 (非 Pandoc 生成的)
+            // 先获取所有非 mermaid 的 pre 元素
+            const allPreBlocks = document.querySelectorAll('pre:not(.mermaid)');
+            allPreBlocks.forEach(function(block) {
+                // 检查是否已经在 sourceCode div 中（Pandoc 生成的）或者已经有复制按钮
+                if (block.closest('.sourceCode') || block.querySelector('.copy-button')) return;
+                
+                // 创建复制按钮
+                const button = document.createElement('button');
+                button.className = 'copy-button';
+                button.textContent = '复制';
+                button.setAttribute('aria-label', '复制代码');
+                
+                // 添加点击事件
+                button.addEventListener('click', function() {
+                    // 获取代码文本
+                    const code = block.querySelector('code');
+                    const text = code ? code.innerText : block.innerText;
+                    
+                    // 复制到剪贴板
+                    navigator.clipboard.writeText(text).then(function() {
+                        // 更新按钮状态
+                        button.textContent = '已复制';
+                        button.classList.add('copied');
+                        
+                        // 3秒后恢复原始状态
+                        setTimeout(function() {
+                            button.textContent = '复制';
+                            button.classList.remove('copied');
+                        }, 3000);
+                    }).catch(function(err) {
+                        console.error('复制失败: ', err);
+                        button.textContent = '失败';
+                        setTimeout(function() {
+                            button.textContent = '复制';
+                        }, 3000);
+                    });
+                });
+                
+                // 将按钮添加到代码块
+                block.appendChild(button);
+            });
+        }
     </script>
 </head>
 <body>
@@ -878,6 +1005,38 @@ Actions，站点会自动构建并部署到 GitHub Pages。</li>
             
             // Adjust height on window resize
             window.addEventListener('resize', adjustTOCHeight);
+        });
+        
+        // 页面加载完成后添加复制按钮
+        window.addEventListener('load', function() {
+            addCopyButtons();
+        });
+        
+        // 监听可能的动态内容加载
+        const observer = new MutationObserver(function(mutations) {
+            let shouldAddButtons = false;
+            mutations.forEach(function(mutation) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) {
+                        // 检查添加的节点是否是代码块或包含代码块
+                        if ((node.classList && node.classList.contains('sourceCode')) || 
+                            (node.tagName === 'PRE' && !node.classList.contains('mermaid')) ||
+                            node.querySelector('.sourceCode, pre:not(.mermaid)')) {
+                            shouldAddButtons = true;
+                        }
+                    }
+                });
+            });
+            if (shouldAddButtons) {
+                // 延迟执行以确保DOM完全更新
+                setTimeout(addCopyButtons, 100);
+            }
+        });
+        
+        // 开始监听DOM变化
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
         });
         
         console.log("页面加载完成，AI 技术笔记已就绪");
