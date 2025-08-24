@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.caoayu.top/index.html</loc>
-    <lastmod>2025-08-24T07:05:52.056Z</lastmod>
+    <lastmod>2025-08-24T08:49:32.401Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
@@ -87,6 +87,12 @@
   <url>
     <loc>https://www.caoayu.top/docs/2025-08/深度解析-spring-中的-filter-与-interceptor.html</loc>
     <lastmod>2025-08-19T14:47:14.232Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.caoayu.top/docs/2025-08/深度解析-windows-平台-python-版本管理.html</loc>
+    <lastmod>2025-08-24T08:23:22.494Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

@@ -72,7 +72,7 @@ function formatDate(date) {
 }
 
 // Function to generate a document card HTML snippet for feed style
-function generateDocCard(doc) {
+function generateDocCard(doc, currentPage) {
     const formattedDate = formatDate(doc.date);
     
     // Different handling for markdown and html files
@@ -80,7 +80,7 @@ function generateDocCard(doc) {
         const htmlFilename = doc.filename.replace('.md', '.html');
         return `            <div class="feed-item">
                 <div class="feed-item-header">
-                    <h2 class="feed-item-title"><a href="docs/${doc.monthDir}/${htmlFilename}">${doc.title}</a></h2>
+                    <h2 class="feed-item-title"><a href="/docs/${doc.monthDir}/${htmlFilename}">${doc.title}</a></h2>
                     <div class="feed-item-meta">
                         <span class="feed-item-date">${formattedDate}</span>
                         <span class="feed-item-category">Markdown 文档</span>
@@ -95,9 +95,11 @@ function generateDocCard(doc) {
             </div>`;
     } else {
         // HTML files
+        // Adjust path based on current page location
+        const htmlPath = currentPage === 1 ? `/html/${doc.filename}` : `/html/${doc.filename}`;
         return `            <div class="feed-item">
                 <div class="feed-item-header">
-                    <h2 class="feed-item-title"><a href="html/${doc.filename}">${doc.title}</a></h2>
+                    <h2 class="feed-item-title"><a href="${htmlPath}">${doc.title}</a></h2>
                     <div class="feed-item-meta">
                         <span class="feed-item-date">${formattedDate}</span>
                         <span class="feed-item-category">HTML 文档</span>
@@ -107,7 +109,7 @@ function generateDocCard(doc) {
                     <p>此文章为HTML格式内容，无特殊布局设计，阅读后请使用浏览器的返回功能回到首页。</p>
                 </div>
                 <div class="feed-item-footer">
-                    <a href="html/${doc.filename}" class="read-more">阅读更多 →</a>
+                    <a href="${htmlPath}" class="read-more">阅读更多 →</a>
                 </div>
             </div>`;
     }
@@ -208,7 +210,7 @@ function main() {
         
         // Generate feed items for this page
         const feedItems = pageDocuments.map(doc => 
-            generateDocCard(doc)
+            generateDocCard(doc, page)
         );
         
         // Generate pagination HTML for this specific page
@@ -226,7 +228,16 @@ function main() {
                 if (i === page) {
                     paginationHtml += `            <a href="#" class="current">${i}</a>\n`;
                 } else {
-                    const pageLink = i === 1 ? (page === 2 ? '../index.html' : 'index.html') : `pages/index${i}.html`;
+                    let pageLink;
+                    if (i === 1) {
+                        // First page is always index.html in root directory
+                        pageLink = page === 2 ? '../index.html' : 'index.html';
+                    } else {
+                        // Other pages are in pages directory
+                        // If we're on the first page, links to other pages need to go to pages/ directory
+                        // If we're on other pages, links to other pages are relative to current directory
+                        pageLink = page === 1 ? `pages/index${i}.html` : `index${i}.html`;
+                    }
                     paginationHtml += `            <a href="${pageLink}">${i}</a>\n`;
                 }
             }

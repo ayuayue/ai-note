@@ -24,7 +24,8 @@
       "Bash(dir:*)",
       "Bash(sed:*)",
       "Bash(npm run generate-index:*)",
-      "Bash(npm run generate-sitemap:*)"
+      "Bash(npm run generate-sitemap:*)",
+      "Bash(npm run dev:*)"
     ],
     "defaultMode": "acceptEdits"
   }
