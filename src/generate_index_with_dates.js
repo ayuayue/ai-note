@@ -253,8 +253,39 @@ function main() {
             paginationHtml = '<div class="pagination">\n            <a href="../index.html" class="current">1</a>\n        </div>';
         }
         
+        // Add SEO meta tags for index pages
+        const seoMetaTags = `
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="AI 个人笔记 - 记录 AI 协助解决的各种技术问题和学习笔记">
+    <meta name="keywords" content="AI, 技术笔记, 学习笔记, 编程, 开发">
+    <meta name="author" content="AI 个人笔记">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="AI 个人笔记">
+    <meta property="og:description" content="AI 个人笔记 - 记录 AI 协助解决的各种技术问题和学习笔记">
+    <meta property="og:image" content="https://your-domain.com/images/og-image.png">
+    <meta property="og:url" content="https://your-domain.com/index.html">
+    <meta property="og:site_name" content="AI 个人笔记">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="AI 个人笔记">
+    <meta property="twitter:description" content="AI 个人笔记 - 记录 AI 协助解决的各种技术问题和学习笔记">
+    <meta property="twitter:image" content="https://your-domain.com/images/og-image.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://your-domain.com/index.html">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">`;
+        
         // Replace placeholder with feed items
         let updatedContent = template.replace("{{DOC_CARDS}}", feedItems.join('\n'));
+        
+        // Add SEO meta tags
+        updatedContent = updatedContent.replace('</title>', '</title>' + seoMetaTags);
         
         // Replace pagination placeholder
         const paginationPlaceholder = '<div class="pagination">\n            <a href="#" class="current">1</a>\n            <a href="#">2</a>\n            <a href="#">3</a>\n            <a href="#">下一页 →</a>\n        </div>';

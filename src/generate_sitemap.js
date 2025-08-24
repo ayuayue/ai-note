@@ -128,6 +128,14 @@ function main() {
     sitemapXml += '    <priority>1.0</priority>\n';
     sitemapXml += '  </url>\n';
     
+    // Add pagination pages (assuming 2 pages for now, in a real implementation you would calculate this)
+    sitemapXml += '  <url>\n';
+    sitemapXml += `    <loc>${baseUrl}/pages/index2.html</loc>\n`;
+    sitemapXml += `    <lastmod>${formatSitemapDate(new Date())}</lastmod>\n`;
+    sitemapXml += '    <changefreq>daily</changefreq>\n';
+    sitemapXml += '    <priority>0.9</priority>\n';
+    sitemapXml += '  </url>\n';
+    
     // Add all documents
     allDocuments.forEach(doc => {
         sitemapXml += '  <url>\n';
