@@ -4,7 +4,7 @@ const chokidar = require('chokidar');
 const { execSync } = require('child_process');
 
 // Import the conversion function from the existing script
-const { markdownToHtmlWithPandoc } = require('./convert_md_to_html_pandoc.js');
+const { markdownToHtmlWithPandoc, shouldConvertFile } = require('./convert_md_to_html_pandoc.js');
 
 console.log('Starting Markdown file watcher...');
 
@@ -28,6 +28,16 @@ function convertSingleFile(filePath) {
             return;
         }
         
+        // Create HTML filename
+        const htmlFilename = path.basename(filename, '.md') + '.html';
+        const htmlPath = path.join('docs', monthDir, htmlFilename);
+        
+        // Check if we need to convert this file (incremental build)
+        if (!shouldConvertFile(filePath, htmlPath)) {
+            console.log(`File ${monthDir}/${filename} is up to date, skipping conversion.`);
+            return;
+        }
+        
         // Create corresponding docs directory
         const docsMonthPath = path.join('docs', monthDir);
         if (!fs.existsSync(docsMonthPath)) {
@@ -47,10 +57,6 @@ function convertSingleFile(filePath) {
         
         // Convert to HTML using the existing function
         const htmlContent = markdownToHtmlWithPandoc(filePath, title, date, monthDir, filename);
-        
-        // Create HTML filename
-        const htmlFilename = path.basename(filename, '.md') + '.html';
-        const htmlPath = path.join(docsMonthPath, htmlFilename);
         
         // Write the HTML file
         fs.writeFileSync(htmlPath, htmlContent, 'utf8');

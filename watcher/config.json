@@ -1,0 +1,12 @@
+{
+  "tasks": [
+    {
+      "watch": "./markdown",             
+      "command": "npm run convert-md-pandoc"    
+    },
+    {
+      "watch": "./docs",
+      "command": "echo 文件有变化"
+    }
+  ]
+}

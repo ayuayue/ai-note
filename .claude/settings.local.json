@@ -25,7 +25,12 @@
       "Bash(sed:*)",
       "Bash(npm run generate-index:*)",
       "Bash(npm run generate-sitemap:*)",
-      "Bash(npm run dev:*)"
+      "Bash(npm run dev:*)",
+      "WebSearch",
+      "Bash(npm info chokidar version:*)",
+      "Bash(npm info nodemon version:*)",
+      "Bash(pandoc:*)",
+      "Bash(npx http-server:*)"
     ],
     "defaultMode": "acceptEdits"
   }

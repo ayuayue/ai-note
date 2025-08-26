@@ -14,9 +14,10 @@
     "new-md": "node src/new_markdown.js",
     "new-html": "node src/new_html.js",
     "build": "npm run convert-md-pandoc && npm run generate-index && npm run generate-sitemap && npm run generate-overview",
-    "dev": "npm run build && http-server -p 3003",
+    "dev": "concurrently \"npm run watch\" \"http-server -p 3003\"",
     "watch-chokidar": "node src/watch-md-chokidar.js",
-    "watch-nodemon": "nodemon --watch markdown --ext md --exec \"npm run convert-single-md\""
+    "watch-nodemon": "nodemon --watch markdown --ext md --exec \"npm run convert-single-md\"",
+    "watch": "node watcher/watcher.js"
   },
   "keywords": [
     "markdown",
@@ -32,6 +33,7 @@
   },
   "devDependencies": {
     "chokidar": "^4.0.3",
+    "concurrently": "^9.2.1",
     "http-server": "^14.1.1",
     "nodemon": "^3.1.10"
   }

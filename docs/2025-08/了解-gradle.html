@@ -607,7 +607,7 @@ graph LR
                 <header class="post-header">
                     <h1 class="post-title">了解-gradle</h1>
                     <div class="post-meta">
-                        <div class="post-date">2025/8/24</div>
+                        <div class="post-date">2025/8/22</div>
                         <div class="post-category">2025-08</div>
                     </div>
                 </header>
@@ -679,7 +679,7 @@ vs. Maven</strong></h4>
 <col style="width: 25%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th style="text-align: left;">特性</th>
 <th style="text-align: left;">Maven</th>
 <th style="text-align: left;">Gradle</th>
@@ -687,7 +687,7 @@ vs. Maven</strong></h4>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>配置文件</strong></td>
 <td style="text-align: left;"><code>pom.xml</code></td>
 <td style="text-align: left;"><code>build.gradle</code> (Groovy) 或
@@ -696,7 +696,7 @@ vs. Maven</strong></h4>
 Gradle 的 DSL 脚本非常简洁、易读。一个 50 行的 <code>build.gradle</code>
 文件可能需要 200 行 <code>pom.xml</code> 来实现相同的功能。</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>配置语言</strong></td>
 <td
 style="text-align: left;"><strong>XML</strong>：声明式，结构清晰，但非常啰嗦，缺乏逻辑处理能力。</td>
@@ -706,7 +706,7 @@ DSL</strong>：命令式，像写代码一样配置构建。支持条件、循�
 style="text-align: left;"><strong>Gradle</strong>。编程语言的灵活性完胜静态的
 XML，尤其是在处理复杂逻辑时。</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>依赖管理</strong></td>
 <td style="text-align: left;"><code>&lt;dependencies&gt;</code> 块，通过
 <code>&lt;scope&gt;</code> (compile, test, provided) 管理。</td>
@@ -718,7 +718,7 @@ style="text-align: left;"><strong>Gradle</strong>。<code>implementation</code>
 能够隐藏传递性依赖，避免依赖泄漏，加快编译速度，这是 Maven
 无法做到的。</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>构建生命周期</strong></td>
 <td
 style="text-align: left;"><strong>固定生命周期</strong>：<code>validate</code>
@@ -730,7 +730,7 @@ style="text-align: left;"><strong>任务驱动</strong>：一切皆为任务（T
 <td
 style="text-align: left;"><strong>Gradle</strong>。任务驱动的模型更加灵活和直观，你可以轻松创建、扩展或替换任何任务，而不受固定生命周期的束缚。</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>性能</strong></td>
 <td
 style="text-align: left;">较慢。每次构建都会执行完整的生命周期阶段。</td>
@@ -742,7 +742,7 @@ JVM）。</td>
 style="text-align: left;"><strong>Gradle</strong>。在大型多模块项目中，Gradle
 的性能优势是压倒性的，构建速度可能是 Maven 的数倍甚至数十倍。</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>灵活性与定制</strong></td>
 <td style="text-align: left;">较低。复杂的构建逻辑需要编写自定义的 Maven
 插件（用 Java），门槛高。</td>
@@ -753,7 +753,7 @@ style="text-align: left;"><strong>Gradle</strong>。在大型多模块项目中�
 style="text-align: left;"><strong>Gradle</strong>。无与伦比的灵活性是
 Gradle 最大的王牌。</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>社区与生态</strong></td>
 <td
 style="text-align: left;">极其成熟。拥有海量的插件、文档和社区支持，几乎所有问题都能找到答案。</td>

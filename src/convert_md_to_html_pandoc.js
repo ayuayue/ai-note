@@ -2,6 +2,36 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
+// Simple concurrency limiter
+class ConcurrencyLimiter {
+    constructor(limit) {
+        this.limit = limit;
+        this.running = 0;
+        this.queue = [];
+    }
+
+    async run(task) {
+        return new Promise((resolve, reject) => {
+            this.queue.push({ task, resolve, reject });
+            this.tryNext();
+        });
+    }
+
+    tryNext() {
+        if (this.running >= this.limit || this.queue.length === 0) {
+            return;
+        }
+
+        const { task, resolve, reject } = this.queue.shift();
+        this.running++;
+
+        task().then(resolve, reject).finally(() => {
+            this.running--;
+            this.tryNext();
+        });
+    }
+}
+
 // Function to convert Markdown to HTML with feed-style layout using Pandoc
 function markdownToHtmlWithPandoc(markdownFilePath, title, date, monthDir, filename) {
     try {
@@ -51,8 +81,23 @@ function markdownToHtmlWithPandoc(markdownFilePath, title, date, monthDir, filen
     }
 }
 
+// Function to check if file needs to be converted (incremental build)
+function shouldConvertFile(markdownPath, htmlPath) {
+    // If HTML file doesn't exist, we need to convert
+    if (!fs.existsSync(htmlPath)) {
+        return true;
+    }
+    
+    // Compare modification times
+    const markdownStats = fs.statSync(markdownPath);
+    const htmlStats = fs.statSync(htmlPath);
+    
+    // Convert if markdown file is newer than HTML file
+    return markdownStats.mtime > htmlStats.mtime;
+}
+
 // Main function
-function main() {
+async function main() {
     const markdownDir = "markdown";
     const docsDir = "docs";
     
@@ -76,7 +121,12 @@ function main() {
         return;
     }
     
+    // Create a concurrency limiter with 4 concurrent processes
+    const limiter = new ConcurrencyLimiter(4);
+    
     let totalFiles = 0;
+    let skippedFiles = 0;
+    const conversionPromises = [];
     
     // Process each month directory
     monthDirs.forEach(monthDir => {
@@ -97,42 +147,64 @@ function main() {
             return;
         }
         
-        // Convert each Markdown file to HTML
+        // Add each file conversion to the promise array
         markdownFiles.forEach(filename => {
-            try {
-                const filePath = path.join(monthPath, filename);
-                
-                // Extract title from first line (assuming it's a # heading)
-                const markdownContent = fs.readFileSync(filePath, 'utf8');
-                const titleLine = markdownContent.split('\n')[0];
-                const title = titleLine.startsWith('# ') ? titleLine.substring(2) : path.basename(filename, '.md');
-                
-                // Get file date
-                const fileStats = fs.statSync(filePath);
-                const date = fileStats.mtime.toLocaleDateString('zh-CN');
-                
-                const htmlContent = markdownToHtmlWithPandoc(filePath, title, date, monthDir, filename);
-                
-                // Create HTML filename
-                const htmlFilename = path.basename(filename, '.md') + '.html';
-                const htmlPath = path.join(docsMonthPath, htmlFilename);
-                
-                fs.writeFileSync(htmlPath, htmlContent, 'utf8');
-                console.log(`Converted ${monthDir}/${filename} to ${monthDir}/${htmlFilename}`);
-                totalFiles++;
-            } catch (error) {
-                console.error(`Error converting ${monthDir}/${filename}: ${error.message}`);
-            }
+            const conversionPromise = limiter.run(() => {
+                return new Promise((resolve, reject) => {
+                    try {
+                        const filePath = path.join(monthPath, filename);
+                        
+                        // Create HTML filename
+                        const htmlFilename = path.basename(filename, '.md') + '.html';
+                        const htmlPath = path.join(docsMonthPath, htmlFilename);
+                        
+                        // Check if we need to convert this file (incremental build)
+                        if (!shouldConvertFile(filePath, htmlPath)) {
+                            skippedFiles++;
+                            resolve();
+                            return;
+                        }
+                        
+                        // Extract title from first line (assuming it's a # heading)
+                        const markdownContent = fs.readFileSync(filePath, 'utf8');
+                        const titleLine = markdownContent.split('\n')[0];
+                        const title = titleLine.startsWith('# ') ? titleLine.substring(2) : path.basename(filename, '.md');
+                        
+                        // Get file date
+                        const fileStats = fs.statSync(filePath);
+                        const date = fileStats.mtime.toLocaleDateString('zh-CN');
+                        
+                        const htmlContent = markdownToHtmlWithPandoc(filePath, title, date, monthDir, filename);
+                        
+                        fs.writeFileSync(htmlPath, htmlContent, 'utf8');
+                        console.log(`Converted ${monthDir}/${filename} to ${monthDir}/${htmlFilename}`);
+                        totalFiles++;
+                        resolve();
+                    } catch (error) {
+                        console.error(`Error converting ${monthDir}/${filename}: ${error.message}`);
+                        reject(error);
+                    }
+                });
+            });
+            
+            conversionPromises.push(conversionPromise);
         });
     });
     
-    console.log(`\nConversion complete! ${totalFiles} files converted.`);
+    // Wait for all conversions to complete
+    try {
+        await Promise.all(conversionPromises);
+        console.log(`\nConversion complete! ${totalFiles} files converted, ${skippedFiles} files skipped (up to date).`);
+    } catch (error) {
+        console.error(`Error during conversion process: ${error.message}`);
+    }
 }
 
 // Export the function for use in other scripts
 module.exports = {
     markdownToHtmlWithPandoc,
-    main
+    main,
+    shouldConvertFile
 };
 
 // Run the main function if this script is executed directly

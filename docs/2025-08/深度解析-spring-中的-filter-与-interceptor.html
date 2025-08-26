@@ -821,58 +821,58 @@ vs. Interceptor</h2>
 <col style="width: 33%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th style="text-align: left;">特性</th>
 <th style="text-align: left;">Filter (过滤器)</th>
 <th style="text-align: left;">Interceptor (拦截器)</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>来源</strong></td>
 <td style="text-align: left;">Servlet API (Java EE 标准)</td>
 <td style="text-align: left;">Spring MVC 框架</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>依赖关系</strong></td>
 <td style="text-align: left;">独立于 Spring，可用于任何 Servlet
 应用</td>
 <td style="text-align: left;">强依赖于 Spring MVC</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>执行时机</strong></td>
 <td style="text-align: left;">在 Servlet
 (<code>DispatcherServlet</code>) 之前和之后</td>
 <td style="text-align: left;">在 <code>DispatcherServlet</code>
 内部，Controller 方法之前、之后、完成时</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>控制粒度</strong></td>
 <td style="text-align: left;">粗粒度。基于 URL 模式进行拦截</td>
 <td style="text-align: left;">细粒度。可以获取到具体的
 HandlerMethod，进行更精细的控制</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>访问能力</strong></td>
 <td style="text-align: left;">可访问原始的
 <code>HttpServletRequest</code> 和 <code>HttpServletResponse</code></td>
 <td style="text-align: left;">可访问 <code>HandlerMethod</code>,
 <code>ModelAndView</code> 等 Spring MVC 核心对象</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>核心功能</strong></td>
 <td style="text-align: left;">修改
 Request/Response、字符编码、数据压缩、跨域(CORS)</td>
 <td style="text-align: left;">权限校验、日志记录、性能监控、向
 <code>Model</code> 添加通用数据</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>依赖注入</strong></td>
 <td style="text-align: left;">默认不支持，但在 Spring Boot 中可通过
 <code>@Component</code> 实现</td>
 <td style="text-align: left;">天然支持，本身就是 Spring Bean</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>异常处理</strong></td>
 <td style="text-align: left;">无法直接捕获 Controller 层的异常</td>
 <td style="text-align: left;"><code>afterCompletion</code>

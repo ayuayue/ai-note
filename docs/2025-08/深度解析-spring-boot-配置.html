@@ -682,73 +682,73 @@ Spring Cloud 来集成，实现配置的动态管理。</li>
 <col style="width: 33%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th style="text-align: left;">优先级</th>
 <th style="text-align: left;">配置源</th>
 <th style="text-align: left;">示例 / 说明</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>最低</strong></td>
 <td style="text-align: left;">1. 默认属性</td>
 <td style="text-align: left;">通过
 <code>SpringApplication.setDefaultProperties</code> 在代码中设置。</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;">↑</td>
 <td style="text-align: left;">2. <code>@PropertySource</code> 注解</td>
 <td style="text-align: left;">在 <code>@Configuration</code>
 类上通过此注解加载的配置文件。</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;">↑</td>
 <td style="text-align: left;">3.
 <strong>配置文件（<code>application.yml</code> 等）</strong></td>
 <td style="text-align: left;">打包在 jar 包内部的
 <code>application.properties/yml</code>。<strong>这是基础配置层</strong>。</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;">↑</td>
 <td style="text-align: left;">4. <strong>Profile
 特定配置文件</strong></td>
 <td style="text-align: left;">打包在 jar 包内部的
 <code>application-{profile}.yml</code>。<strong>会覆盖第3级的同名属性</strong>。</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;">↑</td>
 <td style="text-align: left;">5. <strong>外部配置文件</strong></td>
 <td style="text-align: left;">Jar 包同级目录下的
 <code>application.yml</code>。</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;">↑</td>
 <td style="text-align: left;">6. <strong>外部 Profile
 特定配置文件</strong></td>
 <td style="text-align: left;">Jar 包同级目录下的
 <code>application-{profile}.yml</code>。</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;">↑</td>
 <td style="text-align: left;">7. <strong>Java 系统属性</strong></td>
 <td
 style="text-align: left;"><code>java -Dserver.port=9090</code>。</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;">↑</td>
 <td style="text-align: left;">8. <strong>操作系统环境变量</strong></td>
 <td
 style="text-align: left;"><code>export SERVER_PORT=9091</code>。注意命名转换规则：<code>SERVER.PORT</code>
 或 <code>SERVER_PORT</code> 都会被转换为 <code>server.port</code>。</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;">↑</td>
 <td style="text-align: left;">9. <strong>Spring Cloud 配置中心
 (Nacos)</strong></td>
 <td style="text-align: left;">通过 <code>bootstrap.yml</code>
 加载的外部配置。<strong>优先级非常高，高于所有本地文件</strong>。</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>最高</strong></td>
 <td style="text-align: left;">10. <strong>命令行参数</strong></td>
 <td
@@ -768,12 +768,15 @@ style="text-align: left;"><code>java -jar app.jar --server.port=9092</code>。<s
 <h4 id="激活-profile">4.1 激活 Profile</h4>
 <p>有多种方式可以激活一个或多个 Profile，优先级从低到高：</p>
 <ol type="1">
-<li>在 <code>application.yml</code> 中配置：
-<code>yaml     spring:       profiles:         active: dev</code></li>
-<li>Java
-系统属性：<code>java -jar myapp.jar -Dspring.profiles.active=dev</code></li>
-<li>操作系统环境变量：<code>export SPRING_PROFILES_ACTIVE=dev</code></li>
-<li><strong>命令行参数（最高）</strong>：<code>java -jar myapp.jar --spring.profiles.active=dev</code></li>
+<li><p>在 <code>application.yml</code> 中配置：</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">spring</span><span class="kw">:</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">profiles</span><span class="kw">:</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">active</span><span class="kw">:</span><span class="at"> dev</span></span></code></pre></div></li>
+<li><p>Java
+系统属性：<code>java -jar myapp.jar -Dspring.profiles.active=dev</code></p></li>
+<li><p>操作系统环境变量：<code>export SPRING_PROFILES_ACTIVE=dev</code></p></li>
+<li><p><strong>命令行参数（最高）</strong>：<code>java -jar myapp.jar --spring.profiles.active=dev</code></p></li>
 </ol>
 <h4 id="加载规则">4.2 加载规则</h4>
 <p>当 <code>dev</code> profile被激活时，Spring Boot 的加载顺序是： 1.
@@ -782,16 +785,16 @@ style="text-align: left;"><code>java -jar app.jar --server.port=9092</code>。<s
 <strong><code>application-dev.yml</code> 中的配置会覆盖
 <code>application.yml</code> 中定义的同名配置</strong>。</p>
 <p><strong>示例</strong>： <code>application.yml</code>:</p>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">server</span><span class="kw">:</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">port</span><span class="kw">:</span><span class="at"> </span><span class="dv">8080</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">logging</span><span class="kw">:</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">level</span><span class="kw">:</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">root</span><span class="kw">:</span><span class="at"> info</span></span></code></pre></div>
-<p><code>application-dev.yml</code>:</p>
 <div class="sourceCode" id="cb2"><pre
 class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">server</span><span class="kw">:</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">port</span><span class="kw">:</span><span class="at"> </span><span class="dv">8888</span><span class="co"> # 覆盖通用配置中的端口</span></span></code></pre></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">port</span><span class="kw">:</span><span class="at"> </span><span class="dv">8080</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">logging</span><span class="kw">:</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">level</span><span class="kw">:</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">root</span><span class="kw">:</span><span class="at"> info</span></span></code></pre></div>
+<p><code>application-dev.yml</code>:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">server</span><span class="kw">:</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">port</span><span class="kw">:</span><span class="at"> </span><span class="dv">8888</span><span class="co"> # 覆盖通用配置中的端口</span></span></code></pre></div>
 <p>当激活 <code>dev</code> profile 时，应用的最终端口将是
 <strong>8888</strong>，日志级别是 <strong>info</strong>（因为
 <code>dev</code> 文件中没有定义，所以沿用通用配置）。</p>
@@ -849,21 +852,21 @@ YAML 文件都配置了 <code>port</code></h4>
 <p><strong>场景</strong>： * 应用名: <code>user-service</code> *
 Profile: <code>dev</code></p>
 <p><strong><code>bootstrap.yml</code> 配置</strong>：</p>
-<div class="sourceCode" id="cb3"><pre
-class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">spring</span><span class="kw">:</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">cloud</span><span class="kw">:</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">nacos</span><span class="kw">:</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">config</span><span class="kw">:</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">server-addr</span><span class="kw">:</span><span class="at"> 127.0.0.1:8848</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">file-extension</span><span class="kw">:</span><span class="at"> yaml</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">        # 共享配置</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">shared-configs</span><span class="kw">:</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">data-id</span><span class="kw">:</span><span class="at"> common.yaml</span><span class="co"> # 后配置，优先级高</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">group</span><span class="kw">:</span><span class="at"> SHARED_GROUP</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">refresh</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">data-id</span><span class="kw">:</span><span class="at"> database.yaml</span><span class="co"> # 先配置，优先级低</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">group</span><span class="kw">:</span><span class="at"> SHARED_GROUP</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">refresh</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">spring</span><span class="kw">:</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">cloud</span><span class="kw">:</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">nacos</span><span class="kw">:</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">config</span><span class="kw">:</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">server-addr</span><span class="kw">:</span><span class="at"> 127.0.0.1:8848</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">file-extension</span><span class="kw">:</span><span class="at"> yaml</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">        # 共享配置</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">shared-configs</span><span class="kw">:</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">data-id</span><span class="kw">:</span><span class="at"> common.yaml</span><span class="co"> # 后配置，优先级高</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">group</span><span class="kw">:</span><span class="at"> SHARED_GROUP</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">refresh</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">data-id</span><span class="kw">:</span><span class="at"> database.yaml</span><span class="co"> # 先配置，优先级低</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">group</span><span class="kw">:</span><span class="at"> SHARED_GROUP</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">refresh</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span></code></pre></div>
 <p><strong>Nacos 中的配置文件</strong>： 1. <strong>主应用配置</strong>
 (<code>user-service-dev.yaml</code>):
 <code>yaml     server:       port: 9001</code> 2.
