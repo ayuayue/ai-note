@@ -129,5 +129,13 @@ function main() {
     console.log(`\nConversion complete! ${totalFiles} files converted.`);
 }
 
-// Run the main function
-main();
+// Export the function for use in other scripts
+module.exports = {
+    markdownToHtmlWithPandoc,
+    main
+};
+
+// Run the main function if this script is executed directly
+if (require.main === module) {
+    main();
+}

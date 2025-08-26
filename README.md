@@ -73,7 +73,26 @@ npm run generate-all       # 生成所有页面（主页+概览页+sitemap）
 # 创建新文章
 npm run new-md "文章标题"   # 创建新的 Markdown 文章
 npm run new-html "文章标题" # 创建新的 HTML 文章
+
+# 自动监视文件变化并转换（增量构建）
+npm run watch-chokidar     # 使用 Chokidar 监视文件变化
+npm run watch-nodemon      # 使用 Nodemon 监视文件变化
 ```
+
+### 自动文件监视
+本项目支持自动监视 Markdown 文件的变化并实时转换为 HTML，无需手动执行构建命令：
+
+1. **Chokidar 方案**：`npm run watch-chokidar`
+   - 使用 Node.js 的 chokidar 库实现
+   - 支持文件添加、修改、删除事件
+   - 支持目录创建和删除事件
+   - 只转换发生变化的文件（增量构建）
+
+2. **Nodemon 方案**：`npm run watch-nodemon`
+   - 使用 nodemon 工具实现
+   - 监视 `.md` 文件的修改
+   - 文件修改时自动调用转换脚本
+   - 支持增量构建
 
 ## 🛠 技术实现
 

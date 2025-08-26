@@ -7,13 +7,16 @@
     "convert-html": "node src/convert_html_to_md.js",
     "convert-md": "node src/convert_md_to_html.js",
     "convert-md-pandoc": "node src/convert_md_to_html_pandoc.js",
+    "convert-single-md": "node src/convert-single-md.js",
     "generate-index": "node src/generate_index_with_dates.js",
     "generate-sitemap": "node src/generate_sitemap.js",
     "generate-overview": "node src/generate_overview.js",
     "new-md": "node src/new_markdown.js",
     "new-html": "node src/new_html.js",
     "build": "npm run convert-md-pandoc && npm run generate-index && npm run generate-sitemap && npm run generate-overview",
-    "dev": "npm run build && http-server -p 3003"
+    "dev": "npm run build && http-server -p 3003",
+    "watch-chokidar": "node src/watch-md-chokidar.js",
+    "watch-nodemon": "nodemon --watch markdown --ext md --exec \"npm run convert-single-md\""
   },
   "keywords": [
     "markdown",
@@ -28,6 +31,8 @@
     "marked": "^4.3.0"
   },
   "devDependencies": {
-    "http-server": "^14.1.1"
+    "chokidar": "^4.0.3",
+    "http-server": "^14.1.1",
+    "nodemon": "^3.1.10"
   }
 }
