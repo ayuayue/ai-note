@@ -2,7 +2,7 @@
   "tasks": [
     {
       "watch": "./markdown",             
-      "command": "npm run convert-md-pandoc"    
+      "command": "npm run convert-md-pandoc && npm run generate-index "    
     },
     {
       "watch": "./docs",
