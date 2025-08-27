@@ -3,44 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>从基石到殿堂：深度剖析 Spring AnnotationConfigApplicationContext 的继承体系</title>
+    <title>java-中的多继承与菱形问题</title>
     <!-- SEO Meta Tags -->
-    <meta name="description" content="从基石到殿堂：深度剖析
-Spring AnnotationConfigApplicationContext 的继承体系
-当我们写下：
-new AnnotationConfigApplicationContext(AppConfig.class);
-一个功能完备、灵活自如的 IoC 容器就此诞生。
-然而，这个看...">
-    <meta name="keywords" content="从基石到殿堂, 深度剖析, Spring, AnnotationConfigApplicationContext, 的继承体系">
+    <meta name="description" content="深度剖析：Java
+中的多继承与菱形问题
+
+摘要：
+在面向对象编程中，多继承常常带来二义性和复杂性，最典型的问题就是“菱形继承”。
+本文将从 C++ 的多继承问题谈起，深入剖析 Java
+为什么禁止类的多继承、接口如何优雅地支持多继承，并结合 Spring 框架中的
+ApplicationContext ...">
+    <meta name="keywords" content="java, 中的多继承与菱形问题">
     <meta name="author" content="AI 个人笔记">
     <meta name="robots" content="index, follow">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article">
-    <meta property="og:title" content="从基石到殿堂：深度剖析 Spring AnnotationConfigApplicationContext 的继承体系">
-    <meta property="og:description" content="从基石到殿堂：深度剖析
-Spring AnnotationConfigApplicationContext 的继承体系
-当我们写下：
-new AnnotationConfigApplicationContext(AppConfig.class);
-一个功能完备、灵活自如的 IoC 容器就此诞生。
-然而，这个看...">
+    <meta property="og:title" content="java-中的多继承与菱形问题">
+    <meta property="og:description" content="深度剖析：Java
+中的多继承与菱形问题
+
+摘要：
+在面向对象编程中，多继承常常带来二义性和复杂性，最典型的问题就是“菱形继承”。
+本文将从 C++ 的多继承问题谈起，深入剖析 Java
+为什么禁止类的多继承、接口如何优雅地支持多继承，并结合 Spring 框架中的
+ApplicationContext ...">
     <meta property="og:image" content="https://your-domain.com/images/og-image.png">
-    <meta property="og:url" content="https://your-domain.com/docs/2025-08/深度剖析-spring-annotationconfigapplicationcontext-的继承体系.html">
+    <meta property="og:url" content="https://your-domain.com/docs/2025-08/java-中的多继承与菱形问题.html">
     <meta property="og:site_name" content="AI 个人笔记">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="从基石到殿堂：深度剖析 Spring AnnotationConfigApplicationContext 的继承体系">
-    <meta property="twitter:description" content="从基石到殿堂：深度剖析
-Spring AnnotationConfigApplicationContext 的继承体系
-当我们写下：
-new AnnotationConfigApplicationContext(AppConfig.class);
-一个功能完备、灵活自如的 IoC 容器就此诞生。
-然而，这个看...">
+    <meta property="twitter:title" content="java-中的多继承与菱形问题">
+    <meta property="twitter:description" content="深度剖析：Java
+中的多继承与菱形问题
+
+摘要：
+在面向对象编程中，多继承常常带来二义性和复杂性，最典型的问题就是“菱形继承”。
+本文将从 C++ 的多继承问题谈起，深入剖析 Java
+为什么禁止类的多继承、接口如何优雅地支持多继承，并结合 Spring 框架中的
+ApplicationContext ...">
     <meta property="twitter:image" content="https://your-domain.com/images/og-image.png">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://your-domain.com/docs/2025-08/深度剖析-spring-annotationconfigapplicationcontext-的继承体系.html">
+    <link rel="canonical" href="https://your-domain.com/docs/2025-08/java-中的多继承与菱形问题.html">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -602,7 +608,7 @@ new AnnotationConfigApplicationContext(AppConfig.class);
             
             <article class="post">
                 <header class="post-header">
-                    <h1 class="post-title">从基石到殿堂：深度剖析 Spring AnnotationConfigApplicationContext 的继承体系</h1>
+                    <h1 class="post-title">java-中的多继承与菱形问题</h1>
                     <div class="post-meta">
                         <div class="post-date">2025/8/27</div>
                         <div class="post-category">2025-08</div>
@@ -612,231 +618,232 @@ new AnnotationConfigApplicationContext(AppConfig.class);
                     ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
                 </div>
                 <div class="post-content" id="post-content">
-                    <h1
-id="从基石到殿堂深度剖析-spring-annotationconfigapplicationcontext-的继承体系">从基石到殿堂：深度剖析
-Spring AnnotationConfigApplicationContext 的继承体系</h1>
-<p>当我们写下：</p>
+                    <h1 id="深度剖析java-中的多继承与菱形问题">深度剖析：Java
+中的多继承与菱形问题</h1>
+<blockquote>
+<p><strong>摘要</strong>：
+在面向对象编程中，多继承常常带来二义性和复杂性，最典型的问题就是“菱形继承”。
+本文将从 C++ 的多继承问题谈起，深入剖析 Java
+为什么禁止类的多继承、接口如何优雅地支持多继承，并结合 Spring 框架中的
+<code>ApplicationContext</code> 接口做实战分析。 读完后，你将彻底理解
+Java 的继承设计哲学。</p>
+</blockquote>
+<hr />
+<h2 id="目录">📑 目录</h2>
+<ol type="1">
+<li><a href="#继承与多继承的基本概念">继承与多继承的基本概念</a></li>
+<li><a href="#什么是菱形继承问题">什么是菱形继承问题</a></li>
+<li><a href="#java-为什么禁止类的多继承">Java
+为什么禁止类的多继承</a></li>
+<li><a href="#接口的多继承与默认方法">接口的多继承与默认方法</a></li>
+<li><a href="#如何在-java-中避免菱形问题">如何在 Java
+中避免菱形问题</a></li>
+<li><a href="#spring-框架中的实战案例">Spring 框架中的实战案例</a></li>
+<li><a href="#总结">总结</a></li>
+<li><a href="#延伸阅读">延伸阅读</a></li>
+</ol>
+<hr />
+<h2 id="继承与多继承的基本概念">继承与多继承的基本概念</h2>
+<ul>
+<li><strong>继承</strong>：一个类（子类）可以继承另一个类（父类）的属性和方法。</li>
+<li><strong>多继承</strong>：一个类可以同时继承多个父类。</li>
+</ul>
+<p>在 <strong>C++</strong> 中，多继承是允许的；而在
+<strong>Java</strong> 中，类只允许单继承，但接口可以多继承。</p>
+<hr />
+<h2 id="什么是菱形继承问题">什么是菱形继承问题</h2>
+<p>先看一个 <strong>C++ 风格</strong> 的例子：</p>
 <div class="sourceCode" id="cb1"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">new</span> <span class="fu">AnnotationConfigApplicationContext</span><span class="op">(</span>AppConfig<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span></code></pre></div>
-<p>一个功能完备、灵活自如的 IoC 容器就此诞生。</p>
-<p>然而，这个看似简单的构造调用背后，隐藏着一套庞大而精妙的设计体系。<code>AnnotationConfigApplicationContext</code>
-并不是一个孤立的巨物，而是处在 <strong>Spring IoC
-容器继承体系的顶端</strong>，它的每一项能力都来自于底层一层层接口与抽象类的积木式叠加。</p>
-<p>要理解它，我们需要沿着两条主线溯源：</p>
-<ol type="1">
-<li><strong>应用上下文（Context）主线</strong>：提供生命周期管理、事件机制、配置加载等企业级功能。</li>
-<li><strong>Bean 注册（Registry）主线</strong>：专注于最核心的 Bean
-定义、单例管理和别名解析。</li>
-</ol>
-<p>最终，这两条主线在 <code>GenericApplicationContext</code>
-处汇合，形成我们熟悉的容器。</p>
-<hr />
-<h2 id="宏观鸟瞰继承体系全貌">宏观鸟瞰：继承体系全貌</h2>
-<p>下图展现了 <code>AnnotationConfigApplicationContext</code>
-的完整继承与实现关系。它既揭示了上下文主线的演进脉络，也展示了 Bean
-注册主线的层层积累。</p>
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> A <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> hello<span class="op">()</span> <span class="op">{</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;Hello from A&quot;</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> B <span class="op">:</span> <span class="kw">public</span> A <span class="op">{};</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> C <span class="op">:</span> <span class="kw">public</span> A <span class="op">{};</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> D <span class="op">:</span> <span class="kw">public</span> B<span class="op">,</span> <span class="kw">public</span> C <span class="op">{};</span></span></code></pre></div>
+<p>继承关系示意图：</p>
 <pre class="mermaid"><code>classDiagram
-    %% ============= 应用上下文主线 =============
-    class ApplicationContext {
-        &lt;&lt;interface&gt;&gt;
+    class A {
+        +hello()
     }
+    class B
+    class C
+    class D
 
-    class ConfigurableApplicationContext {
-        &lt;&lt;interface&gt;&gt;
-    }
-
-    class AbstractApplicationContext
-
-    class GenericApplicationContext {
-        -DefaultListableBeanFactory beanFactory
-    }
-
-    class AnnotationConfigApplicationContext
-
-    %% ============= Bean 注册主线 =============
-    class BeanFactory {
-        &lt;&lt;interface&gt;&gt;
-    }
-
-    class ListableBeanFactory {
-        &lt;&lt;interface&gt;&gt;
-    }
-
-    class HierarchicalBeanFactory {
-        &lt;&lt;interface&gt;&gt;
-    }
-
-    class ConfigurableBeanFactory {
-        &lt;&lt;interface&gt;&gt;
-    }
-
-    class SingletonBeanRegistry {
-        &lt;&lt;interface&gt;&gt;
-    }
-
-    class AliasRegistry {
-        &lt;&lt;interface&gt;&gt;
-    }
-
-    class SimpleAliasRegistry
-
-    class DefaultSingletonBeanRegistry
-
-    class FactoryBeanRegistrySupport
-
-    class BeanDefinitionRegistry {
-        &lt;&lt;interface&gt;&gt;
-    }
-
-    class DefaultListableBeanFactory
-
-    %% ============= 应用上下文主线继承关系 =============
-    ApplicationContext &lt;|.. ConfigurableApplicationContext
-    ConfigurableApplicationContext &lt;|-- AbstractApplicationContext
-    AbstractApplicationContext &lt;|-- GenericApplicationContext
-    GenericApplicationContext &lt;|-- AnnotationConfigApplicationContext
-
-    %% ============= BeanFactory 主线继承关系 =============
-    BeanFactory &lt;|.. ListableBeanFactory
-    BeanFactory &lt;|.. HierarchicalBeanFactory
-    BeanFactory &lt;|.. ConfigurableBeanFactory
-
-    SingletonBeanRegistry &lt;|.. DefaultSingletonBeanRegistry
-    DefaultSingletonBeanRegistry &lt;|-- FactoryBeanRegistrySupport
-    FactoryBeanRegistrySupport &lt;|-- DefaultListableBeanFactory
-
-    AliasRegistry &lt;|.. SimpleAliasRegistry
-    SimpleAliasRegistry &lt;|-- DefaultSingletonBeanRegistry
-
-    BeanDefinitionRegistry &lt;|.. DefaultListableBeanFactory
-    ConfigurableBeanFactory &lt;|.. DefaultListableBeanFactory
-    ListableBeanFactory &lt;|.. DefaultListableBeanFactory
-    HierarchicalBeanFactory &lt;|.. DefaultListableBeanFactory
-
-    %% ============= 组合关系 =============
-    GenericApplicationContext o-- DefaultListableBeanFactory</code></pre>
+    A &lt;|-- B
+    A &lt;|-- C
+    B &lt;|-- D
+    C &lt;|-- D</code></pre>
+<p>⚠️ 问题：</p>
+<ul>
+<li><code>D</code> 通过 <code>B</code> 和 <code>C</code> 继承了
+<strong>两份 <code>A</code></strong>。</li>
+<li>当调用 <code>D.hello()</code> 时，编译器不知道该调用哪一个
+<code>A.hello()</code>。</li>
+<li>这就是 <strong>菱形继承问题（Diamond
+Problem）</strong>：多继承带来的<strong>二义性和重复继承</strong>。</li>
+</ul>
 <hr />
-<h2
-id="主线一应用上下文context的成长之路">主线一：应用上下文（Context）的成长之路</h2>
-<p>这条主线赋予容器“全局视野”与“生命周期”，让它超越了单纯的 Bean
-工厂，成为一个框架级的运行环境。</p>
+<h2 id="java-为什么禁止类的多继承">Java 为什么禁止类的多继承</h2>
+<p>在 Java 中，<strong>类只允许单继承</strong>：</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> A <span class="op">{}</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> B <span class="kw">extends</span> A <span class="op">{}</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> C <span class="kw">extends</span> A <span class="op">{}</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">// class D extends B, C {} // ❌ 编译错误</span></span></code></pre></div>
+<p>这样，<code>D</code> 无法同时继承 <code>B</code> 和
+<code>C</code>，避免了 C++ 中的菱形问题。</p>
+<p><strong>Java 设计者的考虑</strong>：</p>
 <ol type="1">
-<li><p><strong><code>ApplicationContext</code> (接口)</strong></p>
-<ul>
-<li><strong>定位</strong>：IoC 容器的企业级接口。</li>
-<li><strong>能力</strong>：继承自
-<code>BeanFactory</code>，并扩展了<strong>国际化</strong>、<strong>事件发布</strong>、<strong>资源加载</strong>等功能。</li>
-</ul></li>
-<li><p><strong><code>ConfigurableApplicationContext</code>
-(接口)</strong></p>
-<ul>
-<li><strong>定位</strong>：容器的生命周期遥控器。</li>
-<li><strong>能力</strong>：定义了 <code>refresh()</code> 和
-<code>close()</code> 方法，标志容器可以被“启动/刷新/销毁”。</li>
-</ul></li>
-<li><p><strong><code>AbstractApplicationContext</code>
-(抽象类)</strong></p>
-<ul>
-<li><strong>定位</strong>：骨架基类。</li>
-<li><strong>能力</strong>：实现了著名的 <code>refresh()</code>
-模板方法，涵盖 <strong>12 个启动步骤</strong>，如准备环境、初始化
-BeanFactory、注册后置处理器、完成 Bean 实例化等。</li>
-<li><strong>关键特性</strong>：采用模板方法模式，将“加载 Bean
-定义”留给子类决定。</li>
-</ul></li>
+<li>避免二义性（简化语义）。</li>
+<li>减少复杂性（不用考虑多份父类拷贝）。</li>
+<li>保持代码清晰（推荐接口和组合）。</li>
 </ol>
 <hr />
-<h2 id="主线二bean-注册registry的基石">主线二：Bean
-注册（Registry）的基石</h2>
-<p>这条主线是幕后功臣，专注于 Bean
-的定义与实例管理。它不关心事件、国际化，而是为 IoC 提供核心支撑。</p>
+<h2 id="接口的多继承与默认方法">接口的多继承与默认方法</h2>
+<p>虽然类不能多继承，但 <strong>接口可以多继承</strong>。</p>
+<h3 id="示例代码">示例代码</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> A <span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">default</span> <span class="dt">void</span> <span class="fu">hello</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Hello from A&quot;</span><span class="op">);</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> B <span class="kw">extends</span> A <span class="op">{</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">default</span> <span class="dt">void</span> <span class="fu">hello</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Hello from B&quot;</span><span class="op">);</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> C <span class="kw">extends</span> A <span class="op">{</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">default</span> <span class="dt">void</span> <span class="fu">hello</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Hello from C&quot;</span><span class="op">);</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> D <span class="kw">implements</span> B<span class="op">,</span> C <span class="op">{</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">hello</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>        B<span class="op">.</span><span class="fu">super</span><span class="op">.</span><span class="fu">hello</span><span class="op">();</span> <span class="co">// 必须显式选择</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>继承关系示意图：</p>
+<pre class="mermaid"><code>classDiagram
+    class A {
+        +hello()
+    }
+    class B {
+        +hello()
+    }
+    class C {
+        +hello()
+    }
+    class D {
+        +hello()
+    }
+
+    A &lt;|-- B
+    A &lt;|-- C
+    B &lt;|.. D
+    C &lt;|.. D</code></pre>
+<p>👉 Java 要求 <code>D</code>
+<strong>显式指定调用哪一个父接口的方法</strong>，从而避免了菱形问题带来的二义性。</p>
+<hr />
+<h2 id="如何在-java-中避免菱形问题">如何在 Java 中避免菱形问题</h2>
+<h3 id="接口-默认方法">1. 接口 + 默认方法</h3>
+<p>通过 <code>default</code> 方法，让实现类来选择调用的父接口实现。</p>
+<h3 id="组合优于继承">2. 组合优于继承</h3>
+<p>使用组合（has-a）代替继承（is-a）：</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> D <span class="op">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> B b <span class="op">=</span> <span class="kw">new</span> <span class="fu">B</span><span class="op">();</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> C c <span class="op">=</span> <span class="kw">new</span> <span class="fu">C</span><span class="op">();</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> <span class="fu">helloFromB</span><span class="op">()</span> <span class="op">{</span> b<span class="op">.</span><span class="fu">hello</span><span class="op">();</span> <span class="op">}</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> <span class="fu">helloFromC</span><span class="op">()</span> <span class="op">{</span> c<span class="op">.</span><span class="fu">hello</span><span class="op">();</span> <span class="op">}</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="抽象类统一继承路径">3. 抽象类统一继承路径</h3>
+<p>使用抽象类来保证继承链的单一性，避免多份祖先类。</p>
+<hr />
+<h2 id="spring-框架中的实战案例">Spring 框架中的实战案例</h2>
+<p>在 <strong>Spring</strong> 框架中，很多核心接口都体现了 Java
+接口多继承的特性。 一个典型的例子就是
+<code>ApplicationContext</code>：</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">interface</span> ApplicationContext </span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>        <span class="kw">extends</span> EnvironmentCapable<span class="op">,</span> </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                ListableBeanFactory<span class="op">,</span> </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                HierarchicalBeanFactory<span class="op">,</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                MessageSource<span class="op">,</span> </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                ApplicationEventPublisher<span class="op">,</span> </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>                ResourcePatternResolver <span class="op">{</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// ...</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="继承关系">🧐 继承关系</h3>
+<ul>
+<li><code>ApplicationContext</code> 继承了 <strong>6
+个接口</strong>。</li>
+<li>其中，<code>ListableBeanFactory</code> 和
+<code>HierarchicalBeanFactory</code> 都继承自
+<code>BeanFactory</code>。</li>
+<li>这就天然形成了 <strong>菱形继承结构</strong>。</li>
+</ul>
+<p>可视化关系图：</p>
+<pre class="mermaid"><code>classDiagram
+    class BeanFactory
+    class ListableBeanFactory
+    class HierarchicalBeanFactory
+    class ApplicationContext
+
+    BeanFactory &lt;|-- ListableBeanFactory
+    BeanFactory &lt;|-- HierarchicalBeanFactory
+    ListableBeanFactory &lt;|-- ApplicationContext
+    HierarchicalBeanFactory &lt;|-- ApplicationContext</code></pre>
+<h3 id="为什么不会有菱形问题">⚡ 为什么不会有菱形问题？</h3>
+<p>因为在 <strong>Java 接口继承</strong> 的规则下：</p>
 <ol type="1">
-<li><p><strong><code>AliasRegistry</code> →
-<code>SimpleAliasRegistry</code></strong></p>
-<ul>
-<li><strong>作用</strong>：别名机制。支持 Bean 拥有多个名称。</li>
-</ul></li>
-<li><p><strong><code>SingletonBeanRegistry</code> →
-<code>DefaultSingletonBeanRegistry</code></strong></p>
-<ul>
-<li><strong>作用</strong>：单例池核心。</li>
-<li><strong>亮点</strong>：实现了
-<strong>三级缓存</strong>（<code>singletonObjects</code>、<code>earlySingletonObjects</code>、<code>singletonFactories</code>），完美解决循环依赖。</li>
-<li><strong>附加功能</strong>：负责 Bean 的销毁回调管理。</li>
-</ul></li>
-<li><p><strong><code>FactoryBeanRegistrySupport</code></strong></p>
-<ul>
-<li><strong>作用</strong>：支持 <code>FactoryBean</code> 特殊语义。</li>
-<li><strong>机制</strong>：内部维护
-<code>factoryBeanObjectCache</code>，缓存由 <code>FactoryBean</code>
-生成的对象。</li>
-</ul></li>
-<li><p><strong><code>DefaultListableBeanFactory</code></strong></p>
-<ul>
-<li><strong>作用</strong>：全能型 Bean 工厂。</li>
-<li><strong>特点</strong>：继承了前面所有能力，同时实现
-<code>BeanDefinitionRegistry</code>，因此既能注册 Bean
-定义，又能管理单例实例。</li>
-<li><strong>地位</strong>：Spring 默认的 BeanFactory
-实现，是容器的“心脏”。</li>
-</ul></li>
+<li>接口 <strong>只定义方法签名</strong>（以及 JDK8 之后的
+<code>default</code> 方法）。</li>
+<li>如果多个父接口提供了相同的默认方法，<strong>必须由实现类（如
+<code>AnnotationConfigApplicationContext</code>）来显式解决冲突</strong>。</li>
 </ol>
+<p>因此，即使有菱形结构，Java 也能保证不会出现二义性。</p>
 <hr />
-<h2
-id="最终交汇genericapplicationcontext">最终交汇：GenericApplicationContext</h2>
-<p><code>GenericApplicationContext</code>
-是上下文主线与注册主线的汇合点：</p>
+<h2 id="总结">总结</h2>
 <ul>
-<li><strong>继承自 <code>AbstractApplicationContext</code></strong> →
-拥有完整生命周期和应用上下文功能。</li>
-<li><strong>组合 <code>DefaultListableBeanFactory</code></strong> →
-获得底层 Bean 定义注册、别名、单例管理和 FactoryBean 支持。</li>
-<li><strong>实现 <code>BeanDefinitionRegistry</code></strong> →
-开放动态注册 Bean 的编程接口。</li>
+<li><strong>C++</strong>：支持多继承，但容易出现菱形继承问题，需要虚拟继承来解决。</li>
+<li><strong>Java</strong>：禁止类的多继承，避免了二义性。</li>
+<li><strong>接口</strong>：允许多继承，但必须在实现类中解决冲突。</li>
+<li><strong>Spring 框架</strong>：<code>ApplicationContext</code>
+等核心接口就是典型的接口多继承案例，但通过 Java
+规则避免了菱形问题。</li>
+<li><strong>开发实践</strong>：推荐使用 <strong>接口 +
+组合</strong>，保持继承体系清晰。</li>
 </ul>
-<p>它是一个“空白画布”，可以通过 API 灵活注册 Bean
-定义，为更高层容器提供无限扩展空间。</p>
 <hr />
-<h2
-id="殿堂顶点annotationconfigapplicationcontext">殿堂顶点：AnnotationConfigApplicationContext</h2>
-<p>终于，主角登场。</p>
+<h2 id="延伸阅读">延伸阅读</h2>
 <ul>
-<li><p><strong>继承关系</strong>：<code>public class AnnotationConfigApplicationContext extends GenericApplicationContext implements AnnotationConfigRegistry</code></p></li>
-<li><p><strong>核心能力</strong>：</p>
-<ol type="1">
-<li><p>内部持有
-<strong><code>AnnotatedBeanDefinitionReader</code></strong>（解析
-<code>@Configuration</code>、<code>@Bean</code>）。</p></li>
-<li><p>内部持有
-<strong><code>ClassPathBeanDefinitionScanner</code></strong>（扫描
-<code>@Component</code>、<code>@Service</code> 等注解）。</p></li>
-<li><p>提供简洁的 API：</p>
-<ul>
-<li><code>register(Class...)</code> → 注册配置类。</li>
-<li><code>scan(String...)</code> → 包扫描，自动发现 Bean。</li>
-</ul></li>
-</ol></li>
+<li><a
+href="https://docs.oracle.com/javase/tutorial/java/IandI/createinterface.html">Java
+官方文档：接口（Interfaces）</a></li>
+<li>《Effective Java》第三版：第 18 条 —— 接口优于抽象类</li>
+<li>Spring Framework 源码：<code>ApplicationContext</code>
+接口层级结构</li>
+<li><a
+href="https://en.cppreference.com/w/cpp/language/derived_class">C++
+菱形继承与虚拟继承</a></li>
 </ul>
-<p>换句话说：它把“如何把注解配置转化为
-BeanDefinition”这一层复杂性完全封装起来，让开发者仅需调用简单方法，即可启动一个企业级容器。</p>
 <hr />
-<h2 id="结语层次化的优雅">结语：层次化的优雅</h2>
-<p><code>AnnotationConfigApplicationContext</code>
-的强大并非来自臃肿，而是来自 <strong>分层设计 +
-关注点分离</strong>：</p>
-<ul>
-<li><strong>底层</strong> → 别名管理、单例池、FactoryBean
-支持（<code>DefaultSingletonBeanRegistry</code> 及其家族）。</li>
-<li><strong>中层</strong> →
-生命周期管理、资源与事件机制（<code>AbstractApplicationContext</code>）。</li>
-<li><strong>顶层</strong> →
-注解驱动的便捷入口（<code>AnnotationConfigApplicationContext</code>）。</li>
-</ul>
-<p>这座从基石到殿堂的架构，不仅保障了 Spring
-的稳定性和灵活性，也使它能随着时代演进不断生长。</p>
-<p>下次当你写下 <code>new AnnotationConfigApplicationContext(...)</code>
-时，不妨想一想：你调用的，并不是一个单独的类，而是一整套
-<strong>精密架构的化身</strong>。</p>
+<p>📌 <strong>一句话记忆</strong>：</p>
+<blockquote>
+<p>Java 用 <strong>类单继承 + 接口多继承</strong>
+的方式，巧妙避开了菱形陷阱，并在 Spring 等框架中得到了优雅的应用。</p>
+</blockquote>
 <hr />
 
                 </div>
