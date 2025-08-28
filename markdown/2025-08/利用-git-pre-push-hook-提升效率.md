@@ -262,7 +262,7 @@ npm run lint && npm run test
 *   [pre-commit 框架官方网站](https://pre-commit.com/)
 *   [Atlassian Git Hooks 教程](https://www.atlassian.com/git/tutorials/git-hooks)
 
----
+--- 
 
 ### 7. 一句话记忆
 
