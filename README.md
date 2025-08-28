@@ -75,8 +75,7 @@ npm run new-md "文章标题"   # 创建新的 Markdown 文章
 npm run new-html "文章标题" # 创建新的 HTML 文章
 
 # 自动监视文件变化并转换（增量构建）
-npm run watch-chokidar     # 使用 Chokidar 监视文件变化
-npm run watch-nodemon      # 使用 Nodemon 监视文件变化
+npm run dev     # 使用 Nodemon 监视文章变化重新convert并启动http server
 ```
 
 ### 自动文件监视
@@ -208,7 +207,6 @@ classDiagram
     Animal: +age
     Dog: +breed
 ```
-```
 
 ## 🌐 部署方式
 
@@ -219,6 +217,30 @@ classDiagram
 - 本地文件系统直接打开
 
 只需上传整个项目目录即可，无需额外配置。
+
+## 🔐 Git Hooks (Husky)
+
+本项目使用 Husky 管理 Git 钩子，确保代码质量：
+
+### Pre-commit 钩子
+在每次提交前，会自动执行以下操作：
+1. 运行完整构建流程 (`npm run build`)
+2. 自动将构建结果添加到暂存区
+3. 如果构建失败，提交将被中止
+
+### 安装
+
+项目已经配置好 Husky，只需在克隆项目后运行一次安装命令：
+
+```bash
+npm install
+```
+
+安装完成后，Husky 会自动设置 Git 钩子。
+
+### 自定义钩子
+
+你可以在 `.husky/pre-commit` 文件中修改或扩展预提交钩子的行为。
 
 ## ⚠️ 重要提醒
 
