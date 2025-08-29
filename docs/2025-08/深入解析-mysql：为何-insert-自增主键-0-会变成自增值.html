@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>深入解析 MySQL：为何 INSERT 自增主键 `0` 会变成自增值？</title>
+    <title>深入解析 MySQL：为何 INSERT 自增主键 `0` 会变成自增值？</title>
     <!-- SEO Meta Tags -->
     <meta name="description" content="深入解析
 MySQL：为何 INSERT 自增主键 0 会变成自增值？
@@ -18,7 +18,7 @@ MySQL：为何 INSERT 自增主键 0 会变成自增值？
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article">
-    <meta property="og:title" content="深入解析 MySQL：为何 INSERT 自增主键 `0` 会变成自增值？">
+    <meta property="og:title" content="深入解析 MySQL：为何 INSERT 自增主键 `0` 会变成自增值？">
     <meta property="og:description" content="深入解析
 MySQL：为何 INSERT 自增主键 0 会变成自增值？
 开头摘要
@@ -32,7 +32,7 @@ MySQL：为何 INSERT 自增主键 0 会变成自增值？
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="深入解析 MySQL：为何 INSERT 自增主键 `0` 会变成自增值？">
+    <meta property="twitter:title" content="深入解析 MySQL：为何 INSERT 自增主键 `0` 会变成自增值？">
     <meta property="twitter:description" content="深入解析
 MySQL：为何 INSERT 自增主键 0 会变成自增值？
 开头摘要
@@ -605,9 +605,9 @@ MySQL：为何 INSERT 自增主键 0 会变成自增值？
             
             <article class="post">
                 <header class="post-header">
-                    <h1 class="post-title">深入解析 MySQL：为何 INSERT 自增主键 `0` 会变成自增值？</h1>
+                    <h1 class="post-title">深入解析 MySQL：为何 INSERT 自增主键 `0` 会变成自增值？</h1>
                     <div class="post-meta">
-                        <div class="post-date">2025/8/28</div>
+                        <div class="post-date">2025/8/29</div>
                         <div class="post-category">2025-08</div>
                     </div>
                 </header>
@@ -833,7 +833,7 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a hr
 <col style="width: 33%" />
 </colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th style="text-align: left;">数据库系统</th>
 <th style="text-align: left;"><code>IDENTITY</code> /
 <code>SERIAL</code> 列插入 <code>0</code> 的行为</th>
@@ -841,13 +841,13 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a hr
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td style="text-align: left;"><strong>MySQL (默认)</strong></td>
 <td style="text-align: left;">触发自增，生成下一个序列值。</td>
 <td style="text-align: left;">行为可通过
 <code>NO_AUTO_VALUE_ON_ZERO</code> 模式修改。</td>
 </tr>
-<tr>
+<tr class="even">
 <td style="text-align: left;"><strong>PostgreSQL</strong></td>
 <td style="text-align: left;">插入字面值
 <code>0</code>，前提是该值未被占用。不会触发 <code>SERIAL</code> 或
@@ -855,14 +855,14 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a hr
 <td style="text-align: left;">序列的触发通常依赖 <code>DEFAULT</code>
 关键字或完全省略该列。</td>
 </tr>
-<tr>
+<tr class="odd">
 <td style="text-align: left;"><strong>SQL Server</strong></td>
 <td style="text-align: left;">默认情况下，不允许向 <code>IDENTITY</code>
 列显式插入值。需要 <code>SET IDENTITY_INSERT ON;</code> 后才能插入字面值
 <code>0</code>。</td>
 <td style="text-align: left;">操作更为严格，需要显式声明意图。</td>
 </tr>
-<tr>
+<tr class="even">
 <td style="text-align: left;"><strong>SQLite</strong></td>
 <td style="text-align: left;">插入字面值 <code>0</code>。</td>
 <td style="text-align: left;">如果 <code>INTEGER PRIMARY KEY</code>
