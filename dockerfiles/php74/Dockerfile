@@ -25,9 +25,8 @@ RUN curl -o /usr/bin/composer https://mirrors.aliyun.com/composer/composer.phar 
 # 	&& docker-php-source delete
 
 
-EXPOSE 8000
-EXPOSE 8001
-EXPOSE 8002
+EXPOSE 9000
+
 
 ENV LANG=en_US.UTF-8 \
     LANGUAGE=en_US.UTF-8
