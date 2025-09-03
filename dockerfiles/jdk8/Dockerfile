@@ -1,5 +1,5 @@
 
-FROM openjdk:8
+FROM amazoncorretto:8
 EXPOSE 9003
 RUN echo Asia/Shanghai > /etc/timezone
 RUN ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
