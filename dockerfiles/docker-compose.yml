@@ -100,6 +100,21 @@ services:
       - app-network
     restart: unless-stopped
 
+  camoufox:
+    build: ./camoufox
+    ports:
+      - "5345:5345"
+    environment:
+      # 设置一个你最终Gemini服务的API密钥
+      - AUTH_API_KEY=123456
+    volumes:
+      - ./camoufox/camoufox-py/config.yaml:/app/config.yaml
+      - ./camoufox/camoufox-py/cookies:/app/cookies
+      - ./camoufox/camoufox-py/logs:/app/logs
+    restart: always
+    networks:
+      - app-network
+
 # 网络配置
 networks:
   app-network:
