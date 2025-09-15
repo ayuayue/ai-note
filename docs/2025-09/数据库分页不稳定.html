@@ -3,37 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数据库分页不稳定：为什么无排序的分页是“定时炸弹”，以及如何彻底解决</title>
+    <title>数据库分页不稳定</title>
     <!-- SEO Meta Tags -->
-    <meta name="description" content="数据库分页不稳定：为什么无排序的分页是“定时炸弹”，以及如何彻底解决
+    <meta name="description" content="数据库分页不稳定：成因、误区与解决方案
+开头摘要
+本文深入剖析数据库分页查询中的不稳定现象，揭示其技术根源并提供实用解决方案，帮助开发者构建健壮的分页功能。适合后端开发人员、数据库管理员及对数据一致性有高要求的系统架构师。
+目录
 
-在数据库分页查询中，省略 ORDER BY
-会导致结果顺序不可预测，进而引发分页“跳页”、“数据重复”或“遗漏”，严重破坏用户体验与数据一致性。本文深入剖析其底层原理、常见误区、解决方案及实战优化，适合后端开发、DBA
-与系统架构师阅读。...">
-    <meta name="keywords" content="数据库分页不稳定, 为什么无排序的分页是, 定时炸弹, 以及如何彻底解决">
+1. 概念解释
+2. 示例代码
+3. Mermaid图
+4. 问题分析...">
+    <meta name="keywords" content="数据库分页不稳定">
     <meta name="author" content="AI 个人笔记">
     <meta name="robots" content="index, follow">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article">
-    <meta property="og:title" content="数据库分页不稳定：为什么无排序的分页是“定时炸弹”，以及如何彻底解决">
-    <meta property="og:description" content="数据库分页不稳定：为什么无排序的分页是“定时炸弹”，以及如何彻底解决
+    <meta property="og:title" content="数据库分页不稳定">
+    <meta property="og:description" content="数据库分页不稳定：成因、误区与解决方案
+开头摘要
+本文深入剖析数据库分页查询中的不稳定现象，揭示其技术根源并提供实用解决方案，帮助开发者构建健壮的分页功能。适合后端开发人员、数据库管理员及对数据一致性有高要求的系统架构师。
+目录
 
-在数据库分页查询中，省略 ORDER BY
-会导致结果顺序不可预测，进而引发分页“跳页”、“数据重复”或“遗漏”，严重破坏用户体验与数据一致性。本文深入剖析其底层原理、常见误区、解决方案及实战优化，适合后端开发、DBA
-与系统架构师阅读。...">
+1. 概念解释
+2. 示例代码
+3. Mermaid图
+4. 问题分析...">
     <meta property="og:image" content="https://your-domain.com/images/og-image.png">
     <meta property="og:url" content="https://your-domain.com/docs/2025-09/数据库分页不稳定.html">
     <meta property="og:site_name" content="AI 个人笔记">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="数据库分页不稳定：为什么无排序的分页是“定时炸弹”，以及如何彻底解决">
-    <meta property="twitter:description" content="数据库分页不稳定：为什么无排序的分页是“定时炸弹”，以及如何彻底解决
+    <meta property="twitter:title" content="数据库分页不稳定">
+    <meta property="twitter:description" content="数据库分页不稳定：成因、误区与解决方案
+开头摘要
+本文深入剖析数据库分页查询中的不稳定现象，揭示其技术根源并提供实用解决方案，帮助开发者构建健壮的分页功能。适合后端开发人员、数据库管理员及对数据一致性有高要求的系统架构师。
+目录
 
-在数据库分页查询中，省略 ORDER BY
-会导致结果顺序不可预测，进而引发分页“跳页”、“数据重复”或“遗漏”，严重破坏用户体验与数据一致性。本文深入剖析其底层原理、常见误区、解决方案及实战优化，适合后端开发、DBA
-与系统架构师阅读。...">
+1. 概念解释
+2. 示例代码
+3. Mermaid图
+4. 问题分析...">
     <meta property="twitter:image" content="https://your-domain.com/images/og-image.png">
     
     <!-- Canonical URL -->
@@ -343,12 +355,14 @@
             border-collapse: collapse;
             margin: 25px 0;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            table-layout: fixed; /* 添加这行以确保表格列宽正确 */
         }
 
         .post-content th, .post-content td {
             padding: 12px 15px;
             text-align: left;
             border: 1px solid #e1e1e1;
+            word-wrap: break-word; /* 确保长内容可以换行 */
         }
 
         .post-content th {
@@ -599,7 +613,7 @@
             
             <article class="post">
                 <header class="post-header">
-                    <h1 class="post-title">数据库分页不稳定：为什么无排序的分页是“定时炸弹”，以及如何彻底解决</h1>
+                    <h1 class="post-title">数据库分页不稳定</h1>
                     <div class="post-meta">
                         <div class="post-date">2025/9/15</div>
                         <div class="post-category">2025-09</div>
@@ -610,297 +624,471 @@
                 </div>
                 <div class="post-content" id="post-content">
                     <h1
-id="数据库分页不稳定为什么无排序的分页是定时炸弹以及如何彻底解决">数据库分页不稳定：为什么无排序的分页是“定时炸弹”，以及如何彻底解决</h1>
-<blockquote>
-<p>在数据库分页查询中，省略 <code>ORDER BY</code>
-会导致结果顺序不可预测，进而引发分页“跳页”、“数据重复”或“遗漏”，严重破坏用户体验与数据一致性。本文深入剖析其底层原理、常见误区、解决方案及实战优化，适合后端开发、DBA
-与系统架构师阅读。</p>
-</blockquote>
-<hr />
+id="数据库分页不稳定成因误区与解决方案">数据库分页不稳定：成因、误区与解决方案</h1>
+<h2 id="开头摘要">开头摘要</h2>
+<p>本文深入剖析数据库分页查询中的不稳定现象，揭示其技术根源并提供实用解决方案，帮助开发者构建健壮的分页功能。适合后端开发人员、数据库管理员及对数据一致性有高要求的系统架构师。</p>
 <h2 id="目录">目录</h2>
 <ul>
-<li><a href="#1-核心概念什么是分页不稳定">1.
-核心概念：什么是“分页不稳定”</a></li>
-<li><a href="#2-为什么无排序会导致分页不稳定">2.
-为什么无排序会导致分页不稳定</a></li>
-<li><a href="#3-示例代码复现与修复">3. 示例代码：复现与修复</a></li>
-<li><a href="#4-mermaid-图解查询执行与排序缺失的影响">4. Mermaid
-图解：查询执行与排序缺失的影响</a></li>
-<li><a href="#5-常见误区与边界情况">5. 常见误区与边界情况</a></li>
-<li><a href="#6-应用场景从管理后台到高并发-api">6.
-应用场景：从管理后台到高并发 API</a></li>
-<li><a href="#7-跨语言框架对比">7. 跨语言/框架对比</a></li>
-<li><a href="#8-实战案例spring-boot--mybatis-分页陷阱与修复">8.
-实战案例：Spring Boot + MyBatis 分页陷阱与修复</a></li>
-<li><a href="#9-总结">9. 总结</a></li>
-<li><a href="#10-延伸阅读">10. 延伸阅读</a></li>
-<li><a href="#11-一句话记忆">11. 一句话记忆</a></li>
+<li><a href="#1-概念解释">1. 概念解释</a></li>
+<li><a href="#2-示例代码">2. 示例代码</a></li>
+<li><a href="#3-mermaid图">3. Mermaid图</a></li>
+<li><a href="#4-问题分析">4. 问题分析</a></li>
+<li><a href="#5-应用场景">5. 应用场景</a></li>
+<li><a href="#6-跨语言或跨框架对比">6. 跨语言或跨框架对比</a></li>
+<li><a href="#7-实战案例">7. 实战案例</a></li>
+<li><a href="#8-总结">8. 总结</a></li>
+<li><a href="#9-延伸阅读">9. 延伸阅读</a></li>
+<li><a href="#10-一句话记忆">10. 一句话记忆</a></li>
 </ul>
 <hr />
-<h2 id="核心概念什么是分页不稳定">1. 核心概念：什么是“分页不稳定”</h2>
-<h3 id="概念解释">概念解释</h3>
-<p><strong>分页不稳定（Pagination Instability）</strong>
-是指在数据库分页查询中，由于未指定明确排序规则（<code>ORDER BY</code>），导致多次执行相同分页语句时，返回的数据顺序不一致，从而造成“同一页面内容变化”、“记录重复出现”或“某些记录始终无法被访问”的现象。</p>
-<p>这并非数据库“bug”，而是<strong>SQL
-标准与数据库引擎设计的必然结果</strong>。根据 ANSI SQL 标准，若未指定
-<code>ORDER BY</code>，数据库有权以任意顺序返回结果。不同数据库（MySQL、PostgreSQL、Oracle、SQL
-Server）在不同版本、不同执行计划、不同物理存储结构下，都可能返回不同顺序。</p>
-<p>历史上，早期开发者常误以为“表是按插入顺序存储的，所以查询自然有序”，但现代数据库基于
-B+Tree、堆表、并行扫描、索引覆盖等机制，早已打破这种“朴素认知”。</p>
+<h2 id="概念解释">1. 概念解释</h2>
+<p>数据库分页不稳定是指在使用传统<code>LIMIT offset, size</code>方式进行分页查询时，由于数据在两次查询间发生变化（增删改），导致后续分页结果出现数据重复或遗漏的现象。这种不稳定性在动态数据环境中尤为突出。</p>
+<p><strong>历史背景</strong>：传统分页方式源于静态数据时代的设计，当时数据变动较少。随着Web应用的发展，实时数据交互成为常态，这种分页方式的缺陷逐渐暴露。核心问题在于<code>OFFSET</code>的语义是”跳过前N条记录”，而非”从某个位置开始”，当记录顺序因数据变动而改变时，就会导致分页错位。</p>
+<p><strong>技术本质</strong>：分页不稳定源于三个关键因素： 1.
+<strong>数据变动</strong>：两次分页查询间发生DML操作 2.
+<strong>非原子性</strong>：分页操作非原子事务，无法保证数据快照一致性 3.
+<strong>OFFSET语义缺陷</strong>：基于物理位置的分页在逻辑数据变动时失效</p>
 <hr />
-<h2 id="为什么无排序会导致分页不稳定">2.
-为什么无排序会导致分页不稳定</h2>
-<h3 id="问题根源">问题根源</h3>
-<p>数据库引擎在执行 <code>SELECT ... LIMIT N OFFSET M</code>
-时，如果没有 <code>ORDER BY</code>，其行为等价于：</p>
-<blockquote>
-<p>“给我任意 N 条满足条件的记录，从第 M 条开始计数。”</p>
-</blockquote>
-<p>但“任意”意味着：</p>
-<ul>
-<li>数据库可能使用不同索引</li>
-<li>可能因统计信息变化选择不同执行计划</li>
-<li>可能因并发写入导致数据页重排</li>
-<li>可能因 MVCC 快照导致不同事务看到不同顺序</li>
-</ul>
-<h3 id="示例场景">示例场景</h3>
+<h2 id="示例代码">2. 示例代码</h2>
+<p>以下通过Java和MySQL演示分页不稳定场景：</p>
 <div class="sourceCode" id="cb1"><pre
-class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- 假设 users 表有 100 条记录，无主键约束，无索引</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> users <span class="kw">LIMIT</span> <span class="dv">10</span> OFFSET <span class="dv">0</span>;  <span class="co">-- 第一次执行：返回 id=1~10</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">-- 插入一条新记录，触发页分裂</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> users <span class="kw">LIMIT</span> <span class="dv">10</span> OFFSET <span class="dv">0</span>;  <span class="co">-- 第二次执行：返回 id=5, 2, 8, 1, ... 顺序全乱</span></span></code></pre></div>
-<h3 id="设计动机">设计动机</h3>
-<p>数据库如此设计，是为了<strong>最大化查询性能与执行灵活性</strong>。强制排序会带来额外开销（内存排序、磁盘临时表），在不需要顺序的场景（如
-COUNT、EXISTS）中是浪费。因此，顺序控制权交给开发者。</p>
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 实体类</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Product <span class="op">{</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">Long</span> id<span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">String</span> name<span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">BigDecimal</span> price<span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// getters &amp; setters</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">// 不稳定分页实现</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="bu">List</span><span class="op">&lt;</span>Product<span class="op">&gt;</span> <span class="fu">unstablePagination</span><span class="op">(</span><span class="dt">int</span> page<span class="op">,</span> <span class="dt">int</span> size<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> offset <span class="op">=</span> <span class="op">(</span>page <span class="op">-</span> <span class="dv">1</span><span class="op">)</span> <span class="op">*</span> size<span class="op">;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">String</span> sql <span class="op">=</span> <span class="st">&quot;SELECT * FROM products ORDER BY price DESC LIMIT ? OFFSET ?&quot;</span><span class="op">;</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jdbcTemplate<span class="op">.</span><span class="fu">query</span><span class="op">(</span>sql<span class="op">,</span> </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="kw">new</span> <span class="bu">Object</span><span class="op">[]{</span>size<span class="op">,</span> offset<span class="op">},</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        <span class="op">(</span>rs<span class="op">,</span> rowNum<span class="op">)</span> <span class="op">-&gt;</span> <span class="kw">new</span> <span class="fu">Product</span><span class="op">(</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>            rs<span class="op">.</span><span class="fu">getLong</span><span class="op">(</span><span class="st">&quot;id&quot;</span><span class="op">),</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>            rs<span class="op">.</span><span class="fu">getString</span><span class="op">(</span><span class="st">&quot;name&quot;</span><span class="op">),</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>            rs<span class="op">.</span><span class="fu">getBigDecimal</span><span class="op">(</span><span class="st">&quot;price&quot;</span><span class="op">)</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>        <span class="op">));</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">// 模拟数据变动导致的不稳定</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">demonstrateInstability</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 第一页查询（价格降序）</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="bu">List</span><span class="op">&lt;</span>Product<span class="op">&gt;</span> page1 <span class="op">=</span> <span class="fu">unstablePagination</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">10</span><span class="op">);</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 在两次查询间插入新数据</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    jdbcTemplate<span class="op">.</span><span class="fu">update</span><span class="op">(</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;INSERT INTO products(name, price) VALUES(&#39;New Product&#39;, 999.99)&quot;</span><span class="op">);</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 第二页查询</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="bu">List</span><span class="op">&lt;</span>Product<span class="op">&gt;</span> page2 <span class="op">=</span> <span class="fu">unstablePagination</span><span class="op">(</span><span class="dv">2</span><span class="op">,</span> <span class="dv">10</span><span class="op">);</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 问题：page2可能包含page1已显示的数据（因新插入高价商品改变了排序）</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>关键问题</strong>：当新插入的商品价格高于第一页所有商品时，会导致原第一页的部分商品被挤到第二页，造成数据重复显示。</p>
 <hr />
-<h2 id="示例代码复现与修复">3. 示例代码：复现与修复</h2>
-<h3 id="python-sqlite-示例可运行">Python + SQLite 示例（可运行）</h3>
-<div class="sourceCode" id="cb2"><pre
-class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlite3</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 初始化数据库</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>conn <span class="op">=</span> sqlite3.<span class="ex">connect</span>(<span class="st">&quot;:memory:&quot;</span>)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>cursor <span class="op">=</span> conn.cursor()</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>cursor.execute(<span class="st">&quot;CREATE TABLE users (id INTEGER, name TEXT)&quot;</span>)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 插入无序数据</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> [(<span class="dv">3</span>, <span class="st">&quot;Alice&quot;</span>), (<span class="dv">1</span>, <span class="st">&quot;Bob&quot;</span>), (<span class="dv">4</span>, <span class="st">&quot;Carol&quot;</span>), (<span class="dv">2</span>, <span class="st">&quot;Dave&quot;</span>)]</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>cursor.executemany(<span class="st">&quot;INSERT INTO users VALUES (?, ?)&quot;</span>, data)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>conn.commit()</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># ❌ 错误：无排序分页</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;=== 无排序分页（不稳定）===&quot;</span>)</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">4</span>, <span class="dv">2</span>):</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    cursor.execute(<span class="st">&quot;SELECT id, name FROM users LIMIT 2 OFFSET ?&quot;</span>, (i,))</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    rows <span class="op">=</span> cursor.fetchall()</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Page </span><span class="sc">{</span>i<span class="op">//</span><span class="dv">2</span> <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>rows<span class="sc">}</span><span class="ss">&quot;</span>)</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co"># ✅ 正确：有排序分页</span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">=== 有排序分页（稳定）===&quot;</span>)</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">4</span>, <span class="dv">2</span>):</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    cursor.execute(<span class="st">&quot;SELECT id, name FROM users ORDER BY id LIMIT 2 OFFSET ?&quot;</span>, (i,))</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    rows <span class="op">=</span> cursor.fetchall()</span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Page </span><span class="sc">{</span>i<span class="op">//</span><span class="dv">2</span> <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>rows<span class="sc">}</span><span class="ss">&quot;</span>)</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>conn.close()</span></code></pre></div>
-<p><strong>输出示例（SQLite 可能按 rowid 返回，但不保证）：</strong></p>
-<pre><code>=== 无排序分页（不稳定）===
-Page 1: [(3, &#39;Alice&#39;), (1, &#39;Bob&#39;)]
-Page 2: [(4, &#39;Carol&#39;), (2, &#39;Dave&#39;)]
-
-=== 有排序分页（稳定）===
-Page 1: [(1, &#39;Bob&#39;), (2, &#39;Dave&#39;)]
-Page 2: [(3, &#39;Alice&#39;), (4, &#39;Carol&#39;)]</code></pre>
-<blockquote>
-<p>⚠️ 在 PostgreSQL 或 MySQL 中，无排序结果更易变动，尤其在并发写入或
-VACUUM 后。</p>
-</blockquote>
-<hr />
-<h2 id="mermaid-图解查询执行与排序缺失的影响">4. Mermaid
-图解：查询执行与排序缺失的影响</h2>
+<h2 id="mermaid图">3. Mermaid图</h2>
+<h3 id="分页不稳定流程图">分页不稳定流程图</h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant Client
+    participant App
+    participant DB
+    
+    Client-&gt;&gt;App: 请求第1页数据
+    App-&gt;&gt;DB: SELECT * FROM products ORDER BY price DESC LIMIT 10 OFFSET 0
+    DB--&gt;&gt;App: 返回商品A-J
+    App--&gt;&gt;Client: 显示商品A-J
+    
+    Note over App,DB: 并发操作：插入新商品K(价格最高)
+    Client-&gt;&gt;App: 请求第2页数据
+    App-&gt;&gt;DB: SELECT * FROM products ORDER BY price DESC LIMIT 10 OFFSET 10
+    DB--&gt;&gt;App: 返回商品J-S（含重复商品J）
+    App--&gt;&gt;Client: 显示商品J-S（重复显示J）</code></pre>
+<h3 id="游标分页解决方案">游标分页解决方案</h3>
 <pre class="mermaid"><code>graph TD
-    A[客户端请求分页] --&gt; B{是否含 ORDER BY?}
-    B --&gt;|否| C[数据库自由选择扫描路径]
-    C --&gt; D[可能使用索引A、索引B或全表扫描]
-    D --&gt; E[返回“任意顺序”的前N条]
-    E --&gt; F[分页结果不稳定]
-    B --&gt;|是| G[数据库强制按指定列排序]
-    G --&gt; H[使用排序索引或内存排序]
-    H --&gt; I[返回稳定有序结果]
-    I --&gt; J[分页结果可靠]
-    F --&gt; K[用户看到数据跳动/重复]
-    J --&gt; L[用户体验一致]</code></pre>
+    A[客户端请求] --&gt; B{是否有游标?}
+    B --&gt;|无| C[执行初始查询：SELECT * FROM products ORDER BY id LIMIT 10]
+    B --&gt;|有| D[执行游标查询：SELECT * FROM products WHERE id &gt; lastId ORDER BY id LIMIT 10]
+    C --&gt; E[返回数据+最后一条ID作为游标]
+    D --&gt; E
+    E --&gt; F[客户端存储游标]
+    F --&gt; A</code></pre>
 <hr />
-<h2 id="常见误区与边界情况">5. 常见误区与边界情况</h2>
-<h3
-id="误区一主键自增所以默认有序">误区一：“主键自增，所以默认有序”</h3>
-<p>❌ 错！即使有自增主键，若未在 <code>ORDER BY</code>
-中显式指定，数据库仍可能不按主键顺序返回（如使用其他索引覆盖查询）。</p>
-<h3
-id="误区二数据没变顺序就不会变">误区二：“数据没变，顺序就不会变”</h3>
-<p>❌
-错！数据库统计信息更新、缓存失效、执行计划重选都可能导致顺序变化。</p>
-<h3 id="边界情况排序字段值相同">边界情况：排序字段值相同</h3>
-<div class="sourceCode" id="cb5"><pre
-class="sourceCode sql"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- 若 status 相同，不同数据库对相同值的排序不一致</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> orders <span class="kw">ORDER</span> <span class="kw">BY</span> status <span class="kw">LIMIT</span> <span class="dv">10</span> OFFSET <span class="dv">10</span>;</span></code></pre></div>
-<p>✅
-解决方案：<strong>添加辅助排序字段（如主键）确保全局唯一排序</strong></p>
-<div class="sourceCode" id="cb6"><pre
-class="sourceCode sql"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> orders <span class="kw">ORDER</span> <span class="kw">BY</span> status, <span class="kw">id</span> <span class="kw">LIMIT</span> <span class="dv">10</span> OFFSET <span class="dv">10</span>;</span></code></pre></div>
-<h3 id="误区三加了索引就等于排序">误区三：“加了索引就等于排序”</h3>
-<p>❌
-错！索引用于加速查找，但查询优化器可能选择不使用该索引，或使用后仍需额外排序。</p>
-<hr />
-<h2 id="应用场景从管理后台到高并发-api">6. 应用场景：从管理后台到高并发
-API</h2>
-<h3
-id="场景一后台管理系统低频人工操作">场景一：后台管理系统（低频、人工操作）</h3>
+<h2 id="问题分析">4. 问题分析</h2>
+<h3 id="常见误解">常见误解</h3>
+<ol type="1">
+<li><p><strong>事务能解决问题</strong>：<br />
+误解：使用事务可以保证分页稳定性<br />
+实际：事务只能保证单次查询的一致性，无法解决两次查询间的数据变动问题</p></li>
+<li><p><strong>ORDER BY足够</strong>：<br />
+误解：只要添加ORDER BY就能避免问题<br />
+实际：ORDER
+BY只保证单次查询的顺序，无法阻止数据变动导致的分页错位</p></li>
+<li><p><strong>缓存可解决</strong>：<br />
+误解：缓存分页结果能避免不稳定<br />
+实际：缓存会引入数据延迟问题，且在高并发场景下缓存失效策略复杂</p></li>
+</ol>
+<h3 id="技术陷阱">技术陷阱</h3>
+<ol type="1">
+<li><p><strong>深度分页性能陷阱</strong>：<br />
+<code>OFFSET 1000000</code>会导致数据库扫描大量无用数据，性能急剧下降</p></li>
+<li><p><strong>排序字段不唯一</strong>：<br />
+当排序字段存在重复值时，分页边界可能出现不确定行为</p></li>
+<li><p><strong>删除操作影响</strong>：<br />
+分页查询间删除数据可能导致返回行数少于预期</p></li>
+</ol>
+<h3 id="边界情况">边界情况</h3>
 <ul>
-<li>用户手动翻页查看订单列表</li>
-<li>❌ 无排序 → 用户翻页时数据“乱跳”，误操作风险高</li>
-<li>✅ 加 <code>ORDER BY created_at DESC, id DESC</code> →
-稳定倒序，符合预期</li>
-</ul>
-<h3
-id="场景二移动端无限滚动高频自动化">场景二：移动端无限滚动（高频、自动化）</h3>
-<ul>
-<li>App 自动加载下一页内容</li>
-<li>❌ 无排序 → 可能重复加载相同内容，或跳过新内容</li>
-<li>✅ 使用游标分页（Cursor Pagination）→ 基于最后一条记录的 ID
-加载，天然稳定</li>
-</ul>
-<div class="sourceCode" id="cb7"><pre
-class="sourceCode sql"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- 游标分页示例</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> posts </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="kw">id</span> <span class="op">&lt;</span> ?last_seen_id </span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> <span class="kw">id</span> <span class="kw">DESC</span> </span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">20</span>;</span></code></pre></div>
-<h3 id="场景三导出分页数据批处理">场景三：导出分页数据（批处理）</h3>
-<ul>
-<li>后台任务分批导出百万级数据</li>
-<li>❌ 无排序 → 可能漏导或重复导出</li>
-<li>✅ 按主键分段 + 排序 → 确保全覆盖、无重复</li>
+<li><strong>空结果集</strong>：当分页查询结果为空时，客户端应正确处理</li>
+<li><strong>数据不足</strong>：请求页数超过实际数据量时的处理</li>
+<li><strong>排序字段变更</strong>：运行时修改排序字段导致的分页混乱</li>
 </ul>
 <hr />
-<h2 id="跨语言框架对比">7. 跨语言/框架对比</h2>
+<h2 id="应用场景">5. 应用场景</h2>
+<h3 id="高频变动数据场景">高频变动数据场景</h3>
+<ol type="1">
+<li><strong>实时订单系统</strong>：新订单持续插入，价格排序分页易出现重复</li>
+<li><strong>社交媒体动态</strong>：用户发布新内容导致时间线分页错位</li>
+<li><strong>物联网数据流</strong>：传感器数据持续写入，时间分页不稳定</li>
+</ol>
+<h3 id="大数据量场景">大数据量场景</h3>
+<ol type="1">
+<li><strong>日志分析系统</strong>：百万级日志分页查询，OFFSET性能极差</li>
+<li><strong>电商商品列表</strong>：商品信息频繁更新，价格排序分页不稳定</li>
+<li><strong>金融交易记录</strong>：高频交易数据分页展示易出现重复或遗漏</li>
+</ol>
+<h3 id="解决方案选择">解决方案选择</h3>
 <table>
-<colgroup>
-<col style="width: 16%" />
-<col style="width: 34%" />
-<col style="width: 14%" />
-<col style="width: 35%" />
-</colgroup>
 <thead>
 <tr>
-<th>语言/框架</th>
-<th>分页实现方式</th>
-<th>是否默认排序</th>
-<th>推荐做法</th>
+<th>场景</th>
+<th>传统分页</th>
+<th>游标分页</th>
+<th>覆盖索引</th>
+<th>预计算分页</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Java + MyBatis</strong></td>
-<td><code>LIMIT #{offset}, #{limit}</code></td>
-<td>❌ 否</td>
-<td>在 Mapper XML 中显式写 <code>ORDER BY</code></td>
+<td>静态数据</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
 </tr>
 <tr>
-<td><strong>Python + Django</strong></td>
-<td><code>QuerySet[offset:offset+limit]</code></td>
-<td>❌ 否</td>
-<td>调用 <code>.order_by('id')</code> 再分页</td>
+<td>低频变动</td>
+<td>⚠️</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
 </tr>
 <tr>
-<td><strong>Go + GORM</strong></td>
-<td><code>.Offset().Limit()</code></td>
-<td>❌ 否</td>
-<td>链式调用 <code>.Order("id")</code></td>
+<td>高频变动</td>
+<td>✗</td>
+<td>✓</td>
+<td>⚠️</td>
+<td>✓</td>
 </tr>
 <tr>
-<td><strong>Node.js + Sequelize</strong></td>
-<td><code>.findAll({ offset, limit })</code></td>
-<td>❌ 否</td>
-<td>加 <code>order: [['id', 'ASC']]</code></td>
+<td>随机访问</td>
+<td>✓</td>
+<td>✗</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr>
+<td>深度分页</td>
+<td>✗</td>
+<td>✓</td>
+<td>⚠️</td>
+<td>✓</td>
 </tr>
 </tbody>
 </table>
-<blockquote>
-<p>✅ <strong>共性</strong>：所有主流 ORM
-都不自动添加排序，开发者必须显式指定。</p>
-</blockquote>
 <hr />
-<h2 id="实战案例spring-boot-mybatis-分页陷阱与修复">8. 实战案例：Spring
-Boot + MyBatis 分页陷阱与修复</h2>
-<h3 id="问题代码mybatis-mapper">问题代码（MyBatis Mapper）</h3>
-<div class="sourceCode" id="cb8"><pre
-class="sourceCode xml"><code class="sourceCode xml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- ❌ 危险：无排序分页 --&gt;</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">select</span><span class="ot"> id=</span><span class="st">&quot;selectUsersByPage&quot;</span><span class="ot"> resultType=</span><span class="st">&quot;User&quot;</span>&gt;</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    SELECT id, name, email</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    FROM users</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    LIMIT #{offset}, #{limit}</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">select</span>&gt;</span></code></pre></div>
-<h3 id="修复代码">修复代码</h3>
+<h2 id="跨语言或跨框架对比">6. 跨语言或跨框架对比</h2>
+<h3 id="java生态">Java生态</h3>
+<p><strong>Spring Data JPA</strong>：</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 传统分页（不稳定）</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>Page<span class="op">&lt;</span>Product<span class="op">&gt;</span> <span class="fu">findByPriceGreaterThan</span><span class="op">(</span><span class="bu">BigDecimal</span> price<span class="op">,</span> <span class="bu">Pageable</span> pageable<span class="op">);</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">// 游标分页实现</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="at">@Query</span><span class="op">(</span><span class="st">&quot;SELECT p FROM Product p WHERE p.id &gt; :lastId ORDER BY p.id&quot;</span><span class="op">)</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="bu">List</span><span class="op">&lt;</span>Product<span class="op">&gt;</span> <span class="fu">findNextPage</span><span class="op">(</span><span class="at">@Param</span><span class="op">(</span><span class="st">&quot;lastId&quot;</span><span class="op">)</span> <span class="bu">Long</span> lastId<span class="op">,</span> <span class="bu">Pageable</span> pageable<span class="op">);</span></span></code></pre></div>
+<p><strong>MyBatis</strong>：</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- 传统分页 --&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">select</span><span class="ot"> id=</span><span class="st">&quot;selectByPage&quot;</span><span class="ot"> resultType=</span><span class="st">&quot;Product&quot;</span>&gt;</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    SELECT * FROM products ORDER BY price DESC </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    LIMIT #{size} OFFSET #{offset}</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">select</span>&gt;</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- 游标分页 --&gt;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">select</span><span class="ot"> id=</span><span class="st">&quot;selectByCursor&quot;</span><span class="ot"> resultType=</span><span class="st">&quot;Product&quot;</span>&gt;</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    SELECT * FROM products </span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    WHERE id &gt; #{lastId} </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    ORDER BY id </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    LIMIT #{size}</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">select</span>&gt;</span></code></pre></div>
+<h3 id="python生态">Python生态</h3>
+<p><strong>Django ORM</strong>：</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 传统分页（不稳定）</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_unstable_page(page_number):</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Product.objects.order_by(<span class="st">&#39;-price&#39;</span>).<span class="bu">all</span>()[</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        (page_number<span class="op">-</span><span class="dv">1</span>)<span class="op">*</span><span class="dv">10</span> : page_number<span class="op">*</span><span class="dv">10</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 游标分页</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_stable_page(last_id<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    queryset <span class="op">=</span> Product.objects.order_by(<span class="st">&#39;id&#39;</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> last_id:</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        queryset <span class="op">=</span> queryset.<span class="bu">filter</span>(id__gt<span class="op">=</span>last_id)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> queryset[:<span class="dv">10</span>]</span></code></pre></div>
+<p><strong>SQLAlchemy</strong>：</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 传统分页</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> unstable_pagination(session, page, size):</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> session.query(Product)<span class="op">\</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        .order_by(Product.price.desc())<span class="op">\</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        .offset((page<span class="op">-</span><span class="dv">1</span>)<span class="op">*</span>size)<span class="op">\</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        .limit(size)<span class="op">\</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        .<span class="bu">all</span>()</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 游标分页</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> stable_pagination(session, last_id, size):</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    query <span class="op">=</span> session.query(Product).order_by(Product.<span class="bu">id</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> last_id:</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        query <span class="op">=</span> query.<span class="bu">filter</span>(Product.<span class="bu">id</span> <span class="op">&gt;</span> last_id)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> query.limit(size).<span class="bu">all</span>()</span></code></pre></div>
+<h3 id="go生态">Go生态</h3>
+<p><strong>GORM</strong>：</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode go"><code class="sourceCode go"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 传统分页（不稳定）</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">func</span> UnstablePagination<span class="op">(</span>db <span class="op">*</span>gorm<span class="op">.</span>DB<span class="op">,</span> page<span class="op">,</span> size <span class="dt">int</span><span class="op">)</span> <span class="op">[]</span>Product <span class="op">{</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> products <span class="op">[]</span>Product</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    db<span class="op">.</span>Order<span class="op">(</span><span class="st">&quot;price desc&quot;</span><span class="op">).</span>Offset<span class="op">((</span>page<span class="op">-</span><span class="dv">1</span><span class="op">)*</span>size<span class="op">).</span>Limit<span class="op">(</span>size<span class="op">).</span>Find<span class="op">(&amp;</span>products<span class="op">)</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> products</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">// 游标分页</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="kw">func</span> StablePagination<span class="op">(</span>db <span class="op">*</span>gorm<span class="op">.</span>DB<span class="op">,</span> lastID <span class="dt">uint</span><span class="op">,</span> size <span class="dt">int</span><span class="op">)</span> <span class="op">[]</span>Product <span class="op">{</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> products <span class="op">[]</span>Product</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    query <span class="op">:=</span> db<span class="op">.</span>Order<span class="op">(</span><span class="st">&quot;id&quot;</span><span class="op">).</span>Limit<span class="op">(</span>size<span class="op">)</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> lastID <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">{</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        query <span class="op">=</span> query<span class="op">.</span>Where<span class="op">(</span><span class="st">&quot;id &gt; ?&quot;</span><span class="op">,</span> lastID<span class="op">)</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    query<span class="op">.</span>Find<span class="op">(&amp;</span>products<span class="op">)</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> products</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="对比总结">对比总结</h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>Java生态</th>
+<th>Python生态</th>
+<th>Go生态</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>传统分页支持</td>
+<td>完善</td>
+<td>完善</td>
+<td>完善</td>
+</tr>
+<tr>
+<td>游标分页支持</td>
+<td>需自定义</td>
+<td>需自定义</td>
+<td>需自定义</td>
+</tr>
+<tr>
+<td>框架集成度</td>
+<td>高（Spring Data）</td>
+<td>中（Django）</td>
+<td>中（GORM）</td>
+</tr>
+<tr>
+<td>性能优化</td>
+<td>覆盖索引支持</td>
+<td>覆盖索引支持</td>
+<td>覆盖索引支持</td>
+</tr>
+<tr>
+<td>学习曲线</td>
+<td>中等</td>
+<td>低</td>
+<td>中等</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="实战案例">7. 实战案例</h2>
+<h3 id="spring-boot-mybatis实现游标分页">Spring Boot +
+MyBatis实现游标分页</h3>
+<p><strong>数据库表结构</strong>：</p>
 <div class="sourceCode" id="cb9"><pre
-class="sourceCode xml"><code class="sourceCode xml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- ✅ 安全：显式排序 --&gt;</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">select</span><span class="ot"> id=</span><span class="st">&quot;selectUsersByPage&quot;</span><span class="ot"> resultType=</span><span class="st">&quot;User&quot;</span>&gt;</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    SELECT id, name, email</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    FROM users</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    ORDER BY id ASC  <span class="co">&lt;!-- 或 created_at DESC, id ASC --&gt;</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    LIMIT #{offset}, #{limit}</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">select</span>&gt;</span></code></pre></div>
-<h3 id="集成-pagehelper-插件时的坑">集成 PageHelper 插件时的坑</h3>
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> products (</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">id</span> BIGINT AUTO_INCREMENT <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    name <span class="dt">VARCHAR</span>(<span class="dv">100</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    price <span class="dt">DECIMAL</span>(<span class="dv">10</span>,<span class="dv">2</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    create_time DATETIME <span class="kw">DEFAULT</span> <span class="fu">CURRENT_TIMESTAMP</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">INDEX</span> idx_price (price),</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">INDEX</span> idx_id (<span class="kw">id</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div>
+<p><strong>Mapper接口</strong>：</p>
 <div class="sourceCode" id="cb10"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">// ❌ PageHelper 只加 LIMIT/OFFSET，不自动加 ORDER BY</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>PageHelper<span class="op">.</span><span class="fu">startPage</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">10</span><span class="op">);</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="bu">List</span><span class="op">&lt;</span>User<span class="op">&gt;</span> users <span class="op">=</span> userMapper<span class="op">.</span><span class="fu">selectAll</span><span class="op">();</span> <span class="co">// 若 Mapper 无 ORDER BY，仍不稳定</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">// ✅ 正确做法：Mapper 中写死 ORDER BY，或动态拼接</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="at">@Select</span><span class="op">(</span><span class="st">&quot;SELECT * FROM users ORDER BY id LIMIT #{offset}, #{limit}&quot;</span><span class="op">)</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="bu">List</span><span class="op">&lt;</span>User<span class="op">&gt;</span> <span class="fu">selectUsersByPage</span><span class="op">(</span><span class="at">@Param</span><span class="op">(</span><span class="st">&quot;offset&quot;</span><span class="op">)</span> <span class="dt">int</span> offset<span class="op">,</span> <span class="at">@Param</span><span class="op">(</span><span class="st">&quot;limit&quot;</span><span class="op">)</span> <span class="dt">int</span> limit<span class="op">);</span></span></code></pre></div>
-<blockquote>
-<p>💡 生产环境建议：在 Service 层封装分页逻辑，强制校验排序参数。</p>
-</blockquote>
+class="sourceCode java"><code class="sourceCode java"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">interface</span> ProductMapper <span class="op">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 游标分页查询</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Select</span><span class="op">(</span><span class="st">&quot;SELECT * FROM products WHERE id &gt; #{lastId} ORDER BY id LIMIT #{size}&quot;</span><span class="op">)</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">List</span><span class="op">&lt;</span>Product<span class="op">&gt;</span> <span class="fu">selectByCursor</span><span class="op">(</span><span class="at">@Param</span><span class="op">(</span><span class="st">&quot;lastId&quot;</span><span class="op">)</span> <span class="bu">Long</span> lastId<span class="op">,</span> <span class="at">@Param</span><span class="op">(</span><span class="st">&quot;size&quot;</span><span class="op">)</span> <span class="dt">int</span> size<span class="op">);</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 获取总记录数（用于显示总页数）</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Select</span><span class="op">(</span><span class="st">&quot;SELECT COUNT(*) FROM products&quot;</span><span class="op">)</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">long</span> <span class="fu">countTotal</span><span class="op">();</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>服务层实现</strong>：</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Service</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> ProductService <span class="op">{</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Autowired</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> ProductMapper productMapper<span class="op">;</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> PageResult<span class="op">&lt;</span>Product<span class="op">&gt;</span> <span class="fu">getProductsByCursor</span><span class="op">(</span><span class="bu">Long</span> lastId<span class="op">,</span> <span class="dt">int</span> size<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        <span class="bu">List</span><span class="op">&lt;</span>Product<span class="op">&gt;</span> products <span class="op">=</span> productMapper<span class="op">.</span><span class="fu">selectByCursor</span><span class="op">(</span>lastId<span class="op">,</span> size<span class="op">);</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Long</span> newLastId <span class="op">=</span> products<span class="op">.</span><span class="fu">isEmpty</span><span class="op">()</span> <span class="op">?</span> <span class="kw">null</span> <span class="op">:</span> </span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>            products<span class="op">.</span><span class="fu">get</span><span class="op">(</span>products<span class="op">.</span><span class="fu">size</span><span class="op">()</span> <span class="op">-</span> <span class="dv">1</span><span class="op">).</span><span class="fu">getId</span><span class="op">();</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="kw">new</span> PageResult<span class="op">&lt;&gt;(</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>            products<span class="op">,</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>            newLastId<span class="op">,</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>            productMapper<span class="op">.</span><span class="fu">countTotal</span><span class="op">()</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>        <span class="op">);</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="co">// 分页结果封装</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="at">@Data</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="at">@AllArgsConstructor</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> PageResult<span class="op">&lt;</span>T<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">List</span><span class="op">&lt;</span>T<span class="op">&gt;</span> data<span class="op">;</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">Long</span> nextCursor<span class="op">;</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">long</span> total<span class="op">;</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>控制器实现</strong>：</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="at">@RestController</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="at">@RequestMapping</span><span class="op">(</span><span class="st">&quot;/api/products&quot;</span><span class="op">)</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> ProductController <span class="op">{</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Autowired</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> ProductService productService<span class="op">;</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">@GetMapping</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> ResponseEntity<span class="op">&lt;</span>PageResult<span class="op">&lt;</span>Product<span class="op">&gt;&gt;</span> <span class="fu">getProducts</span><span class="op">(</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">@RequestParam</span><span class="op">(</span>required <span class="op">=</span> <span class="kw">false</span><span class="op">)</span> <span class="bu">Long</span> cursor<span class="op">,</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">@RequestParam</span><span class="op">(</span>defaultValue <span class="op">=</span> <span class="st">&quot;10&quot;</span><span class="op">)</span> <span class="dt">int</span> size<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>        PageResult<span class="op">&lt;</span>Product<span class="op">&gt;</span> result <span class="op">=</span> productService<span class="op">.</span><span class="fu">getProductsByCursor</span><span class="op">(</span>cursor<span class="op">,</span> size<span class="op">);</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ResponseEntity<span class="op">.</span><span class="fu">ok</span><span class="op">(</span>result<span class="op">);</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>前端调用示例</strong>：</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 初始加载</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">loadProducts</span>() {</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> response <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="st">&#39;/api/products?size=10&#39;</span>)<span class="op">;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> result <span class="op">=</span> <span class="cf">await</span> response<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">displayProducts</span>(result<span class="op">.</span><span class="at">data</span>)<span class="op">;</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">saveCursor</span>(result<span class="op">.</span><span class="at">nextCursor</span>)<span class="op">;</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">// 加载下一页</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">loadNextPage</span>() {</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> cursor <span class="op">=</span> <span class="fu">getSavedCursor</span>()<span class="op">;</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="op">!</span>cursor) <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> response <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="vs">`/api/products?cursor=</span><span class="sc">${</span>cursor<span class="sc">}</span><span class="vs">&amp;size=10`</span>)<span class="op">;</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> result <span class="op">=</span> <span class="cf">await</span> response<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">displayProducts</span>(result<span class="op">.</span><span class="at">data</span>)<span class="op">;</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">saveCursor</span>(result<span class="op">.</span><span class="at">nextCursor</span>)<span class="op">;</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong>优化点</strong>： 1. 使用覆盖索引优化查询性能 2.
+添加缓存层减少数据库压力 3. 实现游标加密防止客户端篡改 4.
+添加分页大小限制防止恶意请求</p>
 <hr />
-<h2 id="总结">9. 总结</h2>
+<h2 id="总结">8. 总结</h2>
 <ul>
-<li>✅ <strong>必须显式排序</strong>：任何分页查询必须包含
-<code>ORDER BY</code>，否则结果不可靠。</li>
-<li>✅
-<strong>排序字段唯一性</strong>：优先使用主键或唯一组合字段，避免相同值导致边界模糊。</li>
-<li>✅
-<strong>游标分页更优</strong>：大数据量、高并发场景推荐游标分页（基于 ID
-或时间戳）。</li>
-<li>❌ <strong>不要依赖“默认顺序”</strong>：数据库不承诺无
-<code>ORDER BY</code> 时的顺序一致性。</li>
-<li>🛠️ <strong>框架不救你</strong>：MyBatis、Hibernate、Django ORM
-等均不自动添加排序，责任在开发者。</li>
-<li>📊
-<strong>测试要覆盖</strong>：在测试环境中模拟数据变更，验证分页稳定性。</li>
+<li><strong>核心问题</strong>：传统<code>LIMIT offset</code>分页在数据变动时会导致重复或遗漏数据</li>
+<li><strong>根本原因</strong>：OFFSET基于物理位置而非逻辑标识，数据变动导致记录顺序改变</li>
+<li><strong>主要场景</strong>：高频数据变动、深度分页、实时数据展示</li>
+<li><strong>解决方案</strong>：
+<ul>
+<li>游标分页（推荐）：基于唯一有序列（如自增ID）的分页</li>
+<li>覆盖索引：优化排序和分页性能</li>
+<li>预计算分页：适合静态或低频变动数据</li>
+</ul></li>
+<li><strong>最佳实践</strong>：
+<ul>
+<li>优先使用游标分页替代传统分页</li>
+<li>为排序字段创建合适索引</li>
+<li>避免深度分页（OFFSET过大）</li>
+<li>考虑业务场景选择合适方案</li>
+</ul></li>
+<li><strong>注意事项</strong>：
+<ul>
+<li>游标分页不支持随机跳页</li>
+<li>需处理游标失效边界情况</li>
+<li>大数据量时注意内存消耗</li>
+</ul></li>
 </ul>
 <hr />
-<h2 id="延伸阅读">10. 延伸阅读</h2>
+<h2 id="延伸阅读">9. 延伸阅读</h2>
+<h3 id="官方文档">官方文档</h3>
 <ul>
-<li>📘 《SQL 必知必会》第 15 章：排序与分页</li>
-<li>📘 《高性能 MySQL》第 6 章：查询性能优化</li>
-<li>🔗 <a
+<li><a href="https://dev.mysql.com/doc/refman/8.0/en/select.html">MySQL
+8.0: LIMIT Clause</a></li>
+<li><a
 href="https://www.postgresql.org/docs/current/queries-limit.html">PostgreSQL:
-ORDER BY and LIMIT</a></li>
-<li>🔗 <a
-href="https://dev.mysql.com/doc/refman/8.0/en/limit-optimization.html">MySQL:
-LIMIT Query Optimization</a></li>
-<li>🔗 <a href="https://www.iso.org/standard/63555.html">SQL Standard
-(ISO/IEC 9075-2:2016) - Section 7.13 <query expression></a></li>
-<li>🔍 MyBatis-PageHelper
-源码：https://github.com/pagehelper/Mybatis-PageHelper</li>
+LIMIT and OFFSET</a></li>
+<li><a
+href="https://docs.oracle.com/en/database/oracle/oracle-database/19/sqlrf/SELECT.html#GUID-CFA006CA-6FF1-4972-821E-6996142A51C6__BABDGFIC">Oracle:
+row limiting clause</a></li>
+</ul>
+<h3 id="经典书籍">经典书籍</h3>
+<ul>
+<li>《高性能MySQL》第6章：查询性能优化</li>
+<li>《SQL权威指南》第13章：高级查询技术</li>
+<li>《数据库系统概念》第15章：事务管理</li>
+</ul>
+<h3 id="技术文章">技术文章</h3>
+<ul>
+<li><a
+href="https://www.citusdata.com/blog/2018/08/29/pagination-done-right-postgresql/">Pagination
+Done Right the PostgreSQL Way</a></li>
+<li><a href="https://relay.dev/graphql/connections.htm">Cursor-based
+Pagination</a></li>
+<li><a href="https://use-the-index-luke.com/no-offset">Deep Pagination:
+The Wrong Way and The Right Way</a></li>
+</ul>
+<h3 id="源码参考">源码参考</h3>
+<ul>
+<li><a
+href="https://github.com/spring-projects/spring-data-commons">Spring
+Data: Pagination</a></li>
+<li><a href="https://github.com/mybatis/mybatis-3">MyBatis:
+PaginationInterceptor</a></li>
+<li><a href="https://github.com/django/django">Django:
+Paginator</a></li>
 </ul>
 <hr />
-<h2 id="一句话记忆">11. 一句话记忆</h2>
-<blockquote>
-<p><strong>无排序，勿分页 —— 稳定分页的唯一法则是显式 ORDER
-BY。</strong></p>
-</blockquote>
+<h2 id="一句话记忆">10. 一句话记忆</h2>
+<p><strong>游标分页替OFFSET，数据变动不惊慌。</strong></p>
 
                 </div>
             </article>
