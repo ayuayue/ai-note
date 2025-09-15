@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据库分页不稳定：为什么无排序的分页是“定时炸弹”，以及如何彻底解决</title>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="数据库分页不稳定：为什么无排序的分页是“定时炸弹”，以及如何彻底解决
+
+在数据库分页查询中，省略 ORDER BY
+会导致结果顺序不可预测，进而引发分页“跳页”、“数据重复”或“遗漏”，严重破坏用户体验与数据一致性。本文深入剖析其底层原理、常见误区、解决方案及实战优化，适合后端开发、DBA
+与系统架构师阅读。...">
+    <meta name="keywords" content="数据库分页不稳定, 为什么无排序的分页是, 定时炸弹, 以及如何彻底解决">
+    <meta name="author" content="AI 个人笔记">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="数据库分页不稳定：为什么无排序的分页是“定时炸弹”，以及如何彻底解决">
+    <meta property="og:description" content="数据库分页不稳定：为什么无排序的分页是“定时炸弹”，以及如何彻底解决
+
+在数据库分页查询中，省略 ORDER BY
+会导致结果顺序不可预测，进而引发分页“跳页”、“数据重复”或“遗漏”，严重破坏用户体验与数据一致性。本文深入剖析其底层原理、常见误区、解决方案及实战优化，适合后端开发、DBA
+与系统架构师阅读。...">
+    <meta property="og:image" content="https://your-domain.com/images/og-image.png">
+    <meta property="og:url" content="https://your-domain.com/docs/2025-09/数据库分页不稳定.html">
+    <meta property="og:site_name" content="AI 个人笔记">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="数据库分页不稳定：为什么无排序的分页是“定时炸弹”，以及如何彻底解决">
+    <meta property="twitter:description" content="数据库分页不稳定：为什么无排序的分页是“定时炸弹”，以及如何彻底解决
+
+在数据库分页查询中，省略 ORDER BY
+会导致结果顺序不可预测，进而引发分页“跳页”、“数据重复”或“遗漏”，严重破坏用户体验与数据一致性。本文深入剖析其底层原理、常见误区、解决方案及实战优化，适合后端开发、DBA
+与系统架构师阅读。...">
+    <meta property="twitter:image" content="https://your-domain.com/images/og-image.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://your-domain.com/docs/2025-09/数据库分页不稳定.html">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <style>
+        /* Google Fonts for better typography */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
+
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --bg-color: #f8f9fa;
+            --text-color: #34495e;
+            --border-color: #e9ecef;
+            --card-bg: #ffffff;
+            --hover-color: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', 'Noto Sans SC', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            gap: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .back-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--secondary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .back-home:hover {
+            background: #2980b9;
+        }
+
+        .github-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #24292e;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .github-link:hover {
+            background: #000;
+        }
+
+        .main-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .post {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .post-header {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .post-title {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #6c757d;
+            font-size: 0.95rem;
+        }
+
+        .post-date {
+            background-color: #e3f2fd;
+            color: var(--secondary-color);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .post-category {
+            background-color: #e8f5e9;
+            color: #4caf50;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .post-content {
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .post-content h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin: 35px 0 25px 0;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        /* Table of Contents */
+        .toc-container {
+            width: 300px;
+            flex-shrink: 0;
+        }
+        
+        .toc {
+            position: sticky;
+            top: 135px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            max-height: calc(100vh - 150px);
+            overflow-y: auto;
+        }
+        
+        .toc h2 {
+            color: var(--primary-color);
+            font-size: 1.4rem;
+            margin-top: 0;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .toc ul ul {
+            padding-left: 20px;
+        }
+        
+        .toc li {
+            margin-bottom: 8px;
+        }
+        
+        .toc a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+        
+        .toc a:hover {
+            color: var(--secondary-color);
+        }
+        
+        .toc a.active {
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .post-content h2 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .post-content h3 {
+            color: #2980b9;
+            font-size: 1.3rem;
+            margin: 25px 0 15px 0;
+        }
+
+        .post-content p {
+            margin-bottom: 18px;
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 20px 0;
+            padding-left: 35px;
+        }
+
+        .post-content li {
+            margin-bottom: 10px;
+        }
+
+        .post-content code {
+            background-color: #e8eaed;
+            padding: 3px 7px;
+            border-radius: 4px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            color: #c0392b;
+            font-size: 0.9em;
+        }
+
+        .post-content pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            font-size: 0.9em;
+            line-height: 1.5;
+            position: relative;
+            overflow: visible;
+        }
+        
+        /* Copy button styles */
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #444;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 0.8em;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: all 0.2s ease;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        /* 为 Pandoc 生成的代码块容器添加定位上下文 */
+        .sourceCode {
+            position: relative;
+        }
+        
+        .copy-button:hover {
+            background-color: #555;
+            opacity: 1;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .copy-button.copied {
+            background-color: #27ae60;
+        }
+
+        .post-content pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        .post-content blockquote {
+            background-color: #eaf2f8;
+            border-left: 5px solid var(--secondary-color);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .post-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .post-content th, .post-content td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #e1e1e1;
+        }
+
+        .post-content th {
+            background-color: #3498db;
+            color: #ffffff;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .post-content tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .post-content tbody tr:hover {
+            background-color: #e9ecef;
+        }
+
+        .post-content a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+
+        .post-content a:hover {
+            text-decoration: underline;
+        }
+
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 25px 0;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 40px;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--secondary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+        }
+
+        /* Mermaid 图表样式 */
+        .mermaid {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .post {
+                padding: 20px;
+            }
+            
+            .post-title {
+                font-size: 1.6rem;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .post-content {
+                font-size: 1rem;
+            }
+            
+            .post-content h1 {
+                font-size: 1.5rem;
+            }
+            
+            .post-content h2 {
+                font-size: 1.3rem;
+            }
+            
+            .post-content h3 {
+                font-size: 1.1rem;
+            }
+            
+            .toc-container {
+                display: none;
+            }
+        }
+    </style>
+    <!-- 引入本地 Mermaid 库 -->
+    <script src="../../js/mermaid.min.js"></script>
+    <script>
+        // 初始化 Mermaid
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            // 可以根据需要添加更多配置选项
+            securityLevel: 'loose'
+        });
+        
+        // 处理 Pandoc 生成的 Mermaid 代码块
+        // Pandoc 将 Mermaid 代码块转换为 <pre class="mermaid"><code>... 格式
+        // 我们需要将其转换为 <div class="mermaid">... 格式以便 Mermaid 渲染
+        document.addEventListener('DOMContentLoaded', function() {
+            const mermaidBlocks = document.querySelectorAll('pre.mermaid code');
+            mermaidBlocks.forEach(function(codeElement) {
+                // 创建新的 div 元素
+                const mermaidDiv = document.createElement('div');
+                mermaidDiv.className = 'mermaid';
+                // 将代码内容移到 div 中
+                mermaidDiv.textContent = codeElement.textContent;
+                // 替换原来的 pre 元素
+                codeElement.parentNode.parentNode.replaceChild(mermaidDiv, codeElement.parentNode);
+            });
+            
+            // 重新启动 Mermaid 渲染
+            mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+        });
+        
+        // 为代码块添加复制按钮
+        function addCopyButtons() {
+            // 处理 Pandoc 生成的代码块结构 (<div class="sourceCode"><pre><code>)
+            const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
+            sourceCodeBlocks.forEach(function(block) {
+                // 检查是否已经有复制按钮
+                if (block.querySelector('.copy-button')) return;
+                
+                // 获取 pre 元素
+                const preElement = block.querySelector('pre');
+                if (!preElement) return;
+                
+                // 创建复制按钮
+                const button = document.createElement('button');
+                button.className = 'copy-button';
+                button.textContent = '复制';
+                button.setAttribute('aria-label', '复制代码');
+                
+                // 添加点击事件
+                button.addEventListener('click', function() {
+                    // 获取代码文本
+                    const code = preElement.querySelector('code');
+                    const text = code ? code.innerText : preElement.innerText;
+                    
+                    // 复制到剪贴板
+                    navigator.clipboard.writeText(text).then(function() {
+                        // 更新按钮状态
+                        button.textContent = '已复制';
+                        button.classList.add('copied');
+                        
+                        // 3秒后恢复原始状态
+                        setTimeout(function() {
+                            button.textContent = '复制';
+                            button.classList.remove('copied');
+                        }, 3000);
+                    }).catch(function(err) {
+                        console.error('复制失败: ', err);
+                        button.textContent = '失败';
+                        setTimeout(function() {
+                            button.textContent = '复制';
+                        }, 3000);
+                    });
+                });
+                
+                // 将按钮添加到 sourceCode div 中
+                block.appendChild(button);
+            });
+            
+            // 处理普通的 pre 代码块 (非 Pandoc 生成的)
+            // 先获取所有非 mermaid 的 pre 元素
+            const allPreBlocks = document.querySelectorAll('pre:not(.mermaid)');
+            allPreBlocks.forEach(function(block) {
+                // 检查是否已经在 sourceCode div 中（Pandoc 生成的）或者已经有复制按钮
+                if (block.closest('.sourceCode') || block.querySelector('.copy-button')) return;
+                
+                // 创建复制按钮
+                const button = document.createElement('button');
+                button.className = 'copy-button';
+                button.textContent = '复制';
+                button.setAttribute('aria-label', '复制代码');
+                
+                // 添加点击事件
+                button.addEventListener('click', function() {
+                    // 获取代码文本
+                    const code = block.querySelector('code');
+                    const text = code ? code.innerText : block.innerText;
+                    
+                    // 复制到剪贴板
+                    navigator.clipboard.writeText(text).then(function() {
+                        // 更新按钮状态
+                        button.textContent = '已复制';
+                        button.classList.add('copied');
+                        
+                        // 3秒后恢复原始状态
+                        setTimeout(function() {
+                            button.textContent = '复制';
+                            button.classList.remove('copied');
+                        }, 3000);
+                    }).catch(function(err) {
+                        console.error('复制失败: ', err);
+                        button.textContent = '失败';
+                        setTimeout(function() {
+                            button.textContent = '复制';
+                        }, 3000);
+                    });
+                });
+                
+                // 将按钮添加到代码块
+                block.appendChild(button);
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="main-content">
+            <header class="header">
+                <a href="../../index.html" class="back-home">
+                    ← 返回首页
+                </a>
+            </header>
+            
+            <article class="post">
+                <header class="post-header">
+                    <h1 class="post-title">数据库分页不稳定：为什么无排序的分页是“定时炸弹”，以及如何彻底解决</h1>
+                    <div class="post-meta">
+                        <div class="post-date">2025/9/15</div>
+                        <div class="post-category">2025-09</div>
+                    </div>
+                </header>
+                <div class="warning">
+                    ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+                </div>
+                <div class="post-content" id="post-content">
+                    <h1
+id="数据库分页不稳定为什么无排序的分页是定时炸弹以及如何彻底解决">数据库分页不稳定：为什么无排序的分页是“定时炸弹”，以及如何彻底解决</h1>
+<blockquote>
+<p>在数据库分页查询中，省略 <code>ORDER BY</code>
+会导致结果顺序不可预测，进而引发分页“跳页”、“数据重复”或“遗漏”，严重破坏用户体验与数据一致性。本文深入剖析其底层原理、常见误区、解决方案及实战优化，适合后端开发、DBA
+与系统架构师阅读。</p>
+</blockquote>
+<hr />
+<h2 id="目录">目录</h2>
+<ul>
+<li><a href="#1-核心概念什么是分页不稳定">1.
+核心概念：什么是“分页不稳定”</a></li>
+<li><a href="#2-为什么无排序会导致分页不稳定">2.
+为什么无排序会导致分页不稳定</a></li>
+<li><a href="#3-示例代码复现与修复">3. 示例代码：复现与修复</a></li>
+<li><a href="#4-mermaid-图解查询执行与排序缺失的影响">4. Mermaid
+图解：查询执行与排序缺失的影响</a></li>
+<li><a href="#5-常见误区与边界情况">5. 常见误区与边界情况</a></li>
+<li><a href="#6-应用场景从管理后台到高并发-api">6.
+应用场景：从管理后台到高并发 API</a></li>
+<li><a href="#7-跨语言框架对比">7. 跨语言/框架对比</a></li>
+<li><a href="#8-实战案例spring-boot--mybatis-分页陷阱与修复">8.
+实战案例：Spring Boot + MyBatis 分页陷阱与修复</a></li>
+<li><a href="#9-总结">9. 总结</a></li>
+<li><a href="#10-延伸阅读">10. 延伸阅读</a></li>
+<li><a href="#11-一句话记忆">11. 一句话记忆</a></li>
+</ul>
+<hr />
+<h2 id="核心概念什么是分页不稳定">1. 核心概念：什么是“分页不稳定”</h2>
+<h3 id="概念解释">概念解释</h3>
+<p><strong>分页不稳定（Pagination Instability）</strong>
+是指在数据库分页查询中，由于未指定明确排序规则（<code>ORDER BY</code>），导致多次执行相同分页语句时，返回的数据顺序不一致，从而造成“同一页面内容变化”、“记录重复出现”或“某些记录始终无法被访问”的现象。</p>
+<p>这并非数据库“bug”，而是<strong>SQL
+标准与数据库引擎设计的必然结果</strong>。根据 ANSI SQL 标准，若未指定
+<code>ORDER BY</code>，数据库有权以任意顺序返回结果。不同数据库（MySQL、PostgreSQL、Oracle、SQL
+Server）在不同版本、不同执行计划、不同物理存储结构下，都可能返回不同顺序。</p>
+<p>历史上，早期开发者常误以为“表是按插入顺序存储的，所以查询自然有序”，但现代数据库基于
+B+Tree、堆表、并行扫描、索引覆盖等机制，早已打破这种“朴素认知”。</p>
+<hr />
+<h2 id="为什么无排序会导致分页不稳定">2.
+为什么无排序会导致分页不稳定</h2>
+<h3 id="问题根源">问题根源</h3>
+<p>数据库引擎在执行 <code>SELECT ... LIMIT N OFFSET M</code>
+时，如果没有 <code>ORDER BY</code>，其行为等价于：</p>
+<blockquote>
+<p>“给我任意 N 条满足条件的记录，从第 M 条开始计数。”</p>
+</blockquote>
+<p>但“任意”意味着：</p>
+<ul>
+<li>数据库可能使用不同索引</li>
+<li>可能因统计信息变化选择不同执行计划</li>
+<li>可能因并发写入导致数据页重排</li>
+<li>可能因 MVCC 快照导致不同事务看到不同顺序</li>
+</ul>
+<h3 id="示例场景">示例场景</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- 假设 users 表有 100 条记录，无主键约束，无索引</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> users <span class="kw">LIMIT</span> <span class="dv">10</span> OFFSET <span class="dv">0</span>;  <span class="co">-- 第一次执行：返回 id=1~10</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">-- 插入一条新记录，触发页分裂</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> users <span class="kw">LIMIT</span> <span class="dv">10</span> OFFSET <span class="dv">0</span>;  <span class="co">-- 第二次执行：返回 id=5, 2, 8, 1, ... 顺序全乱</span></span></code></pre></div>
+<h3 id="设计动机">设计动机</h3>
+<p>数据库如此设计，是为了<strong>最大化查询性能与执行灵活性</strong>。强制排序会带来额外开销（内存排序、磁盘临时表），在不需要顺序的场景（如
+COUNT、EXISTS）中是浪费。因此，顺序控制权交给开发者。</p>
+<hr />
+<h2 id="示例代码复现与修复">3. 示例代码：复现与修复</h2>
+<h3 id="python-sqlite-示例可运行">Python + SQLite 示例（可运行）</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlite3</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 初始化数据库</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>conn <span class="op">=</span> sqlite3.<span class="ex">connect</span>(<span class="st">&quot;:memory:&quot;</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>cursor <span class="op">=</span> conn.cursor()</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>cursor.execute(<span class="st">&quot;CREATE TABLE users (id INTEGER, name TEXT)&quot;</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 插入无序数据</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> [(<span class="dv">3</span>, <span class="st">&quot;Alice&quot;</span>), (<span class="dv">1</span>, <span class="st">&quot;Bob&quot;</span>), (<span class="dv">4</span>, <span class="st">&quot;Carol&quot;</span>), (<span class="dv">2</span>, <span class="st">&quot;Dave&quot;</span>)]</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>cursor.executemany(<span class="st">&quot;INSERT INTO users VALUES (?, ?)&quot;</span>, data)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>conn.commit()</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co"># ❌ 错误：无排序分页</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;=== 无排序分页（不稳定）===&quot;</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">4</span>, <span class="dv">2</span>):</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    cursor.execute(<span class="st">&quot;SELECT id, name FROM users LIMIT 2 OFFSET ?&quot;</span>, (i,))</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    rows <span class="op">=</span> cursor.fetchall()</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Page </span><span class="sc">{</span>i<span class="op">//</span><span class="dv">2</span> <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>rows<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co"># ✅ 正确：有排序分页</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">=== 有排序分页（稳定）===&quot;</span>)</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>, <span class="dv">4</span>, <span class="dv">2</span>):</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    cursor.execute(<span class="st">&quot;SELECT id, name FROM users ORDER BY id LIMIT 2 OFFSET ?&quot;</span>, (i,))</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    rows <span class="op">=</span> cursor.fetchall()</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f&quot;Page </span><span class="sc">{</span>i<span class="op">//</span><span class="dv">2</span> <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss">: </span><span class="sc">{</span>rows<span class="sc">}</span><span class="ss">&quot;</span>)</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>conn.close()</span></code></pre></div>
+<p><strong>输出示例（SQLite 可能按 rowid 返回，但不保证）：</strong></p>
+<pre><code>=== 无排序分页（不稳定）===
+Page 1: [(3, &#39;Alice&#39;), (1, &#39;Bob&#39;)]
+Page 2: [(4, &#39;Carol&#39;), (2, &#39;Dave&#39;)]
+
+=== 有排序分页（稳定）===
+Page 1: [(1, &#39;Bob&#39;), (2, &#39;Dave&#39;)]
+Page 2: [(3, &#39;Alice&#39;), (4, &#39;Carol&#39;)]</code></pre>
+<blockquote>
+<p>⚠️ 在 PostgreSQL 或 MySQL 中，无排序结果更易变动，尤其在并发写入或
+VACUUM 后。</p>
+</blockquote>
+<hr />
+<h2 id="mermaid-图解查询执行与排序缺失的影响">4. Mermaid
+图解：查询执行与排序缺失的影响</h2>
+<pre class="mermaid"><code>graph TD
+    A[客户端请求分页] --&gt; B{是否含 ORDER BY?}
+    B --&gt;|否| C[数据库自由选择扫描路径]
+    C --&gt; D[可能使用索引A、索引B或全表扫描]
+    D --&gt; E[返回“任意顺序”的前N条]
+    E --&gt; F[分页结果不稳定]
+    B --&gt;|是| G[数据库强制按指定列排序]
+    G --&gt; H[使用排序索引或内存排序]
+    H --&gt; I[返回稳定有序结果]
+    I --&gt; J[分页结果可靠]
+    F --&gt; K[用户看到数据跳动/重复]
+    J --&gt; L[用户体验一致]</code></pre>
+<hr />
+<h2 id="常见误区与边界情况">5. 常见误区与边界情况</h2>
+<h3
+id="误区一主键自增所以默认有序">误区一：“主键自增，所以默认有序”</h3>
+<p>❌ 错！即使有自增主键，若未在 <code>ORDER BY</code>
+中显式指定，数据库仍可能不按主键顺序返回（如使用其他索引覆盖查询）。</p>
+<h3
+id="误区二数据没变顺序就不会变">误区二：“数据没变，顺序就不会变”</h3>
+<p>❌
+错！数据库统计信息更新、缓存失效、执行计划重选都可能导致顺序变化。</p>
+<h3 id="边界情况排序字段值相同">边界情况：排序字段值相同</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- 若 status 相同，不同数据库对相同值的排序不一致</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> orders <span class="kw">ORDER</span> <span class="kw">BY</span> status <span class="kw">LIMIT</span> <span class="dv">10</span> OFFSET <span class="dv">10</span>;</span></code></pre></div>
+<p>✅
+解决方案：<strong>添加辅助排序字段（如主键）确保全局唯一排序</strong></p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> orders <span class="kw">ORDER</span> <span class="kw">BY</span> status, <span class="kw">id</span> <span class="kw">LIMIT</span> <span class="dv">10</span> OFFSET <span class="dv">10</span>;</span></code></pre></div>
+<h3 id="误区三加了索引就等于排序">误区三：“加了索引就等于排序”</h3>
+<p>❌
+错！索引用于加速查找，但查询优化器可能选择不使用该索引，或使用后仍需额外排序。</p>
+<hr />
+<h2 id="应用场景从管理后台到高并发-api">6. 应用场景：从管理后台到高并发
+API</h2>
+<h3
+id="场景一后台管理系统低频人工操作">场景一：后台管理系统（低频、人工操作）</h3>
+<ul>
+<li>用户手动翻页查看订单列表</li>
+<li>❌ 无排序 → 用户翻页时数据“乱跳”，误操作风险高</li>
+<li>✅ 加 <code>ORDER BY created_at DESC, id DESC</code> →
+稳定倒序，符合预期</li>
+</ul>
+<h3
+id="场景二移动端无限滚动高频自动化">场景二：移动端无限滚动（高频、自动化）</h3>
+<ul>
+<li>App 自动加载下一页内容</li>
+<li>❌ 无排序 → 可能重复加载相同内容，或跳过新内容</li>
+<li>✅ 使用游标分页（Cursor Pagination）→ 基于最后一条记录的 ID
+加载，天然稳定</li>
+</ul>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- 游标分页示例</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> posts </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> <span class="kw">id</span> <span class="op">&lt;</span> ?last_seen_id </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ORDER</span> <span class="kw">BY</span> <span class="kw">id</span> <span class="kw">DESC</span> </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="kw">LIMIT</span> <span class="dv">20</span>;</span></code></pre></div>
+<h3 id="场景三导出分页数据批处理">场景三：导出分页数据（批处理）</h3>
+<ul>
+<li>后台任务分批导出百万级数据</li>
+<li>❌ 无排序 → 可能漏导或重复导出</li>
+<li>✅ 按主键分段 + 排序 → 确保全覆盖、无重复</li>
+</ul>
+<hr />
+<h2 id="跨语言框架对比">7. 跨语言/框架对比</h2>
+<table>
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 34%" />
+<col style="width: 14%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr>
+<th>语言/框架</th>
+<th>分页实现方式</th>
+<th>是否默认排序</th>
+<th>推荐做法</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Java + MyBatis</strong></td>
+<td><code>LIMIT #{offset}, #{limit}</code></td>
+<td>❌ 否</td>
+<td>在 Mapper XML 中显式写 <code>ORDER BY</code></td>
+</tr>
+<tr>
+<td><strong>Python + Django</strong></td>
+<td><code>QuerySet[offset:offset+limit]</code></td>
+<td>❌ 否</td>
+<td>调用 <code>.order_by('id')</code> 再分页</td>
+</tr>
+<tr>
+<td><strong>Go + GORM</strong></td>
+<td><code>.Offset().Limit()</code></td>
+<td>❌ 否</td>
+<td>链式调用 <code>.Order("id")</code></td>
+</tr>
+<tr>
+<td><strong>Node.js + Sequelize</strong></td>
+<td><code>.findAll({ offset, limit })</code></td>
+<td>❌ 否</td>
+<td>加 <code>order: [['id', 'ASC']]</code></td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>✅ <strong>共性</strong>：所有主流 ORM
+都不自动添加排序，开发者必须显式指定。</p>
+</blockquote>
+<hr />
+<h2 id="实战案例spring-boot-mybatis-分页陷阱与修复">8. 实战案例：Spring
+Boot + MyBatis 分页陷阱与修复</h2>
+<h3 id="问题代码mybatis-mapper">问题代码（MyBatis Mapper）</h3>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- ❌ 危险：无排序分页 --&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">select</span><span class="ot"> id=</span><span class="st">&quot;selectUsersByPage&quot;</span><span class="ot"> resultType=</span><span class="st">&quot;User&quot;</span>&gt;</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    SELECT id, name, email</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    FROM users</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    LIMIT #{offset}, #{limit}</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">select</span>&gt;</span></code></pre></div>
+<h3 id="修复代码">修复代码</h3>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- ✅ 安全：显式排序 --&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">select</span><span class="ot"> id=</span><span class="st">&quot;selectUsersByPage&quot;</span><span class="ot"> resultType=</span><span class="st">&quot;User&quot;</span>&gt;</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    SELECT id, name, email</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    FROM users</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    ORDER BY id ASC  <span class="co">&lt;!-- 或 created_at DESC, id ASC --&gt;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    LIMIT #{offset}, #{limit}</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">select</span>&gt;</span></code></pre></div>
+<h3 id="集成-pagehelper-插件时的坑">集成 PageHelper 插件时的坑</h3>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">// ❌ PageHelper 只加 LIMIT/OFFSET，不自动加 ORDER BY</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>PageHelper<span class="op">.</span><span class="fu">startPage</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">10</span><span class="op">);</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="bu">List</span><span class="op">&lt;</span>User<span class="op">&gt;</span> users <span class="op">=</span> userMapper<span class="op">.</span><span class="fu">selectAll</span><span class="op">();</span> <span class="co">// 若 Mapper 无 ORDER BY，仍不稳定</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">// ✅ 正确做法：Mapper 中写死 ORDER BY，或动态拼接</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="at">@Select</span><span class="op">(</span><span class="st">&quot;SELECT * FROM users ORDER BY id LIMIT #{offset}, #{limit}&quot;</span><span class="op">)</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="bu">List</span><span class="op">&lt;</span>User<span class="op">&gt;</span> <span class="fu">selectUsersByPage</span><span class="op">(</span><span class="at">@Param</span><span class="op">(</span><span class="st">&quot;offset&quot;</span><span class="op">)</span> <span class="dt">int</span> offset<span class="op">,</span> <span class="at">@Param</span><span class="op">(</span><span class="st">&quot;limit&quot;</span><span class="op">)</span> <span class="dt">int</span> limit<span class="op">);</span></span></code></pre></div>
+<blockquote>
+<p>💡 生产环境建议：在 Service 层封装分页逻辑，强制校验排序参数。</p>
+</blockquote>
+<hr />
+<h2 id="总结">9. 总结</h2>
+<ul>
+<li>✅ <strong>必须显式排序</strong>：任何分页查询必须包含
+<code>ORDER BY</code>，否则结果不可靠。</li>
+<li>✅
+<strong>排序字段唯一性</strong>：优先使用主键或唯一组合字段，避免相同值导致边界模糊。</li>
+<li>✅
+<strong>游标分页更优</strong>：大数据量、高并发场景推荐游标分页（基于 ID
+或时间戳）。</li>
+<li>❌ <strong>不要依赖“默认顺序”</strong>：数据库不承诺无
+<code>ORDER BY</code> 时的顺序一致性。</li>
+<li>🛠️ <strong>框架不救你</strong>：MyBatis、Hibernate、Django ORM
+等均不自动添加排序，责任在开发者。</li>
+<li>📊
+<strong>测试要覆盖</strong>：在测试环境中模拟数据变更，验证分页稳定性。</li>
+</ul>
+<hr />
+<h2 id="延伸阅读">10. 延伸阅读</h2>
+<ul>
+<li>📘 《SQL 必知必会》第 15 章：排序与分页</li>
+<li>📘 《高性能 MySQL》第 6 章：查询性能优化</li>
+<li>🔗 <a
+href="https://www.postgresql.org/docs/current/queries-limit.html">PostgreSQL:
+ORDER BY and LIMIT</a></li>
+<li>🔗 <a
+href="https://dev.mysql.com/doc/refman/8.0/en/limit-optimization.html">MySQL:
+LIMIT Query Optimization</a></li>
+<li>🔗 <a href="https://www.iso.org/standard/63555.html">SQL Standard
+(ISO/IEC 9075-2:2016) - Section 7.13 <query expression></a></li>
+<li>🔍 MyBatis-PageHelper
+源码：https://github.com/pagehelper/Mybatis-PageHelper</li>
+</ul>
+<hr />
+<h2 id="一句话记忆">11. 一句话记忆</h2>
+<blockquote>
+<p><strong>无排序，勿分页 —— 稳定分页的唯一法则是显式 ORDER
+BY。</strong></p>
+</blockquote>
+
+                </div>
+            </article>
+            
+            <footer class="footer">
+                <p>AI 个人笔记 &copy; 2025 | 所有内容均由 AI 协助生成</p>
+            </footer>
+        </div>
+        
+        <div class="toc-container">
+            <nav class="toc" id="table-of-contents">
+                <h2>目录</h2>
+                <div id="toc-content"></div>
+            </nav>
+        </div>
+    </div>
+    
+    <a href="#" class="back-to-top" id="backToTop">↑</a>
+    
+    <script>
+        // Generate Table of Contents
+        function generateTOC() {
+            const tocContainer = document.getElementById('toc-content');
+            const content = document.querySelector('.post-content');
+            const headers = content.querySelectorAll('h1, h2, h3');
+            
+            if (headers.length === 0) {
+                tocContainer.innerHTML = '<p>暂无目录</p>';
+                return;
+            }
+            
+            const toc = document.createElement('ul');
+            
+            headers.forEach((header, index) => {
+                // Add an id to the header if it doesn't have one
+                if (!header.id) {
+                    header.id = 'heading-' + index;
+                }
+                
+                const li = document.createElement('li');
+                li.className = 'toc-item';
+                
+                const link = document.createElement('a');
+                link.href = '#' + header.id;
+                link.textContent = header.textContent;
+                link.className = 'toc-link';
+                
+                // Set indentation based on header level
+                const level = parseInt(header.tagName.charAt(1)) - 1;
+                li.style.marginLeft = (level * 20) + 'px';
+                
+                li.appendChild(link);
+                toc.appendChild(li);
+            });
+            
+            tocContainer.appendChild(toc);
+        }
+        
+        // Adjust TOC height to match content
+        function adjustTOCHeight() {
+            const toc = document.getElementById('table-of-contents');
+            const post = document.querySelector('.post');
+            
+            if (toc && post) {
+                // Get the height of the post area
+                const postHeight = post.offsetHeight;
+                
+                // Set the max-height of the TOC to match the post height
+                // Leave some space for top margin and padding
+                toc.style.maxHeight = Math.min(postHeight - 30, window.innerHeight * 0.8) + 'px';
+            }
+        }
+        
+        // Back to top button
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        });
+        
+        // Initialize TOC when page loads and adjust height
+        document.addEventListener('DOMContentLoaded', function() {
+            generateTOC();
+            adjustTOCHeight();
+            
+            // Adjust height on window resize
+            window.addEventListener('resize', adjustTOCHeight);
+        });
+        
+        // 页面加载完成后添加复制按钮
+        window.addEventListener('load', function() {
+            addCopyButtons();
+        });
+        
+        // 监听可能的动态内容加载
+        const observer = new MutationObserver(function(mutations) {
+            let shouldAddButtons = false;
+            mutations.forEach(function(mutation) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) {
+                        // 检查添加的节点是否是代码块或包含代码块
+                        if ((node.classList && node.classList.contains('sourceCode')) || 
+                            (node.tagName === 'PRE' && !node.classList.contains('mermaid')) ||
+                            node.querySelector('.sourceCode, pre:not(.mermaid)')) {
+                            shouldAddButtons = true;
+                        }
+                    }
+                });
+            });
+            if (shouldAddButtons) {
+                // 延迟执行以确保DOM完全更新
+                setTimeout(addCopyButtons, 100);
+            }
+        });
+        
+        // 开始监听DOM变化
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+        
+        console.log("页面加载完成，AI 技术笔记已就绪");
+    </script>
+</body>
+</html>
