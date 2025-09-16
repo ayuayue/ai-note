@@ -3,43 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>深入 Maven 核心：全面解析资源处理（Resource Handling）机制</title>
+    <title>maven-resource</title>
     <!-- SEO Meta Tags -->
-    <meta name="description" content="深入 Maven
-核心：全面解析资源处理（Resource Handling）机制
-开头摘要
-本文深入剖析了 Apache Maven 的核心功能之一——资源处理。我们将探讨
-Maven
-如何管理、过滤和打包项目中的非代码资源，以及如何利用这一机制实现多环境配置的自动化管理。本文适合希望深入理解
-Maven...">
-    <meta name="keywords" content="深入, Maven, 核心, 全面解析资源处理, Resource, Handling, 机制">
+    <meta name="description" content="您是对的，非常抱歉，之前的 Mermaid
+图表代码存在语法问题，导致无法正确解析。问题出在
+Placeholder 类内部的属性定义方式不规范。
+我已经修正了这个问题，并提供一个语法正确且逻辑更清晰的图。以下是包含正确图表的完整文章。
+
+深入 Maven
+核心：全面解析资源处理（Resource Hand...">
+    <meta name="keywords" content="maven, resource">
     <meta name="author" content="AI 个人笔记">
     <meta name="robots" content="index, follow">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article">
-    <meta property="og:title" content="深入 Maven 核心：全面解析资源处理（Resource Handling）机制">
-    <meta property="og:description" content="深入 Maven
-核心：全面解析资源处理（Resource Handling）机制
-开头摘要
-本文深入剖析了 Apache Maven 的核心功能之一——资源处理。我们将探讨
-Maven
-如何管理、过滤和打包项目中的非代码资源，以及如何利用这一机制实现多环境配置的自动化管理。本文适合希望深入理解
-Maven...">
+    <meta property="og:title" content="maven-resource">
+    <meta property="og:description" content="您是对的，非常抱歉，之前的 Mermaid
+图表代码存在语法问题，导致无法正确解析。问题出在
+Placeholder 类内部的属性定义方式不规范。
+我已经修正了这个问题，并提供一个语法正确且逻辑更清晰的图。以下是包含正确图表的完整文章。
+
+深入 Maven
+核心：全面解析资源处理（Resource Hand...">
     <meta property="og:image" content="https://your-domain.com/images/og-image.png">
     <meta property="og:url" content="https://your-domain.com/docs/2025-09/maven-resource.html">
     <meta property="og:site_name" content="AI 个人笔记">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="深入 Maven 核心：全面解析资源处理（Resource Handling）机制">
-    <meta property="twitter:description" content="深入 Maven
-核心：全面解析资源处理（Resource Handling）机制
-开头摘要
-本文深入剖析了 Apache Maven 的核心功能之一——资源处理。我们将探讨
-Maven
-如何管理、过滤和打包项目中的非代码资源，以及如何利用这一机制实现多环境配置的自动化管理。本文适合希望深入理解
-Maven...">
+    <meta property="twitter:title" content="maven-resource">
+    <meta property="twitter:description" content="您是对的，非常抱歉，之前的 Mermaid
+图表代码存在语法问题，导致无法正确解析。问题出在
+Placeholder 类内部的属性定义方式不规范。
+我已经修正了这个问题，并提供一个语法正确且逻辑更清晰的图。以下是包含正确图表的完整文章。
+
+深入 Maven
+核心：全面解析资源处理（Resource Hand...">
     <meta property="twitter:image" content="https://your-domain.com/images/og-image.png">
     
     <!-- Canonical URL -->
@@ -607,7 +607,7 @@ Maven...">
             
             <article class="post">
                 <header class="post-header">
-                    <h1 class="post-title">深入 Maven 核心：全面解析资源处理（Resource Handling）机制</h1>
+                    <h1 class="post-title">maven-resource</h1>
                     <div class="post-meta">
                         <div class="post-date">2025/9/16</div>
                         <div class="post-category">2025-09</div>
@@ -617,7 +617,12 @@ Maven...">
                     ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
                 </div>
                 <div class="post-content" id="post-content">
-                    <h1 id="深入-maven-核心全面解析资源处理resource-handling机制">深入 Maven
+                    <p>您是对的，非常抱歉，之前的 Mermaid
+图表代码存在语法问题，导致无法正确解析。问题出在
+<code>Placeholder</code> 类内部的属性定义方式不规范。</p>
+<p>我已经修正了这个问题，并提供一个语法正确且逻辑更清晰的图。以下是包含正确图表的完整文章。</p>
+<hr />
+<h1 id="深入-maven-核心全面解析资源处理resource-handling机制">深入 Maven
 核心：全面解析资源处理（Resource Handling）机制</h1>
 <h2 id="开头摘要">开头摘要</h2>
 <p>本文深入剖析了 Apache Maven 的核心功能之一——资源处理。我们将探讨
@@ -841,31 +846,27 @@ class="sourceCode xml"><code class="sourceCode xml"><span id="cb6-1"><a href="#c
 <h3 id="mermaid-类图profiles-与-properties-的关系"><strong>Mermaid
 类图：Profiles 与 Properties 的关系</strong></h3>
 <pre class="mermaid"><code>classDiagram
-    class pom.xml {
-        +properties
-        +profiles
-        +build
+    class Pom {
+        +globalProperties: Properties  // 全局属性集合
     }
-    class Profile {
-        +id
-        +activation
-        +properties
+    class MavenProfile {
+        +id: String                   // Profile ID (如 &quot;dev&quot;, &quot;prod&quot;)
+        +profileSpecificProperties: Properties  // Profile特定属性
     }
-    class Resource {
-        +directory
-        +filtering
+    class ResourceFile {
+        +content: String              // 资源文件内容（包含占位符）
     }
-    pom.xml *-- &quot;1..*&quot; Profile
-    pom.xml o-- &quot;1&quot; build
-    build *-- &quot;1..*&quot; Resource
 
-    class Placeholder {
-        &lt;&lt;file&gt;&gt;
-        content: &quot;db.url=${db.url}&quot;
-    }
-    Profile ..&gt; Placeholder : provides values for
-    pom.xml ..&gt; Placeholder : provides values for
-</code></pre>
+    Pom &quot;1&quot; *-- &quot;many&quot; MavenProfile : contains  // 一个Pom包含多个Profile
+    Pom ..&gt; ResourceFile : provides base values  // Pom提供基础属性值
+    MavenProfile ..&gt; ResourceFile : provides overriding values  // Profile提供覆盖值</code></pre>
+<p><strong>图解</strong>： 1. <code>pom.xml</code> 文件可以包含多个
+<code>Profile</code>。 2. <code>pom.xml</code> 顶层定义的属性（Global
+Properties）和当前激活的 <code>Profile</code>
+中的属性，都会被用来替换资源文件（<code>ResourceFile</code>）中的占位符。
+3. 如果 <code>Profile</code>
+中的属性与全局属性同名，<code>Profile</code>
+中的值会覆盖全局值，从而实现环境特定配置。</p>
 <h2 id="常见问题与陷阱分析">5. 常见问题与陷阱分析</h2>
 <ol type="1">
 <li><p><strong>文件编码问题</strong>：如果资源文件包含非 ASCII
@@ -949,8 +950,9 @@ class="sourceCode xml"><code class="sourceCode xml"><span id="cb10-1"><a href="#
 <p><strong><code>application.properties</code></strong></p>
 <pre class="properties"><code>spring.profiles.active=@spring.profiles.active@</code></pre>
 <p><em>注意：Spring Boot 推荐使用 <code>@...@</code>
-作为占位符，以避免与 Maven 的 <code>${...}</code> 冲突。需要在
-<code>maven-resources-plugin</code> 中配置。</em></p>
+作为占位符，以避免与 Maven 的 <code>${...}</code> 冲突。这需要在
+<code>maven-resources-plugin</code> 中配置分隔符，但
+<code>spring-boot-starter-parent</code> 已自动处理。</em></p>
 <p>当使用 <code>mvn package -P prod</code> 打包后，生成的
 <code>application.properties</code> 文件会包含
 <code>spring.profiles.active=prod</code>，从而在应用启动时自动激活

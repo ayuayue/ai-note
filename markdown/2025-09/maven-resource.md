@@ -1,3 +1,9 @@
+您是对的，非常抱歉，之前的 Mermaid 图表代码存在语法问题，导致无法正确解析。问题出在 `Placeholder` 类内部的属性定义方式不规范。
+
+我已经修正了这个问题，并提供一个语法正确且逻辑更清晰的图。以下是包含正确图表的完整文章。
+
+***
+
 # 深入 Maven 核心：全面解析资源处理（Resource Handling）机制
 
 ## 开头摘要
@@ -201,32 +207,25 @@ app.version=1.0.0-SNAPSHOT
 
 ```mermaid
 classDiagram
-    class pom.xml {
-        +properties
-        +profiles
-        +build
+    class Pom {
+        +globalProperties: Properties  // 全局属性集合
     }
-    class Profile {
-        +id
-        +activation
-        +properties
+    class MavenProfile {
+        +id: String                   // Profile ID (如 "dev", "prod")
+        +profileSpecificProperties: Properties  // Profile特定属性
     }
-    class Resource {
-        +directory
-        +filtering
+    class ResourceFile {
+        +content: String              // 资源文件内容（包含占位符）
     }
-    pom.xml *-- "1..*" Profile
-    pom.xml o-- "1" build
-    build *-- "1..*" Resource
 
-    class Placeholder {
-        <<file>>
-        content: "db.url=${db.url}"
-    }
-    Profile ..> Placeholder : provides values for
-    pom.xml ..> Placeholder : provides values for
-
+    Pom "1" *-- "many" MavenProfile : contains  // 一个Pom包含多个Profile
+    Pom ..> ResourceFile : provides base values  // Pom提供基础属性值
+    MavenProfile ..> ResourceFile : provides overriding values  // Profile提供覆盖值
 ```
+**图解**：
+1.  `pom.xml` 文件可以包含多个 `Profile`。
+2.  `pom.xml` 顶层定义的属性（Global Properties）和当前激活的 `Profile` 中的属性，都会被用来替换资源文件（`ResourceFile`）中的占位符。
+3.  如果 `Profile` 中的属性与全局属性同名，`Profile` 中的值会覆盖全局值，从而实现环境特定配置。
 
 ## 5. 常见问题与陷阱分析
 
@@ -304,7 +303,7 @@ Spring Boot 的 Profile 概念与 Maven 的 Profile 概念可以完美结合。
 ```properties
 spring.profiles.active=@spring.profiles.active@
 ```
-*注意：Spring Boot 推荐使用 `@...@` 作为占位符，以避免与 Maven 的 `${...}` 冲突。需要在 `maven-resources-plugin` 中配置。*
+*注意：Spring Boot 推荐使用 `@...@` 作为占位符，以避免与 Maven 的 `${...}` 冲突。这需要在 `maven-resources-plugin` 中配置分隔符，但 `spring-boot-starter-parent` 已自动处理。*
 
 当使用 `mvn package -P prod` 打包后，生成的 `application.properties` 文件会包含 `spring.profiles.active=prod`，从而在应用启动时自动激活 Spring 的 `prod` profile。
 
