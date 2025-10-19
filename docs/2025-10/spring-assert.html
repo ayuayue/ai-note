@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spring Assert 工具类完全指南：编写健壮代码的必备利器</title>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Spring
+Assert 工具类完全指南：编写健壮代码的必备利器
+开头摘要
+在Spring应用开发中，参数校验和状态检查是保证代码健壮性的关键环节。Spring框架提供的Assert工具类通过简洁而强大的断言机制，让开发者能够用最少的代码实现最有效的参数验证。本文将深入解析Assert工具类的设计原理、核心方法...">
+    <meta name="keywords" content="Spring, Assert, 工具类完全指南, 编写健壮代码的必备利器">
+    <meta name="author" content="AI 个人笔记">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Spring Assert 工具类完全指南：编写健壮代码的必备利器">
+    <meta property="og:description" content="Spring
+Assert 工具类完全指南：编写健壮代码的必备利器
+开头摘要
+在Spring应用开发中，参数校验和状态检查是保证代码健壮性的关键环节。Spring框架提供的Assert工具类通过简洁而强大的断言机制，让开发者能够用最少的代码实现最有效的参数验证。本文将深入解析Assert工具类的设计原理、核心方法...">
+    <meta property="og:image" content="https://your-domain.com/images/og-image.png">
+    <meta property="og:url" content="https://your-domain.com/docs/2025-10/spring-assert.html">
+    <meta property="og:site_name" content="AI 个人笔记">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Spring Assert 工具类完全指南：编写健壮代码的必备利器">
+    <meta property="twitter:description" content="Spring
+Assert 工具类完全指南：编写健壮代码的必备利器
+开头摘要
+在Spring应用开发中，参数校验和状态检查是保证代码健壮性的关键环节。Spring框架提供的Assert工具类通过简洁而强大的断言机制，让开发者能够用最少的代码实现最有效的参数验证。本文将深入解析Assert工具类的设计原理、核心方法...">
+    <meta property="twitter:image" content="https://your-domain.com/images/og-image.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://your-domain.com/docs/2025-10/spring-assert.html">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <style>
+        /* Google Fonts for better typography */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
+
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --bg-color: #f8f9fa;
+            --text-color: #34495e;
+            --border-color: #e9ecef;
+            --card-bg: #ffffff;
+            --hover-color: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', 'Noto Sans SC', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            gap: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .back-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--secondary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .back-home:hover {
+            background: #2980b9;
+        }
+
+        .github-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #24292e;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .github-link:hover {
+            background: #000;
+        }
+
+        .main-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .post {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .post-header {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .post-title {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #6c757d;
+            font-size: 0.95rem;
+        }
+
+        .post-date {
+            background-color: #e3f2fd;
+            color: var(--secondary-color);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .post-category {
+            background-color: #e8f5e9;
+            color: #4caf50;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .post-content {
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .post-content h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin: 35px 0 25px 0;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        /* Table of Contents */
+        .toc-container {
+            width: 300px;
+            flex-shrink: 0;
+        }
+        
+        .toc {
+            position: sticky;
+            top: 135px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            max-height: calc(100vh - 150px);
+            overflow-y: auto;
+        }
+        
+        .toc h2 {
+            color: var(--primary-color);
+            font-size: 1.4rem;
+            margin-top: 0;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .toc ul ul {
+            padding-left: 20px;
+        }
+        
+        .toc li {
+            margin-bottom: 8px;
+        }
+        
+        .toc a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+        
+        .toc a:hover {
+            color: var(--secondary-color);
+        }
+        
+        .toc a.active {
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .post-content h2 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .post-content h3 {
+            color: #2980b9;
+            font-size: 1.3rem;
+            margin: 25px 0 15px 0;
+        }
+
+        .post-content p {
+            margin-bottom: 18px;
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 20px 0;
+            padding-left: 35px;
+        }
+
+        .post-content li {
+            margin-bottom: 10px;
+        }
+
+        .post-content code {
+            background-color: #e8eaed;
+            padding: 3px 7px;
+            border-radius: 4px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            color: #c0392b;
+            font-size: 0.9em;
+        }
+
+        .post-content pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            font-size: 0.9em;
+            line-height: 1.5;
+            position: relative;
+            overflow: visible;
+        }
+        
+        /* Copy button styles */
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #444;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 0.8em;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: all 0.2s ease;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        /* 为 Pandoc 生成的代码块容器添加定位上下文 */
+        .sourceCode {
+            position: relative;
+        }
+        
+        .copy-button:hover {
+            background-color: #555;
+            opacity: 1;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .copy-button.copied {
+            background-color: #27ae60;
+        }
+
+        .post-content pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        .post-content blockquote {
+            background-color: #eaf2f8;
+            border-left: 5px solid var(--secondary-color);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .post-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            table-layout: fixed; /* 添加这行以确保表格列宽正确 */
+        }
+
+        .post-content th, .post-content td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #e1e1e1;
+            word-wrap: break-word; /* 确保长内容可以换行 */
+        }
+
+        .post-content th {
+            background-color: #3498db;
+            color: #ffffff;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .post-content tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .post-content tbody tr:hover {
+            background-color: #e9ecef;
+        }
+
+        .post-content a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+
+        .post-content a:hover {
+            text-decoration: underline;
+        }
+
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 25px 0;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 40px;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--secondary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+        }
+
+        /* Mermaid 图表样式 */
+        .mermaid {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .post {
+                padding: 20px;
+            }
+            
+            .post-title {
+                font-size: 1.6rem;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .post-content {
+                font-size: 1rem;
+            }
+            
+            .post-content h1 {
+                font-size: 1.5rem;
+            }
+            
+            .post-content h2 {
+                font-size: 1.3rem;
+            }
+            
+            .post-content h3 {
+                font-size: 1.1rem;
+            }
+            
+            .toc-container {
+                display: none;
+            }
+        }
+    </style>
+    <!-- 引入本地 Mermaid 库 -->
+    <script src="../../js/mermaid.min.js"></script>
+    <script>
+        // 初始化 Mermaid
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            // 可以根据需要添加更多配置选项
+            securityLevel: 'loose'
+        });
+        
+        // 处理 Pandoc 生成的 Mermaid 代码块
+        // Pandoc 将 Mermaid 代码块转换为 <pre class="mermaid"><code>... 格式
+        // 我们需要将其转换为 <div class="mermaid">... 格式以便 Mermaid 渲染
+        document.addEventListener('DOMContentLoaded', function() {
+            const mermaidBlocks = document.querySelectorAll('pre.mermaid code');
+            mermaidBlocks.forEach(function(codeElement) {
+                // 创建新的 div 元素
+                const mermaidDiv = document.createElement('div');
+                mermaidDiv.className = 'mermaid';
+                // 将代码内容移到 div 中
+                mermaidDiv.textContent = codeElement.textContent;
+                // 替换原来的 pre 元素
+                codeElement.parentNode.parentNode.replaceChild(mermaidDiv, codeElement.parentNode);
+            });
+            
+            // 重新启动 Mermaid 渲染
+            mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+        });
+        
+        // 为代码块添加复制按钮
+        function addCopyButtons() {
+            // 处理 Pandoc 生成的代码块结构 (<div class="sourceCode"><pre><code>)
+            const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
+            sourceCodeBlocks.forEach(function(block) {
+                // 检查是否已经有复制按钮
+                if (block.querySelector('.copy-button')) return;
+                
+                // 获取 pre 元素
+                const preElement = block.querySelector('pre');
+                if (!preElement) return;
+                
+                // 创建复制按钮
+                const button = document.createElement('button');
+                button.className = 'copy-button';
+                button.textContent = '复制';
+                button.setAttribute('aria-label', '复制代码');
+                
+                // 添加点击事件
+                button.addEventListener('click', function() {
+                    // 获取代码文本
+                    const code = preElement.querySelector('code');
+                    const text = code ? code.innerText : preElement.innerText;
+                    
+                    // 复制到剪贴板
+                    navigator.clipboard.writeText(text).then(function() {
+                        // 更新按钮状态
+                        button.textContent = '已复制';
+                        button.classList.add('copied');
+                        
+                        // 3秒后恢复原始状态
+                        setTimeout(function() {
+                            button.textContent = '复制';
+                            button.classList.remove('copied');
+                        }, 3000);
+                    }).catch(function(err) {
+                        console.error('复制失败: ', err);
+                        button.textContent = '失败';
+                        setTimeout(function() {
+                            button.textContent = '复制';
+                        }, 3000);
+                    });
+                });
+                
+                // 将按钮添加到 sourceCode div 中
+                block.appendChild(button);
+            });
+            
+            // 处理普通的 pre 代码块 (非 Pandoc 生成的)
+            // 先获取所有非 mermaid 的 pre 元素
+            const allPreBlocks = document.querySelectorAll('pre:not(.mermaid)');
+            allPreBlocks.forEach(function(block) {
+                // 检查是否已经在 sourceCode div 中（Pandoc 生成的）或者已经有复制按钮
+                if (block.closest('.sourceCode') || block.querySelector('.copy-button')) return;
+                
+                // 创建复制按钮
+                const button = document.createElement('button');
+                button.className = 'copy-button';
+                button.textContent = '复制';
+                button.setAttribute('aria-label', '复制代码');
+                
+                // 添加点击事件
+                button.addEventListener('click', function() {
+                    // 获取代码文本
+                    const code = block.querySelector('code');
+                    const text = code ? code.innerText : block.innerText;
+                    
+                    // 复制到剪贴板
+                    navigator.clipboard.writeText(text).then(function() {
+                        // 更新按钮状态
+                        button.textContent = '已复制';
+                        button.classList.add('copied');
+                        
+                        // 3秒后恢复原始状态
+                        setTimeout(function() {
+                            button.textContent = '复制';
+                            button.classList.remove('copied');
+                        }, 3000);
+                    }).catch(function(err) {
+                        console.error('复制失败: ', err);
+                        button.textContent = '失败';
+                        setTimeout(function() {
+                            button.textContent = '复制';
+                        }, 3000);
+                    });
+                });
+                
+                // 将按钮添加到代码块
+                block.appendChild(button);
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="main-content">
+            <header class="header">
+                <a href="../../index.html" class="back-home">
+                    ← 返回首页
+                </a>
+            </header>
+            
+            <article class="post">
+                <header class="post-header">
+                    <h1 class="post-title">Spring Assert 工具类完全指南：编写健壮代码的必备利器</h1>
+                    <div class="post-meta">
+                        <div class="post-date">2025/10/19</div>
+                        <div class="post-category">2025-10</div>
+                    </div>
+                </header>
+                <div class="warning">
+                    ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+                </div>
+                <div class="post-content" id="post-content">
+                    <h1 id="spring-assert-工具类完全指南编写健壮代码的必备利器">Spring
+Assert 工具类完全指南：编写健壮代码的必备利器</h1>
+<h2 id="开头摘要">开头摘要</h2>
+<p>在Spring应用开发中，参数校验和状态检查是保证代码健壮性的关键环节。Spring框架提供的<code>Assert</code>工具类通过简洁而强大的断言机制，让开发者能够用最少的代码实现最有效的参数验证。本文将深入解析Assert工具类的设计原理、核心方法和使用场景，帮助你掌握这一提升代码质量的重要工具。</p>
+<h2 id="目录">目录</h2>
+<ul>
+<li>#assert工具类概述</li>
+<li>#核心方法详解</li>
+<li>#实际应用场景</li>
+<li>#最佳实践与注意事项</li>
+<li>#总结</li>
+</ul>
+<h2 id="assert工具类概述">Assert工具类概述</h2>
+<p><code>org.springframework.util.Assert</code>是Spring框架核心模块(<code>spring-core</code>)中的一个<strong>断言工具类</strong>，完全由静态方法组成，专门用于进行参数校验和状态检查。Assert遵循”<strong>快速失败</strong>”(Fail-Fast)原则，当条件不满足时立即抛出异常，避免程序在错误状态下继续执行。</p>
+<h3 id="设计理念与核心价值">设计理念与核心价值</h3>
+<p>Assert工具类的设计基于几个关键理念：</p>
+<ol type="1">
+<li><strong>代码简洁性</strong>：将繁琐的if-else校验简化为一行方法调用</li>
+<li><strong>早期错误检测</strong>：在问题发生的最早阶段暴露错误，降低调试难度</li>
+<li><strong>自文档化代码</strong>：方法名直接表达校验意图，提高代码可读性</li>
+<li><strong>统一异常处理</strong>：提供一致的异常类型和错误消息格式</li>
+</ol>
+<p>与传统的参数校验方式相比，Assert能够将<strong>5-10行的校验代码压缩为1-2行</strong>，同时提供更清晰的错误信息和更一致的异常处理机制。</p>
+<h2 id="核心方法详解">核心方法详解</h2>
+<h3 id="基础空值检查">基础空值检查</h3>
+<p>空值检查是Assert工具类最常用的功能，提供了多层次的空值验证：</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 对象非空检查</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>User user <span class="op">=</span> userService<span class="op">.</span><span class="fu">findById</span><span class="op">(</span>userId<span class="op">);</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>Assert<span class="op">.</span><span class="fu">notNull</span><span class="op">(</span>user<span class="op">,</span> <span class="st">&quot;用户不存在，ID: &quot;</span> <span class="op">+</span> userId<span class="op">);</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">// 字符串非空检查（包含空白字符检查）</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>Assert<span class="op">.</span><span class="fu">hasText</span><span class="op">(</span>username<span class="op">,</span> <span class="st">&quot;用户名不能为空或空白字符串&quot;</span><span class="op">);</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">// 集合非空检查</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>Assert<span class="op">.</span><span class="fu">notEmpty</span><span class="op">(</span>orderList<span class="op">,</span> <span class="st">&quot;订单列表不能为空&quot;</span><span class="op">);</span></span></code></pre></div>
+<p><strong>方法对比分析</strong>： -
+<code>notNull()</code>：仅检查对象是否为null -
+<code>hasText()</code>：检查字符串非null、非空且包含非空白字符 -
+<code>notEmpty()</code>：检查集合/数组非null且至少包含一个元素</p>
+<h3 id="条件验证与状态检查">条件验证与状态检查</h3>
+<p>对于业务逻辑中的条件验证，Assert提供了专门的方法：</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 布尔条件验证</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">withdraw</span><span class="op">(</span><span class="dt">double</span> amount<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span>amount <span class="op">&gt;</span> <span class="dv">0</span><span class="op">,</span> <span class="st">&quot;取款金额必须大于0&quot;</span><span class="op">);</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span>balance <span class="op">&gt;=</span> amount<span class="op">,</span> <span class="st">&quot;余额不足&quot;</span><span class="op">);</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 执行取款逻辑</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">// 状态检查（使用IllegalStateException）</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">submitOrder</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">boolean</span> valid <span class="op">=</span> <span class="fu">validateOrder</span><span class="op">(</span>order<span class="op">);</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    Assert<span class="op">.</span><span class="fu">state</span><span class="op">(</span>valid<span class="op">,</span> <span class="st">&quot;订单状态不合法，无法提交&quot;</span><span class="op">);</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>异常类型区别</strong>： -
+<code>isTrue()</code>：抛出<code>IllegalArgumentException</code>，适用于参数校验
+-
+<code>state()</code>：抛出<code>IllegalStateException</code>，适用于状态检查</p>
+<h3 id="类型与赋值关系验证">类型与赋值关系验证</h3>
+<p>在框架开发和复杂业务逻辑中，经常需要验证类型关系：</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 类型实例检查</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>Assert<span class="op">.</span><span class="fu">isInstanceOf</span><span class="op">(</span>User<span class="op">.</span><span class="fu">class</span><span class="op">,</span> object<span class="op">,</span> <span class="st">&quot;参数必须是User类型&quot;</span><span class="op">);</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">// 类型赋值兼容性检查</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>Assert<span class="op">.</span><span class="fu">isAssignable</span><span class="op">(</span><span class="bu">Collection</span><span class="op">.</span><span class="fu">class</span><span class="op">,</span> list<span class="op">.</span><span class="fu">getClass</span><span class="op">(),</span> </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;参数必须可赋值给Collection接口&quot;</span><span class="op">);</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">// 数组元素非空检查</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="bu">String</span><span class="op">[]</span> names <span class="op">=</span> <span class="op">{</span><span class="st">&quot;Alice&quot;</span><span class="op">,</span> <span class="st">&quot;Bob&quot;</span><span class="op">,</span> <span class="kw">null</span><span class="op">};</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>Assert<span class="op">.</span><span class="fu">noNullElements</span><span class="op">(</span>names<span class="op">,</span> <span class="st">&quot;数组中不能包含null元素&quot;</span><span class="op">);</span></span></code></pre></div>
+<p>下面是Assert工具类核心方法的功能分类图：</p>
+<pre class="mermaid"><code>graph TB
+    A[Assert工具类] --&gt; B[空值检查]
+    A --&gt; C[条件验证]
+    A --&gt; D[类型检查]
+    A --&gt; E[集合验证]
+    A --&gt; F[字符串验证]
+    
+    B --&gt; B1[notNull]
+    B --&gt; B2[isNull]
+    
+    C --&gt; C1[isTrue]
+    C --&gt; C2[state]
+    
+    D --&gt; D1[isInstanceOf]
+    D --&gt; D2[isAssignable]
+    
+    E --&gt; E1[notEmpty]
+    E --&gt; E2[noNullElements]
+    
+    F --&gt; F1[hasText]
+    F --&gt; F2[hasLength]</code></pre>
+<h2 id="实际应用场景">实际应用场景</h2>
+<h3 id="服务层参数校验">服务层参数校验</h3>
+<p>在Service层方法中，使用Assert进行前置参数校验可以大幅提高代码的健壮性：</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Service</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> OrderService <span class="op">{</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Autowired</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> UserRepository userRepository<span class="op">;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Autowired</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> ProductRepository productRepository<span class="op">;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> Order <span class="fu">createOrder</span><span class="op">(</span><span class="bu">Long</span> userId<span class="op">,</span> <span class="bu">List</span><span class="op">&lt;</span>OrderItem<span class="op">&gt;</span> items<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 参数基础校验</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">notNull</span><span class="op">(</span>userId<span class="op">,</span> <span class="st">&quot;用户ID不能为空&quot;</span><span class="op">);</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">notEmpty</span><span class="op">(</span>items<span class="op">,</span> <span class="st">&quot;订单项不能为空&quot;</span><span class="op">);</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 业务逻辑校验</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        User user <span class="op">=</span> userRepository<span class="op">.</span><span class="fu">findById</span><span class="op">(</span>userId<span class="op">);</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">notNull</span><span class="op">(</span>user<span class="op">,</span> <span class="st">&quot;用户不存在，ID: &quot;</span> <span class="op">+</span> userId<span class="op">);</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span>user<span class="op">.</span><span class="fu">isActive</span><span class="op">(),</span> <span class="st">&quot;用户账户已被禁用&quot;</span><span class="op">);</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span>OrderItem item <span class="op">:</span> items<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>            Assert<span class="op">.</span><span class="fu">notNull</span><span class="op">(</span>item<span class="op">.</span><span class="fu">getProductId</span><span class="op">(),</span> <span class="st">&quot;商品ID不能为空&quot;</span><span class="op">);</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>            Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span>item<span class="op">.</span><span class="fu">getQuantity</span><span class="op">()</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">,</span> <span class="st">&quot;商品数量必须大于0&quot;</span><span class="op">);</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>            Product product <span class="op">=</span> productRepository<span class="op">.</span><span class="fu">findById</span><span class="op">(</span>item<span class="op">.</span><span class="fu">getProductId</span><span class="op">());</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>            Assert<span class="op">.</span><span class="fu">notNull</span><span class="op">(</span>product<span class="op">,</span> <span class="st">&quot;商品不存在，ID: &quot;</span> <span class="op">+</span> item<span class="op">.</span><span class="fu">getProductId</span><span class="op">());</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>            Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span>product<span class="op">.</span><span class="fu">getStock</span><span class="op">()</span> <span class="op">&gt;=</span> item<span class="op">.</span><span class="fu">getQuantity</span><span class="op">(),</span> </span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;商品库存不足: &quot;</span> <span class="op">+</span> product<span class="op">.</span><span class="fu">getName</span><span class="op">());</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 创建订单逻辑</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> orderRepository<span class="op">.</span><span class="fu">save</span><span class="op">(</span><span class="kw">new</span> <span class="fu">Order</span><span class="op">(</span>user<span class="op">,</span> items<span class="op">));</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="控制器层请求验证">控制器层请求验证</h3>
+<p>在Spring MVC控制器中，Assert可以用于验证请求参数的合法性：</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="at">@RestController</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="at">@RequestMapping</span><span class="op">(</span><span class="st">&quot;/api/users&quot;</span><span class="op">)</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> UserController <span class="op">{</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">@PostMapping</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> ResponseEntity<span class="op">&lt;</span>UserDTO<span class="op">&gt;</span> <span class="fu">createUser</span><span class="op">(</span><span class="at">@RequestBody</span> <span class="at">@Valid</span> UserDTO userDTO<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="co">// DTO基础验证（JSR-303已通过，补充业务验证）</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">notNull</span><span class="op">(</span>userDTO<span class="op">,</span> <span class="st">&quot;用户数据不能为空&quot;</span><span class="op">);</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">hasText</span><span class="op">(</span>userDTO<span class="op">.</span><span class="fu">getEmail</span><span class="op">(),</span> <span class="st">&quot;邮箱不能为空&quot;</span><span class="op">);</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 业务规则验证</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span><span class="fu">isValidEmail</span><span class="op">(</span>userDTO<span class="op">.</span><span class="fu">getEmail</span><span class="op">()),</span> <span class="st">&quot;邮箱格式不正确&quot;</span><span class="op">);</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span>userDTO<span class="op">.</span><span class="fu">getAge</span><span class="op">()</span> <span class="op">&gt;=</span> <span class="dv">18</span><span class="op">,</span> <span class="st">&quot;用户必须年满18岁&quot;</span><span class="op">);</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        User user <span class="op">=</span> userService<span class="op">.</span><span class="fu">createUser</span><span class="op">(</span>userDTO<span class="op">);</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ResponseEntity<span class="op">.</span><span class="fu">ok</span><span class="op">(</span>UserDTO<span class="op">.</span><span class="fu">fromEntity</span><span class="op">(</span>user<span class="op">));</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">@PutMapping</span><span class="op">(</span><span class="st">&quot;/{userId}/status&quot;</span><span class="op">)</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> ResponseEntity<span class="op">&lt;</span><span class="bu">Void</span><span class="op">&gt;</span> <span class="fu">updateUserStatus</span><span class="op">(</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>            <span class="at">@PathVariable</span> <span class="bu">Long</span> userId<span class="op">,</span> </span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>            <span class="at">@RequestParam</span> <span class="bu">String</span> status<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">notNull</span><span class="op">(</span>userId<span class="op">,</span> <span class="st">&quot;用户ID不能为空&quot;</span><span class="op">);</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">hasText</span><span class="op">(</span>status<span class="op">,</span> <span class="st">&quot;状态不能为空&quot;</span><span class="op">);</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span><span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;ACTIVE&quot;</span><span class="op">,</span> <span class="st">&quot;INACTIVE&quot;</span><span class="op">).</span><span class="fu">contains</span><span class="op">(</span>status<span class="op">),</span> </span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;状态值不合法&quot;</span><span class="op">);</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>        userService<span class="op">.</span><span class="fu">updateStatus</span><span class="op">(</span>userId<span class="op">,</span> status<span class="op">);</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ResponseEntity<span class="op">.</span><span class="fu">ok</span><span class="op">().</span><span class="fu">build</span><span class="op">();</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="自定义断言扩展">自定义断言扩展</h3>
+<p>对于特定的业务需求，可以基于Assert扩展自定义的断言方法：</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">/**</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a> <span class="co">*</span> <span class="co">业务断言工具类</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a> <span class="co">*/</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">abstract</span> <span class="kw">class</span> BusinessAssert <span class="kw">extends</span> Assert <span class="op">{</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">isValidPhoneNumber</span><span class="op">(</span><span class="bu">String</span> phone<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">hasText</span><span class="op">(</span>phone<span class="op">,</span> <span class="st">&quot;手机号不能为空&quot;</span><span class="op">);</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">isTrue</span><span class="op">(</span>phone<span class="op">.</span><span class="fu">matches</span><span class="op">(</span><span class="st">&quot;^1[3-9]</span><span class="sc">\\</span><span class="st">d{9}{{CONTENT}}quot;</span><span class="op">),</span> <span class="st">&quot;手机号格式不正确&quot;</span><span class="op">);</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">isValidIdCard</span><span class="op">(</span><span class="bu">String</span> idCard<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">hasText</span><span class="op">(</span>idCard<span class="op">,</span> <span class="st">&quot;身份证号不能为空&quot;</span><span class="op">);</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">isTrue</span><span class="op">(</span>idCard<span class="op">.</span><span class="fu">matches</span><span class="op">(</span><span class="st">&quot;^</span><span class="sc">\\</span><span class="st">d{17}[</span><span class="sc">\\</span><span class="st">dXx]{{CONTENT}}quot;</span><span class="op">),</span> <span class="st">&quot;身份证号格式不正确&quot;</span><span class="op">);</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">isPositiveNumber</span><span class="op">(</span><span class="bu">Number</span> number<span class="op">,</span> <span class="bu">String</span> message<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        <span class="fu">notNull</span><span class="op">(</span>number<span class="op">,</span> message<span class="op">);</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>        <span class="fu">isTrue</span><span class="op">(</span>number<span class="op">.</span><span class="fu">doubleValue</span><span class="op">()</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">,</span> message<span class="op">);</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">isInRange</span><span class="op">(</span><span class="dt">int</span> value<span class="op">,</span> <span class="dt">int</span> min<span class="op">,</span> <span class="dt">int</span> max<span class="op">,</span> <span class="bu">String</span> message<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>        <span class="fu">isTrue</span><span class="op">(</span>value <span class="op">&gt;=</span> min <span class="op">&amp;&amp;</span> value <span class="op">&lt;=</span> max<span class="op">,</span> message<span class="op">);</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="co">// 使用示例</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> PaymentService <span class="op">{</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">processPayment</span><span class="op">(</span>PaymentRequest request<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>        BusinessAssert<span class="op">.</span><span class="fu">isValidPhoneNumber</span><span class="op">(</span>request<span class="op">.</span><span class="fu">getPhone</span><span class="op">());</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>        BusinessAssert<span class="op">.</span><span class="fu">isPositiveNumber</span><span class="op">(</span>request<span class="op">.</span><span class="fu">getAmount</span><span class="op">(),</span> <span class="st">&quot;支付金额必须大于0&quot;</span><span class="op">);</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 支付处理逻辑</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h2 id="最佳实践与注意事项">最佳实践与注意事项</h2>
+<h3 id="性能优化策略">性能优化策略</h3>
+<p>虽然Assert方法本身很轻量，但在高性能场景下仍需注意优化：</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 不推荐：在循环内部使用Assert</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">processBatch</span><span class="op">(</span><span class="bu">List</span><span class="op">&lt;</span>Order<span class="op">&gt;</span> orders<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span>Order order <span class="op">:</span> orders<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">notNull</span><span class="op">(</span>order<span class="op">,</span> <span class="st">&quot;订单不能为null&quot;</span><span class="op">);</span> <span class="co">// 每次循环都执行校验</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 处理逻辑</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">// 推荐：循环外部统一校验</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">processBatch</span><span class="op">(</span><span class="bu">List</span><span class="op">&lt;</span>Order<span class="op">&gt;</span> orders<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    Assert<span class="op">.</span><span class="fu">notEmpty</span><span class="op">(</span>orders<span class="op">,</span> <span class="st">&quot;订单列表不能为空&quot;</span><span class="op">);</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span>Order order <span class="op">:</span> orders<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>order <span class="op">==</span> <span class="kw">null</span><span class="op">)</span> <span class="cf">continue</span><span class="op">;</span> <span class="co">// 使用轻量级判断</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 处理逻辑</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co">// 生产环境特定优化</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> ProductionSafeValidator <span class="op">{</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">final</span> <span class="dt">boolean</span> IS_PRODUCTION <span class="op">=</span> </span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;prod&quot;</span><span class="op">.</span><span class="fu">equals</span><span class="op">(</span><span class="bu">System</span><span class="op">.</span><span class="fu">getProperty</span><span class="op">(</span><span class="st">&quot;spring.profiles.active&quot;</span><span class="op">));</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">notNull</span><span class="op">(</span><span class="bu">Object</span> object<span class="op">,</span> <span class="bu">String</span> message<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>IS_PRODUCTION<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(</span>object <span class="op">==</span> <span class="kw">null</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>                log<span class="op">.</span><span class="fu">error</span><span class="op">(</span><span class="st">&quot;参数校验失败: {}&quot;</span><span class="op">,</span> message<span class="op">);</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>                <span class="cf">throw</span> <span class="kw">new</span> <span class="fu">BusinessException</span><span class="op">(</span><span class="st">&quot;参数错误&quot;</span><span class="op">);</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">else</span> <span class="op">{</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>            Assert<span class="op">.</span><span class="fu">notNull</span><span class="op">(</span>object<span class="op">,</span> message<span class="op">);</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="异常处理与错误信息">异常处理与错误信息</h3>
+<p>合理的错误信息设计可以大幅提升调试效率：</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 不推荐：模糊的错误信息</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>Assert<span class="op">.</span><span class="fu">notNull</span><span class="op">(</span>user<span class="op">,</span> <span class="st">&quot;参数错误&quot;</span><span class="op">);</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">// 推荐：具体的错误信息</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>Assert<span class="op">.</span><span class="fu">notNull</span><span class="op">(</span>user<span class="op">,</span> <span class="st">&quot;用户对象不能为null，当前用户ID: &quot;</span> <span class="op">+</span> userId<span class="op">);</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">// 推荐：包含上下文信息的错误消息</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">transfer</span><span class="op">(</span><span class="bu">Long</span> fromAccount<span class="op">,</span> <span class="bu">Long</span> toAccount<span class="op">,</span> <span class="bu">BigDecimal</span> amount<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    Assert<span class="op">.</span><span class="fu">notNull</span><span class="op">(</span>fromAccount<span class="op">,</span> <span class="st">&quot;转出账户不能为空&quot;</span><span class="op">);</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    Assert<span class="op">.</span><span class="fu">notNull</span><span class="op">(</span>toAccount<span class="op">,</span> <span class="st">&quot;转入账户不能为空&quot;</span><span class="op">);</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(!</span>fromAccount<span class="op">.</span><span class="fu">equals</span><span class="op">(</span>toAccount<span class="op">),</span> </span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;转出账户和转入账户不能相同: &quot;</span> <span class="op">+</span> fromAccount<span class="op">);</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    Assert<span class="op">.</span><span class="fu">notNull</span><span class="op">(</span>amount<span class="op">,</span> <span class="st">&quot;转账金额不能为空&quot;</span><span class="op">);</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span>amount<span class="op">.</span><span class="fu">compareTo</span><span class="op">(</span><span class="bu">BigDecimal</span><span class="op">.</span><span class="fu">ZERO</span><span class="op">)</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">,</span> </span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;转账金额必须大于0，当前金额: &quot;</span> <span class="op">+</span> amount<span class="op">);</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 转账逻辑</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="与校验框架的协同使用">与校验框架的协同使用</h3>
+<p>Assert与JSR-303校验框架（如Hibernate
+Validator）可以很好地协同工作：</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Data</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> UserDTO <span class="op">{</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">@NotBlank</span><span class="op">(</span>message <span class="op">=</span> <span class="st">&quot;用户名不能为空&quot;</span><span class="op">)</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Size</span><span class="op">(</span>min <span class="op">=</span> <span class="dv">2</span><span class="op">,</span> max <span class="op">=</span> <span class="dv">20</span><span class="op">,</span> message <span class="op">=</span> <span class="st">&quot;用户名长度2-20个字符&quot;</span><span class="op">)</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">String</span> username<span class="op">;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Email</span><span class="op">(</span>message <span class="op">=</span> <span class="st">&quot;邮箱格式不正确&quot;</span><span class="op">)</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">String</span> email<span class="op">;</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Min</span><span class="op">(</span>value <span class="op">=</span> <span class="dv">18</span><span class="op">,</span> message <span class="op">=</span> <span class="st">&quot;年龄必须大于18岁&quot;</span><span class="op">)</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">Integer</span> age<span class="op">;</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="at">@RestController</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> UserController <span class="op">{</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">@PostMapping</span><span class="op">(</span><span class="st">&quot;/users&quot;</span><span class="op">)</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> ResponseEntity<span class="op">&lt;?&gt;</span> <span class="fu">createUser</span><span class="op">(</span><span class="at">@RequestBody</span> <span class="at">@Valid</span> UserDTO userDTO<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>        <span class="co">// JSR-303校验通过后，进行业务逻辑校验</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span><span class="fu">isUsernameAvailable</span><span class="op">(</span>userDTO<span class="op">.</span><span class="fu">getUsername</span><span class="op">()),</span> </span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;用户名已存在: &quot;</span> <span class="op">+</span> userDTO<span class="op">.</span><span class="fu">getUsername</span><span class="op">());</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span>userDTO<span class="op">.</span><span class="fu">getAge</span><span class="op">()</span> <span class="op">&gt;=</span> <span class="dv">18</span><span class="op">,</span> <span class="st">&quot;用户必须年满18岁&quot;</span><span class="op">);</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>        User user <span class="op">=</span> userService<span class="op">.</span><span class="fu">createUser</span><span class="op">(</span>userDTO<span class="op">);</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ResponseEntity<span class="op">.</span><span class="fu">ok</span><span class="op">(</span>user<span class="op">);</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h2 id="总结">总结</h2>
+<p>Spring
+Assert工具类是一个设计精巧且极其实用的参数校验工具，通过系统学习和实践可以得出以下核心结论：</p>
+<h3 id="核心价值">核心价值</h3>
+<ol type="1">
+<li><strong>开发效率显著提升</strong>：将繁琐的参数校验代码从多行简化为单行方法调用</li>
+<li><strong>代码质量大幅改善</strong>：统一的校验逻辑和异常处理机制，提高代码一致性</li>
+<li><strong>错误早期暴露</strong>：遵循快速失败原则，在问题发生的最早阶段进行拦截</li>
+<li><strong>代码自文档化</strong>：直观的方法名使代码校验意图更加清晰</li>
+</ol>
+<h3 id="适用场景推荐">适用场景推荐</h3>
+<ul>
+<li><strong>服务层参数校验</strong>：业务方法开始处的参数合法性验证</li>
+<li><strong>控制器补充校验</strong>：在JSR-303校验基础上补充业务规则验证</li>
+<li><strong>框架开发</strong>：在框架内部进行关键参数和状态检查</li>
+<li><strong>测试断言</strong>：单元测试中的条件验证（结合测试框架）</li>
+</ul>
+<h3 id="使用注意事项">使用注意事项</h3>
+<ol type="1">
+<li><strong>性能考量</strong>：避免在高频循环内部使用，生产环境可考虑特定优化</li>
+<li><strong>错误信息质量</strong>：提供具体、包含上下文的错误消息，方便调试定位</li>
+<li><strong>与校验框架分工</strong>：基础格式校验用JSR-303，业务规则校验用Assert</li>
+<li><strong>异常处理策略</strong>：区分参数异常(IllegalArgumentException)和状态异常(IllegalStateException)</li>
+</ol>
+<p>Assert工具类作为Spring开发者工具箱中的重要组成部分，合理运用可以显著提升代码的健壮性和可维护性，是编写高质量Java应用的必备技能。</p>
+<h2 id="延伸阅读">延伸阅读</h2>
+<ol type="1">
+<li>https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/util/Assert.html</li>
+<li>Spring源码：<code>org.springframework.util.Assert</code></li>
+<li>https://docs.jboss.org/hibernate/validator/8.0/reference/en-US/html_single/</li>
+</ol>
+<h2 id="一句话记忆">一句话记忆</h2>
+<p>Spring
+Assert是参数校验的利器，用一行代码替代繁琐的if-else判断，让参数校验既简洁又健壮。</p>
+
+                </div>
+            </article>
+            
+            <footer class="footer">
+                <p>AI 个人笔记 &copy; 2025 | 所有内容均由 AI 协助生成</p>
+            </footer>
+        </div>
+        
+        <div class="toc-container">
+            <nav class="toc" id="table-of-contents">
+                <h2>目录</h2>
+                <div id="toc-content"></div>
+            </nav>
+        </div>
+    </div>
+    
+    <a href="#" class="back-to-top" id="backToTop">↑</a>
+    
+    <script>
+        // Generate Table of Contents
+        function generateTOC() {
+            const tocContainer = document.getElementById('toc-content');
+            const content = document.querySelector('.post-content');
+            const headers = content.querySelectorAll('h1, h2, h3');
+            
+            if (headers.length === 0) {
+                tocContainer.innerHTML = '<p>暂无目录</p>';
+                return;
+            }
+            
+            const toc = document.createElement('ul');
+            
+            headers.forEach((header, index) => {
+                // Add an id to the header if it doesn't have one
+                if (!header.id) {
+                    header.id = 'heading-' + index;
+                }
+                
+                const li = document.createElement('li');
+                li.className = 'toc-item';
+                
+                const link = document.createElement('a');
+                link.href = '#' + header.id;
+                link.textContent = header.textContent;
+                link.className = 'toc-link';
+                
+                // Set indentation based on header level
+                const level = parseInt(header.tagName.charAt(1)) - 1;
+                li.style.marginLeft = (level * 20) + 'px';
+                
+                li.appendChild(link);
+                toc.appendChild(li);
+            });
+            
+            tocContainer.appendChild(toc);
+        }
+        
+        // Adjust TOC height to match content
+        function adjustTOCHeight() {
+            const toc = document.getElementById('table-of-contents');
+            const post = document.querySelector('.post');
+            
+            if (toc && post) {
+                // Get the height of the post area
+                const postHeight = post.offsetHeight;
+                
+                // Set the max-height of the TOC to match the post height
+                // Leave some space for top margin and padding
+                toc.style.maxHeight = Math.min(postHeight - 30, window.innerHeight * 0.8) + 'px';
+            }
+        }
+        
+        // Back to top button
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        });
+        
+        // Initialize TOC when page loads and adjust height
+        document.addEventListener('DOMContentLoaded', function() {
+            generateTOC();
+            adjustTOCHeight();
+            
+            // Adjust height on window resize
+            window.addEventListener('resize', adjustTOCHeight);
+        });
+        
+        // 页面加载完成后添加复制按钮
+        window.addEventListener('load', function() {
+            addCopyButtons();
+        });
+        
+        // 监听可能的动态内容加载
+        const observer = new MutationObserver(function(mutations) {
+            let shouldAddButtons = false;
+            mutations.forEach(function(mutation) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) {
+                        // 检查添加的节点是否是代码块或包含代码块
+                        if ((node.classList && node.classList.contains('sourceCode')) || 
+                            (node.tagName === 'PRE' && !node.classList.contains('mermaid')) ||
+                            node.querySelector('.sourceCode, pre:not(.mermaid)')) {
+                            shouldAddButtons = true;
+                        }
+                    }
+                });
+            });
+            if (shouldAddButtons) {
+                // 延迟执行以确保DOM完全更新
+                setTimeout(addCopyButtons, 100);
+            }
+        });
+        
+        // 开始监听DOM变化
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+        
+        console.log("页面加载完成，AI 技术笔记已就绪");
+    </script>
+</body>
+</html>

@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>spring-webutils</title>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Spring 框架中的WebUtils是一个强大且实用的 Web
+开发工具类，它能帮你大幅简化 Servlet API
+的常见操作。下面这个表格汇总了它的核心功能，让你快速了解其全貌：
+
+
+
+
+
+
+
+
+功能类别
+主要方法示例
+核心用途
+
+
+
+
+Session 管理
+getSessi...">
+    <meta name="keywords" content="spring, webutils">
+    <meta name="author" content="AI 个人笔记">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="spring-webutils">
+    <meta property="og:description" content="Spring 框架中的WebUtils是一个强大且实用的 Web
+开发工具类，它能帮你大幅简化 Servlet API
+的常见操作。下面这个表格汇总了它的核心功能，让你快速了解其全貌：
+
+
+
+
+
+
+
+
+功能类别
+主要方法示例
+核心用途
+
+
+
+
+Session 管理
+getSessi...">
+    <meta property="og:image" content="https://your-domain.com/images/og-image.png">
+    <meta property="og:url" content="https://your-domain.com/docs/2025-10/spring-webutils.html">
+    <meta property="og:site_name" content="AI 个人笔记">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="spring-webutils">
+    <meta property="twitter:description" content="Spring 框架中的WebUtils是一个强大且实用的 Web
+开发工具类，它能帮你大幅简化 Servlet API
+的常见操作。下面这个表格汇总了它的核心功能，让你快速了解其全貌：
+
+
+
+
+
+
+
+
+功能类别
+主要方法示例
+核心用途
+
+
+
+
+Session 管理
+getSessi...">
+    <meta property="twitter:image" content="https://your-domain.com/images/og-image.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://your-domain.com/docs/2025-10/spring-webutils.html">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <style>
+        /* Google Fonts for better typography */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
+
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --bg-color: #f8f9fa;
+            --text-color: #34495e;
+            --border-color: #e9ecef;
+            --card-bg: #ffffff;
+            --hover-color: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', 'Noto Sans SC', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            gap: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .back-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--secondary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .back-home:hover {
+            background: #2980b9;
+        }
+
+        .github-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #24292e;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .github-link:hover {
+            background: #000;
+        }
+
+        .main-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .post {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .post-header {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .post-title {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #6c757d;
+            font-size: 0.95rem;
+        }
+
+        .post-date {
+            background-color: #e3f2fd;
+            color: var(--secondary-color);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .post-category {
+            background-color: #e8f5e9;
+            color: #4caf50;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .post-content {
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .post-content h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin: 35px 0 25px 0;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        /* Table of Contents */
+        .toc-container {
+            width: 300px;
+            flex-shrink: 0;
+        }
+        
+        .toc {
+            position: sticky;
+            top: 135px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            max-height: calc(100vh - 150px);
+            overflow-y: auto;
+        }
+        
+        .toc h2 {
+            color: var(--primary-color);
+            font-size: 1.4rem;
+            margin-top: 0;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .toc ul ul {
+            padding-left: 20px;
+        }
+        
+        .toc li {
+            margin-bottom: 8px;
+        }
+        
+        .toc a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+        
+        .toc a:hover {
+            color: var(--secondary-color);
+        }
+        
+        .toc a.active {
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .post-content h2 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .post-content h3 {
+            color: #2980b9;
+            font-size: 1.3rem;
+            margin: 25px 0 15px 0;
+        }
+
+        .post-content p {
+            margin-bottom: 18px;
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 20px 0;
+            padding-left: 35px;
+        }
+
+        .post-content li {
+            margin-bottom: 10px;
+        }
+
+        .post-content code {
+            background-color: #e8eaed;
+            padding: 3px 7px;
+            border-radius: 4px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            color: #c0392b;
+            font-size: 0.9em;
+        }
+
+        .post-content pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            font-size: 0.9em;
+            line-height: 1.5;
+            position: relative;
+            overflow: visible;
+        }
+        
+        /* Copy button styles */
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #444;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 0.8em;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: all 0.2s ease;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        /* 为 Pandoc 生成的代码块容器添加定位上下文 */
+        .sourceCode {
+            position: relative;
+        }
+        
+        .copy-button:hover {
+            background-color: #555;
+            opacity: 1;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .copy-button.copied {
+            background-color: #27ae60;
+        }
+
+        .post-content pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        .post-content blockquote {
+            background-color: #eaf2f8;
+            border-left: 5px solid var(--secondary-color);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .post-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            table-layout: fixed; /* 添加这行以确保表格列宽正确 */
+        }
+
+        .post-content th, .post-content td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #e1e1e1;
+            word-wrap: break-word; /* 确保长内容可以换行 */
+        }
+
+        .post-content th {
+            background-color: #3498db;
+            color: #ffffff;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .post-content tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .post-content tbody tr:hover {
+            background-color: #e9ecef;
+        }
+
+        .post-content a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+
+        .post-content a:hover {
+            text-decoration: underline;
+        }
+
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 25px 0;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 40px;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--secondary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+        }
+
+        /* Mermaid 图表样式 */
+        .mermaid {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .post {
+                padding: 20px;
+            }
+            
+            .post-title {
+                font-size: 1.6rem;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .post-content {
+                font-size: 1rem;
+            }
+            
+            .post-content h1 {
+                font-size: 1.5rem;
+            }
+            
+            .post-content h2 {
+                font-size: 1.3rem;
+            }
+            
+            .post-content h3 {
+                font-size: 1.1rem;
+            }
+            
+            .toc-container {
+                display: none;
+            }
+        }
+    </style>
+    <!-- 引入本地 Mermaid 库 -->
+    <script src="../../js/mermaid.min.js"></script>
+    <script>
+        // 初始化 Mermaid
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            // 可以根据需要添加更多配置选项
+            securityLevel: 'loose'
+        });
+        
+        // 处理 Pandoc 生成的 Mermaid 代码块
+        // Pandoc 将 Mermaid 代码块转换为 <pre class="mermaid"><code>... 格式
+        // 我们需要将其转换为 <div class="mermaid">... 格式以便 Mermaid 渲染
+        document.addEventListener('DOMContentLoaded', function() {
+            const mermaidBlocks = document.querySelectorAll('pre.mermaid code');
+            mermaidBlocks.forEach(function(codeElement) {
+                // 创建新的 div 元素
+                const mermaidDiv = document.createElement('div');
+                mermaidDiv.className = 'mermaid';
+                // 将代码内容移到 div 中
+                mermaidDiv.textContent = codeElement.textContent;
+                // 替换原来的 pre 元素
+                codeElement.parentNode.parentNode.replaceChild(mermaidDiv, codeElement.parentNode);
+            });
+            
+            // 重新启动 Mermaid 渲染
+            mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+        });
+        
+        // 为代码块添加复制按钮
+        function addCopyButtons() {
+            // 处理 Pandoc 生成的代码块结构 (<div class="sourceCode"><pre><code>)
+            const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
+            sourceCodeBlocks.forEach(function(block) {
+                // 检查是否已经有复制按钮
+                if (block.querySelector('.copy-button')) return;
+                
+                // 获取 pre 元素
+                const preElement = block.querySelector('pre');
+                if (!preElement) return;
+                
+                // 创建复制按钮
+                const button = document.createElement('button');
+                button.className = 'copy-button';
+                button.textContent = '复制';
+                button.setAttribute('aria-label', '复制代码');
+                
+                // 添加点击事件
+                button.addEventListener('click', function() {
+                    // 获取代码文本
+                    const code = preElement.querySelector('code');
+                    const text = code ? code.innerText : preElement.innerText;
+                    
+                    // 复制到剪贴板
+                    navigator.clipboard.writeText(text).then(function() {
+                        // 更新按钮状态
+                        button.textContent = '已复制';
+                        button.classList.add('copied');
+                        
+                        // 3秒后恢复原始状态
+                        setTimeout(function() {
+                            button.textContent = '复制';
+                            button.classList.remove('copied');
+                        }, 3000);
+                    }).catch(function(err) {
+                        console.error('复制失败: ', err);
+                        button.textContent = '失败';
+                        setTimeout(function() {
+                            button.textContent = '复制';
+                        }, 3000);
+                    });
+                });
+                
+                // 将按钮添加到 sourceCode div 中
+                block.appendChild(button);
+            });
+            
+            // 处理普通的 pre 代码块 (非 Pandoc 生成的)
+            // 先获取所有非 mermaid 的 pre 元素
+            const allPreBlocks = document.querySelectorAll('pre:not(.mermaid)');
+            allPreBlocks.forEach(function(block) {
+                // 检查是否已经在 sourceCode div 中（Pandoc 生成的）或者已经有复制按钮
+                if (block.closest('.sourceCode') || block.querySelector('.copy-button')) return;
+                
+                // 创建复制按钮
+                const button = document.createElement('button');
+                button.className = 'copy-button';
+                button.textContent = '复制';
+                button.setAttribute('aria-label', '复制代码');
+                
+                // 添加点击事件
+                button.addEventListener('click', function() {
+                    // 获取代码文本
+                    const code = block.querySelector('code');
+                    const text = code ? code.innerText : block.innerText;
+                    
+                    // 复制到剪贴板
+                    navigator.clipboard.writeText(text).then(function() {
+                        // 更新按钮状态
+                        button.textContent = '已复制';
+                        button.classList.add('copied');
+                        
+                        // 3秒后恢复原始状态
+                        setTimeout(function() {
+                            button.textContent = '复制';
+                            button.classList.remove('copied');
+                        }, 3000);
+                    }).catch(function(err) {
+                        console.error('复制失败: ', err);
+                        button.textContent = '失败';
+                        setTimeout(function() {
+                            button.textContent = '复制';
+                        }, 3000);
+                    });
+                });
+                
+                // 将按钮添加到代码块
+                block.appendChild(button);
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="main-content">
+            <header class="header">
+                <a href="../../index.html" class="back-home">
+                    ← 返回首页
+                </a>
+            </header>
+            
+            <article class="post">
+                <header class="post-header">
+                    <h1 class="post-title">spring-webutils</h1>
+                    <div class="post-meta">
+                        <div class="post-date">2025/10/19</div>
+                        <div class="post-category">2025-10</div>
+                    </div>
+                </header>
+                <div class="warning">
+                    ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+                </div>
+                <div class="post-content" id="post-content">
+                    <p>Spring 框架中的<code>WebUtils</code>是一个强大且实用的 Web
+开发工具类，它能帮你大幅简化 Servlet API
+的常见操作。下面这个表格汇总了它的核心功能，让你快速了解其全貌：</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 44%" />
+<col style="width: 36%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">功能类别</th>
+<th style="text-align: left;">主要方法示例</th>
+<th style="text-align: left;">核心用途</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Session 管理</strong></td>
+<td style="text-align: left;"><code>getSessionAttribute()</code>,
+<code>setSessionAttribute()</code></td>
+<td style="text-align: left;">安全地读写 Session
+数据，避免空指针异常</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Cookie 操作</strong></td>
+<td style="text-align: left;"><code>getCookie()</code></td>
+<td style="text-align: left;">便捷地获取特定名称的 Cookie 对象</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>请求参数处理</strong></td>
+<td
+style="text-align: left;"><code>getParametersStartingWith()</code></td>
+<td style="text-align: left;">提取具有特定前缀的请求参数</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>文件与 URL 解析</strong></td>
+<td
+style="text-align: left;"><code>extractFilenameFromUrlPath()</code></td>
+<td style="text-align: left;">从 URL 路径中准确提取文件名</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>请求属性管理</strong></td>
+<td
+style="text-align: left;"><code>exposeRequestAttributes()</code></td>
+<td style="text-align: left;">向请求对象中批量设置属性</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>原生请求/响应访问</strong></td>
+<td style="text-align: left;"><code>getNativeRequest()</code></td>
+<td style="text-align: left;">获取底层 Servlet
+容器的原生请求/响应对象</td>
+</tr>
+</tbody>
+</table>
+<h3 id="核心方法详解">💡 核心方法详解</h3>
+<p><code>WebUtils</code>的真正价值在于其方法的细节设计，它们让很多繁琐的操作变得简单安全。</p>
+<ul>
+<li><p><strong>Session
+操作更稳健</strong>：传统的<code>request.getSession().getAttribute(name)</code>写法在
+Session
+不存在时可能引发问题。而<code>WebUtils</code>的<code>getSessionAttribute(HttpServletRequest request, String name)</code>方法会先检查
+Session
+是否存在，如果不存在则直接返回<code>null</code>，确保了代码的健壮性。<code>setSessionAttribute</code>方法还能在传入值为<code>null</code>时自动移除该属性，非常智能。</p></li>
+<li><p><strong>精准的 Cookie
+获取</strong>：使用<code>getCookie(HttpServletRequest request, String name)</code>可以快速从请求中查找指定名称的
+Cookie，无需手动遍历 Cookie 数组，代码更简洁。</p></li>
+<li><p><strong>前缀参数批量处理</strong>：<code>getParametersStartingWith(ServletRequest request, String prefix)</code>方法能一次性获取所有以指定前缀开头的请求参数，并将其组装成
+Map，非常适合处理一组相关的配置项或筛选条件。</p></li>
+<li><p><strong>智能的文件名提取</strong>：<code>extractFilenameFromUrlPath(String urlPath)</code>方法能够正确处理包含查询参数或会话
+ID 的复杂
+URL，准确抽取出核心文件名，这在处理文件下载或静态资源时非常有用。</p></li>
+</ul>
+<h3 id="实际应用场景">🛠️ 实际应用场景</h3>
+<p>了解这些方法在真实项目中的用法，能帮助你更好地理解和运用<code>WebUtils</code>。</p>
+<ul>
+<li><p><strong>用户身份验证与 Session 管理</strong>
+在用户登录后，将用户信息存入 Session，并在后续请求中安全地获取。</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 用户登录成功时，将用户对象存入Session</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="at">@PostMapping</span><span class="op">(</span><span class="st">&quot;/login&quot;</span><span class="op">)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="bu">String</span> <span class="fu">login</span><span class="op">(</span>User user<span class="op">,</span> HttpServletRequest request<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">// ... 验证逻辑</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    WebUtils<span class="op">.</span><span class="fu">setSessionAttribute</span><span class="op">(</span>request<span class="op">,</span> <span class="st">&quot;currentUser&quot;</span><span class="op">,</span> user<span class="op">);</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">&quot;redirect:/dashboard&quot;</span><span class="op">;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">// 在拦截器或控制器中获取当前用户</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> User <span class="fu">getCurrentUser</span><span class="op">(</span>HttpServletRequest request<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 安全地获取，如果未登录则返回null</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">(</span>User<span class="op">)</span> WebUtils<span class="op">.</span><span class="fu">getSessionAttribute</span><span class="op">(</span>request<span class="op">,</span> <span class="st">&quot;currentUser&quot;</span><span class="op">);</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></li>
+<li><p><strong>API 接口的前缀参数处理</strong>
+在处理类似<code>filter_name</code>、<code>filter_age</code>这样的筛选参数时，<code>getParametersStartingWith</code>方法能大幅简化代码。</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="at">@GetMapping</span><span class="op">(</span><span class="st">&quot;/users&quot;</span><span class="op">)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="bu">List</span><span class="op">&lt;</span>User<span class="op">&gt;</span> <span class="fu">getUsers</span><span class="op">(</span>HttpServletRequest request<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 获取所有以&quot;filter_&quot;开头的参数</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">Map</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">,</span> <span class="bu">Object</span><span class="op">&gt;</span> filterParams <span class="op">=</span> WebUtils<span class="op">.</span><span class="fu">getParametersStartingWith</span><span class="op">(</span>request<span class="op">,</span> <span class="st">&quot;filter_&quot;</span><span class="op">);</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 然后将这个Map传递给Service层进行查询</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> userService<span class="op">.</span><span class="fu">findUsersByCriteria</span><span class="op">(</span>filterParams<span class="op">);</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></li>
+<li><p><strong>访问底层原生对象</strong> 当应用运行在 Spring
+或其它框架包装的请求/响应对象之下时，有时需要访问容器的原生实现以使用某些特定功能。</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 获取底层的HttpServletRequest，例如为了使用Servlet容器特有的方法</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>HttpServletRequest nativeRequest <span class="op">=</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    WebUtils<span class="op">.</span><span class="fu">getNativeRequest</span><span class="op">(</span>request<span class="op">,</span> HttpServletRequest<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span></code></pre></div></li>
+</ul>
+<h3 id="使用注意与最佳实践">⚠️ 使用注意与最佳实践</h3>
+<p>虽然<code>WebUtils</code>很强大，但为了写出更专业的代码，有几点需要特别注意：</p>
+<ol type="1">
+<li><strong>并非万能钥匙</strong>：<code>WebUtils</code>旨在简化 Servlet
+API
+的常见操作，但对于非常复杂的业务逻辑，可能仍需手动编写特定代码。它更像是一个<strong>辅助工具</strong>，而非业务逻辑的核心。</li>
+<li><strong>理解空值安全</strong>：其很多方法（如<code>getSessionAttribute</code>）在目标不存在时返回<code>null</code>。调用方<strong>必须做好空值判断</strong>，避免将<code>null</code>异常简单地转移到了业务代码中。</li>
+<li><strong>注意性能影响</strong>：像<code>getParametersStartingWith</code>这类方法会遍历所有参数，在参数极多且频繁调用的场景下，需关注其性能开销。</li>
+<li><strong>优先使用 Spring 更高层次的抽象</strong>：在现代 Spring
+开发中，对于 Session
+管理，可以考虑使用<code>@SessionAttributes</code>注解；对于参数绑定，可以使用<code>@ModelAttribute</code>。这些是更声明式、更
+Spring
+化的方式。<code>WebUtils</code>通常在这些抽象不适用时作为补充。</li>
+</ol>
+<h3 id="总结">💎 总结</h3>
+<p>总的来说，<code>WebUtils</code>是 Spring 为你准备的一个非常实用的 Web
+开发“工具箱”，它通过简洁的静态方法封装了 Servlet API
+的常见模板代码，能有效提高开发效率，并让代码更加健壮。</p>
+
+                </div>
+            </article>
+            
+            <footer class="footer">
+                <p>AI 个人笔记 &copy; 2025 | 所有内容均由 AI 协助生成</p>
+            </footer>
+        </div>
+        
+        <div class="toc-container">
+            <nav class="toc" id="table-of-contents">
+                <h2>目录</h2>
+                <div id="toc-content"></div>
+            </nav>
+        </div>
+    </div>
+    
+    <a href="#" class="back-to-top" id="backToTop">↑</a>
+    
+    <script>
+        // Generate Table of Contents
+        function generateTOC() {
+            const tocContainer = document.getElementById('toc-content');
+            const content = document.querySelector('.post-content');
+            const headers = content.querySelectorAll('h1, h2, h3');
+            
+            if (headers.length === 0) {
+                tocContainer.innerHTML = '<p>暂无目录</p>';
+                return;
+            }
+            
+            const toc = document.createElement('ul');
+            
+            headers.forEach((header, index) => {
+                // Add an id to the header if it doesn't have one
+                if (!header.id) {
+                    header.id = 'heading-' + index;
+                }
+                
+                const li = document.createElement('li');
+                li.className = 'toc-item';
+                
+                const link = document.createElement('a');
+                link.href = '#' + header.id;
+                link.textContent = header.textContent;
+                link.className = 'toc-link';
+                
+                // Set indentation based on header level
+                const level = parseInt(header.tagName.charAt(1)) - 1;
+                li.style.marginLeft = (level * 20) + 'px';
+                
+                li.appendChild(link);
+                toc.appendChild(li);
+            });
+            
+            tocContainer.appendChild(toc);
+        }
+        
+        // Adjust TOC height to match content
+        function adjustTOCHeight() {
+            const toc = document.getElementById('table-of-contents');
+            const post = document.querySelector('.post');
+            
+            if (toc && post) {
+                // Get the height of the post area
+                const postHeight = post.offsetHeight;
+                
+                // Set the max-height of the TOC to match the post height
+                // Leave some space for top margin and padding
+                toc.style.maxHeight = Math.min(postHeight - 30, window.innerHeight * 0.8) + 'px';
+            }
+        }
+        
+        // Back to top button
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        });
+        
+        // Initialize TOC when page loads and adjust height
+        document.addEventListener('DOMContentLoaded', function() {
+            generateTOC();
+            adjustTOCHeight();
+            
+            // Adjust height on window resize
+            window.addEventListener('resize', adjustTOCHeight);
+        });
+        
+        // 页面加载完成后添加复制按钮
+        window.addEventListener('load', function() {
+            addCopyButtons();
+        });
+        
+        // 监听可能的动态内容加载
+        const observer = new MutationObserver(function(mutations) {
+            let shouldAddButtons = false;
+            mutations.forEach(function(mutation) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) {
+                        // 检查添加的节点是否是代码块或包含代码块
+                        if ((node.classList && node.classList.contains('sourceCode')) || 
+                            (node.tagName === 'PRE' && !node.classList.contains('mermaid')) ||
+                            node.querySelector('.sourceCode, pre:not(.mermaid)')) {
+                            shouldAddButtons = true;
+                        }
+                    }
+                });
+            });
+            if (shouldAddButtons) {
+                // 延迟执行以确保DOM完全更新
+                setTimeout(addCopyButtons, 100);
+            }
+        });
+        
+        // 开始监听DOM变化
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+        
+        console.log("页面加载完成，AI 技术笔记已就绪");
+    </script>
+</body>
+</html>
