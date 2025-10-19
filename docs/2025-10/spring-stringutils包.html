@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spring StringUtils工具类完全指南：从基础到高级用法</title>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Spring
+StringUtils工具类完全指南：从基础到高级用法
+开头摘要
+Spring框架中的StringUtils工具类是一个功能强大的字符串处理工具，提供了丰富且null安全的字符串操作方法。本文基于源码分析，全面介绍该类所有方法的用途、实现原理和实际应用场景，帮助开发者提升字符串处理效率和代码健壮性。...">
+    <meta name="keywords" content="Spring, StringUtils工具类完全指南, 从基础到高级用法">
+    <meta name="author" content="AI 个人笔记">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="Spring StringUtils工具类完全指南：从基础到高级用法">
+    <meta property="og:description" content="Spring
+StringUtils工具类完全指南：从基础到高级用法
+开头摘要
+Spring框架中的StringUtils工具类是一个功能强大的字符串处理工具，提供了丰富且null安全的字符串操作方法。本文基于源码分析，全面介绍该类所有方法的用途、实现原理和实际应用场景，帮助开发者提升字符串处理效率和代码健壮性。...">
+    <meta property="og:image" content="https://your-domain.com/images/og-image.png">
+    <meta property="og:url" content="https://your-domain.com/docs/2025-10/spring-stringutils包.html">
+    <meta property="og:site_name" content="AI 个人笔记">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="Spring StringUtils工具类完全指南：从基础到高级用法">
+    <meta property="twitter:description" content="Spring
+StringUtils工具类完全指南：从基础到高级用法
+开头摘要
+Spring框架中的StringUtils工具类是一个功能强大的字符串处理工具，提供了丰富且null安全的字符串操作方法。本文基于源码分析，全面介绍该类所有方法的用途、实现原理和实际应用场景，帮助开发者提升字符串处理效率和代码健壮性。...">
+    <meta property="twitter:image" content="https://your-domain.com/images/og-image.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://your-domain.com/docs/2025-10/spring-stringutils包.html">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <style>
+        /* Google Fonts for better typography */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
+
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --bg-color: #f8f9fa;
+            --text-color: #34495e;
+            --border-color: #e9ecef;
+            --card-bg: #ffffff;
+            --hover-color: #f8f9fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', 'Noto Sans SC', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            gap: 30px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .back-home {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--secondary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .back-home:hover {
+            background: #2980b9;
+        }
+
+        .github-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #24292e;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .github-link:hover {
+            background: #000;
+        }
+
+        .main-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .post {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .post-header {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .post-title {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .post-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #6c757d;
+            font-size: 0.95rem;
+        }
+
+        .post-date {
+            background-color: #e3f2fd;
+            color: var(--secondary-color);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .post-category {
+            background-color: #e8f5e9;
+            color: #4caf50;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .post-content {
+            font-size: 1.05rem;
+            line-height: 1.7;
+        }
+
+        .post-content h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin: 35px 0 25px 0;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+        
+        /* Table of Contents */
+        .toc-container {
+            width: 300px;
+            flex-shrink: 0;
+        }
+        
+        .toc {
+            position: sticky;
+            top: 135px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            max-height: calc(100vh - 150px);
+            overflow-y: auto;
+        }
+        
+        .toc h2 {
+            color: var(--primary-color);
+            font-size: 1.4rem;
+            margin-top: 0;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .toc ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .toc ul ul {
+            padding-left: 20px;
+        }
+        
+        .toc li {
+            margin-bottom: 8px;
+        }
+        
+        .toc a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+        
+        .toc a:hover {
+            color: var(--secondary-color);
+        }
+        
+        .toc a.active {
+            color: var(--secondary-color);
+            font-weight: 500;
+        }
+
+        .post-content h2 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .post-content h3 {
+            color: #2980b9;
+            font-size: 1.3rem;
+            margin: 25px 0 15px 0;
+        }
+
+        .post-content p {
+            margin-bottom: 18px;
+        }
+
+        .post-content ul, .post-content ol {
+            margin: 20px 0;
+            padding-left: 35px;
+        }
+
+        .post-content li {
+            margin-bottom: 10px;
+        }
+
+        .post-content code {
+            background-color: #e8eaed;
+            padding: 3px 7px;
+            border-radius: 4px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            color: #c0392b;
+            font-size: 0.9em;
+        }
+
+        .post-content pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            font-size: 0.9em;
+            line-height: 1.5;
+            position: relative;
+            overflow: visible;
+        }
+        
+        /* Copy button styles */
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #444;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 0.8em;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: all 0.2s ease;
+            z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        /* 为 Pandoc 生成的代码块容器添加定位上下文 */
+        .sourceCode {
+            position: relative;
+        }
+        
+        .copy-button:hover {
+            background-color: #555;
+            opacity: 1;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+        
+        .copy-button.copied {
+            background-color: #27ae60;
+        }
+
+        .post-content pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+        }
+
+        .post-content blockquote {
+            background-color: #eaf2f8;
+            border-left: 5px solid var(--secondary-color);
+            padding: 20px;
+            margin: 25px 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .post-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            table-layout: fixed; /* 添加这行以确保表格列宽正确 */
+        }
+
+        .post-content th, .post-content td {
+            padding: 12px 15px;
+            text-align: left;
+            border: 1px solid #e1e1e1;
+            word-wrap: break-word; /* 确保长内容可以换行 */
+        }
+
+        .post-content th {
+            background-color: #3498db;
+            color: #ffffff;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .post-content tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        .post-content tbody tr:hover {
+            background-color: #e9ecef;
+        }
+
+        .post-content a {
+            color: var(--secondary-color);
+            text-decoration: none;
+        }
+
+        .post-content a:hover {
+            text-decoration: underline;
+        }
+
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 25px 0;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 40px;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--secondary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+        }
+
+        /* Mermaid 图表样式 */
+        .mermaid {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .post {
+                padding: 20px;
+            }
+            
+            .post-title {
+                font-size: 1.6rem;
+            }
+            
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .post-content {
+                font-size: 1rem;
+            }
+            
+            .post-content h1 {
+                font-size: 1.5rem;
+            }
+            
+            .post-content h2 {
+                font-size: 1.3rem;
+            }
+            
+            .post-content h3 {
+                font-size: 1.1rem;
+            }
+            
+            .toc-container {
+                display: none;
+            }
+        }
+    </style>
+    <!-- 引入本地 Mermaid 库 -->
+    <script src="../../js/mermaid.min.js"></script>
+    <script>
+        // 初始化 Mermaid
+        mermaid.initialize({ 
+            startOnLoad: true,
+            theme: 'default',
+            // 可以根据需要添加更多配置选项
+            securityLevel: 'loose'
+        });
+        
+        // 处理 Pandoc 生成的 Mermaid 代码块
+        // Pandoc 将 Mermaid 代码块转换为 <pre class="mermaid"><code>... 格式
+        // 我们需要将其转换为 <div class="mermaid">... 格式以便 Mermaid 渲染
+        document.addEventListener('DOMContentLoaded', function() {
+            const mermaidBlocks = document.querySelectorAll('pre.mermaid code');
+            mermaidBlocks.forEach(function(codeElement) {
+                // 创建新的 div 元素
+                const mermaidDiv = document.createElement('div');
+                mermaidDiv.className = 'mermaid';
+                // 将代码内容移到 div 中
+                mermaidDiv.textContent = codeElement.textContent;
+                // 替换原来的 pre 元素
+                codeElement.parentNode.parentNode.replaceChild(mermaidDiv, codeElement.parentNode);
+            });
+            
+            // 重新启动 Mermaid 渲染
+            mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+        });
+        
+        // 为代码块添加复制按钮
+        function addCopyButtons() {
+            // 处理 Pandoc 生成的代码块结构 (<div class="sourceCode"><pre><code>)
+            const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
+            sourceCodeBlocks.forEach(function(block) {
+                // 检查是否已经有复制按钮
+                if (block.querySelector('.copy-button')) return;
+                
+                // 获取 pre 元素
+                const preElement = block.querySelector('pre');
+                if (!preElement) return;
+                
+                // 创建复制按钮
+                const button = document.createElement('button');
+                button.className = 'copy-button';
+                button.textContent = '复制';
+                button.setAttribute('aria-label', '复制代码');
+                
+                // 添加点击事件
+                button.addEventListener('click', function() {
+                    // 获取代码文本
+                    const code = preElement.querySelector('code');
+                    const text = code ? code.innerText : preElement.innerText;
+                    
+                    // 复制到剪贴板
+                    navigator.clipboard.writeText(text).then(function() {
+                        // 更新按钮状态
+                        button.textContent = '已复制';
+                        button.classList.add('copied');
+                        
+                        // 3秒后恢复原始状态
+                        setTimeout(function() {
+                            button.textContent = '复制';
+                            button.classList.remove('copied');
+                        }, 3000);
+                    }).catch(function(err) {
+                        console.error('复制失败: ', err);
+                        button.textContent = '失败';
+                        setTimeout(function() {
+                            button.textContent = '复制';
+                        }, 3000);
+                    });
+                });
+                
+                // 将按钮添加到 sourceCode div 中
+                block.appendChild(button);
+            });
+            
+            // 处理普通的 pre 代码块 (非 Pandoc 生成的)
+            // 先获取所有非 mermaid 的 pre 元素
+            const allPreBlocks = document.querySelectorAll('pre:not(.mermaid)');
+            allPreBlocks.forEach(function(block) {
+                // 检查是否已经在 sourceCode div 中（Pandoc 生成的）或者已经有复制按钮
+                if (block.closest('.sourceCode') || block.querySelector('.copy-button')) return;
+                
+                // 创建复制按钮
+                const button = document.createElement('button');
+                button.className = 'copy-button';
+                button.textContent = '复制';
+                button.setAttribute('aria-label', '复制代码');
+                
+                // 添加点击事件
+                button.addEventListener('click', function() {
+                    // 获取代码文本
+                    const code = block.querySelector('code');
+                    const text = code ? code.innerText : block.innerText;
+                    
+                    // 复制到剪贴板
+                    navigator.clipboard.writeText(text).then(function() {
+                        // 更新按钮状态
+                        button.textContent = '已复制';
+                        button.classList.add('copied');
+                        
+                        // 3秒后恢复原始状态
+                        setTimeout(function() {
+                            button.textContent = '复制';
+                            button.classList.remove('copied');
+                        }, 3000);
+                    }).catch(function(err) {
+                        console.error('复制失败: ', err);
+                        button.textContent = '失败';
+                        setTimeout(function() {
+                            button.textContent = '复制';
+                        }, 3000);
+                    });
+                });
+                
+                // 将按钮添加到代码块
+                block.appendChild(button);
+            });
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="main-content">
+            <header class="header">
+                <a href="../../index.html" class="back-home">
+                    ← 返回首页
+                </a>
+            </header>
+            
+            <article class="post">
+                <header class="post-header">
+                    <h1 class="post-title">Spring StringUtils工具类完全指南：从基础到高级用法</h1>
+                    <div class="post-meta">
+                        <div class="post-date">2025/10/19</div>
+                        <div class="post-category">2025-10</div>
+                    </div>
+                </header>
+                <div class="warning">
+                    ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+                </div>
+                <div class="post-content" id="post-content">
+                    <h1 id="spring-stringutils工具类完全指南从基础到高级用法">Spring
+StringUtils工具类完全指南：从基础到高级用法</h1>
+<h2 id="开头摘要">开头摘要</h2>
+<p>Spring框架中的<code>StringUtils</code>工具类是一个功能强大的字符串处理工具，提供了丰富且<strong>null安全</strong>的字符串操作方法。本文基于源码分析，全面介绍该类所有方法的用途、实现原理和实际应用场景，帮助开发者提升字符串处理效率和代码健壮性。</p>
+<h2 id="目录">目录</h2>
+<ul>
+<li>#核心架构设计理念</li>
+<li>#字符串判断方法全解析</li>
+<li>#字符串操作与处理方法</li>
+<li>#路径与文件处理功能</li>
+<li>#数组与集合转换方法</li>
+<li>#国际化与编码支持</li>
+<li>#实战应用案例</li>
+<li>#总结</li>
+</ul>
+<h2 id="核心架构设计理念">核心架构设计理念</h2>
+<p><code>org.springframework.util.StringUtils</code>是Spring框架核心包中的一个<strong>纯静态工具类</strong>，设计遵循”防御性编程”原则。所有方法都精心处理了<code>null</code>值输入，在遇到<code>null</code>时不会抛出<code>NullPointerException</code>，而是返回合理的默认值。</p>
+<p>该类采用<strong>轻量级设计</strong>，不依赖外部库，完全基于JDK原生字符串API构建，确保了高性能和低内存开销。与Apache
+Commons
+Lang的StringUtils相比，Spring的实现更加简洁，且与Spring生态系统无缝集成。</p>
+<h2 id="字符串判断方法全解析">字符串判断方法全解析</h2>
+<h3 id="空值检查三重奏">空值检查三重奏</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 1. 基础空值检查 - 检查null和空字符串</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">isEmpty</span><span class="op">(</span><span class="kw">null</span><span class="op">);</span>      <span class="co">// true</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">isEmpty</span><span class="op">(</span><span class="st">&quot;&quot;</span><span class="op">);</span>        <span class="co">// true</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">isEmpty</span><span class="op">(</span><span class="st">&quot; &quot;</span><span class="op">);</span>       <span class="co">// false</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">isEmpty</span><span class="op">(</span><span class="st">&quot;Hello&quot;</span><span class="op">);</span>   <span class="co">// false</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">// 2. 长度检查 - 检查是否有字符（包括空白字符）</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">hasLength</span><span class="op">(</span><span class="kw">null</span><span class="op">);</span>    <span class="co">// false</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">hasLength</span><span class="op">(</span><span class="st">&quot;&quot;</span><span class="op">);</span>      <span class="co">// false</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">hasLength</span><span class="op">(</span><span class="st">&quot; &quot;</span><span class="op">);</span>     <span class="co">// true</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">hasLength</span><span class="op">(</span><span class="st">&quot;Hello&quot;</span><span class="op">);</span> <span class="co">// true</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">// 3. 文本内容检查 - 要求包含非空白字符</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">hasText</span><span class="op">(</span><span class="kw">null</span><span class="op">);</span>      <span class="co">// false</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">hasText</span><span class="op">(</span><span class="st">&quot;&quot;</span><span class="op">);</span>        <span class="co">// false</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">hasText</span><span class="op">(</span><span class="st">&quot; &quot;</span><span class="op">);</span>       <span class="co">// false</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">hasText</span><span class="op">(</span><span class="st">&quot;Hello&quot;</span><span class="op">);</span>   <span class="co">// true</span></span></code></pre></div>
+<p><strong>设计差异</strong>：这三种方法体现了对不同”空”概念的精确定义：<code>isEmpty</code>对应Java标准的空值概念；<code>hasLength</code>检查是否有字符；<code>hasText</code>则要求包含实际可打印内容。</p>
+<h3 id="内容匹配与检查">内容匹配与检查</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 空白字符检查</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">containsWhitespace</span><span class="op">(</span><span class="st">&quot;Hello&quot;</span><span class="op">);</span>       <span class="co">// false</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">containsWhitespace</span><span class="op">(</span><span class="st">&quot;Hello World&quot;</span><span class="op">);</span> <span class="co">// true</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">// 前缀后缀检查（忽略大小写）</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">startsWithIgnoreCase</span><span class="op">(</span><span class="st">&quot;Hello&quot;</span><span class="op">,</span> <span class="st">&quot;he&quot;</span><span class="op">);</span>   <span class="co">// true</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">endsWithIgnoreCase</span><span class="op">(</span><span class="st">&quot;Hello&quot;</span><span class="op">,</span> <span class="st">&quot;LO&quot;</span><span class="op">);</span>    <span class="co">// true</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">// 子串匹配检查</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">substringMatch</span><span class="op">(</span><span class="st">&quot;Hello World&quot;</span><span class="op">,</span> <span class="dv">6</span><span class="op">,</span> <span class="st">&quot;World&quot;</span><span class="op">);</span> <span class="co">// true</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">// 单字符匹配</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">matchesCharacter</span><span class="op">(</span><span class="st">&quot;A&quot;</span><span class="op">,</span> <span class="ch">&#39;A&#39;</span><span class="op">);</span>  <span class="co">// true</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">matchesCharacter</span><span class="op">(</span><span class="st">&quot;AB&quot;</span><span class="op">,</span> <span class="ch">&#39;A&#39;</span><span class="op">);</span> <span class="co">// false</span></span></code></pre></div>
+<h3 id="计数与出现次数统计">计数与出现次数统计</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 统计子串出现次数</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">countOccurrencesOf</span><span class="op">(</span><span class="st">&quot;abacaba&quot;</span><span class="op">,</span> <span class="st">&quot;aba&quot;</span><span class="op">);</span>  <span class="co">// 2</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">countOccurrencesOf</span><span class="op">(</span><span class="st">&quot;Hello&quot;</span><span class="op">,</span> <span class="st">&quot;l&quot;</span><span class="op">);</span>     <span class="co">// 2</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">countOccurrencesOf</span><span class="op">(</span><span class="st">&quot;Hello&quot;</span><span class="op">,</span> <span class="st">&quot;x&quot;</span><span class="op">);</span>     <span class="co">// 0</span></span></code></pre></div>
+<p><strong>源码实现分析</strong>：<code>countOccurrencesOf</code>方法使用<code>indexOf</code>进行循环查找，时间复杂度为O(n)，但避免了正则表达式的性能开销。</p>
+<h2 id="字符串操作与处理方法">字符串操作与处理方法</h2>
+<h3 id="修剪与清理操作">修剪与清理操作</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 基本修剪（仅首尾空白）</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">trimWhitespace</span><span class="op">(</span><span class="st">&quot;  Hello  &quot;</span><span class="op">);</span>        <span class="co">// &quot;Hello&quot;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">// 全面修剪（包括中间空白）</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">trimAllWhitespace</span><span class="op">(</span><span class="st">&quot;  a  b  c  &quot;</span><span class="op">);</span>   <span class="co">// &quot;abc&quot;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">// 定向修剪</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">trimLeadingWhitespace</span><span class="op">(</span><span class="st">&quot;  Hello&quot;</span><span class="op">);</span>   <span class="co">// &quot;Hello&quot;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">trimTrailingWhitespace</span><span class="op">(</span><span class="st">&quot;Hello  &quot;</span><span class="op">);</span>  <span class="co">// &quot;Hello&quot;</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">// 特定字符修剪</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">trimLeadingCharacter</span><span class="op">(</span><span class="st">&quot;aaaHello&quot;</span><span class="op">,</span> <span class="ch">&#39;a&#39;</span><span class="op">);</span>  <span class="co">// &quot;Hello&quot;</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">trimTrailingCharacter</span><span class="op">(</span><span class="st">&quot;Helloaaa&quot;</span><span class="op">,</span> <span class="ch">&#39;a&#39;</span><span class="op">);</span>  <span class="co">// &quot;Hello&quot;</span></span></code></pre></div>
+<h3 id="替换与删除操作">替换与删除操作</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 模式替换</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">replace</span><span class="op">(</span><span class="st">&quot;aba&quot;</span><span class="op">,</span> <span class="st">&quot;b&quot;</span><span class="op">,</span> <span class="st">&quot;a&quot;</span><span class="op">);</span>            <span class="co">// &quot;aaa&quot;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">replace</span><span class="op">(</span><span class="st">&quot;Hello World&quot;</span><span class="op">,</span> <span class="st">&quot;World&quot;</span><span class="op">,</span> <span class="st">&quot;Java&quot;</span><span class="op">);</span> <span class="co">// &quot;Hello Java&quot;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">// 删除操作</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">delete</span><span class="op">(</span><span class="st">&quot;abcabc&quot;</span><span class="op">,</span> <span class="st">&quot;bc&quot;</span><span class="op">);</span>              <span class="co">// &quot;aa&quot;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">deleteAny</span><span class="op">(</span><span class="st">&quot;Hello World&quot;</span><span class="op">,</span> <span class="st">&quot;HWd&quot;</span><span class="op">);</span>     <span class="co">// &quot;ello orl&quot;</span></span></code></pre></div>
+<p><strong>算法优化</strong>：<code>replace</code>方法手动实现字符串匹配（未使用正则表达式），避免正则的性能开销，使用StringBuilder拼接结果，减少字符串拼接的性能损耗。</p>
+<h3 id="大小写转换">大小写转换</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 首字母大小写转换</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">capitalize</span><span class="op">(</span><span class="st">&quot;hello&quot;</span><span class="op">);</span>     <span class="co">// &quot;Hello&quot;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">uncapitalize</span><span class="op">(</span><span class="st">&quot;Hello&quot;</span><span class="op">);</span>   <span class="co">// &quot;hello&quot;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">// 引用处理</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">quote</span><span class="op">(</span><span class="st">&quot;test&quot;</span><span class="op">);</span>           <span class="co">// &quot;&#39;test&#39;&quot;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">quoteIfString</span><span class="op">(</span><span class="st">&quot;test&quot;</span><span class="op">);</span>   <span class="co">// &quot;&#39;test&#39;&quot;</span></span></code></pre></div>
+<p>下面是StringUtils工具类的核心方法分类及其关系图：</p>
+<pre class="mermaid"><code>graph TB
+    A[StringUtils] --&gt; B[判断方法]
+    A --&gt; C[操作方法]
+    A --&gt; D[路径处理]
+    A --&gt; E[集合数组处理]
+    A --&gt; F[编码转换]
+
+    B --&gt; B1[空值检查]
+    B --&gt; B2[内容检查]
+    B --&gt; B3[匹配检查]
+
+    C --&gt; C1[修剪操作]
+    C --&gt; C2[替换删除]
+    C --&gt; C3[大小写转换]
+
+    D --&gt; D1[路径清理]
+    D --&gt; D2[文件名提取]
+    D --&gt; D3[路径比较]
+
+    E --&gt; E1[数组转换]
+    E --&gt; E2[集合转换]
+    E --&gt; E3[字符串分割]</code></pre>
+<h2 id="路径与文件处理功能">路径与文件处理功能</h2>
+<p><code>StringUtils</code>包含专门处理文件路径的方法，在Web应用和文件操作中非常实用：</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 路径清理和标准化</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">cleanPath</span><span class="op">(</span><span class="st">&quot;src/../test/./example.txt&quot;</span><span class="op">);</span> <span class="co">// &quot;test/example.txt&quot;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">// 文件名和扩展名提取</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">getFilename</span><span class="op">(</span><span class="st">&quot;path/to/file.txt&quot;</span><span class="op">);</span>        <span class="co">// &quot;file.txt&quot;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">getFilenameExtension</span><span class="op">(</span><span class="st">&quot;file.txt&quot;</span><span class="op">);</span>       <span class="co">// &quot;txt&quot;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">stripFilenameExtension</span><span class="op">(</span><span class="st">&quot;file.txt&quot;</span><span class="op">);</span>     <span class="co">// &quot;file&quot;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">// 路径比较和相对路径应用</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">pathEquals</span><span class="op">(</span><span class="st">&quot;path/to/file&quot;</span><span class="op">,</span> <span class="st">&quot;path/../path/to/file&quot;</span><span class="op">);</span> <span class="co">// true</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">applyRelativePath</span><span class="op">(</span><span class="st">&quot;D:/base&quot;</span><span class="op">,</span> <span class="st">&quot;subdir/file.txt&quot;</span><span class="op">);</span>   <span class="co">// &quot;D:/base/subdir/file.txt&quot;</span></span></code></pre></div>
+<p><strong>安全特性</strong>：<code>cleanPath</code>方法会处理路径中的<code>..</code>和<code>.</code>，防止路径遍历攻击，确保路径安全性。</p>
+<h2 id="数组与集合转换方法">数组与集合转换方法</h2>
+<h3 id="数组字符串处理">数组字符串处理</h3>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 数组修剪和去重</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">String</span><span class="op">[]</span> arr <span class="op">=</span> <span class="op">{</span><span class="st">&quot; Java &quot;</span><span class="op">,</span> <span class="st">&quot; Python &quot;</span><span class="op">,</span> <span class="st">&quot; JavaScript &quot;</span><span class="op">};</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">trimArrayElements</span><span class="op">(</span>arr<span class="op">);</span>                <span class="co">// {&quot;Java&quot;, &quot;Python&quot;, &quot;JavaScript&quot;}</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">removeDuplicateStrings</span><span class="op">({</span><span class="st">&quot;A&quot;</span><span class="op">,</span> <span class="st">&quot;B&quot;</span><span class="op">,</span> <span class="st">&quot;A&quot;</span><span class="op">});</span> <span class="co">// {&quot;A&quot;, &quot;B&quot;}</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">// 数组合并和添加</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">concatenateStringArrays</span><span class="op">({</span><span class="st">&quot;A&quot;</span><span class="op">,</span> <span class="st">&quot;B&quot;</span><span class="op">},</span> <span class="op">{</span><span class="st">&quot;C&quot;</span><span class="op">,</span> <span class="st">&quot;D&quot;</span><span class="op">});</span> <span class="co">// {&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, &quot;D&quot;}</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">addStringToArray</span><span class="op">({</span><span class="st">&quot;A&quot;</span><span class="op">,</span> <span class="st">&quot;B&quot;</span><span class="op">},</span> <span class="st">&quot;C&quot;</span><span class="op">);</span>              <span class="co">// {&quot;A&quot;, &quot;B&quot;, &quot;C&quot;}</span></span></code></pre></div>
+<h3 id="集合与字符串转换">集合与字符串转换</h3>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">List</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> list <span class="op">=</span> <span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;Java&quot;</span><span class="op">,</span> <span class="st">&quot;Python&quot;</span><span class="op">,</span> <span class="st">&quot;JavaScript&quot;</span><span class="op">);</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">// 集合转字符串</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">collectionToCommaDelimitedString</span><span class="op">(</span>list<span class="op">);</span>     <span class="co">// &quot;Java,Python,JavaScript&quot;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">collectionToDelimitedString</span><span class="op">(</span>list<span class="op">,</span> <span class="st">&quot;|&quot;</span><span class="op">);</span>     <span class="co">// &quot;Java|Python|JavaScript&quot;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">collectionToDelimitedString</span><span class="op">(</span>list<span class="op">,</span> <span class="st">&quot;-&quot;</span><span class="op">,</span> <span class="st">&quot;[&quot;</span><span class="op">,</span> <span class="st">&quot;]&quot;</span><span class="op">);</span> <span class="co">// &quot;[Java]-[Python]-[JavaScript]&quot;</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">// 字符串转集合</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">commaDelimitedListToSet</span><span class="op">(</span><span class="st">&quot;A,B,C&quot;</span><span class="op">);</span>          <span class="co">// Set包含&quot;A&quot;,&quot;B&quot;,&quot;C&quot;</span></span></code></pre></div>
+<h3 id="字符串分割与标记化">字符串分割与标记化</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 简单分割</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">delimitedListToStringArray</span><span class="op">(</span><span class="st">&quot;A-B-C&quot;</span><span class="op">,</span> <span class="st">&quot;-&quot;</span><span class="op">);</span> <span class="co">// {&quot;A&quot;, &quot;B&quot;, &quot;C&quot;}</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">// 高级标记化（支持修剪和空标记处理）</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">tokenizeToStringArray</span><span class="op">(</span><span class="st">&quot; java, c++, python &quot;</span><span class="op">,</span> <span class="st">&quot;,&quot;</span><span class="op">,</span> <span class="kw">true</span><span class="op">,</span> <span class="kw">true</span><span class="op">);</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">// {&quot;java&quot;, &quot;c++&quot;, &quot;python&quot;}</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="co">// 属性分割</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="bu">String</span><span class="op">[]</span> props <span class="op">=</span> <span class="op">{</span><span class="st">&quot;key1=value1&quot;</span><span class="op">,</span> <span class="st">&quot;key2=value2&quot;</span><span class="op">};</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="bu">Properties</span> properties <span class="op">=</span> StringUtils<span class="op">.</span><span class="fu">splitArrayElementsIntoProperties</span><span class="op">(</span>props<span class="op">,</span> <span class="st">&quot;=&quot;</span><span class="op">);</span></span></code></pre></div>
+<h2 id="国际化与编码支持">国际化与编码支持</h2>
+<h3 id="locale和时区处理">Locale和时区处理</h3>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Locale解析</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">parseLocale</span><span class="op">(</span><span class="st">&quot;en_US&quot;</span><span class="op">);</span>     <span class="co">// 解析为英语（美国）Locale</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">parseLocaleString</span><span class="op">(</span><span class="st">&quot;zh_CN&quot;</span><span class="op">);</span> <span class="co">// 解析为中文（中国）Locale</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">// 时区解析</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">parseTimeZoneString</span><span class="op">(</span><span class="st">&quot;GMT+8&quot;</span><span class="op">);</span> <span class="co">// 解析为东八区时区</span></span></code></pre></div>
+<h3 id="uri解码">URI解码</h3>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">// URL解码</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">String</span> encoded <span class="op">=</span> <span class="st">&quot;http%3A%2F%2Flocalhost%3A8080%2Fapi&quot;</span><span class="op">;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="bu">String</span> decoded <span class="op">=</span> StringUtils<span class="op">.</span><span class="fu">uriDecode</span><span class="op">(</span>encoded<span class="op">,</span> <span class="bu">Charset</span><span class="op">.</span><span class="fu">forName</span><span class="op">(</span><span class="st">&quot;UTF-8&quot;</span><span class="op">));</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">// 结果: &quot;http://localhost:8080/api&quot;</span></span></code></pre></div>
+<h3 id="字符串截断">字符串截断</h3>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 长文本截断</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="bu">String</span> longText <span class="op">=</span> <span class="st">&quot;这是一段非常长的文本需要被截断处理&quot;</span><span class="op">;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>StringUtils<span class="op">.</span><span class="fu">truncate</span><span class="op">(</span>longText<span class="op">,</span> <span class="dv">5</span><span class="op">);</span> <span class="co">// &quot;这是一段非常... (truncated)&quot;</span></span></code></pre></div>
+<h2 id="实战应用案例">实战应用案例</h2>
+<h3 id="web请求参数验证">Web请求参数验证</h3>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="at">@RestController</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> UserController <span class="op">{</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">@PostMapping</span><span class="op">(</span><span class="st">&quot;/users&quot;</span><span class="op">)</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> ResponseEntity<span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> <span class="fu">createUser</span><span class="op">(</span><span class="at">@RequestBody</span> UserDto user<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 使用StringUtils进行全面的输入验证</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(!</span>StringUtils<span class="op">.</span><span class="fu">hasText</span><span class="op">(</span>user<span class="op">.</span><span class="fu">getUsername</span><span class="op">()))</span> <span class="op">{</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> ResponseEntity<span class="op">.</span><span class="fu">badRequest</span><span class="op">().</span><span class="fu">body</span><span class="op">(</span><span class="st">&quot;用户名不能为空&quot;</span><span class="op">);</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(!</span>StringUtils<span class="op">.</span><span class="fu">hasText</span><span class="op">(</span>user<span class="op">.</span><span class="fu">getEmail</span><span class="op">())</span> <span class="op">||</span> <span class="op">!</span>user<span class="op">.</span><span class="fu">getEmail</span><span class="op">().</span><span class="fu">contains</span><span class="op">(</span><span class="st">&quot;@&quot;</span><span class="op">))</span> <span class="op">{</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> ResponseEntity<span class="op">.</span><span class="fu">badRequest</span><span class="op">().</span><span class="fu">body</span><span class="op">(</span><span class="st">&quot;邮箱格式不正确&quot;</span><span class="op">);</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 安全处理文件名</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>        <span class="bu">String</span> filename <span class="op">=</span> StringUtils<span class="op">.</span><span class="fu">cleanPath</span><span class="op">(</span>user<span class="op">.</span><span class="fu">getAvatar</span><span class="op">().</span><span class="fu">getOriginalFilename</span><span class="op">());</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>        <span class="bu">String</span> extension <span class="op">=</span> StringUtils<span class="op">.</span><span class="fu">getFilenameExtension</span><span class="op">(</span>filename<span class="op">);</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(!</span>StringUtils<span class="op">.</span><span class="fu">hasText</span><span class="op">(</span>extension<span class="op">)</span> <span class="op">||</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>            <span class="op">!</span><span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;jpg&quot;</span><span class="op">,</span> <span class="st">&quot;png&quot;</span><span class="op">,</span> <span class="st">&quot;gif&quot;</span><span class="op">).</span><span class="fu">contains</span><span class="op">(</span>extension<span class="op">.</span><span class="fu">toLowerCase</span><span class="op">()))</span> <span class="op">{</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> ResponseEntity<span class="op">.</span><span class="fu">badRequest</span><span class="op">().</span><span class="fu">body</span><span class="op">(</span><span class="st">&quot;不支持的文件格式&quot;</span><span class="op">);</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>        userService<span class="op">.</span><span class="fu">save</span><span class="op">(</span>user<span class="op">);</span></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ResponseEntity<span class="op">.</span><span class="fu">ok</span><span class="op">(</span><span class="st">&quot;用户创建成功&quot;</span><span class="op">);</span></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="配置文件处理与cors配置">配置文件处理与CORS配置</h3>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Configuration</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> AppConfig <span class="op">{</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Value</span><span class="op">(</span><span class="st">&quot;${app.cors.allowed-origins:}&quot;</span><span class="op">)</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">String</span> allowedOrigins<span class="op">;</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Bean</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> CorsFilter <span class="fu">corsFilter</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 安全处理配置值</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>StringUtils<span class="op">.</span><span class="fu">hasText</span><span class="op">(</span>allowedOrigins<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>            <span class="bu">String</span><span class="op">[]</span> origins <span class="op">=</span> StringUtils<span class="op">.</span><span class="fu">trimArrayElements</span><span class="op">(</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>                StringUtils<span class="op">.</span><span class="fu">commaDelimitedListToStringArray</span><span class="op">(</span>allowedOrigins<span class="op">)</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>            <span class="op">);</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>            UrlBasedCorsConfigurationSource source <span class="op">=</span> <span class="kw">new</span> <span class="fu">UrlBasedCorsConfigurationSource</span><span class="op">();</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>            CorsConfiguration config <span class="op">=</span> <span class="kw">new</span> <span class="fu">CorsConfiguration</span><span class="op">();</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>            config<span class="op">.</span><span class="fu">setAllowedOrigins</span><span class="op">(</span><span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span>origins<span class="op">));</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>            source<span class="op">.</span><span class="fu">registerCorsConfiguration</span><span class="op">(</span><span class="st">&quot;/**&quot;</span><span class="op">,</span> config<span class="op">);</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="kw">new</span> <span class="fu">CorsFilter</span><span class="op">(</span>source<span class="op">);</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="kw">null</span><span class="op">;</span></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="数据库查询构建">数据库查询构建</h3>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Repository</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> ProductRepository <span class="op">{</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="bu">List</span><span class="op">&lt;</span>Product<span class="op">&gt;</span> <span class="fu">searchProducts</span><span class="op">(</span><span class="bu">String</span> keyword<span class="op">,</span> <span class="bu">String</span> category<span class="op">,</span> <span class="bu">String</span> sortBy<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 使用StringUtils构建安全动态查询</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">StringBuilder</span> queryBuilder <span class="op">=</span> <span class="kw">new</span> <span class="bu">StringBuilder</span><span class="op">(</span><span class="st">&quot;SELECT p FROM Product p WHERE 1=1&quot;</span><span class="op">);</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>StringUtils<span class="op">.</span><span class="fu">hasText</span><span class="op">(</span>keyword<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>            queryBuilder<span class="op">.</span><span class="fu">append</span><span class="op">(</span><span class="st">&quot; AND (p.name LIKE :keyword OR p.description LIKE :keyword)&quot;</span><span class="op">);</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>StringUtils<span class="op">.</span><span class="fu">hasText</span><span class="op">(</span>category<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>            queryBuilder<span class="op">.</span><span class="fu">append</span><span class="op">(</span><span class="st">&quot; AND p.category = :category&quot;</span><span class="op">);</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 安全处理排序字段</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>StringUtils<span class="op">.</span><span class="fu">hasText</span><span class="op">(</span>sortBy<span class="op">)</span> <span class="op">&amp;&amp;</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>            StringUtils<span class="op">.</span><span class="fu">substringMatch</span><span class="op">(</span>sortBy<span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="st">&quot;name|price|createdDate&quot;</span><span class="op">))</span> <span class="op">{</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>            queryBuilder<span class="op">.</span><span class="fu">append</span><span class="op">(</span><span class="st">&quot; ORDER BY p.&quot;</span><span class="op">).</span><span class="fu">append</span><span class="op">(</span>sortBy<span class="op">);</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>        TypedQuery<span class="op">&lt;</span>Product<span class="op">&gt;</span> query <span class="op">=</span> entityManager<span class="op">.</span><span class="fu">createQuery</span><span class="op">(</span>queryBuilder<span class="op">.</span><span class="fu">toString</span><span class="op">(),</span> Product<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>StringUtils<span class="op">.</span><span class="fu">hasText</span><span class="op">(</span>keyword<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>            query<span class="op">.</span><span class="fu">setParameter</span><span class="op">(</span><span class="st">&quot;keyword&quot;</span><span class="op">,</span> <span class="st">&quot;%&quot;</span> <span class="op">+</span> StringUtils<span class="op">.</span><span class="fu">trimAllWhitespace</span><span class="op">(</span>keyword<span class="op">)</span> <span class="op">+</span> <span class="st">&quot;%&quot;</span><span class="op">);</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>StringUtils<span class="op">.</span><span class="fu">hasText</span><span class="op">(</span>category<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>            query<span class="op">.</span><span class="fu">setParameter</span><span class="op">(</span><span class="st">&quot;category&quot;</span><span class="op">,</span> category<span class="op">);</span></span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> query<span class="op">.</span><span class="fu">getResultList</span><span class="op">();</span></span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h2 id="总结">总结</h2>
+<p>通过完整的源码分析，我们可以看到Spring的<code>StringUtils</code>工具类具有以下核心特性和价值：</p>
+<h3 id="核心优势">核心优势</h3>
+<ol type="1">
+<li><strong>全面的null安全性</strong>：所有方法都对null输入做了容错处理，大幅减少NullPointerException</li>
+<li><strong>功能完整性</strong>：覆盖了字符串处理的几乎所有常见需求，从基础判断到复杂转换</li>
+<li><strong>性能优化</strong>：手动实现核心逻辑，避免正则表达式开销，适合高性能场景</li>
+<li><strong>API一致性</strong>：方法命名和行为在整个Spring生态中保持一致，降低学习成本</li>
+</ol>
+<h3 id="设计哲学">设计哲学</h3>
+<ul>
+<li><strong>防御性编程</strong>：优先考虑边界情况和异常输入，保证代码健壮性</li>
+<li><strong>实用主义</strong>：方法设计贴近实际开发需求，避免过度设计</li>
+<li><strong>轻量级</strong>：不引入不必要的依赖，保持代码简洁高效</li>
+</ul>
+<h3 id="使用建议">使用建议</h3>
+<ol type="1">
+<li>在已使用Spring框架的项目中，优先选择Spring StringUtils而非Apache
+Commons</li>
+<li>注意方法的具体语义差异，特别是<code>hasText</code>与<code>hasLength</code>的区别</li>
+<li>在处理用户输入时充分利用其null安全特性</li>
+<li>在性能敏感场景可放心使用，大多数方法都经过优化</li>
+</ol>
+<h2 id="延伸阅读">延伸阅读</h2>
+<ol type="1">
+<li>https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/util/StringUtils.html</li>
+<li>Spring源码：<code>org.springframework.util.StringUtils</code></li>
+<li>https://www.manning.com/books/spring-in-action-sixth-edition</li>
+</ol>
+<h2 id="一句话记忆">一句话记忆</h2>
+<p>Spring
+StringUtils是一个全面、null安全、高性能的字符串工具集，让字符串处理既简洁又健壮。</p>
+
+                </div>
+            </article>
+            
+            <footer class="footer">
+                <p>AI 个人笔记 &copy; 2025 | 所有内容均由 AI 协助生成</p>
+            </footer>
+        </div>
+        
+        <div class="toc-container">
+            <nav class="toc" id="table-of-contents">
+                <h2>目录</h2>
+                <div id="toc-content"></div>
+            </nav>
+        </div>
+    </div>
+    
+    <a href="#" class="back-to-top" id="backToTop">↑</a>
+    
+    <script>
+        // Generate Table of Contents
+        function generateTOC() {
+            const tocContainer = document.getElementById('toc-content');
+            const content = document.querySelector('.post-content');
+            const headers = content.querySelectorAll('h1, h2, h3');
+            
+            if (headers.length === 0) {
+                tocContainer.innerHTML = '<p>暂无目录</p>';
+                return;
+            }
+            
+            const toc = document.createElement('ul');
+            
+            headers.forEach((header, index) => {
+                // Add an id to the header if it doesn't have one
+                if (!header.id) {
+                    header.id = 'heading-' + index;
+                }
+                
+                const li = document.createElement('li');
+                li.className = 'toc-item';
+                
+                const link = document.createElement('a');
+                link.href = '#' + header.id;
+                link.textContent = header.textContent;
+                link.className = 'toc-link';
+                
+                // Set indentation based on header level
+                const level = parseInt(header.tagName.charAt(1)) - 1;
+                li.style.marginLeft = (level * 20) + 'px';
+                
+                li.appendChild(link);
+                toc.appendChild(li);
+            });
+            
+            tocContainer.appendChild(toc);
+        }
+        
+        // Adjust TOC height to match content
+        function adjustTOCHeight() {
+            const toc = document.getElementById('table-of-contents');
+            const post = document.querySelector('.post');
+            
+            if (toc && post) {
+                // Get the height of the post area
+                const postHeight = post.offsetHeight;
+                
+                // Set the max-height of the TOC to match the post height
+                // Leave some space for top margin and padding
+                toc.style.maxHeight = Math.min(postHeight - 30, window.innerHeight * 0.8) + 'px';
+            }
+        }
+        
+        // Back to top button
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        });
+        
+        // Initialize TOC when page loads and adjust height
+        document.addEventListener('DOMContentLoaded', function() {
+            generateTOC();
+            adjustTOCHeight();
+            
+            // Adjust height on window resize
+            window.addEventListener('resize', adjustTOCHeight);
+        });
+        
+        // 页面加载完成后添加复制按钮
+        window.addEventListener('load', function() {
+            addCopyButtons();
+        });
+        
+        // 监听可能的动态内容加载
+        const observer = new MutationObserver(function(mutations) {
+            let shouldAddButtons = false;
+            mutations.forEach(function(mutation) {
+                mutation.addedNodes.forEach(function(node) {
+                    if (node.nodeType === 1) {
+                        // 检查添加的节点是否是代码块或包含代码块
+                        if ((node.classList && node.classList.contains('sourceCode')) || 
+                            (node.tagName === 'PRE' && !node.classList.contains('mermaid')) ||
+                            node.querySelector('.sourceCode, pre:not(.mermaid)')) {
+                            shouldAddButtons = true;
+                        }
+                    }
+                });
+            });
+            if (shouldAddButtons) {
+                // 延迟执行以确保DOM完全更新
+                setTimeout(addCopyButtons, 100);
+            }
+        });
+        
+        // 开始监听DOM变化
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+        
+        console.log("页面加载完成，AI 技术笔记已就绪");
+    </script>
+</body>
+</html>
