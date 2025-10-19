@@ -26,8 +26,8 @@ CollectionUtils 工具类完全指南：告别繁琐集合操作
 开发中，集合操作是我们每天都要面对的基本任务。传统的集合处理往往需要编写大量的空值检查、循环遍历和条件判断代码，不仅繁琐而且容易出错。Spring
 框架提供的 CollectionUtils
 工具类...">
-    <meta property="og:image" content="https://your-domain.com/images/og-image.png">
-    <meta property="og:url" content="https://your-domain.com/docs/2025-10/spring-collectionutils.html">
+    <meta property="og:image" content="https://caoayu.top/images/og-image.png">
+    <meta property="og:url" content="https://caoayu.top/docs/2025-10/spring-collectionutils.html">
     <meta property="og:site_name" content="AI 个人笔记">
     
     <!-- Twitter -->
@@ -40,10 +40,10 @@ CollectionUtils 工具类完全指南：告别繁琐集合操作
 开发中，集合操作是我们每天都要面对的基本任务。传统的集合处理往往需要编写大量的空值检查、循环遍历和条件判断代码，不仅繁琐而且容易出错。Spring
 框架提供的 CollectionUtils
 工具类...">
-    <meta property="twitter:image" content="https://your-domain.com/images/og-image.png">
+    <meta property="twitter:image" content="https://caoayu.top/images/og-image.png">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://your-domain.com/docs/2025-10/spring-collectionutils.html">
+    <link rel="canonical" href="https://caoayu.top/docs/2025-10/spring-collectionutils.html">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -87,7 +87,7 @@ CollectionUtils 工具类完全指南：告别繁琐集合操作
         }
 
         .header {
-            display: flex;
+            /* display: flex; */
             justify-content: space-between;
             align-items: center;
             padding: 20px 0;
@@ -671,11 +671,14 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>CollectionUtils<span class="op">.</span><span class="fu">isNotEmpty</span><span class="op">(</span>list<span class="op">))</span> <span class="op">{</span></span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 安全地操作非空集合</span></span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p><strong>方法特性</strong>： - <code>isEmpty()</code> 方法同时检查
-<code>null</code> 和空集合，支持所有 Collection 子类和 Map -
-<code>isNotEmpty()</code> 是 <code>isEmpty()</code>
-的反向检查，使代码语义更加清晰 - 这些方法对 Map
-也同样有效，无需区分集合类型</p>
+<p><strong>方法特性</strong>：</p>
+<ul>
+<li><code>isEmpty()</code> 方法同时检查 <code>null</code>
+和空集合，支持所有 Collection 子类和 Map</li>
+<li><code>isNotEmpty()</code> 是 <code>isEmpty()</code>
+的反向检查，使代码语义更加清晰</li>
+<li>这些方法对 Map 也同样有效，无需区分集合类型</li>
+</ul>
 <h3 id="集合运算操作">集合运算操作</h3>
 <p>CollectionUtils 支持完整的数学集合运算，包括并集、交集、差集等：</p>
 <div class="sourceCode" id="cb2"><pre
@@ -696,7 +699,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">// 对称差集（交集的补集）</span></span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="bu">Collection</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> disjunction <span class="op">=</span> CollectionUtils<span class="op">.</span><span class="fu">disjunction</span><span class="op">(</span>listA<span class="op">,</span> listB<span class="op">);</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co">// 结果: [A, C, F, G] </span></span></code></pre></div>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co">// 结果: [A, C, F, G]</span></span></code></pre></div>
 <p><strong>重要特性</strong>：所有集合运算方法都<strong>返回新集合</strong>，不会修改原始集合，这符合函数式编程的不变性原则
 。</p>
 <h3 id="元素查找与包含判断">元素查找与包含判断</h3>
@@ -717,7 +720,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb3-1"><a href="
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co">// 判断完全包含</span></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="bu">List</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> allCheck <span class="op">=</span> <span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;Java&quot;</span><span class="op">,</span> <span class="st">&quot;Spring&quot;</span><span class="op">);</span></span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="dt">boolean</span> containsAll <span class="op">=</span> CollectionUtils<span class="op">.</span><span class="fu">containsAll</span><span class="op">(</span>sourceList<span class="op">,</span> allCheck<span class="op">);</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">// 结果: true </span></span></code></pre></div>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">// 结果: true</span></span></code></pre></div>
 <h3 id="集合转换与合并">集合转换与合并</h3>
 <p>CollectionUtils 提供了多种集合转换和合并方法，简化数据转换流程：</p>
 <div class="sourceCode" id="cb4"><pre
@@ -732,12 +735,12 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>props<span class="op">.</span><span class="fu">setProperty</span><span class="op">(</span><span class="st">&quot;name&quot;</span><span class="op">,</span> <span class="st">&quot;张三&quot;</span><span class="op">);</span></span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="bu">Map</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">,</span> <span class="bu">Object</span><span class="op">&gt;</span> map <span class="op">=</span> <span class="kw">new</span> <span class="bu">HashMap</span><span class="op">&lt;&gt;();</span></span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>CollectionUtils<span class="op">.</span><span class="fu">mergePropertiesIntoMap</span><span class="op">(</span>props<span class="op">,</span> map<span class="op">);</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">// 结果: map包含{&quot;name&quot;=&quot;张三&quot;} </span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">// 结果: map包含{&quot;name&quot;=&quot;张三&quot;}</span></span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">// 获取首尾元素</span></span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="bu">List</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> list <span class="op">=</span> <span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;A&quot;</span><span class="op">,</span> <span class="st">&quot;B&quot;</span><span class="op">,</span> <span class="st">&quot;C&quot;</span><span class="op">);</span></span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="bu">String</span> first <span class="op">=</span> CollectionUtils<span class="op">.</span><span class="fu">firstElement</span><span class="op">(</span>list<span class="op">);</span> <span class="co">// &quot;A&quot;</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="bu">String</span> last <span class="op">=</span> CollectionUtils<span class="op">.</span><span class="fu">lastElement</span><span class="op">(</span>list<span class="op">);</span>  <span class="co">// &quot;C&quot; </span></span></code></pre></div>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="bu">String</span> last <span class="op">=</span> CollectionUtils<span class="op">.</span><span class="fu">lastElement</span><span class="op">(</span>list<span class="op">);</span>  <span class="co">// &quot;C&quot;</span></span></code></pre></div>
 <p>下面是 CollectionUtils 核心方法的功能分类图：</p>
 <pre class="mermaid"><code>graph TB
     A[CollectionUtils] --&gt; B[空值判断]
@@ -745,22 +748,22 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="
     A --&gt; D[元素查找]
     A --&gt; E[集合转换]
     A --&gt; F[特殊操作]
-    
+
     B --&gt; B1[isEmpty]
     B --&gt; B2[isNotEmpty]
-    
+
     C --&gt; C1[union]
     C --&gt; C2[intersection]
     C --&gt; C3[subtract]
     C --&gt; C4[disjunction]
-    
+
     D --&gt; D1[containsAny]
     D --&gt; D2[findFirstMatch]
     D --&gt; D3[containsAll]
-    
+
     E --&gt; E1[mergeArrayIntoCollection]
     E --&gt; E2[mergePropertiesIntoMap]
-    
+
     F --&gt; F1[firstElement/lastElement]
     F --&gt; F2[hasUniqueObject]</code></pre>
 <h2 id="实际应用场景">实际应用场景</h2>
@@ -770,25 +773,25 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="
 <div class="sourceCode" id="cb6"><pre
 class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Service</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> OrderService <span class="op">{</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> Order <span class="fu">createBatchOrder</span><span class="op">(</span><span class="bu">Long</span> userId<span class="op">,</span> <span class="bu">List</span><span class="op">&lt;</span>OrderItem<span class="op">&gt;</span> items<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 参数基础校验</span></span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>CollectionUtils<span class="op">.</span><span class="fu">isEmpty</span><span class="op">(</span>items<span class="op">))</span> <span class="op">{</span></span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>            <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">IllegalArgumentException</span><span class="op">(</span><span class="st">&quot;订单项不能为空&quot;</span><span class="op">);</span></span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 业务逻辑校验</span></span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>items<span class="op">.</span><span class="fu">size</span><span class="op">()</span> <span class="op">&gt;</span> <span class="dv">100</span><span class="op">)</span> <span class="op">{</span></span>
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">IllegalArgumentException</span><span class="op">(</span><span class="st">&quot;单次订单不能超过100个商品&quot;</span><span class="op">);</span></span>
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 检查商品重复</span></span>
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(!</span>CollectionUtils<span class="op">.</span><span class="fu">hasUniqueObject</span><span class="op">(</span>items<span class="op">.</span><span class="fu">stream</span><span class="op">()</span></span>
 <span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">map</span><span class="op">(</span>OrderItem<span class="op">::</span>getProductId<span class="op">)</span></span>
 <span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">collect</span><span class="op">(</span>Collectors<span class="op">.</span><span class="fu">toList</span><span class="op">())))</span> <span class="op">{</span></span>
 <span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>            <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">IllegalArgumentException</span><span class="op">(</span><span class="st">&quot;订单中存在重复商品&quot;</span><span class="op">);</span></span>
 <span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> orderRepository<span class="op">.</span><span class="fu">save</span><span class="op">(</span><span class="kw">new</span> <span class="fu">Order</span><span class="op">(</span>userId<span class="op">,</span> items<span class="op">));</span></span>
 <span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
@@ -797,27 +800,27 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="
 <div class="sourceCode" id="cb7"><pre
 class="sourceCode java"><code class="sourceCode java"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Component</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> DataProcessService <span class="op">{</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="bu">List</span><span class="op">&lt;</span>Product<span class="op">&gt;</span> <span class="fu">filterActiveProducts</span><span class="op">(</span><span class="bu">List</span><span class="op">&lt;</span>Product<span class="op">&gt;</span> allProducts<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>CollectionUtils<span class="op">.</span><span class="fu">isEmpty</span><span class="op">(</span>allProducts<span class="op">))</span> <span class="op">{</span></span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="bu">Collections</span><span class="op">.</span><span class="fu">emptyList</span><span class="op">();</span></span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 过滤掉下架商品和库存为零的商品</span></span>
 <span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> allProducts<span class="op">.</span><span class="fu">stream</span><span class="op">()</span></span>
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">filter</span><span class="op">(</span>product <span class="op">-&gt;</span> product<span class="op">.</span><span class="fu">isActive</span><span class="op">()</span> <span class="op">&amp;&amp;</span> product<span class="op">.</span><span class="fu">getStock</span><span class="op">()</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">)</span></span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">collect</span><span class="op">(</span>Collectors<span class="op">.</span><span class="fu">toList</span><span class="op">());</span></span>
 <span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="bu">Map</span><span class="op">&lt;</span><span class="bu">Long</span><span class="op">,</span> Product<span class="op">&gt;</span> <span class="fu">convertToProductMap</span><span class="op">(</span><span class="bu">List</span><span class="op">&lt;</span>Product<span class="op">&gt;</span> products<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>CollectionUtils<span class="op">.</span><span class="fu">isEmpty</span><span class="op">(</span>products<span class="op">))</span> <span class="op">{</span></span>
 <span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="bu">Collections</span><span class="op">.</span><span class="fu">emptyMap</span><span class="op">();</span></span>
 <span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>        <span class="co">// List 转 Map，使用 CollectionUtils 进行空安全处理</span></span>
 <span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Map</span><span class="op">&lt;</span><span class="bu">Long</span><span class="op">,</span> Product<span class="op">&gt;</span> productMap <span class="op">=</span> <span class="kw">new</span> <span class="bu">HashMap</span><span class="op">&lt;&gt;();</span></span>
 <span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>        products<span class="op">.</span><span class="fu">forEach</span><span class="op">(</span>product <span class="op">-&gt;</span> productMap<span class="op">.</span><span class="fu">put</span><span class="op">(</span>product<span class="op">.</span><span class="fu">getId</span><span class="op">(),</span> product<span class="op">));</span></span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> productMap<span class="op">;</span></span>
 <span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
@@ -827,32 +830,32 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb7-1"><a href="
 <div class="sourceCode" id="cb8"><pre
 class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Service</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> BatchProcessService <span class="op">{</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">final</span> <span class="dt">int</span> BATCH_SIZE <span class="op">=</span> <span class="dv">100</span><span class="op">;</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Autowired</span></span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> UserRepository userRepository<span class="op">;</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">batchUpdateUsers</span><span class="op">(</span><span class="bu">List</span><span class="op">&lt;</span>User<span class="op">&gt;</span> users<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>CollectionUtils<span class="op">.</span><span class="fu">isEmpty</span><span class="op">(</span>users<span class="op">))</span> <span class="op">{</span></span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span><span class="op">;</span></span>
 <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 分批处理，避免单次操作数据量过大</span></span>
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>        <span class="bu">List</span><span class="op">&lt;</span><span class="bu">List</span><span class="op">&lt;</span>User<span class="op">&gt;&gt;</span> batches <span class="op">=</span> CollectionUtils<span class="op">.</span><span class="fu">split</span><span class="op">(</span>users<span class="op">,</span> BATCH_SIZE<span class="op">);</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="bu">List</span><span class="op">&lt;</span>User<span class="op">&gt;</span> batch <span class="op">:</span> batches<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>            userRepository<span class="op">.</span><span class="fu">batchUpdate</span><span class="op">(</span>batch<span class="op">);</span></span>
 <span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
 <span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">processLargeDataset</span><span class="op">(</span><span class="bu">List</span><span class="op">&lt;</span>DataRecord<span class="op">&gt;</span> records<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 使用流式处理与 CollectionUtils 结合</span></span>
 <span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>        <span class="bu">List</span><span class="op">&lt;</span>DataRecord<span class="op">&gt;</span> validRecords <span class="op">=</span> records<span class="op">.</span><span class="fu">stream</span><span class="op">()</span></span>
 <span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">filter</span><span class="op">(</span>record <span class="op">-&gt;</span> CollectionUtils<span class="op">.</span><span class="fu">isNotEmpty</span><span class="op">(</span>record<span class="op">.</span><span class="fu">getValues</span><span class="op">()))</span></span>
 <span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">filter</span><span class="op">(</span>record <span class="op">-&gt;</span> record<span class="op">.</span><span class="fu">isValid</span><span class="op">())</span></span>
 <span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">collect</span><span class="op">(</span>Collectors<span class="op">.</span><span class="fu">toList</span><span class="op">());</span></span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 分批处理有效数据</span></span>
 <span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>        <span class="fu">batchProcess</span><span class="op">(</span>validRecords<span class="op">);</span></span>
 <span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
@@ -898,20 +901,20 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb11-1"><a href=
 等工具库协同使用：</p>
 <div class="sourceCode" id="cb12"><pre
 class="sourceCode java"><code class="sourceCode java"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> AdvancedCollectionUtils <span class="op">{</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 结合 Stream API 进行复杂过滤</span></span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="bu">List</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> <span class="fu">complexFilter</span><span class="op">(</span><span class="bu">List</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> input<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>CollectionUtils<span class="op">.</span><span class="fu">isEmpty</span><span class="op">(</span>input<span class="op">))</span> <span class="op">{</span></span>
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="bu">Collections</span><span class="op">.</span><span class="fu">emptyList</span><span class="op">();</span></span>
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> input<span class="op">.</span><span class="fu">stream</span><span class="op">()</span></span>
 <span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">filter</span><span class="op">(</span>Objects<span class="op">::</span>nonNull<span class="op">)</span></span>
 <span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">filter</span><span class="op">(</span>s <span class="op">-&gt;</span> <span class="op">!</span>s<span class="op">.</span><span class="fu">trim</span><span class="op">().</span><span class="fu">isEmpty</span><span class="op">())</span></span>
 <span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">map</span><span class="op">(</span><span class="bu">String</span><span class="op">::</span>toUpperCase<span class="op">)</span></span>
 <span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">collect</span><span class="op">(</span>Collectors<span class="op">.</span><span class="fu">toList</span><span class="op">());</span></span>
 <span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 多层集合处理</span></span>
 <span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="bu">List</span><span class="op">&lt;</span><span class="bu">List</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;&gt;</span> <span class="fu">processNestedCollections</span><span class="op">(</span><span class="bu">List</span><span class="op">&lt;</span><span class="bu">List</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;&gt;</span> nestedList<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> nestedList<span class="op">.</span><span class="fu">stream</span><span class="op">()</span></span>

@@ -55,10 +55,10 @@ function markdownToHtmlWithPandoc(markdownFilePath, title, date, monthDir, filen
         const keywords = title.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, ' ').split(/\s+/).filter(word => word.length > 1).join(', ');
         
         // Generate URL
-        const url = `https://your-domain.com/docs/${monthDir}/${path.basename(filename, '.md')}.html`;
+        const url = `https://caoayu.top/docs/${monthDir}/${path.basename(filename, '.md')}.html`;
         
         // Generate OG image URL (placeholder)
-        const ogImage = 'https://your-domain.com/images/og-image.png';
+        const ogImage = 'https://caoayu.top/images/og-image.png';
         
         // Replace placeholders in template
         return template

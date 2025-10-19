@@ -8,7 +8,11 @@
     <meta name="description" content="Spring
 Assert 工具类完全指南：编写健壮代码的必备利器
 开头摘要
-在Spring应用开发中，参数校验和状态检查是保证代码健壮性的关键环节。Spring框架提供的Assert工具类通过简洁而强大的断言机制，让开发者能够用最少的代码实现最有效的参数验证。本文将深入解析Assert工具类的设计原理、核心方法...">
+在 Spring
+应用开发中，参数校验和状态检查是保证代码健壮性的关键环节。Spring
+框架提供的Assert工具类通过简洁而强大的断言机制，让开发者能够用最少的代码实现最有效的参数验证。本文将深入解析
+Assert
+工具类的...">
     <meta name="keywords" content="Spring, Assert, 工具类完全指南, 编写健壮代码的必备利器">
     <meta name="author" content="AI 个人笔记">
     <meta name="robots" content="index, follow">
@@ -19,9 +23,13 @@ Assert 工具类完全指南：编写健壮代码的必备利器
     <meta property="og:description" content="Spring
 Assert 工具类完全指南：编写健壮代码的必备利器
 开头摘要
-在Spring应用开发中，参数校验和状态检查是保证代码健壮性的关键环节。Spring框架提供的Assert工具类通过简洁而强大的断言机制，让开发者能够用最少的代码实现最有效的参数验证。本文将深入解析Assert工具类的设计原理、核心方法...">
-    <meta property="og:image" content="https://your-domain.com/images/og-image.png">
-    <meta property="og:url" content="https://your-domain.com/docs/2025-10/spring-assert.html">
+在 Spring
+应用开发中，参数校验和状态检查是保证代码健壮性的关键环节。Spring
+框架提供的Assert工具类通过简洁而强大的断言机制，让开发者能够用最少的代码实现最有效的参数验证。本文将深入解析
+Assert
+工具类的...">
+    <meta property="og:image" content="https://caoayu.top/images/og-image.png">
+    <meta property="og:url" content="https://caoayu.top/docs/2025-10/spring-assert.html">
     <meta property="og:site_name" content="AI 个人笔记">
     
     <!-- Twitter -->
@@ -30,11 +38,15 @@ Assert 工具类完全指南：编写健壮代码的必备利器
     <meta property="twitter:description" content="Spring
 Assert 工具类完全指南：编写健壮代码的必备利器
 开头摘要
-在Spring应用开发中，参数校验和状态检查是保证代码健壮性的关键环节。Spring框架提供的Assert工具类通过简洁而强大的断言机制，让开发者能够用最少的代码实现最有效的参数验证。本文将深入解析Assert工具类的设计原理、核心方法...">
-    <meta property="twitter:image" content="https://your-domain.com/images/og-image.png">
+在 Spring
+应用开发中，参数校验和状态检查是保证代码健壮性的关键环节。Spring
+框架提供的Assert工具类通过简洁而强大的断言机制，让开发者能够用最少的代码实现最有效的参数验证。本文将深入解析
+Assert
+工具类的...">
+    <meta property="twitter:image" content="https://caoayu.top/images/og-image.png">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://your-domain.com/docs/2025-10/spring-assert.html">
+    <link rel="canonical" href="https://caoayu.top/docs/2025-10/spring-assert.html">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -78,7 +90,7 @@ Assert 工具类完全指南：编写健壮代码的必备利器
         }
 
         .header {
-            display: flex;
+            /* display: flex; */
             justify-content: space-between;
             align-items: center;
             padding: 20px 0;
@@ -611,29 +623,38 @@ Assert 工具类完全指南：编写健壮代码的必备利器
                     <h1 id="spring-assert-工具类完全指南编写健壮代码的必备利器">Spring
 Assert 工具类完全指南：编写健壮代码的必备利器</h1>
 <h2 id="开头摘要">开头摘要</h2>
-<p>在Spring应用开发中，参数校验和状态检查是保证代码健壮性的关键环节。Spring框架提供的<code>Assert</code>工具类通过简洁而强大的断言机制，让开发者能够用最少的代码实现最有效的参数验证。本文将深入解析Assert工具类的设计原理、核心方法和使用场景，帮助你掌握这一提升代码质量的重要工具。</p>
+<p>在 Spring
+应用开发中，参数校验和状态检查是保证代码健壮性的关键环节。Spring
+框架提供的<code>Assert</code>工具类通过简洁而强大的断言机制，让开发者能够用最少的代码实现最有效的参数验证。本文将深入解析
+Assert
+工具类的设计原理、核心方法和使用场景，帮助你掌握这一提升代码质量的重要工具。</p>
 <h2 id="目录">目录</h2>
 <ul>
-<li>#assert工具类概述</li>
+<li>#assert 工具类概述</li>
 <li>#核心方法详解</li>
 <li>#实际应用场景</li>
 <li>#最佳实践与注意事项</li>
 <li>#总结</li>
 </ul>
-<h2 id="assert工具类概述">Assert工具类概述</h2>
-<p><code>org.springframework.util.Assert</code>是Spring框架核心模块(<code>spring-core</code>)中的一个<strong>断言工具类</strong>，完全由静态方法组成，专门用于进行参数校验和状态检查。Assert遵循”<strong>快速失败</strong>”(Fail-Fast)原则，当条件不满足时立即抛出异常，避免程序在错误状态下继续执行。</p>
+<h2 id="assert-工具类概述">Assert 工具类概述</h2>
+<p><code>org.springframework.util.Assert</code>是 Spring
+框架核心模块(<code>spring-core</code>)中的一个<strong>断言工具类</strong>，完全由静态方法组成，专门用于进行参数校验和状态检查。Assert
+遵循”<strong>快速失败</strong>”(Fail-Fast)原则，当条件不满足时立即抛出异常，避免程序在错误状态下继续执行。</p>
 <h3 id="设计理念与核心价值">设计理念与核心价值</h3>
-<p>Assert工具类的设计基于几个关键理念：</p>
+<p>Assert 工具类的设计基于几个关键理念：</p>
 <ol type="1">
-<li><strong>代码简洁性</strong>：将繁琐的if-else校验简化为一行方法调用</li>
+<li><strong>代码简洁性</strong>：将繁琐的 if-else
+校验简化为一行方法调用</li>
 <li><strong>早期错误检测</strong>：在问题发生的最早阶段暴露错误，降低调试难度</li>
 <li><strong>自文档化代码</strong>：方法名直接表达校验意图，提高代码可读性</li>
 <li><strong>统一异常处理</strong>：提供一致的异常类型和错误消息格式</li>
 </ol>
-<p>与传统的参数校验方式相比，Assert能够将<strong>5-10行的校验代码压缩为1-2行</strong>，同时提供更清晰的错误信息和更一致的异常处理机制。</p>
+<p>与传统的参数校验方式相比，Assert 能够将<strong>5-10
+行的校验代码压缩为 1-2
+行</strong>，同时提供更清晰的错误信息和更一致的异常处理机制。</p>
 <h2 id="核心方法详解">核心方法详解</h2>
 <h3 id="基础空值检查">基础空值检查</h3>
-<p>空值检查是Assert工具类最常用的功能，提供了多层次的空值验证：</p>
+<p>空值检查是 Assert 工具类最常用的功能，提供了多层次的空值验证：</p>
 <div class="sourceCode" id="cb1"><pre
 class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 对象非空检查</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>User user <span class="op">=</span> userService<span class="op">.</span><span class="fu">findById</span><span class="op">(</span>userId<span class="op">);</span></span>
@@ -644,18 +665,21 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">// 集合非空检查</span></span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>Assert<span class="op">.</span><span class="fu">notEmpty</span><span class="op">(</span>orderList<span class="op">,</span> <span class="st">&quot;订单列表不能为空&quot;</span><span class="op">);</span></span></code></pre></div>
-<p><strong>方法对比分析</strong>： -
-<code>notNull()</code>：仅检查对象是否为null -
-<code>hasText()</code>：检查字符串非null、非空且包含非空白字符 -
-<code>notEmpty()</code>：检查集合/数组非null且至少包含一个元素</p>
+<p><strong>方法对比分析</strong>：</p>
+<ul>
+<li><code>notNull()</code>：仅检查对象是否为 null</li>
+<li><code>hasText()</code>：检查字符串非 null、非空且包含非空白字符</li>
+<li><code>notEmpty()</code>：检查集合/数组非 null
+且至少包含一个元素</li>
+</ul>
 <h3 id="条件验证与状态检查">条件验证与状态检查</h3>
-<p>对于业务逻辑中的条件验证，Assert提供了专门的方法：</p>
+<p>对于业务逻辑中的条件验证，Assert 提供了专门的方法：</p>
 <div class="sourceCode" id="cb2"><pre
 class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 布尔条件验证</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">withdraw</span><span class="op">(</span><span class="dt">double</span> amount<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span>amount <span class="op">&gt;</span> <span class="dv">0</span><span class="op">,</span> <span class="st">&quot;取款金额必须大于0&quot;</span><span class="op">);</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span>balance <span class="op">&gt;=</span> amount<span class="op">,</span> <span class="st">&quot;余额不足&quot;</span><span class="op">);</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 执行取款逻辑</span></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
@@ -664,10 +688,11 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">boolean</span> valid <span class="op">=</span> <span class="fu">validateOrder</span><span class="op">(</span>order<span class="op">);</span></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    Assert<span class="op">.</span><span class="fu">state</span><span class="op">(</span>valid<span class="op">,</span> <span class="st">&quot;订单状态不合法，无法提交&quot;</span><span class="op">);</span></span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p><strong>异常类型区别</strong>： -
-<code>isTrue()</code>：抛出<code>IllegalArgumentException</code>，适用于参数校验
--
-<code>state()</code>：抛出<code>IllegalStateException</code>，适用于状态检查</p>
+<p><strong>异常类型区别</strong>：</p>
+<ul>
+<li><code>isTrue()</code>：抛出<code>IllegalArgumentException</code>，适用于参数校验</li>
+<li><code>state()</code>：抛出<code>IllegalStateException</code>，适用于状态检查</li>
+</ul>
 <h3 id="类型与赋值关系验证">类型与赋值关系验证</h3>
 <p>在框架开发和复杂业务逻辑中，经常需要验证类型关系：</p>
 <div class="sourceCode" id="cb3"><pre
@@ -675,129 +700,130 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb3-1"><a href="
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>Assert<span class="op">.</span><span class="fu">isInstanceOf</span><span class="op">(</span>User<span class="op">.</span><span class="fu">class</span><span class="op">,</span> object<span class="op">,</span> <span class="st">&quot;参数必须是User类型&quot;</span><span class="op">);</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">// 类型赋值兼容性检查</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>Assert<span class="op">.</span><span class="fu">isAssignable</span><span class="op">(</span><span class="bu">Collection</span><span class="op">.</span><span class="fu">class</span><span class="op">,</span> list<span class="op">.</span><span class="fu">getClass</span><span class="op">(),</span> </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>Assert<span class="op">.</span><span class="fu">isAssignable</span><span class="op">(</span><span class="bu">Collection</span><span class="op">.</span><span class="fu">class</span><span class="op">,</span> list<span class="op">.</span><span class="fu">getClass</span><span class="op">(),</span></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;参数必须可赋值给Collection接口&quot;</span><span class="op">);</span></span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">// 数组元素非空检查</span></span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="bu">String</span><span class="op">[]</span> names <span class="op">=</span> <span class="op">{</span><span class="st">&quot;Alice&quot;</span><span class="op">,</span> <span class="st">&quot;Bob&quot;</span><span class="op">,</span> <span class="kw">null</span><span class="op">};</span></span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>Assert<span class="op">.</span><span class="fu">noNullElements</span><span class="op">(</span>names<span class="op">,</span> <span class="st">&quot;数组中不能包含null元素&quot;</span><span class="op">);</span></span></code></pre></div>
-<p>下面是Assert工具类核心方法的功能分类图：</p>
+<p>下面是 Assert 工具类核心方法的功能分类图：</p>
 <pre class="mermaid"><code>graph TB
     A[Assert工具类] --&gt; B[空值检查]
     A --&gt; C[条件验证]
     A --&gt; D[类型检查]
     A --&gt; E[集合验证]
     A --&gt; F[字符串验证]
-    
+
     B --&gt; B1[notNull]
     B --&gt; B2[isNull]
-    
+
     C --&gt; C1[isTrue]
     C --&gt; C2[state]
-    
+
     D --&gt; D1[isInstanceOf]
     D --&gt; D2[isAssignable]
-    
+
     E --&gt; E1[notEmpty]
     E --&gt; E2[noNullElements]
-    
+
     F --&gt; F1[hasText]
     F --&gt; F2[hasLength]</code></pre>
 <h2 id="实际应用场景">实际应用场景</h2>
 <h3 id="服务层参数校验">服务层参数校验</h3>
-<p>在Service层方法中，使用Assert进行前置参数校验可以大幅提高代码的健壮性：</p>
+<p>在 Service 层方法中，使用 Assert
+进行前置参数校验可以大幅提高代码的健壮性：</p>
 <div class="sourceCode" id="cb5"><pre
 class="sourceCode java"><code class="sourceCode java"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Service</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> OrderService <span class="op">{</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Autowired</span></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> UserRepository userRepository<span class="op">;</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Autowired</span></span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> ProductRepository productRepository<span class="op">;</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> Order <span class="fu">createOrder</span><span class="op">(</span><span class="bu">Long</span> userId<span class="op">,</span> <span class="bu">List</span><span class="op">&lt;</span>OrderItem<span class="op">&gt;</span> items<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 参数基础校验</span></span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">notNull</span><span class="op">(</span>userId<span class="op">,</span> <span class="st">&quot;用户ID不能为空&quot;</span><span class="op">);</span></span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">notEmpty</span><span class="op">(</span>items<span class="op">,</span> <span class="st">&quot;订单项不能为空&quot;</span><span class="op">);</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 业务逻辑校验</span></span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        User user <span class="op">=</span> userRepository<span class="op">.</span><span class="fu">findById</span><span class="op">(</span>userId<span class="op">);</span></span>
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">notNull</span><span class="op">(</span>user<span class="op">,</span> <span class="st">&quot;用户不存在，ID: &quot;</span> <span class="op">+</span> userId<span class="op">);</span></span>
 <span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span>user<span class="op">.</span><span class="fu">isActive</span><span class="op">(),</span> <span class="st">&quot;用户账户已被禁用&quot;</span><span class="op">);</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span>OrderItem item <span class="op">:</span> items<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>            Assert<span class="op">.</span><span class="fu">notNull</span><span class="op">(</span>item<span class="op">.</span><span class="fu">getProductId</span><span class="op">(),</span> <span class="st">&quot;商品ID不能为空&quot;</span><span class="op">);</span></span>
 <span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>            Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span>item<span class="op">.</span><span class="fu">getQuantity</span><span class="op">()</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">,</span> <span class="st">&quot;商品数量必须大于0&quot;</span><span class="op">);</span></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>            Product product <span class="op">=</span> productRepository<span class="op">.</span><span class="fu">findById</span><span class="op">(</span>item<span class="op">.</span><span class="fu">getProductId</span><span class="op">());</span></span>
 <span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>            Assert<span class="op">.</span><span class="fu">notNull</span><span class="op">(</span>product<span class="op">,</span> <span class="st">&quot;商品不存在，ID: &quot;</span> <span class="op">+</span> item<span class="op">.</span><span class="fu">getProductId</span><span class="op">());</span></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>            Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span>product<span class="op">.</span><span class="fu">getStock</span><span class="op">()</span> <span class="op">&gt;=</span> item<span class="op">.</span><span class="fu">getQuantity</span><span class="op">(),</span> </span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>            Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span>product<span class="op">.</span><span class="fu">getStock</span><span class="op">()</span> <span class="op">&gt;=</span> item<span class="op">.</span><span class="fu">getQuantity</span><span class="op">(),</span></span>
 <span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;商品库存不足: &quot;</span> <span class="op">+</span> product<span class="op">.</span><span class="fu">getName</span><span class="op">());</span></span>
 <span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 创建订单逻辑</span></span>
 <span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> orderRepository<span class="op">.</span><span class="fu">save</span><span class="op">(</span><span class="kw">new</span> <span class="fu">Order</span><span class="op">(</span>user<span class="op">,</span> items<span class="op">));</span></span>
 <span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h3 id="控制器层请求验证">控制器层请求验证</h3>
-<p>在Spring MVC控制器中，Assert可以用于验证请求参数的合法性：</p>
+<p>在 Spring MVC 控制器中，Assert 可以用于验证请求参数的合法性：</p>
 <div class="sourceCode" id="cb6"><pre
 class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="at">@RestController</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="at">@RequestMapping</span><span class="op">(</span><span class="st">&quot;/api/users&quot;</span><span class="op">)</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> UserController <span class="op">{</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">@PostMapping</span></span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> ResponseEntity<span class="op">&lt;</span>UserDTO<span class="op">&gt;</span> <span class="fu">createUser</span><span class="op">(</span><span class="at">@RequestBody</span> <span class="at">@Valid</span> UserDTO userDTO<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="co">// DTO基础验证（JSR-303已通过，补充业务验证）</span></span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">notNull</span><span class="op">(</span>userDTO<span class="op">,</span> <span class="st">&quot;用户数据不能为空&quot;</span><span class="op">);</span></span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">hasText</span><span class="op">(</span>userDTO<span class="op">.</span><span class="fu">getEmail</span><span class="op">(),</span> <span class="st">&quot;邮箱不能为空&quot;</span><span class="op">);</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 业务规则验证</span></span>
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span><span class="fu">isValidEmail</span><span class="op">(</span>userDTO<span class="op">.</span><span class="fu">getEmail</span><span class="op">()),</span> <span class="st">&quot;邮箱格式不正确&quot;</span><span class="op">);</span></span>
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span>userDTO<span class="op">.</span><span class="fu">getAge</span><span class="op">()</span> <span class="op">&gt;=</span> <span class="dv">18</span><span class="op">,</span> <span class="st">&quot;用户必须年满18岁&quot;</span><span class="op">);</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        User user <span class="op">=</span> userService<span class="op">.</span><span class="fu">createUser</span><span class="op">(</span>userDTO<span class="op">);</span></span>
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ResponseEntity<span class="op">.</span><span class="fu">ok</span><span class="op">(</span>UserDTO<span class="op">.</span><span class="fu">fromEntity</span><span class="op">(</span>user<span class="op">));</span></span>
 <span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">@PutMapping</span><span class="op">(</span><span class="st">&quot;/{userId}/status&quot;</span><span class="op">)</span></span>
 <span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> ResponseEntity<span class="op">&lt;</span><span class="bu">Void</span><span class="op">&gt;</span> <span class="fu">updateUserStatus</span><span class="op">(</span></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>            <span class="at">@PathVariable</span> <span class="bu">Long</span> userId<span class="op">,</span> </span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>            <span class="at">@PathVariable</span> <span class="bu">Long</span> userId<span class="op">,</span></span>
 <span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>            <span class="at">@RequestParam</span> <span class="bu">String</span> status<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">notNull</span><span class="op">(</span>userId<span class="op">,</span> <span class="st">&quot;用户ID不能为空&quot;</span><span class="op">);</span></span>
 <span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">hasText</span><span class="op">(</span>status<span class="op">,</span> <span class="st">&quot;状态不能为空&quot;</span><span class="op">);</span></span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span><span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;ACTIVE&quot;</span><span class="op">,</span> <span class="st">&quot;INACTIVE&quot;</span><span class="op">).</span><span class="fu">contains</span><span class="op">(</span>status<span class="op">),</span> </span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span><span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;ACTIVE&quot;</span><span class="op">,</span> <span class="st">&quot;INACTIVE&quot;</span><span class="op">).</span><span class="fu">contains</span><span class="op">(</span>status<span class="op">),</span></span>
 <span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;状态值不合法&quot;</span><span class="op">);</span></span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>        userService<span class="op">.</span><span class="fu">updateStatus</span><span class="op">(</span>userId<span class="op">,</span> status<span class="op">);</span></span>
 <span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ResponseEntity<span class="op">.</span><span class="fu">ok</span><span class="op">().</span><span class="fu">build</span><span class="op">();</span></span>
 <span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h3 id="自定义断言扩展">自定义断言扩展</h3>
-<p>对于特定的业务需求，可以基于Assert扩展自定义的断言方法：</p>
+<p>对于特定的业务需求，可以基于 Assert 扩展自定义的断言方法：</p>
 <div class="sourceCode" id="cb7"><pre
 class="sourceCode java"><code class="sourceCode java"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">/**</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a> <span class="co">*</span> <span class="co">业务断言工具类</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a> <span class="co">*/</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">abstract</span> <span class="kw">class</span> BusinessAssert <span class="kw">extends</span> Assert <span class="op">{</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">isValidPhoneNumber</span><span class="op">(</span><span class="bu">String</span> phone<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">hasText</span><span class="op">(</span>phone<span class="op">,</span> <span class="st">&quot;手机号不能为空&quot;</span><span class="op">);</span></span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">isTrue</span><span class="op">(</span>phone<span class="op">.</span><span class="fu">matches</span><span class="op">(</span><span class="st">&quot;^1[3-9]</span><span class="sc">\\</span><span class="st">d{9}{{CONTENT}}quot;</span><span class="op">),</span> <span class="st">&quot;手机号格式不正确&quot;</span><span class="op">);</span></span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">isValidIdCard</span><span class="op">(</span><span class="bu">String</span> idCard<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">hasText</span><span class="op">(</span>idCard<span class="op">,</span> <span class="st">&quot;身份证号不能为空&quot;</span><span class="op">);</span></span>
 <span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        <span class="fu">isTrue</span><span class="op">(</span>idCard<span class="op">.</span><span class="fu">matches</span><span class="op">(</span><span class="st">&quot;^</span><span class="sc">\\</span><span class="st">d{17}[</span><span class="sc">\\</span><span class="st">dXx]{{CONTENT}}quot;</span><span class="op">),</span> <span class="st">&quot;身份证号格式不正确&quot;</span><span class="op">);</span></span>
 <span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">isPositiveNumber</span><span class="op">(</span><span class="bu">Number</span> number<span class="op">,</span> <span class="bu">String</span> message<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        <span class="fu">notNull</span><span class="op">(</span>number<span class="op">,</span> message<span class="op">);</span></span>
 <span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>        <span class="fu">isTrue</span><span class="op">(</span>number<span class="op">.</span><span class="fu">doubleValue</span><span class="op">()</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">,</span> message<span class="op">);</span></span>
 <span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">isInRange</span><span class="op">(</span><span class="dt">int</span> value<span class="op">,</span> <span class="dt">int</span> min<span class="op">,</span> <span class="dt">int</span> max<span class="op">,</span> <span class="bu">String</span> message<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>        <span class="fu">isTrue</span><span class="op">(</span>value <span class="op">&gt;=</span> min <span class="op">&amp;&amp;</span> value <span class="op">&lt;=</span> max<span class="op">,</span> message<span class="op">);</span></span>
 <span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
@@ -808,13 +834,13 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb7-1"><a href="
 <span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">processPayment</span><span class="op">(</span>PaymentRequest request<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>        BusinessAssert<span class="op">.</span><span class="fu">isValidPhoneNumber</span><span class="op">(</span>request<span class="op">.</span><span class="fu">getPhone</span><span class="op">());</span></span>
 <span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>        BusinessAssert<span class="op">.</span><span class="fu">isPositiveNumber</span><span class="op">(</span>request<span class="op">.</span><span class="fu">getAmount</span><span class="op">(),</span> <span class="st">&quot;支付金额必须大于0&quot;</span><span class="op">);</span></span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 支付处理逻辑</span></span>
 <span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h2 id="最佳实践与注意事项">最佳实践与注意事项</h2>
 <h3 id="性能优化策略">性能优化策略</h3>
-<p>虽然Assert方法本身很轻量，但在高性能场景下仍需注意优化：</p>
+<p>虽然 Assert 方法本身很轻量，但在高性能场景下仍需注意优化：</p>
 <div class="sourceCode" id="cb8"><pre
 class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 不推荐：在循环内部使用Assert</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">processBatch</span><span class="op">(</span><span class="bu">List</span><span class="op">&lt;</span>Order<span class="op">&gt;</span> orders<span class="op">)</span> <span class="op">{</span></span>
@@ -827,7 +853,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">// 推荐：循环外部统一校验</span></span>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">processBatch</span><span class="op">(</span><span class="bu">List</span><span class="op">&lt;</span>Order<span class="op">&gt;</span> orders<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    Assert<span class="op">.</span><span class="fu">notEmpty</span><span class="op">(</span>orders<span class="op">,</span> <span class="st">&quot;订单列表不能为空&quot;</span><span class="op">);</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span>Order order <span class="op">:</span> orders<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>order <span class="op">==</span> <span class="kw">null</span><span class="op">)</span> <span class="cf">continue</span><span class="op">;</span> <span class="co">// 使用轻量级判断</span></span>
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 处理逻辑</span></span>
@@ -836,9 +862,9 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="
 <span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co">// 生产环境特定优化</span></span>
 <span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> ProductionSafeValidator <span class="op">{</span></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">final</span> <span class="dt">boolean</span> IS_PRODUCTION <span class="op">=</span> </span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">final</span> <span class="dt">boolean</span> IS_PRODUCTION <span class="op">=</span></span>
 <span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;prod&quot;</span><span class="op">.</span><span class="fu">equals</span><span class="op">(</span><span class="bu">System</span><span class="op">.</span><span class="fu">getProperty</span><span class="op">(</span><span class="st">&quot;spring.profiles.active&quot;</span><span class="op">));</span></span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">notNull</span><span class="op">(</span><span class="bu">Object</span> object<span class="op">,</span> <span class="bu">String</span> message<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>IS_PRODUCTION<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(</span>object <span class="op">==</span> <span class="kw">null</span><span class="op">)</span> <span class="op">{</span></span>
@@ -863,16 +889,16 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb9-1"><a href="
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">transfer</span><span class="op">(</span><span class="bu">Long</span> fromAccount<span class="op">,</span> <span class="bu">Long</span> toAccount<span class="op">,</span> <span class="bu">BigDecimal</span> amount<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    Assert<span class="op">.</span><span class="fu">notNull</span><span class="op">(</span>fromAccount<span class="op">,</span> <span class="st">&quot;转出账户不能为空&quot;</span><span class="op">);</span></span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    Assert<span class="op">.</span><span class="fu">notNull</span><span class="op">(</span>toAccount<span class="op">,</span> <span class="st">&quot;转入账户不能为空&quot;</span><span class="op">);</span></span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(!</span>fromAccount<span class="op">.</span><span class="fu">equals</span><span class="op">(</span>toAccount<span class="op">),</span> </span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(!</span>fromAccount<span class="op">.</span><span class="fu">equals</span><span class="op">(</span>toAccount<span class="op">),</span></span>
 <span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;转出账户和转入账户不能相同: &quot;</span> <span class="op">+</span> fromAccount<span class="op">);</span></span>
 <span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    Assert<span class="op">.</span><span class="fu">notNull</span><span class="op">(</span>amount<span class="op">,</span> <span class="st">&quot;转账金额不能为空&quot;</span><span class="op">);</span></span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span>amount<span class="op">.</span><span class="fu">compareTo</span><span class="op">(</span><span class="bu">BigDecimal</span><span class="op">.</span><span class="fu">ZERO</span><span class="op">)</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">,</span> </span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span>amount<span class="op">.</span><span class="fu">compareTo</span><span class="op">(</span><span class="bu">BigDecimal</span><span class="op">.</span><span class="fu">ZERO</span><span class="op">)</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">,</span></span>
 <span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;转账金额必须大于0，当前金额: &quot;</span> <span class="op">+</span> amount<span class="op">);</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 转账逻辑</span></span>
 <span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h3 id="与校验框架的协同使用">与校验框架的协同使用</h3>
-<p>Assert与JSR-303校验框架（如Hibernate
+<p>Assert 与 JSR-303 校验框架（如 Hibernate
 Validator）可以很好地协同工作：</p>
 <div class="sourceCode" id="cb10"><pre
 class="sourceCode java"><code class="sourceCode java"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Data</span></span>
@@ -880,31 +906,31 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb10-1"><a href=
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">@NotBlank</span><span class="op">(</span>message <span class="op">=</span> <span class="st">&quot;用户名不能为空&quot;</span><span class="op">)</span></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Size</span><span class="op">(</span>min <span class="op">=</span> <span class="dv">2</span><span class="op">,</span> max <span class="op">=</span> <span class="dv">20</span><span class="op">,</span> message <span class="op">=</span> <span class="st">&quot;用户名长度2-20个字符&quot;</span><span class="op">)</span></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">String</span> username<span class="op">;</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Email</span><span class="op">(</span>message <span class="op">=</span> <span class="st">&quot;邮箱格式不正确&quot;</span><span class="op">)</span></span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">String</span> email<span class="op">;</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Min</span><span class="op">(</span>value <span class="op">=</span> <span class="dv">18</span><span class="op">,</span> message <span class="op">=</span> <span class="st">&quot;年龄必须大于18岁&quot;</span><span class="op">)</span></span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">Integer</span> age<span class="op">;</span></span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="at">@RestController</span></span>
 <span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> UserController <span class="op">{</span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">@PostMapping</span><span class="op">(</span><span class="st">&quot;/users&quot;</span><span class="op">)</span></span>
 <span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> ResponseEntity<span class="op">&lt;?&gt;</span> <span class="fu">createUser</span><span class="op">(</span><span class="at">@RequestBody</span> <span class="at">@Valid</span> UserDTO userDTO<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>        <span class="co">// JSR-303校验通过后，进行业务逻辑校验</span></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span><span class="fu">isUsernameAvailable</span><span class="op">(</span>userDTO<span class="op">.</span><span class="fu">getUsername</span><span class="op">()),</span> </span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span><span class="fu">isUsernameAvailable</span><span class="op">(</span>userDTO<span class="op">.</span><span class="fu">getUsername</span><span class="op">()),</span></span>
 <span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;用户名已存在: &quot;</span> <span class="op">+</span> userDTO<span class="op">.</span><span class="fu">getUsername</span><span class="op">());</span></span>
 <span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>        Assert<span class="op">.</span><span class="fu">isTrue</span><span class="op">(</span>userDTO<span class="op">.</span><span class="fu">getAge</span><span class="op">()</span> <span class="op">&gt;=</span> <span class="dv">18</span><span class="op">,</span> <span class="st">&quot;用户必须年满18岁&quot;</span><span class="op">);</span></span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>        User user <span class="op">=</span> userService<span class="op">.</span><span class="fu">createUser</span><span class="op">(</span>userDTO<span class="op">);</span></span>
 <span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ResponseEntity<span class="op">.</span><span class="fu">ok</span><span class="op">(</span>user<span class="op">);</span></span>
 <span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h2 id="总结">总结</h2>
-<p>Spring
-Assert工具类是一个设计精巧且极其实用的参数校验工具，通过系统学习和实践可以得出以下核心结论：</p>
+<p>Spring Assert
+工具类是一个设计精巧且极其实用的参数校验工具，通过系统学习和实践可以得出以下核心结论：</p>
 <h3 id="核心价值">核心价值</h3>
 <ol type="1">
 <li><strong>开发效率显著提升</strong>：将繁琐的参数校验代码从多行简化为单行方法调用</li>
@@ -915,7 +941,8 @@ Assert工具类是一个设计精巧且极其实用的参数校验工具，通�
 <h3 id="适用场景推荐">适用场景推荐</h3>
 <ul>
 <li><strong>服务层参数校验</strong>：业务方法开始处的参数合法性验证</li>
-<li><strong>控制器补充校验</strong>：在JSR-303校验基础上补充业务规则验证</li>
+<li><strong>控制器补充校验</strong>：在 JSR-303
+校验基础上补充业务规则验证</li>
 <li><strong>框架开发</strong>：在框架内部进行关键参数和状态检查</li>
 <li><strong>测试断言</strong>：单元测试中的条件验证（结合测试框架）</li>
 </ul>
@@ -923,19 +950,22 @@ Assert工具类是一个设计精巧且极其实用的参数校验工具，通�
 <ol type="1">
 <li><strong>性能考量</strong>：避免在高频循环内部使用，生产环境可考虑特定优化</li>
 <li><strong>错误信息质量</strong>：提供具体、包含上下文的错误消息，方便调试定位</li>
-<li><strong>与校验框架分工</strong>：基础格式校验用JSR-303，业务规则校验用Assert</li>
+<li><strong>与校验框架分工</strong>：基础格式校验用
+JSR-303，业务规则校验用 Assert</li>
 <li><strong>异常处理策略</strong>：区分参数异常(IllegalArgumentException)和状态异常(IllegalStateException)</li>
 </ol>
-<p>Assert工具类作为Spring开发者工具箱中的重要组成部分，合理运用可以显著提升代码的健壮性和可维护性，是编写高质量Java应用的必备技能。</p>
+<p>Assert 工具类作为 Spring
+开发者工具箱中的重要组成部分，合理运用可以显著提升代码的健壮性和可维护性，是编写高质量
+Java 应用的必备技能。</p>
 <h2 id="延伸阅读">延伸阅读</h2>
 <ol type="1">
 <li>https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/util/Assert.html</li>
-<li>Spring源码：<code>org.springframework.util.Assert</code></li>
+<li>Spring 源码：<code>org.springframework.util.Assert</code></li>
 <li>https://docs.jboss.org/hibernate/validator/8.0/reference/en-US/html_single/</li>
 </ol>
 <h2 id="一句话记忆">一句话记忆</h2>
-<p>Spring
-Assert是参数校验的利器，用一行代码替代繁琐的if-else判断，让参数校验既简洁又健壮。</p>
+<p>Spring Assert 是参数校验的利器，用一行代码替代繁琐的 if-else
+判断，让参数校验既简洁又健壮。</p>
 
                 </div>
             </article>

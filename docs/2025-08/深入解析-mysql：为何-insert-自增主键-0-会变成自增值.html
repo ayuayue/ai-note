@@ -26,8 +26,8 @@ MySQL：为何 INSERT 自增主键 0 会变成自增值？
 0
 时，该值会被替换为下一个自增值的底层机制。文章将详细解析其背后的设计哲学、sql_mode
 的关键作用，并提供实战案例。本文适合对 MySQL...">
-    <meta property="og:image" content="https://your-domain.com/images/og-image.png">
-    <meta property="og:url" content="https://your-domain.com/docs/2025-08/深入解析-mysql：为何-insert-自增主键-0-会变成自增值.html">
+    <meta property="og:image" content="https://caoayu.top/images/og-image.png">
+    <meta property="og:url" content="https://caoayu.top/docs/2025-08/深入解析-mysql：为何-insert-自增主键-0-会变成自增值.html">
     <meta property="og:site_name" content="AI 个人笔记">
     
     <!-- Twitter -->
@@ -40,10 +40,10 @@ MySQL：为何 INSERT 自增主键 0 会变成自增值？
 0
 时，该值会被替换为下一个自增值的底层机制。文章将详细解析其背后的设计哲学、sql_mode
 的关键作用，并提供实战案例。本文适合对 MySQL...">
-    <meta property="twitter:image" content="https://your-domain.com/images/og-image.png">
+    <meta property="twitter:image" content="https://caoayu.top/images/og-image.png">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://your-domain.com/docs/2025-08/深入解析-mysql：为何-insert-自增主键-0-会变成自增值.html">
+    <link rel="canonical" href="https://caoayu.top/docs/2025-08/深入解析-mysql：为何-insert-自增主键-0-会变成自增值.html">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -87,7 +87,7 @@ MySQL：为何 INSERT 自增主键 0 会变成自增值？
         }
 
         .header {
-            display: flex;
+            /* display: flex; */
             justify-content: space-between;
             align-items: center;
             padding: 20px 0;
@@ -349,12 +349,14 @@ MySQL：为何 INSERT 自增主键 0 会变成自增值？
             border-collapse: collapse;
             margin: 25px 0;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            table-layout: fixed; /* 添加这行以确保表格列宽正确 */
         }
 
         .post-content th, .post-content td {
             padding: 12px 15px;
             text-align: left;
             border: 1px solid #e1e1e1;
+            word-wrap: break-word; /* 确保长内容可以换行 */
         }
 
         .post-content th {
