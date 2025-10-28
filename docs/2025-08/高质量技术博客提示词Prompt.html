@@ -30,8 +30,8 @@
 
 1. **格式**：Markdown 格式输出，不要额外包裹代码块。
 2. **准确性**：必须确保技术细节正确，避免概念模糊或错...">
-    <meta property="og:image" content="https://your-domain.com/images/og-image.png">
-    <meta property="og:url" content="https://your-domain.com/docs/2025-08/高质量技术博客提示词Prompt.html">
+    <meta property="og:image" content="https://caoayu.top/images/og-image.png">
+    <meta property="og:url" content="https://caoayu.top/docs/2025-08/高质量技术博客提示词Prompt.html">
     <meta property="og:site_name" content="AI 个人笔记">
     
     <!-- Twitter -->
@@ -46,10 +46,10 @@
 
 1. **格式**：Markdown 格式输出，不要额外包裹代码块。
 2. **准确性**：必须确保技术细节正确，避免概念模糊或错...">
-    <meta property="twitter:image" content="https://your-domain.com/images/og-image.png">
+    <meta property="twitter:image" content="https://caoayu.top/images/og-image.png">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://your-domain.com/docs/2025-08/高质量技术博客提示词Prompt.html">
+    <link rel="canonical" href="https://caoayu.top/docs/2025-08/高质量技术博客提示词Prompt.html">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -93,7 +93,7 @@
         }
 
         .header {
-            display: flex;
+            /* display: flex; */
             justify-content: space-between;
             align-items: center;
             padding: 20px 0;
@@ -355,12 +355,14 @@
             border-collapse: collapse;
             margin: 25px 0;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            table-layout: fixed; /* 添加这行以确保表格列宽正确 */
         }
 
         .post-content th, .post-content td {
             padding: 12px 15px;
             text-align: left;
             border: 1px solid #e1e1e1;
+            word-wrap: break-word; /* 确保长内容可以换行 */
         }
 
         .post-content th {

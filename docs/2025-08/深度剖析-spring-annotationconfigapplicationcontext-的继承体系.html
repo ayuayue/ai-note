@@ -24,8 +24,8 @@ Spring AnnotationConfigApplicationContext 的继承体系
 new AnnotationConfigApplicationContext(AppConfig.class);
 一个功能完备、灵活自如的 IoC 容器就此诞生。
 然而，这个看...">
-    <meta property="og:image" content="https://your-domain.com/images/og-image.png">
-    <meta property="og:url" content="https://your-domain.com/docs/2025-08/深度剖析-spring-annotationconfigapplicationcontext-的继承体系.html">
+    <meta property="og:image" content="https://caoayu.top/images/og-image.png">
+    <meta property="og:url" content="https://caoayu.top/docs/2025-08/深度剖析-spring-annotationconfigapplicationcontext-的继承体系.html">
     <meta property="og:site_name" content="AI 个人笔记">
     
     <!-- Twitter -->
@@ -37,10 +37,10 @@ Spring AnnotationConfigApplicationContext 的继承体系
 new AnnotationConfigApplicationContext(AppConfig.class);
 一个功能完备、灵活自如的 IoC 容器就此诞生。
 然而，这个看...">
-    <meta property="twitter:image" content="https://your-domain.com/images/og-image.png">
+    <meta property="twitter:image" content="https://caoayu.top/images/og-image.png">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://your-domain.com/docs/2025-08/深度剖析-spring-annotationconfigapplicationcontext-的继承体系.html">
+    <link rel="canonical" href="https://caoayu.top/docs/2025-08/深度剖析-spring-annotationconfigapplicationcontext-的继承体系.html">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -84,7 +84,7 @@ new AnnotationConfigApplicationContext(AppConfig.class);
         }
 
         .header {
-            display: flex;
+            /* display: flex; */
             justify-content: space-between;
             align-items: center;
             padding: 20px 0;
@@ -346,12 +346,14 @@ new AnnotationConfigApplicationContext(AppConfig.class);
             border-collapse: collapse;
             margin: 25px 0;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            table-layout: fixed; /* 添加这行以确保表格列宽正确 */
         }
 
         .post-content th, .post-content td {
             padding: 12px 15px;
             text-align: left;
             border: 1px solid #e1e1e1;
+            word-wrap: break-word; /* 确保长内容可以换行 */
         }
 
         .post-content th {

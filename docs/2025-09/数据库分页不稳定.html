@@ -30,8 +30,8 @@
 2. 示例代码
 3. Mermaid图
 4. 问题分析...">
-    <meta property="og:image" content="https://your-domain.com/images/og-image.png">
-    <meta property="og:url" content="https://your-domain.com/docs/2025-09/数据库分页不稳定.html">
+    <meta property="og:image" content="https://caoayu.top/images/og-image.png">
+    <meta property="og:url" content="https://caoayu.top/docs/2025-09/数据库分页不稳定.html">
     <meta property="og:site_name" content="AI 个人笔记">
     
     <!-- Twitter -->
@@ -46,10 +46,10 @@
 2. 示例代码
 3. Mermaid图
 4. 问题分析...">
-    <meta property="twitter:image" content="https://your-domain.com/images/og-image.png">
+    <meta property="twitter:image" content="https://caoayu.top/images/og-image.png">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://your-domain.com/docs/2025-09/数据库分页不稳定.html">
+    <link rel="canonical" href="https://caoayu.top/docs/2025-09/数据库分页不稳定.html">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -93,7 +93,7 @@
         }
 
         .header {
-            display: flex;
+            /* display: flex; */
             justify-content: space-between;
             align-items: center;
             padding: 20px 0;
@@ -615,7 +615,7 @@
                 <header class="post-header">
                     <h1 class="post-title">数据库分页不稳定</h1>
                     <div class="post-meta">
-                        <div class="post-date">2025/9/15</div>
+                        <div class="post-date">2025/10/19</div>
                         <div class="post-category">2025-09</div>
                     </div>
                 </header>
@@ -763,7 +763,7 @@ BY只保证单次查询的顺序，无法阻止数据变动导致的分页错位
 <h3 id="解决方案选择">解决方案选择</h3>
 <table>
 <thead>
-<tr>
+<tr class="header">
 <th>场景</th>
 <th>传统分页</th>
 <th>游标分页</th>
@@ -772,35 +772,35 @@ BY只保证单次查询的顺序，无法阻止数据变动导致的分页错位
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>静态数据</td>
 <td>✓</td>
 <td>✓</td>
 <td>✓</td>
 <td>✓</td>
 </tr>
-<tr>
+<tr class="even">
 <td>低频变动</td>
 <td>⚠️</td>
 <td>✓</td>
 <td>✓</td>
 <td>✓</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>高频变动</td>
 <td>✗</td>
 <td>✓</td>
 <td>⚠️</td>
 <td>✓</td>
 </tr>
-<tr>
+<tr class="even">
 <td>随机访问</td>
 <td>✓</td>
 <td>✗</td>
 <td>✓</td>
 <td>✓</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>深度分页</td>
 <td>✗</td>
 <td>✓</td>
@@ -888,7 +888,7 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a hr
 <h3 id="对比总结">对比总结</h3>
 <table>
 <thead>
-<tr>
+<tr class="header">
 <th>特性</th>
 <th>Java生态</th>
 <th>Python生态</th>
@@ -896,31 +896,31 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a hr
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>传统分页支持</td>
 <td>完善</td>
 <td>完善</td>
 <td>完善</td>
 </tr>
-<tr>
+<tr class="even">
 <td>游标分页支持</td>
 <td>需自定义</td>
 <td>需自定义</td>
 <td>需自定义</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>框架集成度</td>
 <td>高（Spring Data）</td>
 <td>中（Django）</td>
 <td>中（GORM）</td>
 </tr>
-<tr>
+<tr class="even">
 <td>性能优化</td>
 <td>覆盖索引支持</td>
 <td>覆盖索引支持</td>
 <td>覆盖索引支持</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>学习曲线</td>
 <td>中等</td>
 <td>低</td>

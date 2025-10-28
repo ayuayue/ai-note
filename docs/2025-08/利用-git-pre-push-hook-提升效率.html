@@ -26,8 +26,8 @@ Git pre-push Hook 提升效率
 hook，在代码被推送到远程仓库前自动执行命令（如代码检查、单元测试）。文章将从基本概念、底层原理到结合
 Husky
 等工具的实战案例，全面解析其工作机制与价值。本文适合希...">
-    <meta property="og:image" content="https://your-domain.com/images/og-image.png">
-    <meta property="og:url" content="https://your-domain.com/docs/2025-08/利用-git-pre-push-hook-提升效率.html">
+    <meta property="og:image" content="https://caoayu.top/images/og-image.png">
+    <meta property="og:url" content="https://caoayu.top/docs/2025-08/利用-git-pre-push-hook-提升效率.html">
     <meta property="og:site_name" content="AI 个人笔记">
     
     <!-- Twitter -->
@@ -40,10 +40,10 @@ Git pre-push Hook 提升效率
 hook，在代码被推送到远程仓库前自动执行命令（如代码检查、单元测试）。文章将从基本概念、底层原理到结合
 Husky
 等工具的实战案例，全面解析其工作机制与价值。本文适合希...">
-    <meta property="twitter:image" content="https://your-domain.com/images/og-image.png">
+    <meta property="twitter:image" content="https://caoayu.top/images/og-image.png">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://your-domain.com/docs/2025-08/利用-git-pre-push-hook-提升效率.html">
+    <link rel="canonical" href="https://caoayu.top/docs/2025-08/利用-git-pre-push-hook-提升效率.html">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -87,7 +87,7 @@ Husky
         }
 
         .header {
-            display: flex;
+            /* display: flex; */
             justify-content: space-between;
             align-items: center;
             padding: 20px 0;
@@ -349,12 +349,14 @@ Husky
             border-collapse: collapse;
             margin: 25px 0;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            table-layout: fixed; /* 添加这行以确保表格列宽正确 */
         }
 
         .post-content th, .post-content td {
             padding: 12px 15px;
             text-align: left;
             border: 1px solid #e1e1e1;
+            word-wrap: break-word; /* 确保长内容可以换行 */
         }
 
         .post-content th {

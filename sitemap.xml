@@ -2,15 +2,87 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.caoayu.top/index.html</loc>
-    <lastmod>2025-10-28T10:59:00.225Z</lastmod>
+    <lastmod>2025-10-28T11:01:41.215Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.caoayu.top/pages/index2.html</loc>
-    <lastmod>2025-10-28T10:59:00.226Z</lastmod>
+    <lastmod>2025-10-28T11:01:41.215Z</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.caoayu.top/docs/2025-10/spring-assert.html</loc>
+    <lastmod>2025-10-28T11:00:36.950Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.caoayu.top/docs/2025-10/spring-beanutils.html</loc>
+    <lastmod>2025-10-28T11:00:36.951Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.caoayu.top/docs/2025-10/spring-collectionutils.html</loc>
+    <lastmod>2025-10-28T11:00:36.951Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.caoayu.top/docs/2025-10/spring-filecopyutils.html</loc>
+    <lastmod>2025-10-28T11:00:36.951Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.caoayu.top/docs/2025-10/spring-objectutils.html</loc>
+    <lastmod>2025-10-28T11:00:36.951Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.caoayu.top/docs/2025-10/spring-pathmatchingresourcepatternresolver.html</loc>
+    <lastmod>2025-10-28T11:00:36.952Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.caoayu.top/docs/2025-10/spring-reflectionutils.html</loc>
+    <lastmod>2025-10-28T11:00:36.952Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.caoayu.top/docs/2025-10/spring-resourceutils.html</loc>
+    <lastmod>2025-10-28T11:00:36.953Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.caoayu.top/docs/2025-10/spring-stringutils包.html</loc>
+    <lastmod>2025-10-28T11:00:36.953Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.caoayu.top/docs/2025-10/spring-webutils.html</loc>
+    <lastmod>2025-10-28T11:00:36.953Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.caoayu.top/docs/2025-10/通过telegram机器人发送通知消息.html</loc>
+    <lastmod>2025-10-28T11:00:36.953Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.caoayu.top/docs/2025-10/飞书机器人发送消息完全指南.html</loc>
+    <lastmod>2025-10-28T11:00:36.954Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://www.caoayu.top/docs/2025-09/javascript-async.html</loc>

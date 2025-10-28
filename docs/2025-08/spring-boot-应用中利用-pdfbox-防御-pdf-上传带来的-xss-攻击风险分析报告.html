@@ -24,8 +24,8 @@ Boot 应用中利用 PDFBox 防御 PDF 上传带来的 XSS 攻击风险分析报
 本报告详细阐述了在 Spring Boot Web 应用中，如何运用 Apache PDFBox
 库来检测并防范用户上传的 PDF
 文件中潜藏的跨站脚本（XSS）攻击。报告将深入探讨并提供多种解决方案的...">
-    <meta property="og:image" content="https://your-domain.com/images/og-image.png">
-    <meta property="og:url" content="https://your-domain.com/docs/2025-08/spring-boot-应用中利用-pdfbox-防御-pdf-上传带来的-xss-攻击风险分析报告.html">
+    <meta property="og:image" content="https://caoayu.top/images/og-image.png">
+    <meta property="og:url" content="https://caoayu.top/docs/2025-08/spring-boot-应用中利用-pdfbox-防御-pdf-上传带来的-xss-攻击风险分析报告.html">
     <meta property="og:site_name" content="AI 个人笔记">
     
     <!-- Twitter -->
@@ -37,10 +37,10 @@ Boot 应用中利用 PDFBox 防御 PDF 上传带来的 XSS 攻击风险分析报
 本报告详细阐述了在 Spring Boot Web 应用中，如何运用 Apache PDFBox
 库来检测并防范用户上传的 PDF
 文件中潜藏的跨站脚本（XSS）攻击。报告将深入探讨并提供多种解决方案的...">
-    <meta property="twitter:image" content="https://your-domain.com/images/og-image.png">
+    <meta property="twitter:image" content="https://caoayu.top/images/og-image.png">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://your-domain.com/docs/2025-08/spring-boot-应用中利用-pdfbox-防御-pdf-上传带来的-xss-攻击风险分析报告.html">
+    <link rel="canonical" href="https://caoayu.top/docs/2025-08/spring-boot-应用中利用-pdfbox-防御-pdf-上传带来的-xss-攻击风险分析报告.html">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -84,7 +84,7 @@ Boot 应用中利用 PDFBox 防御 PDF 上传带来的 XSS 攻击风险分析报
         }
 
         .header {
-            display: flex;
+            /* display: flex; */
             justify-content: space-between;
             align-items: center;
             padding: 20px 0;
@@ -346,12 +346,14 @@ Boot 应用中利用 PDFBox 防御 PDF 上传带来的 XSS 攻击风险分析报
             border-collapse: collapse;
             margin: 25px 0;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            table-layout: fixed; /* 添加这行以确保表格列宽正确 */
         }
 
         .post-content th, .post-content td {
             padding: 12px 15px;
             text-align: left;
             border: 1px solid #e1e1e1;
+            word-wrap: break-word; /* 确保长内容可以换行 */
         }
 
         .post-content th {
@@ -604,7 +606,7 @@ Boot 应用中利用 PDFBox 防御 PDF 上传带来的 XSS 攻击风险分析报
                 <header class="post-header">
                     <h1 class="post-title">spring-boot-应用中利用-pdfbox-防御-pdf-上传带来的-xss-攻击风险分析报告</h1>
                     <div class="post-meta">
-                        <div class="post-date">2025/8/18</div>
+                        <div class="post-date">2025/8/19</div>
                         <div class="post-category">2025-08</div>
                     </div>
                 </header>
@@ -876,7 +878,7 @@ AOP (面向切面编程)</strong></h4>
 <col style="width: 25%" />
 </colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th style="text-align: left;">方案</th>
 <th style="text-align: left;">优点</th>
 <th style="text-align: left;">缺点</th>
@@ -884,7 +886,7 @@ AOP (面向切面编程)</strong></h4>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td style="text-align: left;"><strong>工具类 (Utils)</strong></td>
 <td style="text-align: left;">实现简单，对现有代码影响最小</td>
 <td
@@ -892,7 +894,7 @@ style="text-align: left;">代码分散，不易于统一管理，存在重复调
 <td
 style="text-align: left;">针对个别、已存在的上传接口进行快速安全加固。</td>
 </tr>
-<tr>
+<tr class="even">
 <td style="text-align: left;"><strong>过滤器 (Filter)</strong></td>
 <td
 style="text-align: left;">全局性强，与业务逻辑完全解耦，配置简单</td>
@@ -900,7 +902,7 @@ style="text-align: left;">全局性强，与业务逻辑完全解耦，配置简
 <td
 style="text-align: left;">需要对应用中绝大多数文件上传实施统一安全策略的通用场景。</td>
 </tr>
-<tr>
+<tr class="odd">
 <td style="text-align: left;"><strong>拦截器 (Interceptor)</strong></td>
 <td style="text-align: left;">结合 Spring MVC 更紧密，可根据 Controller
 方法信息做更灵活的判断</td>
@@ -908,7 +910,7 @@ style="text-align: left;">需要对应用中绝大多数文件上传实施统一
 <td
 style="text-align: left;">需要基于请求的后端处理器（Handler）信息来动态决定是否执行验证的复杂场景。</td>
 </tr>
-<tr>
+<tr class="even">
 <td style="text-align: left;"><strong>AOP</strong></td>
 <td
 style="text-align: left;"><strong>无侵入性</strong>，代码优雅，高度可复用，可精确控制验证点</td>

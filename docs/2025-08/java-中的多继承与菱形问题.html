@@ -28,8 +28,8 @@ ApplicationContext ...">
 本文将从 C++ 的多继承问题谈起，深入剖析 Java
 为什么禁止类的多继承、接口如何优雅地支持多继承，并结合 Spring 框架中的
 ApplicationContext ...">
-    <meta property="og:image" content="https://your-domain.com/images/og-image.png">
-    <meta property="og:url" content="https://your-domain.com/docs/2025-08/java-中的多继承与菱形问题.html">
+    <meta property="og:image" content="https://caoayu.top/images/og-image.png">
+    <meta property="og:url" content="https://caoayu.top/docs/2025-08/java-中的多继承与菱形问题.html">
     <meta property="og:site_name" content="AI 个人笔记">
     
     <!-- Twitter -->
@@ -43,10 +43,10 @@ ApplicationContext ...">
 本文将从 C++ 的多继承问题谈起，深入剖析 Java
 为什么禁止类的多继承、接口如何优雅地支持多继承，并结合 Spring 框架中的
 ApplicationContext ...">
-    <meta property="twitter:image" content="https://your-domain.com/images/og-image.png">
+    <meta property="twitter:image" content="https://caoayu.top/images/og-image.png">
     
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://your-domain.com/docs/2025-08/java-中的多继承与菱形问题.html">
+    <link rel="canonical" href="https://caoayu.top/docs/2025-08/java-中的多继承与菱形问题.html">
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
@@ -90,7 +90,7 @@ ApplicationContext ...">
         }
 
         .header {
-            display: flex;
+            /* display: flex; */
             justify-content: space-between;
             align-items: center;
             padding: 20px 0;
@@ -352,12 +352,14 @@ ApplicationContext ...">
             border-collapse: collapse;
             margin: 25px 0;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            table-layout: fixed; /* 添加这行以确保表格列宽正确 */
         }
 
         .post-content th, .post-content td {
             padding: 12px 15px;
             text-align: left;
             border: 1px solid #e1e1e1;
+            word-wrap: break-word; /* 确保长内容可以换行 */
         }
 
         .post-content th {
