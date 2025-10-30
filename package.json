@@ -30,7 +30,8 @@
   "license": "MIT",
   "dependencies": {
     "cheerio": "^1.0.0-rc.12",
-    "marked": "^4.3.0"
+    "marked": "^4.3.0",
+    "qrcode": "^1.5.4"
   },
   "devDependencies": {
     "chokidar": "^4.0.3",

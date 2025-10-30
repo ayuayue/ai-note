@@ -3,20 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 个人笔记 - Dockerfiles</title>
+    <title>Dockerfiles - AI 个人笔记</title>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Dockerfiles 集合 - 包含各种常用Docker镜像的配置文件">
+    <meta name="keywords" content="Docker, Dockerfile, Docker Compose, 容器化, 部署">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Dockerfiles - AI 个人笔记">
+    <meta property="og:description" content="Dockerfiles 集合 - 包含各种常用Docker镜像的配置文件">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://your-domain.com/dockerfiles.html">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <style>
         /* Google Fonts for better typography */
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Roboto:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
         :root {
             --primary-color: #2c3e50;
             --secondary-color: #3498db;
             --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
             --bg-color: #f8f9fa;
             --text-color: #34495e;
             --border-color: #e9ecef;
             --card-bg: #ffffff;
             --hover-color: #f8f9fa;
+            --code-bg: #f4f4f4;
+            --docker-blue: #2496ed;
         }
 
         * {
@@ -35,7 +54,7 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
@@ -70,86 +89,287 @@
             flex-wrap: wrap;
         }
 
-        .back-home {
+        .nav-button {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: var(--secondary-color);
+            background: var(--docker-blue);
             color: white;
             padding: 10px 20px;
             border-radius: 30px;
             text-decoration: none;
             font-weight: 500;
             transition: background 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
         }
 
-        .back-home:hover {
-            background: #2980b9;
+        .nav-button:hover {
+            background: #1a7dd4;
         }
 
-        .warning {
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            color: #856404;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 30px;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-
-        .dockerfile-list {
+        .docker-stats {
             background: var(--card-bg);
             border-radius: 8px;
-            padding: 30px;
+            padding: 20px;
+            margin-bottom: 30px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             border: 1px solid var(--border-color);
         }
 
-        .dockerfile-list h2 {
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--docker-blue);
+            display: block;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .docker-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 25px;
+        }
+
+        .docker-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .docker-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .docker-card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .docker-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--docker-blue);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .docker-title {
             color: var(--primary-color);
-            font-size: 1.8rem;
-            margin-bottom: 25px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--border-color);
-        }
-
-        .directory-item {
-            padding: 15px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .directory-item:last-child {
-            border-bottom: none;
-        }
-
-        .directory-name {
             font-size: 1.3rem;
-            margin-bottom: 10px;
-            color: var(--primary-color);
+            margin-bottom: 5px;
         }
 
-        .file-list {
-            margin-left: 20px;
+        .docker-description {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .docker-files {
+            margin-top: 15px;
         }
 
         .file-item {
-            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            background: var(--hover-color);
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
         }
 
-        .file-link {
-            color: var(--secondary-color);
-            text-decoration: none;
-            font-family: 'Roboto Mono', monospace;
+        .file-item:hover {
+            background: #e9ecef;
         }
 
-        .file-link:hover {
-            text-decoration: underline;
+        .file-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            border-radius: 3px;
+            font-weight: bold;
         }
 
-        .empty-dir {
+        .file-docker {
+            background: #2496ed;
+            color: white;
+        }
+
+        .file-yml {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .file-md {
+            background: #6f42c1;
+            color: white;
+        }
+
+        .file-text {
+            background: #6c757d;
+            color: white;
+        }
+
+        .file-sql {
+            background: #fd7e14;
+            color: white;
+        }
+
+        .file-properties {
+            background: #20c997;
+            color: white;
+        }
+
+        .file-golang {
+            background: #00add8;
+            color: white;
+        }
+
+        .file-name {
+            flex: 1;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .file-path {
             color: #6c757d;
-            font-style: italic;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .code-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .code-modal.active {
+            display: flex;
+        }
+
+        .code-content {
+            background: var(--card-bg);
+            border-radius: 8px;
+            max-width: 90%;
+            max-height: 90%;
+            width: 90%;
+            height: 90%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--hover-color);
+        }
+
+        .code-title {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6c757d;
+            padding: 5px;
+        }
+
+        .close-btn:hover {
+            color: var(--accent-color);
+        }
+
+        .code-body {
+            flex: 1;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .code-body pre {
+            margin: 0;
+            padding: 20px;
+            background: var(--code-bg);
+            height: 100%;
+            overflow: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .code-body code {
+            white-space: pre-wrap;
+        }
+
+        .search-container {
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .search-input:focus {
+            border-color: var(--docker-blue);
+            box-shadow: 0 0 0 3px rgba(36, 150, 237, 0.2);
         }
 
         .footer {
@@ -182,21 +402,37 @@
             opacity: 1;
         }
 
+        /* Prompt Modal Styles */
+        .prompt-link {
+            background: var(--prompt-purple);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .prompt-link:hover {
+            background: #7c3aed;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
-            }
-            
-            .header {
-                padding: 20px 15px;
             }
             
             .header h1 {
                 font-size: 2rem;
             }
             
-            .dockerfile-list {
-                padding: 20px;
+            .docker-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .docker-card {
+                padding: 15px;
             }
             
             .header-actions {
@@ -209,68 +445,324 @@
 <body>
     <div class="container">
         <header class="header">
-            <h1>AI 个人笔记</h1>
-            <p>Dockerfiles 目录结构</p>
+            <h1>Dockerfiles 集合</h1>
+            <p>精选的 Docker 镜像配置文件，包含各种常用的开发环境和服务</p>
             
             <div class="header-actions">
-                <a href="index.html" class="back-home">
+                <a href="index.html" class="nav-button">
                     ← 返回首页
+                </a>
+                <a href="tools.html" class="nav-button">
+                    🛠️ 工具中心
+                </a>
+                <a href="prompts.html" class="nav-button prompts">
+                    📝 Prompt 集合
                 </a>
             </div>
         </header>
-        
-        <div class="warning">
-            ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+
+        <div class="docker-stats">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number" id="totalImages">8</span>
+                    <div class="stat-label">Docker 镜像</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="totalFiles">32</span>
+                    <div class="stat-label">配置文件</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="composeFiles">2</span>
+                    <div class="stat-label">Docker Compose</div>
+                </div>
+            </div>
         </div>
-        
-        <div class="dockerfile-list">
-            <h2>Dockerfiles 目录结构</h2>
-            
-            <div class="directory-item">
-                <div class="directory-name">dockerfiles/</div>
-                <div class="file-list">
-                    <div class="directory-item">
-                        <div class="directory-name">jdk8/</div>
-                        <div class="file-list">
-                            <div class="file-item empty-dir">（空目录）</div>
-                        </div>
+
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="搜索 Docker 镜像或文件..." id="searchInput">
+        </div>
+
+        <div class="docker-grid">
+            <!-- Docker Compose -->
+            <div class="docker-card" data-name="docker compose">
+                <div class="docker-card-header">
+                    <div class="docker-icon">🐳</div>
+                    <div>
+                        <div class="docker-title">Docker Compose</div>
+                        <div class="docker-description">多容器 Docker 应用编排</div>
                     </div>
-                    
-                    <div class="directory-item">
-                        <div class="directory-name">nacos2.3.2/</div>
-                        <div class="file-list">
-                            <div class="file-item">
-                                <a href="dockerfiles/nacos2.3.2/Dockerfile" class="file-link" target="_blank">Dockerfile</a>
-                            </div>
-                            <div class="file-item">
-                                <a href="dockerfiles/nacos2.3.2/application.properties" class="file-link" target="_blank">application.properties</a>
-                            </div>
-                            <div class="file-item">
-                                <a href="dockerfiles/nacos2.3.2/mysql-schema.sql" class="file-link" target="_blank">mysql-schema.sql</a>
-                            </div>
-                        </div>
+                </div>
+                <div class="docker-files">
+                    <div class="file-item" onclick="showFileContent('dockerfiles/docker-compose.yml', 'Docker Compose 配置', true)">
+                        <div class="file-icon file-yml">YML</div>
+                        <div class="file-name">docker-compose.yml</div>
                     </div>
-                    
-                    <div class="directory-item">
-                        <div class="directory-name">node20/</div>
-                        <div class="file-list">
-                            <div class="file-item">
-                                <a href="dockerfiles/node20/Dockerfile" class="file-link" target="_blank">Dockerfile</a>
-                            </div>
-                        </div>
+                    <div class="file-item" onclick="showFileContent('dockerfiles/docker-compose-with-mysql.yml', 'Docker Compose + MySQL', true)">
+                        <div class="file-icon file-yml">YML</div>
+                        <div class="file-name">docker-compose-with-mysql.yml</div>
                     </div>
+                    <div class="file-path">dockerfiles/</div>
+                </div>
+            </div>
+
+            <!-- JDK 8 -->
+            <div class="docker-card" data-name="jdk java">
+                <div class="docker-card-header">
+                    <div class="docker-icon">☕</div>
+                    <div>
+                        <div class="docker-title">JDK 8</div>
+                        <div class="docker-description">Java 开发环境</div>
+                    </div>
+                </div>
+                <div class="docker-files">
+                    <div class="file-item" onclick="showFileContent('dockerfiles/jdk8/Dockerfile', 'JDK 8 Dockerfile', true)">
+                        <div class="file-icon file-docker">D</div>
+                        <div class="file-name">Dockerfile</div>
+                    </div>
+                    <div class="file-path">dockerfiles/jdk8/</div>
+                </div>
+            </div>
+
+            <!-- Node.js 20 -->
+            <div class="docker-card" data-name="node javascript">
+                <div class="docker-card-header">
+                    <div class="docker-icon">🟢</div>
+                    <div>
+                        <div class="docker-title">Node.js 20</div>
+                        <div class="docker-description">JavaScript 运行环境</div>
+                    </div>
+                </div>
+                <div class="docker-files">
+                    <div class="file-item" onclick="showFileContent('dockerfiles/node20/Dockerfile', 'Node.js 20 Dockerfile', true)">
+                        <div class="file-icon file-docker">D</div>
+                        <div class="file-name">Dockerfile</div>
+                    </div>
+                    <div class="file-path">dockerfiles/node20/</div>
+                </div>
+            </div>
+
+            <!-- PHP 7.4 -->
+            <div class="docker-card" data-name="php">
+                <div class="docker-card-header">
+                    <div class="docker-icon">🐘</div>
+                    <div>
+                        <div class="docker-title">PHP 7.4</div>
+                        <div class="docker-description">PHP 开发环境</div>
+                    </div>
+                </div>
+                <div class="docker-files">
+                    <div class="file-item" onclick="showFileContent('dockerfiles/php74/Dockerfile', 'PHP 7.4 Dockerfile', true)">
+                        <div class="file-icon file-docker">D</div>
+                        <div class="file-name">Dockerfile</div>
+                    </div>
+                    <div class="file-path">dockerfiles/php74/</div>
+                </div>
+            </div>
+
+            <!-- Nginx -->
+            <div class="docker-card" data-name="nginx web server">
+                <div class="docker-card-header">
+                    <div class="docker-icon">🌐</div>
+                    <div>
+                        <div class="docker-title">Nginx</div>
+                        <div class="docker-description">高性能 Web 服务器</div>
+                    </div>
+                </div>
+                <div class="docker-files">
+                    <div class="file-item" onclick="showFileContent('dockerfiles/nginx/Dockerfile', 'Nginx Dockerfile', true)">
+                        <div class="file-icon file-docker">D</div>
+                        <div class="file-name">Dockerfile</div>
+                    </div>
+                    <div class="file-item" onclick="showFileContent('dockerfiles/nginx/nginx.conf', 'Nginx 配置', true)">
+                        <div class="file-icon file-text">CFG</div>
+                        <div class="file-name">nginx.conf</div>
+                    </div>
+                    <div class="file-item" onclick="showFileContent('dockerfiles/nginx/fastcgi.conf', 'FastCGI 配置', true)">
+                        <div class="file-icon file-text">CFG</div>
+                        <div class="file-name">fastcgi.conf</div>
+                    </div>
+                    <div class="file-path">dockerfiles/nginx/</div>
+                </div>
+            </div>
+
+            <!-- MySQL -->
+            <div class="docker-card" data-name="mysql database">
+                <div class="docker-card-header">
+                    <div class="docker-icon">🗄️</div>
+                    <div>
+                        <div class="docker-title">MySQL</div>
+                        <div class="docker-description">关系型数据库</div>
+                    </div>
+                </div>
+                <div class="docker-files">
+                    <div class="file-item" onclick="showFileContent('dockerfiles/mysql/Dockerfile', 'MySQL Dockerfile', true)">
+                        <div class="file-icon file-docker">D</div>
+                        <div class="file-name">Dockerfile</div>
+                    </div>
+                    <div class="file-path">dockerfiles/mysql/</div>
+                </div>
+            </div>
+
+            <!-- Nacos -->
+            <div class="docker-card" data-name="nacos spring cloud">
+                <div class="docker-card-header">
+                    <div class="docker-icon">🛡️</div>
+                    <div>
+                        <div class="docker-title">Nacos 2.3.2</div>
+                        <div class="docker-description">动态服务发现和配置管理</div>
+                    </div>
+                </div>
+                <div class="docker-files">
+                    <div class="file-item" onclick="showFileContent('dockerfiles/nacos2.3.2/Dockerfile', 'Nacos Dockerfile', true)">
+                        <div class="file-icon file-docker">D</div>
+                        <div class="file-name">Dockerfile</div>
+                    </div>
+                    <div class="file-item" onclick="showFileContent('dockerfiles/nacos2.3.2/application.properties', 'Nacos 配置', true)">
+                        <div class="file-icon file-properties">PROP</div>
+                        <div class="file-name">application.properties</div>
+                    </div>
+                    <div class="file-item" onclick="showFileContent('dockerfiles/nacos2.3.2/mysql-schema.sql', 'Nacos MySQL 初始化脚本', true)">
+                        <div class="file-icon file-sql">SQL</div>
+                        <div class="file-name">mysql-schema.sql</div>
+                    </div>
+                    <div class="file-path">dockerfiles/nacos2.3.2/</div>
+                </div>
+            </div>
+
+            <!-- XXL-JOB -->
+            <div class="docker-card" data-name="xxl-job scheduler">
+                <div class="docker-card-header">
+                    <div class="docker-icon">⏰</div>
+                    <div>
+                        <div class="docker-title">XXL-JOB</div>
+                        <div class="docker-description">分布式任务调度框架</div>
+                    </div>
+                </div>
+                <div class="docker-files">
+                    <div class="file-item" onclick="showFileContent('dockerfiles/xxl-job/Dockerfile', 'XXL-JOB Dockerfile', true)">
+                        <div class="file-icon file-docker">D</div>
+                        <div class="file-name">Dockerfile</div>
+                    </div>
+                    <div class="file-item" onclick="showFileContent('dockerfiles/xxl-job/db.sql', 'XXL-JOB 数据库脚本', true)">
+                        <div class="file-icon file-sql">SQL</div>
+                        <div class="file-name">db.sql</div>
+                    </div>
+                    <div class="file-path">dockerfiles/xxl-job/</div>
+                </div>
+            </div>
+
+            <!-- Camoufox -->
+            <div class="docker-card" data-name="camoufox browser automation">
+                <div class="docker-card-header">
+                    <div class="docker-icon">🦊</div>
+                    <div>
+                        <div class="docker-title">Camoufox</div>
+                        <div class="docker-description">浏览器自动化工具</div>
+                    </div>
+                </div>
+                <div class="docker-files">
+                    <div class="file-item" onclick="showFileContent('dockerfiles/camoufox/Dockerfile', 'Camoufox Dockerfile', true)">
+                        <div class="file-icon file-docker">D</div>
+                        <div class="file-name">Dockerfile</div>
+                    </div>
+                    <div class="file-item" onclick="showFileContent('dockerfiles/camoufox/supervisord.conf', 'Supervisor 配置', true)">
+                        <div class="file-icon file-text">CONF</div>
+                        <div class="file-name">supervisord.conf</div>
+                    </div>
+                    <div class="file-item" onclick="showFileContent('dockerfiles/camoufox/camoufox-py/readme.md', 'Camoufox Python 文档', true)">
+                        <div class="file-icon file-md">MD</div>
+                        <div class="file-name">readme.md</div>
+                    </div>
+                    <div class="file-item" onclick="showFileContent('dockerfiles/camoufox/golang/main.go', 'Camoufox Go 主程序', true)">
+                        <div class="file-icon file-golang">GO</div>
+                        <div class="file-name">main.go</div>
+                    </div>
+                    <div class="file-path">dockerfiles/camoufox/</div>
                 </div>
             </div>
         </div>
         
         <footer class="footer">
-            <p>AI 技术笔记 &copy; 2025 | 所有内容均由 AI 协助生成</p>
+            <p>Dockerfiles 集合 &copy; 2025 | 持续更新的容器化配置</p>
         </footer>
     </div>
     
     <a href="#" class="back-to-top" id="backToTop">↑</a>
+
+    <!-- 文件内容模态框 -->
+    <div class="code-modal" id="codeModal">
+        <div class="code-content">
+            <div class="code-header">
+                <div class="code-title" id="codeTitle">文件内容</div>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <div class="code-body">
+                <pre><code id="codeContent">加载中...</code></pre>
+            </div>
+        </div>
+    </div>
+
+    <!-- 直接链接到 Prompt 页面 -->
+    <div style="text-align: center; margin-top: 20px;">
+        <a href="prompts.html" class="prompt-link">
+            📝 查看所有 AI Prompt 模板
+        </a>
+    </div>
     
     <script>
+        // 搜索功能
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const dockerCards = document.querySelectorAll('.docker-card');
+            
+            dockerCards.forEach(card => {
+                const cardName = card.getAttribute('data-name').toLowerCase();
+                const files = card.querySelectorAll('.file-item');
+                let hasMatch = false;
+                
+                files.forEach(file => {
+                    const fileName = file.querySelector('.file-name').textContent.toLowerCase();
+                    if (fileName.includes(searchTerm)) {
+                        hasMatch = true;
+                    }
+                });
+                
+                if (cardName.includes(searchTerm) || hasMatch) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // 显示文件内容 - 直接打开文件
+        function showFileContent(filePath, title, isDockerfile = true) {
+            // 直接打开文件路径
+            window.open(filePath, '_blank');
+            
+            // 关闭 prompt 模态框
+            document.getElementById('promptModal').classList.remove('active');
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('codeModal').classList.remove('active');
+        }
+
+        // 点击模态框背景关闭
+        document.getElementById('codeModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // ESC 键关闭模态框
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
         // Back to top button
         const backToTopButton = document.getElementById('backToTop');
         
@@ -286,8 +778,8 @@
             e.preventDefault();
             window.scrollTo({top: 0, behavior: 'smooth'});
         });
-        
-        console.log("页面加载完成，Dockerfiles 页面已就绪");
+
+        console.log("Dockerfiles 页面已加载");
     </script>
 </body>
 </html>

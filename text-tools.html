@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文本处理工具 - AI 个人笔记</title>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="文本处理工具 - 字数统计、大小写转换、格式化等功能">
+    <meta name="keywords" content="文本处理, 字数统计, 大小写转换, 文本格式化">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="文本处理工具 - AI 个人笔记">
+    <meta property="og:description" content="文本处理工具 - 字数统计、大小写转换、格式化等功能">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://caoayu.top/text-tools.html">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <style>
+        /* Google Fonts for better typography */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Roboto:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --bg-color: #f8f9fa;
+            --text-color: #34495e;
+            --border-color: #e9ecef;
+            --card-bg: #ffffff;
+            --hover-color: #f8f9fa;
+            --code-bg: #f4f4f4;
+            --tool-blue: #007bff;
+            --tool-green: #28a745;
+            --tool-orange: #fd7e14;
+            --tool-red: #dc3545;
+            --tool-purple: #6f42c1;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', 'Noto Sans SC', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            color: #6c757d;
+            font-size: 1.1rem;
+            margin: 0 auto 20px;
+            max-width: 600px;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--tool-blue);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .nav-button:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .nav-button.tools {
+            background: var(--tool-purple);
+        }
+
+        .nav-button.tools:hover {
+            background: #5a32a3;
+        }
+
+        .tools-container {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .tool-section {
+            margin-bottom: 30px;
+        }
+
+        .tool-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .input-field, .textarea-field {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .textarea-field {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .input-field:focus, .textarea-field:focus {
+            outline: none;
+            border-color: var(--tool-blue);
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            background: var(--bg-color);
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-number {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--tool-blue);
+            display: block;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--tool-blue);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0056b3;
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: var(--tool-green);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+            transform: translateY(-1px);
+        }
+
+        .btn-warning {
+            background: var(--tool-orange);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e55a00;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #545b62;
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: var(--tool-red);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .result-box {
+            background: var(--code-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            margin-top: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            text-align: center;
+            color: var(--success-color);
+            border-color: var(--success-color);
+            display: none;
+        }
+
+        .result-box.show {
+            display: block;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 40px;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--secondary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .tools-container {
+                padding: 20px;
+            }
+            
+            .button-group {
+                justify-content: center;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .header-actions {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>文本处理工具</h1>
+            <p>强大的文本处理工具，支持字数统计、大小写转换、格式化和文件保存等功能</p>
+            
+            <div class="header-actions">
+                <a href="index.html" class="nav-button">
+                    ← 返回首页
+                </a>
+                <a href="tools.html" class="nav-button tools">
+                    🛠️ 工具中心
+                </a>
+            </div>
+        </header>
+
+        <div class="tools-container">
+            <!-- 文本输入区域 -->
+            <div class="tool-section">
+                <h3>📝 文本输入</h3>
+                <div class="input-group">
+                    <label class="input-label">文件保存名称（可选）</label>
+                    <input type="text" class="input-field" id="fileName" placeholder="例如：处理后的文档.txt">
+                </div>
+                
+                <div class="input-group">
+                    <label class="input-label">请输入要处理的文本</label>
+                    <textarea class="textarea-field" id="inputText" placeholder="请输入要处理的文本..." oninput="updateStats()"></textarea>
+                </div>
+            </div>
+
+            <!-- 字数统计 -->
+            <div class="tool-section">
+                <h3>📊 字数统计</h3>
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-item">
+                        <span class="stat-number" id="charCount">0</span>
+                        <div class="stat-label">字符数</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="charCountNoSpace">0</span>
+                        <div class="stat-label">字符数（不含空格）</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="wordCount">0</span>
+                        <div class="stat-label">单词数</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="lineCount">0</span>
+                        <div class="stat-label">行数</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="paragraphCount">0</span>
+                        <div class="stat-label">段落数</div>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number" id="byteCount">0</span>
+                        <div class="stat-label">字节数</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 大小写转换 -->
+            <div class="tool-section">
+                <h3>🔤 大小写转换</h3>
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="convertCase('upper')">转为大写</button>
+                    <button class="btn btn-primary" onclick="convertCase('lower')">转为小写</button>
+                    <button class="btn btn-primary" onclick="convertCase('capitalize')">首字母大写</button>
+                    <button class="btn btn-primary" onclick="convertCase('title')">标题格式</button>
+                    <button class="btn btn-secondary" onclick="convertCase('swap')">大小写互换</button>
+                </div>
+            </div>
+
+            <!-- 文本格式化 -->
+            <div class="tool-section">
+                <h3>✨ 文本格式化</h3>
+                <div class="button-group">
+                    <button class="btn btn-success" onclick="formatText('trim')">去除首尾空格</button>
+                    <button class="btn btn-success" onclick="formatText('removeExtraSpaces')">去除多余空格</button>
+                    <button class="btn btn-success" onclick="formatText('removeExtraLines')">去除多余空行</button>
+                    <button class="btn btn-success" onclick="formatText('removeEmptyLines')">删除空行</button>
+                    <button class="btn btn-warning" onclick="formatText('reverse')">文本反转</button>
+                </div>
+                <div class="button-group">
+                    <button class="btn btn-warning" onclick="formatText('sortLines')">按行排序</button>
+                    <button class="btn btn-warning" onclick="formatText('uniqueLines')">删除重复行</button>
+                    <button class="btn btn-warning" onclick="formatText('reverseLines')">行顺序反转</button>
+                    <button class="btn btn-danger" onclick="formatText('removeNumbers')">删除数字</button>
+                    <button class="btn btn-danger" onclick="formatText('removeSpecial')">删除特殊字符</button>
+                </div>
+            </div>
+
+            <!-- 文本操作 -->
+            <div class="tool-section">
+                <h3>🔧 文本操作</h3>
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="processText('countChars')">统计字符频率</button>
+                    <button class="btn btn-primary" onclick="processText('extractNumbers')">提取数字</button>
+                    <button class="btn btn-primary" onclick="processText('extractWords')">提取单词</button>
+                    <button class="btn btn-success" onclick="processText('addLineNumbers')">添加行号</button>
+                    <button class="btn btn-warning" onclick="processText('wrapLines')">换行处理</button>
+                </div>
+            </div>
+
+            <!-- 保存操作 -->
+            <div class="tool-section">
+                <h3>💾 保存文本</h3>
+                <div class="button-group">
+                    <button class="btn btn-success" onclick="saveToFile()">💾 保存文件</button>
+                    <button class="btn btn-secondary" onclick="copyToClipboard()">📋 复制到剪贴板</button>
+                    <button class="btn btn-danger" onclick="clearAll()">🗑️ 清空所有</button>
+                </div>
+                <div class="result-box" id="actionResult"></div>
+            </div>
+        </div>
+        
+        <footer class="footer">
+            <p>文本处理工具 &copy; 2025 | 让文本处理更简单高效</p>
+        </footer>
+    </div>
+    
+    <a href="#" class="back-to-top" id="backToTop">↑</a>
+    
+    <script>
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // Back to top button
+            const backToTopButton = document.getElementById('backToTop');
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopButton.classList.add('visible');
+                } else {
+                    backToTopButton.classList.remove('visible');
+                }
+            });
+            
+            backToTopButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            });
+
+            updateStats();
+            console.log('文本处理工具已加载');
+        });
+
+        // 更新字数统计
+        function updateStats() {
+            const text = document.getElementById('inputText').value;
+            
+            // 基本统计
+            document.getElementById('charCount').textContent = text.length;
+            document.getElementById('charCountNoSpace').textContent = text.replace(/\s/g, '').length;
+            document.getElementById('byteCount').textContent = new Blob([text]).size;
+            document.getElementById('lineCount').textContent = text.split('\n').length;
+            
+            // 段落数（以空行分隔）
+            const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim().length > 0);
+            document.getElementById('paragraphCount').textContent = paragraphs.length;
+            
+            // 单词数（以空格分隔）
+            const words = text.trim().split(/\s+/).filter(w => w.length > 0);
+            document.getElementById('wordCount').textContent = words.length;
+        }
+
+        // 大小写转换
+        function convertCase(type) {
+            const textArea = document.getElementById('inputText');
+            let text = textArea.value;
+            
+            switch(type) {
+                case 'upper':
+                    text = text.toUpperCase();
+                    break;
+                case 'lower':
+                    text = text.toLowerCase();
+                    break;
+                case 'capitalize':
+                    text = text.replace(/\b\w/g, l => l.toUpperCase());
+                    break;
+                case 'title':
+                    text = text.toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
+                    break;
+                case 'swap':
+                    text = text.split('').map(c => 
+                        c === c.toUpperCase() && c !== c.toLowerCase() ? 
+                        c.toLowerCase() : 
+                        c.toUpperCase()
+                    ).join('');
+                    break;
+            }
+            
+            textArea.value = text;
+            updateStats();
+            showResult('大小写转换完成！');
+        }
+
+        // 文本格式化
+        function formatText(type) {
+            const textArea = document.getElementById('inputText');
+            let text = textArea.value;
+            
+            switch(type) {
+                case 'trim':
+                    text = text.trim();
+                    break;
+                case 'removeExtraSpaces':
+                    text = text.replace(/\s+/g, ' ').trim();
+                    break;
+                case 'removeExtraLines':
+                    text = text.replace(/\n\s*\n/g, '\n').trim();
+                    break;
+                case 'removeEmptyLines':
+                    text = text.split('\n').filter(line => line.trim().length > 0).join('\n');
+                    break;
+                case 'reverse':
+                    text = text.split('').reverse().join('');
+                    break;
+                case 'sortLines':
+                    text = text.split('\n').sort().join('\n');
+                    break;
+                case 'uniqueLines':
+                    text = [...new Set(text.split('\n'))].join('\n');
+                    break;
+                case 'reverseLines':
+                    text = text.split('\n').reverse().join('\n');
+                    break;
+                case 'removeNumbers':
+                    text = text.replace(/\d+/g, '');
+                    break;
+                case 'removeSpecial':
+                    text = text.replace(/[^\w\s]/g, '');
+                    break;
+            }
+            
+            textArea.value = text;
+            updateStats();
+            showResult('文本格式化完成！');
+        }
+
+        // 文本处理
+        function processText(type) {
+            const textArea = document.getElementById('inputText');
+            const text = textArea.value;
+            
+            switch(type) {
+                case 'countChars':
+                    const charCount = {};
+                    for (let char of text) {
+                        charCount[char] = (charCount[char] || 0) + 1;
+                    }
+                    const result = Object.entries(charCount)
+                        .sort((a, b) => b[1] - a[1])
+                        .slice(0, 20)
+                        .map(([char, count]) => `${char}: ${count}`)
+                        .join('\n');
+                    showResult('字符频率统计：\n' + result);
+                    break;
+                case 'extractNumbers':
+                    const numbers = text.match(/\d+/g);
+                    if (numbers) {
+                        textArea.value = numbers.join('\n');
+                        updateStats();
+                        showResult('数字提取完成！');
+                    } else {
+                        showResult('未找到数字');
+                    }
+                    break;
+                case 'extractWords':
+                    const words = text.toLowerCase().match(/\b\w+\b/g) || [];
+                    textArea.value = [...new Set(words)].join('\n');
+                    updateStats();
+                    showResult('单词提取完成！');
+                    break;
+                case 'addLineNumbers':
+                    const lines = text.split('\n');
+                    const numberedLines = lines.map((line, index) => 
+                        `${index + 1}. ${line}`
+                    );
+                    textArea.value = numberedLines.join('\n');
+                    updateStats();
+                    showResult('行号添加完成！');
+                    break;
+                case 'wrapLines':
+                    textArea.value = text.split('\n').join(' ');
+                    updateStats();
+                    showResult('换行处理完成！');
+                    break;
+            }
+        }
+
+        // 保存到文件
+        function saveToFile() {
+            const content = document.getElementById('inputText').value;
+            let filename = document.getElementById('fileName').value.trim();
+            
+            if (!content) {
+                alert('请输入要保存的文本内容');
+                return;
+            }
+            
+            // 如果文件名为空，使用当前时间
+            if (!filename) {
+                const now = new Date();
+                const timestamp = now.getFullYear() + '-' + 
+                    String(now.getMonth() + 1).padStart(2, '0') + '-' + 
+                    String(now.getDate()).padStart(2, '0') + '_' +
+                    String(now.getHours()).padStart(2, '0') + '-' +
+                    String(now.getMinutes()).padStart(2, '0') + '-' +
+                    String(now.getSeconds()).padStart(2, '0');
+                filename = `text_${timestamp}.txt`;
+            }
+            
+            // 确保文件有扩展名
+            if (!filename.includes('.')) {
+                filename += '.txt';
+            }
+            
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showResult(`文件 "${filename}" 下载成功！`);
+        }
+
+        // 复制到剪贴板
+        function copyToClipboard() {
+            const content = document.getElementById('inputText').value;
+            
+            if (!content) {
+                showResult('没有内容可复制');
+                return;
+            }
+            
+            navigator.clipboard.writeText(content).then(() => {
+                showResult('内容已复制到剪贴板！');
+            }).catch(() => {
+                showResult('复制失败，请手动复制');
+            });
+        }
+
+        // 清空所有
+        function clearAll() {
+            if (confirm('确定要清空所有内容吗？')) {
+                document.getElementById('fileName').value = '';
+                document.getElementById('inputText').value = '';
+                updateStats();
+                showResult('已清空所有内容');
+            }
+        }
+
+        // 显示结果
+        function showResult(message) {
+            const resultBox = document.getElementById('actionResult');
+            resultBox.textContent = message;
+            resultBox.classList.add('show');
+            
+            // 3秒后自动隐藏结果
+            setTimeout(() => {
+                resultBox.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

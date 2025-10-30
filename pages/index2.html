@@ -42,6 +42,7 @@
             --border-color: #e9ecef;
             --card-bg: #ffffff;
             --hover-color: #f8f9fa;
+            --tool-blue: #007bff;
         }
 
         * {
@@ -95,42 +96,25 @@
             flex-wrap: wrap;
         }
 
-        .search-container {
-            position: relative;
-            max-width: 500px;
-            width: 100%;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 12px 20px;
-            border: 1px solid var(--border-color);
-            border-radius: 30px;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.3s;
-        }
-
-        .search-input:focus {
-            border-color: var(--secondary-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-        }
-
-        .github-link {
+        .tools-button {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: #24292e;
+            background: var(--tool-blue);
             color: white;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 30px;
             text-decoration: none;
-            font-weight: 500;
-            transition: background 0.3s;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
         }
 
-        .github-link:hover {
-            background: #000;
+        .tools-button:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
         }
 
         .warning {
@@ -337,11 +321,11 @@
             <p>记录 AI 协助解决的各种技术问题和学习笔记</p>
             
             <div class="header-actions">
-                <div class="search-container">
-                    <input type="text" class="search-input" placeholder="搜索技术笔记..." id="searchInput">
-                </div>
-                <a href="overview.html" class="github-link">
-                    查看归档
+                <a href="tools.html" class="tools-button">
+                    🛠️ 工具
+                </a>
+                <a href="overview.html" class="tools-button">
+                    📚 归档
                 </a>
             </div>
         </header>
@@ -596,23 +580,6 @@
     <a href="#" class="back-to-top" id="backToTop">↑</a>
     
     <script>
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const feedItems = document.querySelectorAll('.feed-item');
-            
-            feedItems.forEach(item => {
-                const title = item.querySelector('.feed-item-title').textContent.toLowerCase();
-                const content = item.querySelector('.feed-item-content').textContent.toLowerCase();
-                
-                if (title.includes(searchTerm) || content.includes(searchTerm)) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        });
-        
         // Back to top button
         const backToTopButton = document.getElementById('backToTop');
         

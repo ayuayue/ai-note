@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Prompt 集合 - AI 个人笔记</title>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="AI Prompt 集合 - 包含各种AI助手对话模板">
+    <meta name="keywords" content="AI, Prompt, 对话模板, 智能助手, 聊天">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="AI Prompt 集合 - AI 个人笔记">
+    <meta property="og:description" content="AI Prompt 集合 - 包含各种AI助手对话模板">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://caoayu.top/prompts.html">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <style>
+        /* Google Fonts for better typography */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Roboto:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --bg-color: #f8f9fa;
+            --text-color: #34495e;
+            --border-color: #e9ecef;
+            --card-bg: #ffffff;
+            --hover-color: #f8f9fa;
+            --code-bg: #f4f4f4;
+            --prompt-purple: #8b5cf6;
+            --prompt-blue: #3b82f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', 'Noto Sans SC', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            color: #6c757d;
+            font-size: 1.1rem;
+            max-width: 800px;
+            margin: 0 auto 20px;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--prompt-purple);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .nav-button:hover {
+            background: #7c3aed;
+        }
+
+        .nav-button.tools {
+            background: var(--prompt-blue);
+        }
+
+        .nav-button.tools:hover {
+            background: #2563eb;
+        }
+
+        .prompt-stats {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--prompt-purple);
+            display: block;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .prompt-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 25px;
+        }
+
+        .prompt-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .prompt-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .prompt-card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .prompt-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--prompt-purple);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .prompt-title {
+            color: var(--primary-color);
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+
+        .prompt-description {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .prompt-files {
+            margin-top: 15px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            background: var(--hover-color);
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .file-item:hover {
+            background: #e9ecef;
+        }
+
+        .file-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            border-radius: 3px;
+            font-weight: bold;
+            background: #6f42c1;
+            color: white;
+        }
+
+        .file-name {
+            flex: 1;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+        }
+
+        .file-path {
+            color: #6c757d;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .code-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .code-modal.active {
+            display: flex;
+        }
+
+        .code-content {
+            background: var(--card-bg);
+            border-radius: 8px;
+            max-width: 90%;
+            max-height: 90%;
+            width: 90%;
+            height: 90%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            background: var(--hover-color);
+        }
+
+        .code-title {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6c757d;
+            padding: 5px;
+        }
+
+        .close-btn:hover {
+            color: var(--accent-color);
+        }
+
+        .code-body {
+            flex: 1;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .code-body pre {
+            margin: 0;
+            padding: 20px;
+            background: var(--code-bg);
+            height: 100%;
+            overflow: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+
+        .code-body code {
+            white-space: pre-wrap;
+        }
+
+        .search-container {
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+            margin: 0 auto;
+            display: block;
+        }
+
+        .search-input:focus {
+            border-color: var(--prompt-purple);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 40px;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--secondary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .prompt-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .prompt-card {
+                padding: 15px;
+            }
+            
+            .header-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>AI Prompt 集合</h1>
+            <p>精选的 AI 对话 Prompt 模板，包含各种不同风格的智能助手配置</p>
+            
+            <div class="header-actions">
+                <a href="index.html" class="nav-button">
+                    ← 返回首页
+                </a>
+                <a href="tools.html" class="nav-button tools">
+                    🛠️ 工具中心
+                </a>
+                <a href="dockerfiles.html" class="nav-button">
+                    🐳 Dockerfiles
+                </a>
+            </div>
+        </header>
+
+        <div class="prompt-stats">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number">4</span>
+                    <div class="stat-label">Prompt 模板</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">4</span>
+                    <div class="stat-label">Markdown 文件</div>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">100%</span>
+                    <div class="stat-label">免费使用</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="搜索 Prompt 模板..." id="searchInput">
+        </div>
+
+        <div class="prompt-grid">
+            <!-- 智能助手模式 -->
+            <div class="prompt-card" data-name="智能助手 adaptive thinking">
+                <div class="prompt-card-header">
+                    <div class="prompt-icon">🧠</div>
+                    <div>
+                        <div class="prompt-title">智能助手模式</div>
+                        <div class="prompt-description">自适应三阶段工作流程，强大推理分析能力</div>
+                    </div>
+                </div>
+                <div class="prompt-files">
+                    <div class="file-item" onclick="showFileContent('promot/智能.md', '智能助手模式')">
+                        <div class="file-icon">MD</div>
+                        <div class="file-name">智能.md</div>
+                    </div>
+                    <div class="file-path">promot/</div>
+                </div>
+            </div>
+
+            <!-- 智能暴躁老哥混合体 -->
+            <div class="prompt-card" data-name="智能暴躁老哥混合体 intelligent">
+                <div class="prompt-card-header">
+                    <div class="prompt-icon">🔥</div>
+                    <div>
+                        <div class="prompt-title">智能暴躁老哥混合体</div>
+                        <div class="prompt-description">智能分析 + 直接沟通，高效专业</div>
+                    </div>
+                </div>
+                <div class="prompt-files">
+                    <div class="file-item" onclick="showFileContent('promot/智能暴躁老哥混合体.md', '智能暴躁老哥混合体')">
+                        <div class="file-icon">MD</div>
+                        <div class="file-name">智能暴躁老哥混合体.md</div>
+                    </div>
+                    <div class="file-path">promot/</div>
+                </div>
+            </div>
+
+            <!-- 暴躁老哥模式 -->
+            <div class="prompt-card" data-name="暴躁老哥 direct efficient">
+                <div class="prompt-card-header">
+                    <div class="prompt-icon">😤</div>
+                    <div>
+                        <div class="prompt-title">暴躁老哥模式</div>
+                        <div class="prompt-description">直接高效，不拐弯抹角，直击问题核心</div>
+                    </div>
+                </div>
+                <div class="prompt-files">
+                    <div class="file-item" onclick="showFileContent('promot/暴躁老哥.md', '暴躁老哥模式')">
+                        <div class="file-icon">MD</div>
+                        <div class="file-name">暴躁老哥.md</div>
+                    </div>
+                    <div class="file-path">promot/</div>
+                </div>
+            </div>
+
+            <!-- 超级暴躁老哥版 -->
+            <div class="prompt-card" data-name="超级暴躁老哥 extreme efficient">
+                <div class="prompt-card-header">
+                    <div class="prompt-icon">💀</div>
+                    <div>
+                        <div class="prompt-title">超级暴躁老哥版</div>
+                        <div class="prompt-description">极致高效，零客套，核心方案直达</div>
+                    </div>
+                </div>
+                <div class="prompt-files">
+                    <div class="file-item" onclick="showFileContent('promot/超级暴躁老哥版.md', '超级暴躁老哥版')">
+                        <div class="file-icon">MD</div>
+                        <div class="file-name">超级暴躁老哥版.md</div>
+                    </div>
+                    <div class="file-path">promot/</div>
+                </div>
+            </div>
+        </div>
+        
+        <footer class="footer">
+            <p>AI Prompt 集合 &copy; 2025 | 智能对话，无限可能</p>
+        </footer>
+    </div>
+    
+    <a href="#" class="back-to-top" id="backToTop">↑</a>
+
+    <!-- 文件内容模态框 -->
+    <div class="code-modal" id="codeModal">
+        <div class="code-content">
+            <div class="code-header">
+                <div class="code-title" id="codeTitle">文件内容</div>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <div class="code-body">
+                <pre><code id="codeContent">加载中...</code></pre>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // 搜索功能
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const promptCards = document.querySelectorAll('.prompt-card');
+            
+            promptCards.forEach(card => {
+                const cardName = card.getAttribute('data-name').toLowerCase();
+                const files = card.querySelectorAll('.file-item');
+                let hasMatch = false;
+                
+                files.forEach(file => {
+                    const fileName = file.querySelector('.file-name').textContent.toLowerCase();
+                    if (fileName.includes(searchTerm)) {
+                        hasMatch = true;
+                    }
+                });
+                
+                if (cardName.includes(searchTerm) || hasMatch) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // 显示文件内容 - 直接打开文件
+        function showFileContent(filePath, title) {
+            // 直接打开文件路径
+            window.open(filePath, '_blank');
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('codeModal').classList.remove('active');
+        }
+
+        // 点击模态框背景关闭
+        document.getElementById('codeModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // ESC 键关闭模态框
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Back to top button
+        const backToTopButton = document.getElementById('backToTop');
+        
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+            } else {
+                backToTopButton.classList.remove('visible');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        });
+
+        console.log("Prompt 集合页面已加载");
+    </script>
+</body>
+</html>

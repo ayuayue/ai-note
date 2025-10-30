@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工具中心 - AI 个人笔记</title>
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="工具中心 - Dockerfiles、Prompt 集合和在线工具">
+    <meta name="keywords" content="工具, Docker, Prompt, 在线工具">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="工具中心 - AI 个人笔记">
+    <meta property="og:description" content="工具中心 - Dockerfiles、Prompt 集合和在线工具">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://caoayu.top/tools.html">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <style>
+        /* Google Fonts for better typography */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Roboto:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --bg-color: #f8f9fa;
+            --text-color: #34495e;
+            --border-color: #e9ecef;
+            --card-bg: #ffffff;
+            --hover-color: #f8f9fa;
+            --code-bg: #f4f4f4;
+            --tool-blue: #007bff;
+            --tool-green: #28a745;
+            --tool-orange: #fd7e14;
+            --tool-red: #dc3545;
+            --tool-purple: #6f42c1;
+            --docker-blue: #2496ed;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', 'Noto Sans SC', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .header p {
+            color: #6c757d;
+            font-size: 1.1rem;
+            margin: 0 auto 20px;
+            max-width: 600px;
+        }
+
+        .header-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--tool-blue);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .nav-button:hover {
+            background: #0056b3;
+            transform: translateY(-2px);
+        }
+
+        .nav-button.dockerfiles {
+            background: var(--docker-blue);
+        }
+
+        .nav-button.dockerfiles:hover {
+            background: #1a7dd4;
+        }
+
+        .nav-button.prompts {
+            background: var(--tool-purple);
+        }
+
+        .nav-button.prompts:hover {
+            background: #5a32a3;
+        }
+
+        .nav-button.text-tools {
+            background: var(--tool-green);
+        }
+
+        .nav-button.text-tools:hover {
+            background: #218838;
+        }
+
+        .nav-button.online-tools {
+            background: var(--tool-orange);
+        }
+
+        .nav-button.online-tools:hover {
+            background: #e55a00;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .tool-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            text-align: center;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .tool-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .tool-title {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .tool-description {
+            color: #6c757d;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        .tool-link {
+            display: inline-block;
+            background: var(--secondary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .tool-link:hover {
+            background: #2980b9;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 20px;
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 40px;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--secondary-color);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .tools-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .tool-card {
+                padding: 20px;
+            }
+            
+            .header-actions {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>工具中心</h1>
+            <p>集成各种开发工具和实用功能，提高开发效率</p>
+            
+            <div class="header-actions">
+                <a href="index.html" class="nav-button">
+                    ← 返回首页
+                </a>
+                <a href="dockerfiles.html" class="nav-button dockerfiles">
+                    🐳 Dockerfiles
+                </a>
+                <a href="prompts.html" class="nav-button prompts">
+                    📝 Prompt 集合
+                </a>
+                <button onclick="window.open('https://ctool.dev/tool.html#/tool/json', '_blank', 'noopener,noreferrer')" class="nav-button online-tools">
+                    🛠️ 在线工具
+                </button>
+                <a href="text-tools.html" class="nav-button text-tools">
+                    📄 文本处理
+                </a>
+            </div>
+        </header>
+
+        <div class="tools-grid">
+            <!-- Dockerfiles 工具卡片 -->
+            <div class="tool-card">
+                <div class="tool-icon">🐳</div>
+                <div class="tool-title">Dockerfiles 集合</div>
+                <div class="tool-description">
+                    精选的 Docker 镜像配置文件，包含各种常用的开发环境和服务配置。
+                </div>
+                <a href="dockerfiles.html" class="tool-link">查看 Dockerfiles</a>
+            </div>
+
+            <!-- Prompt 集合卡片 -->
+            <div class="tool-card">
+                <div class="tool-icon">📝</div>
+                <div class="tool-title">Prompt 集合</div>
+                <div class="tool-description">
+                    AI Prompt 模板集合，包含智能助手、暴躁老哥等多种风格的对话模板。
+                </div>
+                <a href="prompts.html" class="tool-link">查看 Prompts</a>
+            </div>
+
+            <!-- 文本处理工具卡片 -->
+            <div class="tool-card">
+                <div class="tool-icon">📄</div>
+                <div class="tool-title">文本处理工具</div>
+                <div class="tool-description">
+                    强大的文本处理工具，支持字数统计、大小写转换、格式化和文件保存等功能。
+                </div>
+                <a href="text-tools.html" class="tool-link">开始处理</a>
+            </div>
+
+            <!-- 在线工具集合卡片 -->
+            <div class="tool-card">
+                <div class="tool-icon">🛠️</div>
+                <div class="tool-title">在线工具集合</div>
+                <div class="tool-description">
+                    外部在线工具集合，包含 JSON 格式化、编码转换、时间处理等实用工具。
+                </div>
+                <a href="https://ctool.dev/tool.html#/tool/json" target="_blank" class="tool-link" rel="noopener noreferrer">访问工具</a>
+            </div>
+
+            <!-- 项目归档卡片 -->
+            <div class="tool-card">
+                <div class="tool-icon">📁</div>
+                <div class="tool-title">项目归档</div>
+                <div class="tool-description">
+                    按时间分类的技术文档和项目记录，方便查阅和参考。
+                </div>
+                <a href="overview.html" class="tool-link">查看归档</a>
+            </div>
+        </div>
+        
+        <footer class="footer">
+            <p>工具中心 &copy; 2025 | 提高开发效率，优化工作流程</p>
+        </footer>
+    </div>
+    
+    <a href="#" class="back-to-top" id="backToTop">↑</a>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Back to top button
+            const backToTopButton = document.getElementById('backToTop');
+            
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 300) {
+                    backToTopButton.classList.add('visible');
+                } else {
+                    backToTopButton.classList.remove('visible');
+                }
+            });
+            
+            backToTopButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            });
+
+            console.log('工具中心已加载');
+        });
+    </script>
+</body>
+</html>
