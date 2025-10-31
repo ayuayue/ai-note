@@ -231,7 +231,7 @@ function main() {
                     let pageLink;
                     if (i === 1) {
                         // First page is always index.html in root directory
-                        pageLink = page === 2 ? '../index.html' : 'index.html';
+                        pageLink = page > 1 ? '../index.html' : 'index.html';
                     } else {
                         // Other pages are in pages directory
                         // If we're on the first page, links to other pages need to go to pages/ directory
@@ -286,6 +286,16 @@ function main() {
         
         // Add SEO meta tags
         updatedContent = updatedContent.replace('</title>', '</title>' + seoMetaTags);
+        
+        // Fix paths for pages in subdirectories
+        if (page > 1) {
+            // Fix logo path
+            updatedContent = updatedContent.replace('src="img/logo.png"', 'src="../img/logo.png"');
+            // Fix tools button path
+            updatedContent = updatedContent.replace('href="tools.html"', 'href="../tools.html"');
+            // Fix overview button path
+            updatedContent = updatedContent.replace('href="overview.html"', 'href="../overview.html"');
+        }
         
         // Replace pagination placeholder
         const paginationPlaceholder = '<div class="pagination">\n            <a href="#" class="current">1</a>\n            <a href="#">2</a>\n            <a href="#">3</a>\n            <a href="#">下一页 →</a>\n        </div>';
