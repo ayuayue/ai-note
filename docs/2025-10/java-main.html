@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Java中的多个Main方法：解构项目入口与依赖共享</title>
+    <title>Java中的多个Main方法：解构项目入口与依赖共享</title>
     <!-- SEO Meta Tags -->
     <meta name="description" content="Java中的多个Main方法：解构项目入口与依赖共享
 开头摘要
@@ -14,7 +14,7 @@
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article">
-    <meta property="og:title" content="Java中的多个Main方法：解构项目入口与依赖共享">
+    <meta property="og:title" content="Java中的多个Main方法：解构项目入口与依赖共享">
     <meta property="og:description" content="Java中的多个Main方法：解构项目入口与依赖共享
 开头摘要
 本文深入探讨了Java项目中关于main方法的两个核心问题：一个项目能否拥有多个main方法，以及这些方法如何共享依赖。文章旨在帮助Java初学者和中级开发者彻底理解程序入口的本质、JVM的执行机制以及类路径的共享原理，从而更灵活地组织项目结构、进行代...">
@@ -24,7 +24,7 @@
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="Java中的多个Main方法：解构项目入口与依赖共享">
+    <meta property="twitter:title" content="Java中的多个Main方法：解构项目入口与依赖共享">
     <meta property="twitter:description" content="Java中的多个Main方法：解构项目入口与依赖共享
 开头摘要
 本文深入探讨了Java项目中关于main方法的两个核心问题：一个项目能否拥有多个main方法，以及这些方法如何共享依赖。文章旨在帮助Java初学者和中级开发者彻底理解程序入口的本质、JVM的执行机制以及类路径的共享原理，从而更灵活地组织项目结构、进行代...">
@@ -595,7 +595,7 @@
             
             <article class="post">
                 <header class="post-header">
-                    <h1 class="post-title">Java中的多个Main方法：解构项目入口与依赖共享</h1>
+                    <h1 class="post-title">Java中的多个Main方法：解构项目入口与依赖共享</h1>
                     <div class="post-meta">
                         <div class="post-date">2025/10/31</div>
                         <div class="post-category">2025-10</div>
@@ -838,7 +838,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="
 class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">&quot;Hello, World! (唯一的入口)&quot;</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout<span class="op"> &lt;&lt;</span> <span class="st">&quot;Hello, World! (唯一的入口)&quot;</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p><strong>Go</strong></p>
@@ -871,7 +871,7 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a h
 <col style="width: 25%" />
 </colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th style="text-align: left;">语言</th>
 <th style="text-align: left;">入口机制</th>
 <th style="text-align: left;">优点</th>
@@ -879,26 +879,26 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a h
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td style="text-align: left;"><strong>Java</strong></td>
 <td style="text-align: left;">类中的静态方法</td>
 <td style="text-align: left;">面向对象，高度灵活，支持多入口</td>
 <td style="text-align: left;">对于简单脚本略显繁琐</td>
 </tr>
-<tr>
+<tr class="even">
 <td style="text-align: left;"><strong>C/C++</strong></td>
 <td style="text-align: left;">全局函数</td>
 <td style="text-align: left;">简单，性能高</td>
 <td
 style="text-align: left;">不够灵活，难以在一个项目中组织多个可执行程序</td>
 </tr>
-<tr>
+<tr class="odd">
 <td style="text-align: left;"><strong>Go</strong></td>
 <td style="text-align: left;"><code>main</code>包中的函数</td>
 <td style="text-align: left;">与模块化结合良好，编译部署简单</td>
 <td style="text-align: left;">依赖包结构，不如Java类级别灵活</td>
 </tr>
-<tr>
+<tr class="even">
 <td style="text-align: left;"><strong>Python</strong></td>
 <td style="text-align: left;">脚本约定</td>
 <td style="text-align: left;">极其灵活，代码复用性强</td>
