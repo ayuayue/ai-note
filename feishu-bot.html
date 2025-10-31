@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>飞书机器人 - AI 个人笔记工具</title>
+    <style>
+        /* Google Fonts for better typography */
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Roboto:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --bg-color: #f8f9fa;
+            --text-color: #34495e;
+            --border-color: #e9ecef;
+            --card-bg: #ffffff;
+            --hover-color: #f8f9fa;
+            --code-bg: #f4f4f4;
+            --feishu-blue: #007dff;
+            --feishu-light-blue: #4299ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', 'Noto Sans SC', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 30px 20px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .header h1 {
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .header p {
+            color: #6c757d;
+            font-size: 1.1rem;
+            margin: 0 auto 20px;
+            max-width: 600px;
+        }
+
+        .nav-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--secondary-color);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .nav-button:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .feishu-form {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--feishu-blue);
+            box-shadow: 0 0 0 3px rgba(0, 125, 255, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .help-text {
+            font-size: 0.9rem;
+            color: #6c757d;
+            margin-top: 5px;
+            line-height: 1.4;
+        }
+
+        .help-text code {
+            background: var(--code-bg);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+        }
+
+        .message-type-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid var(--border-color);
+        }
+
+        .message-type-tab {
+            flex: 1;
+            padding: 12px 20px;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .message-type-tab.active {
+            background: var(--feishu-blue);
+            color: white;
+        }
+
+        .message-type-content {
+            display: none;
+        }
+
+        .message-type-content.active {
+            display: block;
+        }
+
+        .send-button {
+            background: var(--feishu-blue);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .send-button:hover {
+            background: var(--feishu-light-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 125, 255, 0.3);
+        }
+
+        .send-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .status-message {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .instructions {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .instructions h3 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .instructions ol {
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .instructions ul {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+
+        .code-block {
+            background: var(--code-bg);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: 'JetBrains Mono', monospace;
+            overflow-x: auto;
+        }
+
+        .preview-button {
+            background: var(--success-color);
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .preview-button:hover {
+            background: #229954;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .feishu-form {
+                padding: 20px;
+            }
+
+            .message-type-tabs {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>
+                📋 飞书机器人
+            </h1>
+            <p>通过飞书机器人 API 发送消息到群聊或个人</p>
+            
+            <a href="tools.html" class="nav-button">
+                ← 返回工具中心
+            </a>
+        </header>
+
+        <div class="instructions">
+            <h3>📋 使用说明</h3>
+            <ol>
+                <li><strong>创建飞书机器人：</strong>
+                    <ul>
+                        <li>打开飞书电脑版或网页版</li>
+                        <li>进入群聊设置 → 群机器人 → 添加机器人 → 自定义机器人</li>
+                        <li>设置机器人名称和描述，获取 Webhook URL</li>
+                    </ul>
+                </li>
+                <li><strong>获取 Webhook URL：</strong>创建机器人后会获得形如 <code>https://open.feishu.cn/open-apis/bot/v2/hook/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</code> 的Webhook地址</li>
+                <li><strong>选择消息类型：</strong>支持文本消息和富文本消息两种格式</li>
+                <li><strong>编写消息内容：</strong>根据选择的消息类型编写对应的内容</li>
+                <li><strong>发送消息：</strong>点击发送按钮推送到飞书群聊或用户</li>
+            </ol>
+        </div>
+
+        <form class="feishu-form" id="feishuForm">
+            <div class="form-group">
+                <label for="webhookUrl">Webhook URL</label>
+                <input type="url" id="webhookUrl" name="webhookUrl" required placeholder="例如：https://open.feishu.cn/open-apis/bot/v2/hook/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
+                <div class="help-text">
+                    从飞书群聊机器人设置中获取的 Webhook 地址
+                </div>
+            </div>
+
+            <div class="message-type-tabs">
+                <button type="button" class="message-type-tab active" data-type="text">文本消息</button>
+                <button type="button" class="message-type-tab" data-type="interactive">富文本消息</button>
+            </div>
+
+            <!-- 文本消息类型 -->
+            <div class="message-type-content active" id="textContent">
+                <div class="form-group">
+                    <label for="textMessage">消息内容</label>
+                    <textarea id="textMessage" name="textMessage" placeholder="输入要发送的文本消息..."></textarea>
+                    <div class="help-text">
+                        纯文本消息，最长不超过 2000 字符
+                    </div>
+                </div>
+            </div>
+
+            <!-- 富文本消息类型 -->
+            <div class="message-type-content" id="interactiveContent">
+                <div class="form-group">
+                    <label for="interactiveTitle">标题</label>
+                    <input type="text" id="interactiveTitle" name="interactiveTitle" placeholder="消息标题">
+                </div>
+
+                <div class="form-group">
+                    <label for="interactiveContent">内容</label>
+                    <textarea id="interactiveContent" name="interactiveContent" placeholder="消息内容，支持 Markdown 格式"></textarea>
+                    <div class="help-text">
+                        支持 Markdown 格式，如 <code>**粗体**</code>, <code>*斜体*</code>, <code>`代码`</code>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="interactiveUrl">链接地址（可选）</label>
+                    <input type="url" id="interactiveUrl" name="interactiveUrl" placeholder="https://example.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="interactiveButtonText">按钮文字（可选）</label>
+                    <input type="text" id="interactiveButtonText" name="interactiveButtonText" placeholder="点击查看">
+                </div>
+            </div>
+
+            <button type="submit" class="send-button" id="sendButton">
+                🚀 发送消息
+            </button>
+
+            <div id="statusMessage" class="status-message"></div>
+        </form>
+    </div>
+
+    <script>
+        // 消息类型切换
+        document.querySelectorAll('.message-type-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const messageType = this.dataset.type;
+                
+                // 更新标签状态
+                document.querySelectorAll('.message-type-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                // 更新内容显示
+                document.querySelectorAll('.message-type-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById(messageType + 'Content').classList.add('active');
+            });
+        });
+
+        document.getElementById('feishuForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const webhookUrl = document.getElementById('webhookUrl').value;
+            const sendButton = document.getElementById('sendButton');
+            const statusMessage = document.getElementById('statusMessage');
+            
+            // 确定消息类型
+            const isTextMessage = document.querySelector('.message-type-tab.active').dataset.type === 'text';
+            
+            let payload;
+            
+            if (isTextMessage) {
+                // 文本消息
+                const textMessage = document.getElementById('textMessage').value;
+                if (!textMessage.trim()) {
+                    alert('请输入消息内容');
+                    return;
+                }
+                
+                payload = {
+                    msg_type: "text",
+                    content: {
+                        text: textMessage
+                    }
+                };
+            } else {
+                // 富文本消息
+                const title = document.getElementById('interactiveTitle').value;
+                const content = document.getElementById('interactiveContent').value;
+                const url = document.getElementById('interactiveUrl').value;
+                const buttonText = document.getElementById('interactiveButtonText').value;
+                
+                if (!title.trim() || !content.trim()) {
+                    alert('请填写标题和内容');
+                    return;
+                }
+                
+                let cardContent = `**${title}**\n\n${content}`;
+                
+                if (url && buttonText) {
+                    cardContent += `\n\n[${buttonText}](${url})`;
+                }
+                
+                payload = {
+                    msg_type: "interactive",
+                    card: {
+                        elements: [{
+                            tag: "div",
+                            text: {
+                                content: cardContent,
+                                tag: "lark_md"
+                            }
+                        }]
+                    }
+                };
+            }
+            
+            // 显示发送状态
+            sendButton.disabled = true;
+            sendButton.textContent = '发送中...';
+            statusMessage.style.display = 'none';
+            
+            try {
+                const response = await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    
+                    if (result.code === 0) {
+                        statusMessage.className = 'status-message status-success';
+                        statusMessage.textContent = '✅ 消息发送成功！';
+                        statusMessage.style.display = 'block';
+                        
+                        // 清空表单
+                        if (isTextMessage) {
+                            document.getElementById('textMessage').value = '';
+                        } else {
+                            document.getElementById('interactiveTitle').value = '';
+                            document.getElementById('interactiveContent').value = '';
+                            document.getElementById('interactiveUrl').value = '';
+                            document.getElementById('interactiveButtonText').value = '';
+                        }
+                    } else {
+                        statusMessage.className = 'status-message status-error';
+                        statusMessage.textContent = `❌ 发送失败：${result.msg}`;
+                        statusMessage.style.display = 'block';
+                    }
+                } else {
+                    statusMessage.className = 'status-message status-error';
+                    statusMessage.textContent = `❌ HTTP 错误：${response.status} ${response.statusText}`;
+                    statusMessage.style.display = 'block';
+                }
+            } catch (error) {
+                statusMessage.className = 'status-message status-error';
+                statusMessage.textContent = `❌ 网络错误：${error.message}`;
+                statusMessage.style.display = 'block';
+            } finally {
+                sendButton.disabled = false;
+                sendButton.textContent = '🚀 发送消息';
+            }
+        });
+
+        // 测试 Webhook 连接
+        document.getElementById('webhookUrl').addEventListener('blur', async function() {
+            const url = this.value;
+            if (url && url.includes('open.feishu.cn')) {
+                try {
+                    // 发送测试消息
+                    const testPayload = {
+                        msg_type: "text",
+                        content: {
+                            text: "🔗 飞书机器人连接测试"
+                        }
+                    };
+                    
+                    const response = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(testPayload)
+                    });
+                    
+                    if (response.ok) {
+                        this.style.borderColor = 'var(--success-color)';
+                        this.title = '✅ Webhook 连接正常';
+                    } else {
+                        this.style.borderColor = 'var(--accent-color)';
+                        this.title = '❌ Webhook 无效';
+                    }
+                } catch (error) {
+                    this.style.borderColor = 'var(--warning-color)';
+                    this.title = '⚠️ 无法测试连接';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
