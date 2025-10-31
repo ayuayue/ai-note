@@ -56,11 +56,63 @@
             margin-bottom: 15px;
         }
 
-        .header p {
+        .header-subtitle {
             color: #6c757d;
             font-size: 1.1rem;
             max-width: 800px;
             margin: 0 auto 20px;
+        }
+
+        .header-description {
+            color: #6c757d;
+            font-size: 0.95rem;
+            max-width: 700px;
+            margin: 0 auto 25px;
+            line-height: 1.6;
+        }
+
+        .topic-areas {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin: 25px 0 30px;
+            flex-wrap: wrap;
+        }
+
+        .topic-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(52, 152, 219, 0.08);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(52, 152, 219, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .topic-item:hover {
+            background: rgba(52, 152, 219, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .topic-icon {
+            width: 16px;
+            height: 16px;
+            color: var(--secondary-color);
+        }
+
+        .topic-name {
+            font-size: 0.9rem;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .header-tagline {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            font-style: italic;
+            margin: 15px 0 0;
+            opacity: 0.8;
         }
 
         .header-actions {
@@ -74,22 +126,42 @@
         .tools-button {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            background: var(--tool-blue);
-            color: white;
-            padding: 12px 24px;
-            border-radius: 30px;
+            gap: 10px;
+            background: var(--card-bg);
+            color: var(--primary-color);
+            padding: 14px 32px;
+            border-radius: 12px;
             text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(44, 62, 80, 0.1);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tools-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(52, 152, 219, 0.1), transparent);
+            transition: left 0.5s ease;
         }
 
         .tools-button:hover {
-            background: #0056b3;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 16px rgba(44, 62, 80, 0.2);
+            border-color: var(--primary-color);
+        }
+
+        .tools-button:hover::before {
+            left: 100%;
         }
 
         .warning {
@@ -281,10 +353,27 @@
                 align-items: flex-start;
                 gap: 8px;
             }
-            
+
             .header-actions {
                 flex-direction: column;
                 align-items: center;
+            }
+
+            .topic-areas {
+                gap: 15px;
+            }
+
+            .topic-item {
+                padding: 6px 12px;
+            }
+
+            .topic-name {
+                font-size: 0.85rem;
+            }
+
+            .header-description {
+                font-size: 0.9rem;
+                padding: 0 10px;
             }
         }
     </style>
@@ -293,14 +382,68 @@
     <div class="container">
         <header class="header">
             <h1>AI 个人笔记</h1>
-            <p>记录 AI 协助解决的各种技术问题和学习笔记</p>
-            
+            <p class="header-subtitle">记录 AI 协助解决的各种技术问题和学习笔记</p>
+
+            <div class="header-description">
+                这里汇集了在日常开发和学习过程中，通过 AI 协助解决的技术难题、最佳实践总结、以及深度的技术原理分析。
+                涵盖 Java、Spring、前端技术、系统架构等多个领域的知识沉淀。
+            </div>
+
+            <div class="topic-areas">
+                <div class="topic-item">
+                    <svg class="topic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                        <path d="M2 17l10 5 10-5"/>
+                        <path d="M2 12l10 5 10-5"/>
+                    </svg>
+                    <span class="topic-name">Java 深度解析</span>
+                </div>
+                <div class="topic-item">
+                    <svg class="topic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                    </svg>
+                    <span class="topic-name">Spring 全家桶</span>
+                </div>
+                <div class="topic-item">
+                    <svg class="topic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    <span class="topic-name">前端技术</span>
+                </div>
+                <div class="topic-item">
+                    <svg class="topic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                        <line x1="8" y1="21" x2="16" y2="21"/>
+                        <line x1="12" y1="17" x2="12" y2="21"/>
+                    </svg>
+                    <span class="topic-name">系统架构</span>
+                </div>
+                <div class="topic-item">
+                    <svg class="topic-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 1v6m0 6v6m4.22-13.22l4.24 4.24M1.54 8.96l4.24 4.24M20.46 15.04l-4.24-4.24M7.78 7.78L3.54 3.54"/>
+                    </svg>
+                    <span class="topic-name">开发工具</span>
+                </div>
+            </div>
+
+            <p class="header-tagline">
+                "让每个技术难题都成为成长的阶梯"
+            </p>
+
             <div class="header-actions">
                 <a href="tools.html" class="tools-button">
-                    🛠️ 工具
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                    </svg>
+                    工具
                 </a>
                 <a href="overview.html" class="tools-button">
-                    📚 归档
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                    </svg>
+                    归档
                 </a>
             </div>
         </header>
