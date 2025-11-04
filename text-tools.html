@@ -279,12 +279,128 @@
             transform: none !important;
         }
 
+        /* 新的布局样式 */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .text-input-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .text-input-section .textarea-field {
+            min-height: 400px;
+            resize: vertical;
+        }
+
+        .stats-compact {
+            margin-top: 20px;
+        }
+
+        .stats-compact .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .stats-compact .stat-item {
+            background: var(--bg-color);
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .stats-compact .stat-number {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--tool-blue);
+            display: block;
+        }
+
+        .stats-compact .stat-label {
+            color: #6c757d;
+            font-size: 0.8rem;
+            margin-top: 3px;
+        }
+
+        .operations-panel {
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .sticky-operations {
+            position: sticky;
+            top: 20px;
+        }
+
+        /* 滚动条美化 */
+        .operations-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .operations-panel::-webkit-scrollbar-track {
+            background: var(--bg-color);
+            border-radius: 3px;
+        }
+
+        .operations-panel::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+
+        .operations-panel::-webkit-scrollbar-thumb:hover {
+            background: #adb5bd;
+        }
+
+        .operations-panel .tool-section {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .operations-panel .tool-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        .operations-panel .button-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 0;
+        }
+
+        .operations-panel .btn {
+            padding: 8px 12px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            gap: 6px;
+        }
+
+        .result-section {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            min-height: 60px;
+        }
+
         .result-box {
             background: var(--code-bg);
             border: 1px solid var(--border-color);
             border-radius: 6px;
             padding: 15px;
-            margin-top: 15px;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.9rem;
             line-height: 1.5;
@@ -292,10 +408,64 @@
             color: var(--success-color);
             border-color: var(--success-color);
             display: none;
+            margin: 0;
         }
 
         .result-box.show {
             display: block;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .operations-panel {
+                max-height: none;
+                overflow-y: visible;
+            }
+
+            .sticky-operations {
+                position: static;
+            }
+
+            .stats-compact .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .tools-container {
+                padding: 20px;
+            }
+
+            .operations-panel .button-group {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-compact .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .text-input-section .textarea-field {
+                min-height: 300px;
+            }
+
+            .header-actions {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
         }
 
         .footer {
@@ -328,34 +498,7 @@
             opacity: 1;
         }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .tools-container {
-                padding: 20px;
-            }
-            
-            .button-group {
-                justify-content: center;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .header-actions {
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
-            }
-        }
-    </style>
+      </style>
 </head>
 <body>
     <div class="container">
@@ -374,102 +517,120 @@
         </header>
 
         <div class="tools-container">
-            <!-- 文本输入区域 -->
-            <div class="tool-section">
-                <h3>📝 文本输入</h3>
-                <div class="input-group">
-                    <label class="input-label">文件保存名称（可选）</label>
-                    <input type="text" class="input-field" id="fileName" placeholder="例如：处理后的文档.txt">
+            <!-- 主要内容区域：使用左右布局 -->
+            <div class="main-content">
+                <!-- 左侧：文本输入区域 -->
+                <div class="text-input-section">
+                    <div class="tool-section">
+                        <h3>📝 文本输入</h3>
+                        <div class="input-group">
+                            <label class="input-label">文件保存名称（可选）</label>
+                            <input type="text" class="input-field" id="fileName" placeholder="例如：处理后的文档.txt">
+                        </div>
+
+                        <div class="input-group">
+                            <label class="input-label">请输入要处理的文本</label>
+                            <textarea class="textarea-field" id="inputText" placeholder="请输入要处理的文本..." oninput="updateStats()"></textarea>
+                        </div>
+
+                        <!-- 字数统计 -->
+                        <div class="stats-compact">
+                            <div class="stats-grid" id="statsGrid">
+                                <div class="stat-item">
+                                    <span class="stat-number" id="charCount">0</span>
+                                    <div class="stat-label">字符数</div>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number" id="charCountNoSpace">0</span>
+                                    <div class="stat-label">字符数(无空格)</div>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number" id="wordCount">0</span>
+                                    <div class="stat-label">单词数</div>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-number" id="lineCount">0</span>
+                                    <div class="stat-label">行数</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="input-group">
-                    <label class="input-label">请输入要处理的文本</label>
-                    <textarea class="textarea-field" id="inputText" placeholder="请输入要处理的文本..." oninput="updateStats()"></textarea>
+
+                <!-- 右侧：操作面板 -->
+                <div class="operations-panel">
+                    <div class="sticky-operations">
+                        <!-- 快速操作 -->
+                        <div class="tool-section">
+                            <h3>⚡ 快速操作</h3>
+                            <div class="button-group">
+                                <button class="btn btn-success" onclick="saveToFile()">💾 保存文件</button>
+                                <button class="btn btn-secondary" onclick="copyToClipboard()">📋 复制</button>
+                                <button class="btn btn-danger" onclick="clearAll()">🗑️ 清空</button>
+                            </div>
+                        </div>
+
+                        <!-- 大小写转换 -->
+                        <div class="tool-section">
+                            <h3>🔤 大小写转换</h3>
+                            <div class="button-group">
+                                <button class="btn btn-primary" onclick="convertCase('upper')">转为大写</button>
+                                <button class="btn btn-primary" onclick="convertCase('lower')">转为小写</button>
+                                <button class="btn btn-primary" onclick="convertCase('capitalize')">首字母大写</button>
+                                <button class="btn btn-primary" onclick="convertCase('title')">标题格式</button>
+                            </div>
+                        </div>
+
+                        <!-- 文本清理 -->
+                        <div class="tool-section">
+                            <h3>🧹 文本清理</h3>
+                            <div class="button-group">
+                                <button class="btn btn-success" onclick="formatText('trim')">去除首尾空格</button>
+                                <button class="btn btn-success" onclick="formatText('removeExtraSpaces')">去除多余空格</button>
+                                <button class="btn btn-success" onclick="formatText('removeExtraLines')">去除多余空行</button>
+                                <button class="btn btn-success" onclick="formatText('removeEmptyLines')">删除空行</button>
+                            </div>
+                        </div>
+
+                        <!-- 转义处理 -->
+                        <div class="tool-section">
+                            <h3>🔒 转义处理</h3>
+                            <div class="button-group">
+                                <button class="btn btn-warning" onclick="escapeText('html')">HTML转义</button>
+                                <button class="btn btn-warning" onclick="escapeText('url')">URL转义</button>
+                                <button class="btn btn-warning" onclick="escapeText('json')">JSON转义</button>
+                                <button class="btn btn-warning" onclick="escapeText('regex')">正则转义</button>
+                            </div>
+                            <div class="button-group">
+                                <button class="btn btn-success" onclick="unescapeText('html')">HTML去转义</button>
+                                <button class="btn btn-success" onclick="unescapeText('url')">URL去转义</button>
+                                <button class="btn btn-success" onclick="unescapeText('json')">JSON去转义</button>
+                                <button class="btn btn-success" onclick="unescapeText('common')">常见转义还原</button>
+                            </div>
+                        </div>
+
+                        <!-- 高级操作 -->
+                        <div class="tool-section">
+                            <h3>🔧 高级操作</h3>
+                            <div class="button-group">
+                                <button class="btn btn-primary" onclick="processText('sortLines')">按行排序</button>
+                                <button class="btn btn-primary" onclick="processText('uniqueLines')">删除重复行</button>
+                                <button class="btn btn-primary" onclick="processText('addLineNumbers')">添加行号</button>
+                                <button class="btn btn-primary" onclick="processText('reverseLines')">行反转</button>
+                            </div>
+                            <div class="button-group">
+                                <button class="btn btn-warning" onclick="processText('extractNumbers')">提取数字</button>
+                                <button class="btn btn-warning" onclick="processText('extractWords')">提取单词</button>
+                                <button class="btn btn-warning" onclick="processText('countChars')">字符频率</button>
+                                <button class="btn btn-warning" onclick="formatText('reverse')">文本反转</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- 字数统计 -->
-            <div class="tool-section">
-                <h3>📊 字数统计</h3>
-                <div class="stats-grid" id="statsGrid">
-                    <div class="stat-item">
-                        <span class="stat-number" id="charCount">0</span>
-                        <div class="stat-label">字符数</div>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number" id="charCountNoSpace">0</span>
-                        <div class="stat-label">字符数（不含空格）</div>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number" id="wordCount">0</span>
-                        <div class="stat-label">单词数</div>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number" id="lineCount">0</span>
-                        <div class="stat-label">行数</div>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number" id="paragraphCount">0</span>
-                        <div class="stat-label">段落数</div>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number" id="byteCount">0</span>
-                        <div class="stat-label">字节数</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 大小写转换 -->
-            <div class="tool-section">
-                <h3>🔤 大小写转换</h3>
-                <div class="button-group">
-                    <button class="btn btn-primary" onclick="convertCase('upper')">转为大写</button>
-                    <button class="btn btn-primary" onclick="convertCase('lower')">转为小写</button>
-                    <button class="btn btn-primary" onclick="convertCase('capitalize')">首字母大写</button>
-                    <button class="btn btn-primary" onclick="convertCase('title')">标题格式</button>
-                    <button class="btn btn-secondary" onclick="convertCase('swap')">大小写互换</button>
-                </div>
-            </div>
-
-            <!-- 文本格式化 -->
-            <div class="tool-section">
-                <h3>✨ 文本格式化</h3>
-                <div class="button-group">
-                    <button class="btn btn-success" onclick="formatText('trim')">去除首尾空格</button>
-                    <button class="btn btn-success" onclick="formatText('removeExtraSpaces')">去除多余空格</button>
-                    <button class="btn btn-success" onclick="formatText('removeExtraLines')">去除多余空行</button>
-                    <button class="btn btn-success" onclick="formatText('removeEmptyLines')">删除空行</button>
-                    <button class="btn btn-warning" onclick="formatText('reverse')">文本反转</button>
-                </div>
-                <div class="button-group">
-                    <button class="btn btn-warning" onclick="formatText('sortLines')">按行排序</button>
-                    <button class="btn btn-warning" onclick="formatText('uniqueLines')">删除重复行</button>
-                    <button class="btn btn-warning" onclick="formatText('reverseLines')">行顺序反转</button>
-                    <button class="btn btn-danger" onclick="formatText('removeNumbers')">删除数字</button>
-                    <button class="btn btn-danger" onclick="formatText('removeSpecial')">删除特殊字符</button>
-                </div>
-            </div>
-
-            <!-- 文本操作 -->
-            <div class="tool-section">
-                <h3>🔧 文本操作</h3>
-                <div class="button-group">
-                    <button class="btn btn-primary" onclick="processText('countChars')">统计字符频率</button>
-                    <button class="btn btn-primary" onclick="processText('extractNumbers')">提取数字</button>
-                    <button class="btn btn-primary" onclick="processText('extractWords')">提取单词</button>
-                    <button class="btn btn-success" onclick="processText('addLineNumbers')">添加行号</button>
-                    <button class="btn btn-warning" onclick="processText('wrapLines')">换行处理</button>
-                </div>
-            </div>
-
-            <!-- 保存操作 -->
-            <div class="tool-section">
-                <h3>💾 保存文本</h3>
-                <div class="button-group">
-                    <button class="btn btn-success" onclick="saveToFile()">💾 保存文件</button>
-                    <button class="btn btn-secondary" onclick="copyToClipboard()">📋 复制到剪贴板</button>
-                    <button class="btn btn-danger" onclick="clearAll()">🗑️ 清空所有</button>
-                </div>
+            <!-- 结果显示区域 -->
+            <div class="result-section">
                 <div class="result-box" id="actionResult"></div>
             </div>
         </div>
@@ -713,12 +874,107 @@
             }
         }
 
+        // 转义处理
+        function escapeText(type) {
+            const textArea = document.getElementById('inputText');
+            let text = textArea.value;
+
+            switch(type) {
+                case 'html':
+                    text = text.replace(/[&<>"']/g, function(match) {
+                        const escapeMap = {
+                            '&': '&amp;',
+                            '<': '&lt;',
+                            '>': '&gt;',
+                            '"': '&quot;',
+                            "'": '&#39;'
+                        };
+                        return escapeMap[match];
+                    });
+                    break;
+                case 'url':
+                    text = encodeURIComponent(text);
+                    break;
+                case 'json':
+                    text = text.replace(/["\\]/g, function(match) {
+                        return '\\' + match;
+                    }).replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
+                    break;
+                case 'regex':
+                    text = text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    break;
+            }
+
+            textArea.value = text;
+            updateStats();
+            showResult(`${type.toUpperCase()}转义完成！`);
+        }
+
+        // 去转义处理
+        function unescapeText(type) {
+            const textArea = document.getElementById('inputText');
+            let text = textArea.value;
+
+            switch(type) {
+                case 'html':
+                    text = text.replace(/&amp;/g, '&')
+                              .replace(/&lt;/g, '<')
+                              .replace(/&gt;/g, '>')
+                              .replace(/&quot;/g, '"')
+                              .replace(/&#39;/g, "'")
+                              .replace(/&#x27;/g, "'")
+                              .replace(/&#x2F;/g, "/");
+                    break;
+                case 'url':
+                    try {
+                        text = decodeURIComponent(text);
+                    } catch (e) {
+                        showResult('URL解码失败，请检查格式');
+                        return;
+                    }
+                    break;
+                case 'json':
+                    try {
+                        // 先将JSON字符串转义，然后解析再重新获取
+                        const parsed = JSON.parse('"' + text + '"');
+                        text = parsed;
+                    } catch (e) {
+                        // 如果JSON解析失败，使用基本的去转义
+                        text = text.replace(/\\n/g, '\n')
+                                  .replace(/\\r/g, '\r')
+                                  .replace(/\\t/g, '\t')
+                                  .replace(/\\"/g, '"')
+                                  .replace(/\\\\/g, '\\');
+                    }
+                    break;
+                case 'common':
+                    // 常见转义字符还原
+                    text = text.replace(/\\n/g, '\n')
+                              .replace(/\\r/g, '\r')
+                              .replace(/\\t/g, '\t')
+                              .replace(/\\"/g, '"')
+                              .replace(/\\'/g, "'")
+                              .replace(/\\\\/g, '\\')
+                              .replace(/\\x([0-9A-Fa-f]{2})/g, function(match, hex) {
+                                  return String.fromCharCode(parseInt(hex, 16));
+                              })
+                              .replace(/\\u([0-9A-Fa-f]{4})/g, function(match, hex) {
+                                  return String.fromCharCode(parseInt(hex, 16));
+                              });
+                    break;
+            }
+
+            textArea.value = text;
+            updateStats();
+            showResult(`${type.toUpperCase()}去转义完成！`);
+        }
+
         // 显示结果
         function showResult(message) {
             const resultBox = document.getElementById('actionResult');
             resultBox.textContent = message;
             resultBox.classList.add('show');
-            
+
             // 3秒后自动隐藏结果
             setTimeout(() => {
                 resultBox.classList.remove('show');
