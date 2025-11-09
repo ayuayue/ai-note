@@ -10,8 +10,7 @@
         ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
     </div>
     <div class="post-content" id="post-content">
-        
-                    <h1
+        <h1
 id="数据库分页不稳定成因误区与解决方案">数据库分页不稳定：成因、误区与解决方案</h1>
 <h2 id="开头摘要">开头摘要</h2>
 <p>本文深入剖析数据库分页查询中的不稳定现象，揭示其技术根源并提供实用解决方案，帮助开发者构建健壮的分页功能。适合后端开发人员、数据库管理员及对数据一致性有高要求的系统架构师。</p>
@@ -75,10 +74,411 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="
 <span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="bu">List</span><span class="op">&lt;</span>Product<span class="op">&gt;</span> page2 <span class="op">=</span> <span class="fu">unstablePagination</span><span class="op">(</span><span class="dv">2</span><span class="op">,</span> <span class="dv">10</span><span class="op">);</span></span>
 <span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 问题：page2可能包含page1已显示的数据（因新插入高价商品改变了排序）</span></span>
-<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>关键问题</strong>：当新插入的商品价格高于第一页所有商品时，会导致原第一页的部分商品被挤到第二页，造成数据重复显示。</p>
+<hr />
+<h2 id="mermaid图">3. Mermaid图</h2>
+<h3 id="分页不稳定流程图">分页不稳定流程图</h3>
+<pre class="mermaid"><code>sequenceDiagram
+    participant Client
+    participant App
+    participant DB
+    
+    Client-&gt;&gt;App: 请求第1页数据
+    App-&gt;&gt;DB: SELECT * FROM products ORDER BY price DESC LIMIT 10 OFFSET 0
+    DB--&gt;&gt;App: 返回商品A-J
+    App--&gt;&gt;Client: 显示商品A-J
+    
+    Note over App,DB: 并发操作：插入新商品K(价格最高)
+    Client-&gt;&gt;App: 请求第2页数据
+    App-&gt;&gt;DB: SELECT * FROM products ORDER BY price DESC LIMIT 10 OFFSET 10
+    DB--&gt;&gt;App: 返回商品J-S（含重复商品J）
+    App--&gt;&gt;Client: 显示商品J-S（重复显示J）</code></pre>
+<h3 id="游标分页解决方案">游标分页解决方案</h3>
+<pre class="mermaid"><code>graph TD
+    A[客户端请求] --&gt; B{是否有游标?}
+    B --&gt;|无| C[执行初始查询：SELECT * FROM products ORDER BY id LIMIT 10]
+    B --&gt;|有| D[执行游标查询：SELECT * FROM products WHERE id &gt; lastId ORDER BY id LIMIT 10]
+    C --&gt; E[返回数据+最后一条ID作为游标]
+    D --&gt; E
+    E --&gt; F[客户端存储游标]
+    F --&gt; A</code></pre>
+<hr />
+<h2 id="问题分析">4. 问题分析</h2>
+<h3 id="常见误解">常见误解</h3>
+<ol type="1">
+<li><p><strong>事务能解决问题</strong>：<br />
+误解：使用事务可以保证分页稳定性<br />
+实际：事务只能保证单次查询的一致性，无法解决两次查询间的数据变动问题</p></li>
+<li><p><strong>ORDER BY足够</strong>：<br />
+误解：只要添加ORDER BY就能避免问题<br />
+实际：ORDER
+BY只保证单次查询的顺序，无法阻止数据变动导致的分页错位</p></li>
+<li><p><strong>缓存可解决</strong>：<br />
+误解：缓存分页结果能避免不稳定<br />
+实际：缓存会引入数据延迟问题，且在高并发场景下缓存失效策略复杂</p></li>
+</ol>
+<h3 id="技术陷阱">技术陷阱</h3>
+<ol type="1">
+<li><p><strong>深度分页性能陷阱</strong>：<br />
+<code>OFFSET 1000000</code>会导致数据库扫描大量无用数据，性能急剧下降</p></li>
+<li><p><strong>排序字段不唯一</strong>：<br />
+当排序字段存在重复值时，分页边界可能出现不确定行为</p></li>
+<li><p><strong>删除操作影响</strong>：<br />
+分页查询间删除数据可能导致返回行数少于预期</p></li>
+</ol>
+<h3 id="边界情况">边界情况</h3>
+<ul>
+<li><strong>空结果集</strong>：当分页查询结果为空时，客户端应正确处理</li>
+<li><strong>数据不足</strong>：请求页数超过实际数据量时的处理</li>
+<li><strong>排序字段变更</strong>：运行时修改排序字段导致的分页混乱</li>
+</ul>
+<hr />
+<h2 id="应用场景">5. 应用场景</h2>
+<h3 id="高频变动数据场景">高频变动数据场景</h3>
+<ol type="1">
+<li><strong>实时订单系统</strong>：新订单持续插入，价格排序分页易出现重复</li>
+<li><strong>社交媒体动态</strong>：用户发布新内容导致时间线分页错位</li>
+<li><strong>物联网数据流</strong>：传感器数据持续写入，时间分页不稳定</li>
+</ol>
+<h3 id="大数据量场景">大数据量场景</h3>
+<ol type="1">
+<li><strong>日志分析系统</strong>：百万级日志分页查询，OFFSET性能极差</li>
+<li><strong>电商商品列表</strong>：商品信息频繁更新，价格排序分页不稳定</li>
+<li><strong>金融交易记录</strong>：高频交易数据分页展示易出现重复或遗漏</li>
+</ol>
+<h3 id="解决方案选择">解决方案选择</h3>
+<table>
+<thead>
+<tr class="header">
+<th>场景</th>
+<th>传统分页</th>
+<th>游标分页</th>
+<th>覆盖索引</th>
+<th>预计算分页</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>静态数据</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr class="even">
+<td>低频变动</td>
+<td>⚠️</td>
+<td>✓</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr class="odd">
+<td>高频变动</td>
+<td>✗</td>
+<td>✓</td>
+<td>⚠️</td>
+<td>✓</td>
+</tr>
+<tr class="even">
+<td>随机访问</td>
+<td>✓</td>
+<td>✗</td>
+<td>✓</td>
+<td>✓</td>
+</tr>
+<tr class="odd">
+<td>深度分页</td>
+<td>✗</td>
+<td>✓</td>
+<td>⚠️</td>
+<td>✓</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="跨语言或跨框架对比">6. 跨语言或跨框架对比</h2>
+<h3 id="java生态">Java生态</h3>
+<p><strong>Spring Data JPA</strong>：</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 传统分页（不稳定）</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>Page<span class="op">&lt;</span>Product<span class="op">&gt;</span> <span class="fu">findByPriceGreaterThan</span><span class="op">(</span><span class="bu">BigDecimal</span> price<span class="op">,</span> <span class="bu">Pageable</span> pageable<span class="op">);</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">// 游标分页实现</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="at">@Query</span><span class="op">(</span><span class="st">&quot;SELECT p FROM Product p WHERE p.id &gt; :lastId ORDER BY p.id&quot;</span><span class="op">)</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="bu">List</span><span class="op">&lt;</span>Product<span class="op">&gt;</span> <span class="fu">findNextPage</span><span class="op">(</span><span class="at">@Param</span><span class="op">(</span><span class="st">&quot;lastId&quot;</span><span class="op">)</span> <span class="bu">Long</span> lastId<span class="op">,</span> <span class="bu">Pageable</span> pageable<span class="op">);</span></span></code></pre></div>
+<p><strong>MyBatis</strong>：</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- 传统分页 --&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">select</span><span class="ot"> id=</span><span class="st">&quot;selectByPage&quot;</span><span class="ot"> resultType=</span><span class="st">&quot;Product&quot;</span>&gt;</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    SELECT * FROM products ORDER BY price DESC </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    LIMIT #{size} OFFSET #{offset}</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">select</span>&gt;</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- 游标分页 --&gt;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">select</span><span class="ot"> id=</span><span class="st">&quot;selectByCursor&quot;</span><span class="ot"> resultType=</span><span class="st">&quot;Product&quot;</span>&gt;</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    SELECT * FROM products </span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    WHERE id &gt; #{lastId} </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    ORDER BY id </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    LIMIT #{size}</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">select</span>&gt;</span></code></pre></div>
+<h3 id="python生态">Python生态</h3>
+<p><strong>Django ORM</strong>：</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 传统分页（不稳定）</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_unstable_page(page_number):</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Product.objects.order_by(<span class="st">&#39;-price&#39;</span>).<span class="bu">all</span>()[</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>        (page_number<span class="op">-</span><span class="dv">1</span>)<span class="op">*</span><span class="dv">10</span> : page_number<span class="op">*</span><span class="dv">10</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    ]</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 游标分页</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_stable_page(last_id<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    queryset <span class="op">=</span> Product.objects.order_by(<span class="st">&#39;id&#39;</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> last_id:</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        queryset <span class="op">=</span> queryset.<span class="bu">filter</span>(id__gt<span class="op">=</span>last_id)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> queryset[:<span class="dv">10</span>]</span></code></pre></div>
+<p><strong>SQLAlchemy</strong>：</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 传统分页</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> unstable_pagination(session, page, size):</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> session.query(Product)<span class="op">\</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        .order_by(Product.price.desc())<span class="op">\</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        .offset((page<span class="op">-</span><span class="dv">1</span>)<span class="op">*</span>size)<span class="op">\</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        .limit(size)<span class="op">\</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        .<span class="bu">all</span>()</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 游标分页</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> stable_pagination(session, last_id, size):</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    query <span class="op">=</span> session.query(Product).order_by(Product.<span class="bu">id</span>)</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> last_id:</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        query <span class="op">=</span> query.<span class="bu">filter</span>(Product.<span class="bu">id</span> <span class="op">&gt;</span> last_id)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> query.limit(size).<span class="bu">all</span>()</span></code></pre></div>
+<h3 id="go生态">Go生态</h3>
+<p><strong>GORM</strong>：</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode go"><code class="sourceCode go"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 传统分页（不稳定）</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">func</span> UnstablePagination<span class="op">(</span>db <span class="op">*</span>gorm<span class="op">.</span>DB<span class="op">,</span> page<span class="op">,</span> size <span class="dt">int</span><span class="op">)</span> <span class="op">[]</span>Product <span class="op">{</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> products <span class="op">[]</span>Product</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    db<span class="op">.</span>Order<span class="op">(</span><span class="st">&quot;price desc&quot;</span><span class="op">).</span>Offset<span class="op">((</span>page<span class="op">-</span><span class="dv">1</span><span class="op">)*</span>size<span class="op">).</span>Limit<span class="op">(</span>size<span class="op">).</span>Find<span class="op">(&amp;</span>products<span class="op">)</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> products</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">// 游标分页</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="kw">func</span> StablePagination<span class="op">(</span>db <span class="op">*</span>gorm<span class="op">.</span>DB<span class="op">,</span> lastID <span class="dt">uint</span><span class="op">,</span> size <span class="dt">int</span><span class="op">)</span> <span class="op">[]</span>Product <span class="op">{</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">var</span> products <span class="op">[]</span>Product</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    query <span class="op">:=</span> db<span class="op">.</span>Order<span class="op">(</span><span class="st">&quot;id&quot;</span><span class="op">).</span>Limit<span class="op">(</span>size<span class="op">)</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> lastID <span class="op">&gt;</span> <span class="dv">0</span> <span class="op">{</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        query <span class="op">=</span> query<span class="op">.</span>Where<span class="op">(</span><span class="st">&quot;id &gt; ?&quot;</span><span class="op">,</span> lastID<span class="op">)</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    query<span class="op">.</span>Find<span class="op">(&amp;</span>products<span class="op">)</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> products</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="对比总结">对比总结</h3>
+<table>
+<thead>
+<tr class="header">
+<th>特性</th>
+<th>Java生态</th>
+<th>Python生态</th>
+<th>Go生态</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>传统分页支持</td>
+<td>完善</td>
+<td>完善</td>
+<td>完善</td>
+</tr>
+<tr class="even">
+<td>游标分页支持</td>
+<td>需自定义</td>
+<td>需自定义</td>
+<td>需自定义</td>
+</tr>
+<tr class="odd">
+<td>框架集成度</td>
+<td>高（Spring Data）</td>
+<td>中（Django）</td>
+<td>中（GORM）</td>
+</tr>
+<tr class="even">
+<td>性能优化</td>
+<td>覆盖索引支持</td>
+<td>覆盖索引支持</td>
+<td>覆盖索引支持</td>
+</tr>
+<tr class="odd">
+<td>学习曲线</td>
+<td>中等</td>
+<td>低</td>
+<td>中等</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="实战案例">7. 实战案例</h2>
+<h3 id="spring-boot-mybatis实现游标分页">Spring Boot +
+MyBatis实现游标分页</h3>
+<p><strong>数据库表结构</strong>：</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> products (</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">id</span> BIGINT AUTO_INCREMENT <span class="kw">PRIMARY</span> <span class="kw">KEY</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    name <span class="dt">VARCHAR</span>(<span class="dv">100</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    price <span class="dt">DECIMAL</span>(<span class="dv">10</span>,<span class="dv">2</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    create_time DATETIME <span class="kw">DEFAULT</span> <span class="fu">CURRENT_TIMESTAMP</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">INDEX</span> idx_price (price),</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">INDEX</span> idx_id (<span class="kw">id</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div>
+<p><strong>Mapper接口</strong>：</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">interface</span> ProductMapper <span class="op">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 游标分页查询</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Select</span><span class="op">(</span><span class="st">&quot;SELECT * FROM products WHERE id &gt; #{lastId} ORDER BY id LIMIT #{size}&quot;</span><span class="op">)</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">List</span><span class="op">&lt;</span>Product<span class="op">&gt;</span> <span class="fu">selectByCursor</span><span class="op">(</span><span class="at">@Param</span><span class="op">(</span><span class="st">&quot;lastId&quot;</span><span class="op">)</span> <span class="bu">Long</span> lastId<span class="op">,</span> <span class="at">@Param</span><span class="op">(</span><span class="st">&quot;size&quot;</span><span class="op">)</span> <span class="dt">int</span> size<span class="op">);</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 获取总记录数（用于显示总页数）</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Select</span><span class="op">(</span><span class="st">&quot;SELECT COUNT(*) FROM products&quot;</span><span class="op">)</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">long</span> <span class="fu">countTotal</span><span class="op">();</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>服务层实现</strong>：</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Service</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> ProductService <span class="op">{</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Autowired</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> ProductMapper productMapper<span class="op">;</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> PageResult<span class="op">&lt;</span>Product<span class="op">&gt;</span> <span class="fu">getProductsByCursor</span><span class="op">(</span><span class="bu">Long</span> lastId<span class="op">,</span> <span class="dt">int</span> size<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        <span class="bu">List</span><span class="op">&lt;</span>Product<span class="op">&gt;</span> products <span class="op">=</span> productMapper<span class="op">.</span><span class="fu">selectByCursor</span><span class="op">(</span>lastId<span class="op">,</span> size<span class="op">);</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Long</span> newLastId <span class="op">=</span> products<span class="op">.</span><span class="fu">isEmpty</span><span class="op">()</span> <span class="op">?</span> <span class="kw">null</span> <span class="op">:</span> </span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>            products<span class="op">.</span><span class="fu">get</span><span class="op">(</span>products<span class="op">.</span><span class="fu">size</span><span class="op">()</span> <span class="op">-</span> <span class="dv">1</span><span class="op">).</span><span class="fu">getId</span><span class="op">();</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="kw">new</span> PageResult<span class="op">&lt;&gt;(</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>            products<span class="op">,</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>            newLastId<span class="op">,</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>            productMapper<span class="op">.</span><span class="fu">countTotal</span><span class="op">()</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>        <span class="op">);</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="co">// 分页结果封装</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="at">@Data</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="at">@AllArgsConstructor</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> PageResult<span class="op">&lt;</span>T<span class="op">&gt;</span> <span class="op">{</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">List</span><span class="op">&lt;</span>T<span class="op">&gt;</span> data<span class="op">;</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">Long</span> nextCursor<span class="op">;</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">long</span> total<span class="op">;</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>控制器实现</strong>：</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="at">@RestController</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="at">@RequestMapping</span><span class="op">(</span><span class="st">&quot;/api/products&quot;</span><span class="op">)</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> ProductController <span class="op">{</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Autowired</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> ProductService productService<span class="op">;</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">@GetMapping</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> ResponseEntity<span class="op">&lt;</span>PageResult<span class="op">&lt;</span>Product<span class="op">&gt;&gt;</span> <span class="fu">getProducts</span><span class="op">(</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">@RequestParam</span><span class="op">(</span>required <span class="op">=</span> <span class="kw">false</span><span class="op">)</span> <span class="bu">Long</span> cursor<span class="op">,</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">@RequestParam</span><span class="op">(</span>defaultValue <span class="op">=</span> <span class="st">&quot;10&quot;</span><span class="op">)</span> <span class="dt">int</span> size<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>        PageResult<span class="op">&lt;</span>Product<span class="op">&gt;</span> result <span class="op">=</span> productService<span class="op">.</span><span class="fu">getProductsByCursor</span><span class="op">(</span>cursor<span class="op">,</span> size<span class="op">);</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> ResponseEntity<span class="op">.</span><span class="fu">ok</span><span class="op">(</span>result<span class="op">);</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>前端调用示例</strong>：</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 初始加载</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">loadProducts</span>() {</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> response <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="st">&#39;/api/products?size=10&#39;</span>)<span class="op">;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> result <span class="op">=</span> <span class="cf">await</span> response<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">displayProducts</span>(result<span class="op">.</span><span class="at">data</span>)<span class="op">;</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">saveCursor</span>(result<span class="op">.</span><span class="at">nextCursor</span>)<span class="op">;</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">// 加载下一页</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="kw">async</span> <span class="kw">function</span> <span class="fu">loadNextPage</span>() {</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> cursor <span class="op">=</span> <span class="fu">getSavedCursor</span>()<span class="op">;</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="op">!</span>cursor) <span class="cf">return</span><span class="op">;</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> response <span class="op">=</span> <span class="cf">await</span> <span class="fu">fetch</span>(<span class="vs">`/api/products?cursor=</span><span class="sc">${</span>cursor<span class="sc">}</span><span class="vs">&amp;size=10`</span>)<span class="op">;</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> result <span class="op">=</span> <span class="cf">await</span> response<span class="op">.</span><span class="fu">json</span>()<span class="op">;</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">displayProducts</span>(result<span class="op">.</span><span class="at">data</span>)<span class="op">;</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">saveCursor</span>(result<span class="op">.</span><span class="at">nextCursor</span>)<span class="op">;</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong>优化点</strong>： 1. 使用覆盖索引优化查询性能 2.
+添加缓存层减少数据库压力 3. 实现游标加密防止客户端篡改 4.
+添加分页大小限制防止恶意请求</p>
+<hr />
+<h2 id="总结">8. 总结</h2>
+<ul>
+<li><strong>核心问题</strong>：传统<code>LIMIT offset</code>分页在数据变动时会导致重复或遗漏数据</li>
+<li><strong>根本原因</strong>：OFFSET基于物理位置而非逻辑标识，数据变动导致记录顺序改变</li>
+<li><strong>主要场景</strong>：高频数据变动、深度分页、实时数据展示</li>
+<li><strong>解决方案</strong>：
+<ul>
+<li>游标分页（推荐）：基于唯一有序列（如自增ID）的分页</li>
+<li>覆盖索引：优化排序和分页性能</li>
+<li>预计算分页：适合静态或低频变动数据</li>
+</ul></li>
+<li><strong>最佳实践</strong>：
+<ul>
+<li>优先使用游标分页替代传统分页</li>
+<li>为排序字段创建合适索引</li>
+<li>避免深度分页（OFFSET过大）</li>
+<li>考虑业务场景选择合适方案</li>
+</ul></li>
+<li><strong>注意事项</strong>：
+<ul>
+<li>游标分页不支持随机跳页</li>
+<li>需处理游标失效边界情况</li>
+<li>大数据量时注意内存消耗</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="延伸阅读">9. 延伸阅读</h2>
+<h3 id="官方文档">官方文档</h3>
+<ul>
+<li><a href="https://dev.mysql.com/doc/refman/8.0/en/select.html">MySQL
+8.0: LIMIT Clause</a></li>
+<li><a
+href="https://www.postgresql.org/docs/current/queries-limit.html">PostgreSQL:
+LIMIT and OFFSET</a></li>
+<li><a
+href="https://docs.oracle.com/en/database/oracle/oracle-database/19/sqlrf/SELECT.html#GUID-CFA006CA-6FF1-4972-821E-6996142A51C6__BABDGFIC">Oracle:
+row limiting clause</a></li>
+</ul>
+<h3 id="经典书籍">经典书籍</h3>
+<ul>
+<li>《高性能MySQL》第6章：查询性能优化</li>
+<li>《SQL权威指南》第13章：高级查询技术</li>
+<li>《数据库系统概念》第15章：事务管理</li>
+</ul>
+<h3 id="技术文章">技术文章</h3>
+<ul>
+<li><a
+href="https://www.citusdata.com/blog/2018/08/29/pagination-done-right-postgresql/">Pagination
+Done Right the PostgreSQL Way</a></li>
+<li><a href="https://relay.dev/graphql/connections.htm">Cursor-based
+Pagination</a></li>
+<li><a href="https://use-the-index-luke.com/no-offset">Deep Pagination:
+The Wrong Way and The Right Way</a></li>
+</ul>
+<h3 id="源码参考">源码参考</h3>
+<ul>
+<li><a
+href="https://github.com/spring-projects/spring-data-commons">Spring
+Data: Pagination</a></li>
+<li><a href="https://github.com/mybatis/mybatis-3">MyBatis:
+PaginationInterceptor</a></li>
+<li><a href="https://github.com/django/django">Django:
+Paginator</a></li>
+</ul>
+<hr />
+<h2 id="一句话记忆">10. 一句话记忆</h2>
+<p><strong>游标分页替OFFSET，数据变动不惊慌。</strong></p>
+
     </div>
 </article>
-
 
 <script>
     // Add copy buttons to code blocks

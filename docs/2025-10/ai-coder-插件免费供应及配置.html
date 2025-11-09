@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI代码编程插件配置与部署指南：Kilo Code免费接入实践</title>
     <!-- SEO Meta Tags -->
     <meta name="description" content="AI代码编程插件配置与部署指南：Kilo
@@ -34,14 +34,14 @@ Code免费接入实践
 
 
 2. 平台生态概述
-...">
-    <meta name="keywords" content="AI代码编程插件配置与部署指南, Kilo, Code免费接入实践">
-    <meta name="author" content="AI 个人笔记">
-    <meta name="robots" content="index, follow">
-    
+..." />
+    <meta name="keywords" content="AI代码编程插件配置与部署指南, Kilo, Code免费接入实践" />
+    <meta name="author" content="AI 个人笔记" />
+    <meta name="robots" content="index, follow" />
+
     <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="article">
-    <meta property="og:title" content="AI代码编程插件配置与部署指南：Kilo Code免费接入实践">
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="AI代码编程插件配置与部署指南：Kilo Code免费接入实践" />
     <meta property="og:description" content="AI代码编程插件配置与部署指南：Kilo
 Code免费接入实践
 
@@ -71,14 +71,14 @@ Code免费接入实践
 
 
 2. 平台生态概述
-...">
-    <meta property="og:image" content="https://caoayu.top/images/og-image.png">
-    <meta property="og:url" content="https://caoayu.top/docs/2025-10/ai-coder-插件免费供应及配置.html">
-    <meta property="og:site_name" content="AI 个人笔记">
-    
+..." />
+    <meta property="og:image" content="https://caoayu.top/images/og-image.png" />
+    <meta property="og:url" content="https://caoayu.top/docs/2025-10/ai-coder-插件免费供应及配置.html" />
+    <meta property="og:site_name" content="AI 个人笔记" />
+
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="AI代码编程插件配置与部署指南：Kilo Code免费接入实践">
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content="AI代码编程插件配置与部署指南：Kilo Code免费接入实践" />
     <meta property="twitter:description" content="AI代码编程插件配置与部署指南：Kilo
 Code免费接入实践
 
@@ -108,673 +108,689 @@ Code免费接入实践
 
 
 2. 平台生态概述
-...">
-    <meta property="twitter:image" content="https://caoayu.top/images/og-image.png">
-    
+..." />
+    <meta property="twitter:image" content="https://caoayu.top/images/og-image.png" />
+
     <!-- Canonical URL -->
-    <link rel="canonical" href="https://caoayu.top/docs/2025-10/ai-coder-插件免费供应及配置.html">
-    
+    <link rel="canonical" href="https://caoayu.top/docs/2025-10/ai-coder-插件免费供应及配置.html" />
+
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
     <style>
-        /* Google Fonts for better typography */
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap');
+      /* Google Fonts for better typography */
+      @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap");
 
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --bg-color: #f8f9fa;
-            --text-color: #34495e;
-            --border-color: #e9ecef;
-            --card-bg: #ffffff;
-            --hover-color: #f8f9fa;
-        }
+      :root {
+        --primary-color: #2c3e50;
+        --secondary-color: #3498db;
+        --accent-color: #e74c3c;
+        --bg-color: #f8f9fa;
+        --text-color: #34495e;
+        --border-color: #e9ecef;
+        --card-bg: #ffffff;
+        --hover-color: #f8f9fa;
+      }
 
-        :root.dark-mode {
-            --primary-color: #ecf0f1;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --bg-color: #1a1a1a;
-            --text-color: #e0e0e0;
-            --border-color: #333333;
-            --card-bg: #2d2d2d;
-            --hover-color: #3a3a3a;
-        }
+      :root.dark-mode {
+        --primary-color: #ecf0f1;
+        --secondary-color: #3498db;
+        --accent-color: #e74c3c;
+        --bg-color: #1a1a1a;
+        --text-color: #e0e0e0;
+        --border-color: #333333;
+        --card-bg: #2d2d2d;
+        --hover-color: #3a3a3a;
+      }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: 'Roboto', 'Noto Sans SC', sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--bg-color);
-            min-height: 100vh;
-            padding: 0;
-        }
+      body {
+        font-family: "Roboto", "Noto Sans SC", sans-serif;
+        line-height: 1.6;
+        color: var(--text-color);
+        background-color: var(--bg-color);
+        min-height: 100vh;
+        padding: 0;
+      }
 
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+        display: flex;
+        gap: 30px;
+      }
+
+      .header {
+        /* display: flex; */
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 0;
+        margin-bottom: 30px;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .github-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #24292e;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: background 0.3s;
+      }
+
+      .github-link:hover {
+        background: #000;
+      }
+
+      .theme-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        background: rgba(255, 255, 255, 0.95);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        backdrop-filter: blur(10px);
+      }
+
+      .theme-toggle:hover {
+        background: rgba(255, 255, 255, 1);
+        transform: scale(1.1);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+      }
+
+      .theme-toggle svg {
+        width: 24px;
+        height: 24px;
+        color: #ce3321;
+        transition: transform 0.3s ease;
+      }
+
+      .theme-toggle:hover svg {
+        transform: rotate(20deg);
+      }
+
+      :root.dark-mode .theme-toggle {
+        background: rgba(45, 45, 45, 0.95);
+        border-color: rgba(200, 200, 200, 0.3);
+      }
+
+      :root.dark-mode .theme-toggle svg {
+        color: #ffc107;
+      }
+
+      :root.dark-mode .theme-toggle:hover {
+        background: rgba(60, 60, 60, 1);
+      }
+
+      .main-content {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .post {
+        background: var(--card-bg);
+        border-radius: 8px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--border-color);
+      }
+
+      .post-header {
+        margin-bottom: 25px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .post-title {
+        color: var(--primary-color);
+        font-size: 2rem;
+        margin-bottom: 15px;
+      }
+
+      .post-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #6c757d;
+        font-size: 0.95rem;
+      }
+
+      :root.dark-mode .post-meta {
+        color: #a0a0a0;
+      }
+
+      .post-date {
+        background-color: #e3f2fd;
+        color: var(--secondary-color);
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: 500;
+      }
+
+      :root.dark-mode .post-date {
+        background-color: rgba(52, 152, 219, 0.2);
+        color: #64b5f6;
+      }
+
+      .post-category {
+        background-color: #e8f5e9;
+        color: #4caf50;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: 500;
+      }
+
+      :root.dark-mode .post-category {
+        background-color: rgba(76, 175, 80, 0.2);
+        color: #81c784;
+      }
+
+      .post-content {
+        font-size: 1.05rem;
+        line-height: 1.7;
+      }
+
+      .post-content h1 {
+        color: var(--primary-color);
+        font-size: 1.8rem;
+        margin: 35px 0 25px 0;
+        padding-bottom: 15px;
+        border-bottom: 2px solid var(--border-color);
+      }
+
+      /* Table of Contents */
+      .toc-container {
+        width: 300px;
+        flex-shrink: 0;
+      }
+
+      .toc {
+        position: sticky;
+        top: 135px;
+        background: var(--card-bg);
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--border-color);
+        max-height: calc(100vh - 150px);
+        overflow-y: auto;
+      }
+
+      .toc h2 {
+        color: var(--primary-color);
+        font-size: 1.4rem;
+        margin-top: 0;
+        margin-bottom: 15px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .toc ul {
+        list-style: none;
+        padding-left: 0;
+      }
+
+      .toc ul ul {
+        padding-left: 20px;
+      }
+
+      .toc li {
+        margin-bottom: 8px;
+      }
+
+      .toc a {
+        text-decoration: none;
+        color: var(--text-color);
+        font-size: 0.95rem;
+        transition: color 0.2s;
+      }
+
+      .toc a:hover {
+        color: var(--secondary-color);
+      }
+
+      .toc a.active {
+        color: var(--secondary-color);
+        font-weight: 500;
+      }
+
+      .post-content h2 {
+        color: var(--primary-color);
+        font-size: 1.5rem;
+        margin: 30px 0 20px 0;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .post-content h3 {
+        color: #2980b9;
+        font-size: 1.3rem;
+        margin: 25px 0 15px 0;
+      }
+
+      .post-content p {
+        margin-bottom: 18px;
+      }
+
+      .post-content ul,
+      .post-content ol {
+        margin: 20px 0;
+        padding-left: 35px;
+      }
+
+      .post-content li {
+        margin-bottom: 10px;
+      }
+
+      .post-content code {
+        background-color: #e8eaed;
+        padding: 3px 7px;
+        border-radius: 4px;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo,
+          Courier, monospace;
+        color: #c0392b;
+        font-size: 0.9em;
+      }
+
+      :root.dark-mode .post-content code {
+        background-color: rgba(255, 255, 255, 0.1);
+        color: #ff7043;
+      }
+
+      .post-content pre {
+        background-color: #2d2d2d;
+        color: #f8f8f2;
+        padding: 20px;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 25px 0;
+        font-size: 0.9em;
+        line-height: 1.5;
+        position: relative;
+        overflow: visible;
+      }
+
+      /* Copy button styles */
+      .copy-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #444;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 5px 10px;
+        font-size: 0.8em;
+        cursor: pointer;
+        opacity: 0.8;
+        transition: all 0.2s ease;
+        z-index: 10;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      }
+
+      /* 为 Pandoc 生成的代码块容器添加定位上下文 */
+      .sourceCode {
+        position: relative;
+      }
+
+      .copy-button:hover {
+        background-color: #555;
+        opacity: 1;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      }
+
+      .copy-button.copied {
+        background-color: #27ae60;
+      }
+
+      .post-content pre code {
+        background-color: transparent;
+        padding: 0;
+        color: inherit;
+      }
+
+      .post-content blockquote {
+        background-color: #eaf2f8;
+        border-left: 5px solid var(--secondary-color);
+        padding: 20px;
+        margin: 25px 0;
+        border-radius: 0 5px 5px 0;
+      }
+
+      :root.dark-mode .post-content blockquote {
+        background-color: rgba(52, 152, 219, 0.15);
+        color: #b3e5fc;
+      }
+
+      .post-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 25px 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        table-layout: fixed; /* 添加这行以确保表格列宽正确 */
+      }
+
+      .post-content th,
+      .post-content td {
+        padding: 12px 15px;
+        text-align: left;
+        border: 1px solid #e1e1e1;
+        word-wrap: break-word; /* 确保长内容可以换行 */
+      }
+
+      .post-content th {
+        background-color: #3498db;
+        color: #ffffff;
+        font-weight: 500;
+        text-align: center;
+      }
+
+      .post-content tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+      }
+
+      .post-content tbody tr:hover {
+        background-color: #e9ecef;
+      }
+
+      :root.dark-mode .post-content th {
+        background-color: #2196f3;
+      }
+
+      :root.dark-mode .post-content th,
+      :root.dark-mode .post-content td {
+        border: 1px solid #444;
+      }
+
+      :root.dark-mode .post-content tbody tr:nth-child(even) {
+        background-color: #2a2a2a;
+      }
+
+      :root.dark-mode .post-content tbody tr:hover {
+        background-color: #3a3a3a;
+      }
+
+      .post-content a {
+        color: var(--secondary-color);
+        text-decoration: none;
+      }
+
+      .post-content a:hover {
+        text-decoration: underline;
+      }
+
+      .warning {
+        background-color: #fff3cd;
+        border: 1px solid #ffeaa7;
+        color: #856404;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 25px 0;
+        text-align: center;
+        font-size: 0.9rem;
+      }
+
+      :root.dark-mode .warning {
+        background-color: rgba(255, 193, 7, 0.15);
+        border: 1px solid rgba(255, 193, 7, 0.3);
+        color: #ffd54f;
+      }
+
+      .footer {
+        text-align: center;
+        padding: 30px 20px;
+        color: #6c757d;
+        font-size: 0.9rem;
+        margin-top: 40px;
+      }
+
+      .back-to-top {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: var(--secondary-color);
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .back-to-top.visible {
+        opacity: 1;
+      }
+
+      /* Mermaid 图表样式 */
+      .mermaid {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 25px 0;
+        text-align: center;
+      }
+
+      :root.dark-mode .mermaid {
+        background-color: #2d2d2d;
+        border: 1px solid #444;
+      }
+
+      @media (max-width: 768px) {
         .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-            display: flex;
-            gap: 30px;
+          padding: 15px;
         }
 
-        .header {
-            /* display: flex; */
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-            margin-bottom: 30px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-.github-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: #24292e;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: background 0.3s;
-        }
-
-        .github-link:hover {
-            background: #000;
-        }
-
-        .theme-toggle {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.95);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-        }
-
-        .theme-toggle:hover {
-            background: rgba(255, 255, 255, 1);
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .theme-toggle svg {
-            width: 24px;
-            height: 24px;
-            color: #CE3321;
-            transition: transform 0.3s ease;
-        }
-
-        .theme-toggle:hover svg {
-            transform: rotate(20deg);
-        }
-
-        :root.dark-mode .theme-toggle {
-            background: rgba(45, 45, 45, 0.95);
-            border-color: rgba(200, 200, 200, 0.3);
-        }
-
-        :root.dark-mode .theme-toggle svg {
-            color: #FFC107;
-        }
-
-        :root.dark-mode .theme-toggle:hover {
-            background: rgba(60, 60, 60, 1);
-        }
-
-        .main-content {
-            flex: 1;
-            min-width: 0;
-        }
-        
         .post {
-            background: var(--card-bg);
-            border-radius: 8px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            border: 1px solid var(--border-color);
-        }
-
-        .post-header {
-            margin-bottom: 25px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid var(--border-color);
+          padding: 20px;
         }
 
         .post-title {
-            color: var(--primary-color);
-            font-size: 2rem;
-            margin-bottom: 15px;
+          font-size: 1.6rem;
         }
 
-        .post-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: #6c757d;
-            font-size: 0.95rem;
-        }
-
-        :root.dark-mode .post-meta {
-            color: #a0a0a0;
-        }
-
-        .post-date {
-            background-color: #e3f2fd;
-            color: var(--secondary-color);
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: 500;
-        }
-
-        :root.dark-mode .post-date {
-            background-color: rgba(52, 152, 219, 0.2);
-            color: #64B5F6;
-        }
-
-        .post-category {
-            background-color: #e8f5e9;
-            color: #4caf50;
-            padding: 5px 15px;
-            border-radius: 20px;
-            font-weight: 500;
-        }
-
-        :root.dark-mode .post-category {
-            background-color: rgba(76, 175, 80, 0.2);
-            color: #81C784;
+        .header {
+          flex-direction: column;
+          gap: 15px;
         }
 
         .post-content {
-            font-size: 1.05rem;
-            line-height: 1.7;
+          font-size: 1rem;
         }
 
         .post-content h1 {
-            color: var(--primary-color);
-            font-size: 1.8rem;
-            margin: 35px 0 25px 0;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--border-color);
-        }
-        
-        /* Table of Contents */
-        .toc-container {
-            width: 300px;
-            flex-shrink: 0;
-        }
-        
-        .toc {
-            position: sticky;
-            top: 135px;
-            background: var(--card-bg);
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            border: 1px solid var(--border-color);
-            max-height: calc(100vh - 150px);
-            overflow-y: auto;
-        }
-        
-        .toc h2 {
-            color: var(--primary-color);
-            font-size: 1.4rem;
-            margin-top: 0;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
-        }
-        
-        .toc ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        
-        .toc ul ul {
-            padding-left: 20px;
-        }
-        
-        .toc li {
-            margin-bottom: 8px;
-        }
-        
-        .toc a {
-            text-decoration: none;
-            color: var(--text-color);
-            font-size: 0.95rem;
-            transition: color 0.2s;
-        }
-        
-        .toc a:hover {
-            color: var(--secondary-color);
-        }
-        
-        .toc a.active {
-            color: var(--secondary-color);
-            font-weight: 500;
+          font-size: 1.5rem;
         }
 
         .post-content h2 {
-            color: var(--primary-color);
-            font-size: 1.5rem;
-            margin: 30px 0 20px 0;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--border-color);
+          font-size: 1.3rem;
         }
 
         .post-content h3 {
-            color: #2980b9;
-            font-size: 1.3rem;
-            margin: 25px 0 15px 0;
+          font-size: 1.1rem;
         }
 
-        .post-content p {
-            margin-bottom: 18px;
+        .toc-container {
+          display: none;
         }
-
-        .post-content ul, .post-content ol {
-            margin: 20px 0;
-            padding-left: 35px;
-        }
-
-        .post-content li {
-            margin-bottom: 10px;
-        }
-
-        .post-content code {
-            background-color: #e8eaed;
-            padding: 3px 7px;
-            border-radius: 4px;
-            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
-            color: #c0392b;
-            font-size: 0.9em;
-        }
-
-        :root.dark-mode .post-content code {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #FF7043;
-        }
-
-        .post-content pre {
-            background-color: #2d2d2d;
-            color: #f8f8f2;
-            padding: 20px;
-            border-radius: 8px;
-            overflow-x: auto;
-            margin: 25px 0;
-            font-size: 0.9em;
-            line-height: 1.5;
-            position: relative;
-            overflow: visible;
-        }
-        
-        /* Copy button styles */
-        .copy-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: #444;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            padding: 5px 10px;
-            font-size: 0.8em;
-            cursor: pointer;
-            opacity: 0.8;
-            transition: all 0.2s ease;
-            z-index: 10;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        
-        /* 为 Pandoc 生成的代码块容器添加定位上下文 */
-        .sourceCode {
-            position: relative;
-        }
-        
-        .copy-button:hover {
-            background-color: #555;
-            opacity: 1;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-        
-        .copy-button.copied {
-            background-color: #27ae60;
-        }
-
-        .post-content pre code {
-            background-color: transparent;
-            padding: 0;
-            color: inherit;
-        }
-
-        .post-content blockquote {
-            background-color: #eaf2f8;
-            border-left: 5px solid var(--secondary-color);
-            padding: 20px;
-            margin: 25px 0;
-            border-radius: 0 5px 5px 0;
-        }
-
-        :root.dark-mode .post-content blockquote {
-            background-color: rgba(52, 152, 219, 0.15);
-            color: #B3E5FC;
-        }
-
-        .post-content table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 25px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            table-layout: fixed; /* 添加这行以确保表格列宽正确 */
-        }
-
-        .post-content th, .post-content td {
-            padding: 12px 15px;
-            text-align: left;
-            border: 1px solid #e1e1e1;
-            word-wrap: break-word; /* 确保长内容可以换行 */
-        }
-
-        .post-content th {
-            background-color: #3498db;
-            color: #ffffff;
-            font-weight: 500;
-            text-align: center;
-        }
-
-        .post-content tbody tr:nth-child(even) {
-            background-color: #f8f9fa;
-        }
-
-        .post-content tbody tr:hover {
-            background-color: #e9ecef;
-        }
-
-        :root.dark-mode .post-content th {
-            background-color: #2196F3;
-        }
-
-        :root.dark-mode .post-content th, :root.dark-mode .post-content td {
-            border: 1px solid #444;
-        }
-
-        :root.dark-mode .post-content tbody tr:nth-child(even) {
-            background-color: #2a2a2a;
-        }
-
-        :root.dark-mode .post-content tbody tr:hover {
-            background-color: #3a3a3a;
-        }
-
-        .post-content a {
-            color: var(--secondary-color);
-            text-decoration: none;
-        }
-
-        .post-content a:hover {
-            text-decoration: underline;
-        }
-
-        .warning {
-            background-color: #fff3cd;
-            border: 1px solid #ffeaa7;
-            color: #856404;
-            padding: 15px;
-            border-radius: 5px;
-            margin: 25px 0;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-
-        :root.dark-mode .warning {
-            background-color: rgba(255, 193, 7, 0.15);
-            border: 1px solid rgba(255, 193, 7, 0.3);
-            color: #FFD54F;
-        }
-
-        .footer {
-            text-align: center;
-            padding: 30px 20px;
-            color: #6c757d;
-            font-size: 0.9rem;
-            margin-top: 40px;
-        }
-
-        .back-to-top {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: var(--secondary-color);
-            color: white;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-decoration: none;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .back-to-top.visible {
-            opacity: 1;
-        }
-
-        /* Mermaid 图表样式 */
-        .mermaid {
-            background-color: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            padding: 20px;
-            margin: 25px 0;
-            text-align: center;
-        }
-
-        :root.dark-mode .mermaid {
-            background-color: #2d2d2d;
-            border: 1px solid #444;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-            
-            .post {
-                padding: 20px;
-            }
-            
-            .post-title {
-                font-size: 1.6rem;
-            }
-            
-            .header {
-                flex-direction: column;
-                gap: 15px;
-            }
-            
-            .post-content {
-                font-size: 1rem;
-            }
-            
-            .post-content h1 {
-                font-size: 1.5rem;
-            }
-            
-            .post-content h2 {
-                font-size: 1.3rem;
-            }
-            
-            .post-content h3 {
-                font-size: 1.1rem;
-            }
-            
-            .toc-container {
-                display: none;
-            }
-        }
+      }
     </style>
     <!-- 引入本地 Mermaid 库 -->
     <script src="../../js/mermaid.min.js"></script>
     <script>
-        // 初始化 Mermaid
-        mermaid.initialize({ 
-            startOnLoad: true,
-            theme: 'default',
-            // 可以根据需要添加更多配置选项
-            securityLevel: 'loose'
+      // 初始化 Mermaid
+      mermaid.initialize({
+        startOnLoad: true,
+        theme: "default",
+        // 可以根据需要添加更多配置选项
+        securityLevel: "loose",
+      });
+
+      // 处理 Pandoc 生成的 Mermaid 代码块
+      // Pandoc 将 Mermaid 代码块转换为 <pre class="mermaid"><code>... 格式
+      // 我们需要将其转换为 <div class="mermaid">... 格式以便 Mermaid 渲染
+      document.addEventListener("DOMContentLoaded", function () {
+        const mermaidBlocks = document.querySelectorAll("pre.mermaid code");
+        mermaidBlocks.forEach(function (codeElement) {
+          // 创建新的 div 元素
+          const mermaidDiv = document.createElement("div");
+          mermaidDiv.className = "mermaid";
+          // 将代码内容移到 div 中
+          mermaidDiv.textContent = codeElement.textContent;
+          // 替换原来的 pre 元素
+          codeElement.parentNode.parentNode.replaceChild(
+            mermaidDiv,
+            codeElement.parentNode
+          );
         });
-        
-        // 处理 Pandoc 生成的 Mermaid 代码块
-        // Pandoc 将 Mermaid 代码块转换为 <pre class="mermaid"><code>... 格式
-        // 我们需要将其转换为 <div class="mermaid">... 格式以便 Mermaid 渲染
-        document.addEventListener('DOMContentLoaded', function() {
-            const mermaidBlocks = document.querySelectorAll('pre.mermaid code');
-            mermaidBlocks.forEach(function(codeElement) {
-                // 创建新的 div 元素
-                const mermaidDiv = document.createElement('div');
-                mermaidDiv.className = 'mermaid';
-                // 将代码内容移到 div 中
-                mermaidDiv.textContent = codeElement.textContent;
-                // 替换原来的 pre 元素
-                codeElement.parentNode.parentNode.replaceChild(mermaidDiv, codeElement.parentNode);
-            });
-            
-            // 重新启动 Mermaid 渲染
-            mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+
+        // 重新启动 Mermaid 渲染
+        mermaid.init(undefined, document.querySelectorAll(".mermaid"));
+      });
+
+      // 为代码块添加复制按钮
+      function addCopyButtons() {
+        // 处理 Pandoc 生成的代码块结构 (<div class="sourceCode"><pre><code>)
+        const sourceCodeBlocks = document.querySelectorAll(".sourceCode");
+        sourceCodeBlocks.forEach(function (block) {
+          // 检查是否已经有复制按钮
+          if (block.querySelector(".copy-button")) return;
+
+          // 获取 pre 元素
+          const preElement = block.querySelector("pre");
+          if (!preElement) return;
+
+          // 创建复制按钮
+          const button = document.createElement("button");
+          button.className = "copy-button";
+          button.textContent = "复制";
+          button.setAttribute("aria-label", "复制代码");
+
+          // 添加点击事件
+          button.addEventListener("click", function () {
+            // 获取代码文本
+            const code = preElement.querySelector("code");
+            const text = code ? code.innerText : preElement.innerText;
+
+            // 复制到剪贴板
+            navigator.clipboard
+              .writeText(text)
+              .then(function () {
+                // 更新按钮状态
+                button.textContent = "已复制";
+                button.classList.add("copied");
+
+                // 3秒后恢复原始状态
+                setTimeout(function () {
+                  button.textContent = "复制";
+                  button.classList.remove("copied");
+                }, 3000);
+              })
+              .catch(function (err) {
+                console.error("复制失败: ", err);
+                button.textContent = "失败";
+                setTimeout(function () {
+                  button.textContent = "复制";
+                }, 3000);
+              });
+          });
+
+          // 将按钮添加到 sourceCode div 中
+          block.appendChild(button);
         });
-        
-        // 为代码块添加复制按钮
-        function addCopyButtons() {
-            // 处理 Pandoc 生成的代码块结构 (<div class="sourceCode"><pre><code>)
-            const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
-            sourceCodeBlocks.forEach(function(block) {
-                // 检查是否已经有复制按钮
-                if (block.querySelector('.copy-button')) return;
-                
-                // 获取 pre 元素
-                const preElement = block.querySelector('pre');
-                if (!preElement) return;
-                
-                // 创建复制按钮
-                const button = document.createElement('button');
-                button.className = 'copy-button';
-                button.textContent = '复制';
-                button.setAttribute('aria-label', '复制代码');
-                
-                // 添加点击事件
-                button.addEventListener('click', function() {
-                    // 获取代码文本
-                    const code = preElement.querySelector('code');
-                    const text = code ? code.innerText : preElement.innerText;
-                    
-                    // 复制到剪贴板
-                    navigator.clipboard.writeText(text).then(function() {
-                        // 更新按钮状态
-                        button.textContent = '已复制';
-                        button.classList.add('copied');
-                        
-                        // 3秒后恢复原始状态
-                        setTimeout(function() {
-                            button.textContent = '复制';
-                            button.classList.remove('copied');
-                        }, 3000);
-                    }).catch(function(err) {
-                        console.error('复制失败: ', err);
-                        button.textContent = '失败';
-                        setTimeout(function() {
-                            button.textContent = '复制';
-                        }, 3000);
-                    });
-                });
-                
-                // 将按钮添加到 sourceCode div 中
-                block.appendChild(button);
-            });
-            
-            // 处理普通的 pre 代码块 (非 Pandoc 生成的)
-            // 先获取所有非 mermaid 的 pre 元素
-            const allPreBlocks = document.querySelectorAll('pre:not(.mermaid)');
-            allPreBlocks.forEach(function(block) {
-                // 检查是否已经在 sourceCode div 中（Pandoc 生成的）或者已经有复制按钮
-                if (block.closest('.sourceCode') || block.querySelector('.copy-button')) return;
-                
-                // 创建复制按钮
-                const button = document.createElement('button');
-                button.className = 'copy-button';
-                button.textContent = '复制';
-                button.setAttribute('aria-label', '复制代码');
-                
-                // 添加点击事件
-                button.addEventListener('click', function() {
-                    // 获取代码文本
-                    const code = block.querySelector('code');
-                    const text = code ? code.innerText : block.innerText;
-                    
-                    // 复制到剪贴板
-                    navigator.clipboard.writeText(text).then(function() {
-                        // 更新按钮状态
-                        button.textContent = '已复制';
-                        button.classList.add('copied');
-                        
-                        // 3秒后恢复原始状态
-                        setTimeout(function() {
-                            button.textContent = '复制';
-                            button.classList.remove('copied');
-                        }, 3000);
-                    }).catch(function(err) {
-                        console.error('复制失败: ', err);
-                        button.textContent = '失败';
-                        setTimeout(function() {
-                            button.textContent = '复制';
-                        }, 3000);
-                    });
-                });
-                
-                // 将按钮添加到代码块
-                block.appendChild(button);
-            });
-        }
+
+        // 处理普通的 pre 代码块 (非 Pandoc 生成的)
+        // 先获取所有非 mermaid 的 pre 元素
+        const allPreBlocks = document.querySelectorAll("pre:not(.mermaid)");
+        allPreBlocks.forEach(function (block) {
+          // 检查是否已经在 sourceCode div 中（Pandoc 生成的）或者已经有复制按钮
+          if (
+            block.closest(".sourceCode") ||
+            block.querySelector(".copy-button")
+          )
+            return;
+
+          // 创建复制按钮
+          const button = document.createElement("button");
+          button.className = "copy-button";
+          button.textContent = "复制";
+          button.setAttribute("aria-label", "复制代码");
+
+          // 添加点击事件
+          button.addEventListener("click", function () {
+            // 获取代码文本
+            const code = block.querySelector("code");
+            const text = code ? code.innerText : block.innerText;
+
+            // 复制到剪贴板
+            navigator.clipboard
+              .writeText(text)
+              .then(function () {
+                // 更新按钮状态
+                button.textContent = "已复制";
+                button.classList.add("copied");
+
+                // 3秒后恢复原始状态
+                setTimeout(function () {
+                  button.textContent = "复制";
+                  button.classList.remove("copied");
+                }, 3000);
+              })
+              .catch(function (err) {
+                console.error("复制失败: ", err);
+                button.textContent = "失败";
+                setTimeout(function () {
+                  button.textContent = "复制";
+                }, 3000);
+              });
+          });
+
+          // 将按钮添加到代码块
+          block.appendChild(button);
+        });
+      }
     </script>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <div class="main-content">
-            <article class="post">
-                <header class="post-header">
-                    <h1 class="post-title">AI代码编程插件配置与部署指南：Kilo Code免费接入实践</h1>
-                    <div class="post-meta">
-                        <div class="post-date">2025/11/1</div>
-                        <div class="post-category">2025-10</div>
-                    </div>
-                </header>
-                <div class="warning">
-                    ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
-                </div>
-                <div class="post-content" id="post-content">
-                    <h1
+      <div class="main-content">
+        <article class="post">
+          <header class="post-header">
+            <h1 class="post-title">AI代码编程插件配置与部署指南：Kilo Code免费接入实践</h1>
+            <div class="post-meta">
+              <div class="post-date">2025/11/1</div>
+              <div class="post-category">2025-10</div>
+            </div>
+          </header>
+          <div class="warning">
+            ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用3
+          </div>
+          <div class="post-content" id="post-content"><h1
 id="ai代码编程插件配置与部署指南kilo-code免费接入实践">AI代码编程插件配置与部署指南：Kilo
 Code免费接入实践</h1>
 <blockquote>
@@ -1324,169 +1340,175 @@ Code作为开源项目，将持续集成更多优质API平台，为开发者提�
 </blockquote>
 <hr />
 <p><em>最后更新：2025年10月31日</em></p>
+</div>
+        </article>
+      </div>
 
-                </div>
-            </article>
-            
-            <footer class="footer">
-                <p>AI 个人笔记 &copy; 2025 | 所有内容均由 AI 协助生成</p>
-            </footer>
-        </div>
-        
-        <div class="toc-container">
-            <nav class="toc" id="table-of-contents">
-                <h2>目录</h2>
-                <div id="toc-content"></div>
-            </nav>
-        </div>
+      <div class="toc-container">
+        <nav class="toc" id="table-of-contents">
+          <h2>目录</h2>
+          <div id="toc-content"></div>
+        </nav>
+      </div>
     </div>
-    
+
     <button class="theme-toggle" id="themeToggle" title="切换暗色模式">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="5"></circle>
-            <line x1="12" y1="1" x2="12" y2="3"></line>
-            <line x1="12" y1="21" x2="12" y2="23"></line>
-            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-            <line x1="1" y1="12" x2="3" y2="12"></line>
-            <line x1="21" y1="12" x2="23" y2="12"></line>
-            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-        </svg>
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </svg>
     </button>
 
     <a href="#" class="back-to-top" id="backToTop">↑</a>
 
     <script>
-        // Dark mode toggle
-        const themeToggle = document.getElementById('themeToggle');
-        const html = document.documentElement;
+      // Dark mode toggle
+      const themeToggle = document.getElementById("themeToggle");
+      const html = document.documentElement;
 
-        // Load saved theme preference
-        const savedTheme = localStorage.getItem('theme-mode');
-        if (savedTheme === 'dark') {
-            html.classList.add('dark-mode');
+      // Load saved theme preference
+      const savedTheme = localStorage.getItem("theme-mode");
+      if (savedTheme === "dark") {
+        html.classList.add("dark-mode");
+      }
+
+      // Theme toggle click handler
+      themeToggle.addEventListener("click", () => {
+        html.classList.toggle("dark-mode");
+        const isDarkMode = html.classList.contains("dark-mode");
+        localStorage.setItem("theme-mode", isDarkMode ? "dark" : "light");
+        console.log("主题切换为:", isDarkMode ? "暗色模式" : "亮色模式");
+      });
+
+      // Generate Table of Contents
+      function generateTOC() {
+        const tocContainer = document.getElementById("toc-content");
+        const content = document.querySelector(".post-content");
+        const headers = content.querySelectorAll("h1, h2, h3");
+
+        if (headers.length === 0) {
+          tocContainer.innerHTML = "<p>暂无目录</p>";
+          return;
         }
 
-        // Theme toggle click handler
-        themeToggle.addEventListener('click', () => {
-            html.classList.toggle('dark-mode');
-            const isDarkMode = html.classList.contains('dark-mode');
-            localStorage.setItem('theme-mode', isDarkMode ? 'dark' : 'light');
-            console.log('主题切换为:', isDarkMode ? '暗色模式' : '亮色模式');
+        const toc = document.createElement("ul");
+
+        headers.forEach((header, index) => {
+          // Add an id to the header if it doesn't have one
+          if (!header.id) {
+            header.id = "heading-" + index;
+          }
+
+          const li = document.createElement("li");
+          li.className = "toc-item";
+
+          const link = document.createElement("a");
+          link.href = "#" + header.id;
+          link.textContent = header.textContent;
+          link.className = "toc-link";
+
+          // Set indentation based on header level
+          const level = parseInt(header.tagName.charAt(1)) - 1;
+          li.style.marginLeft = level * 20 + "px";
+
+          li.appendChild(link);
+          toc.appendChild(li);
         });
 
-        // Generate Table of Contents
-        function generateTOC() {
-            const tocContainer = document.getElementById('toc-content');
-            const content = document.querySelector('.post-content');
-            const headers = content.querySelectorAll('h1, h2, h3');
-            
-            if (headers.length === 0) {
-                tocContainer.innerHTML = '<p>暂无目录</p>';
-                return;
-            }
-            
-            const toc = document.createElement('ul');
-            
-            headers.forEach((header, index) => {
-                // Add an id to the header if it doesn't have one
-                if (!header.id) {
-                    header.id = 'heading-' + index;
-                }
-                
-                const li = document.createElement('li');
-                li.className = 'toc-item';
-                
-                const link = document.createElement('a');
-                link.href = '#' + header.id;
-                link.textContent = header.textContent;
-                link.className = 'toc-link';
-                
-                // Set indentation based on header level
-                const level = parseInt(header.tagName.charAt(1)) - 1;
-                li.style.marginLeft = (level * 20) + 'px';
-                
-                li.appendChild(link);
-                toc.appendChild(li);
-            });
-            
-            tocContainer.appendChild(toc);
+        tocContainer.appendChild(toc);
+      }
+
+      // Adjust TOC height to match content
+      function adjustTOCHeight() {
+        const toc = document.getElementById("table-of-contents");
+        const post = document.querySelector(".post");
+
+        if (toc && post) {
+          // Get the height of the post area
+          const postHeight = post.offsetHeight;
+
+          // Set the max-height of the TOC to match the post height
+          // Leave some space for top margin and padding
+          toc.style.maxHeight =
+            Math.min(postHeight - 30, window.innerHeight * 0.8) + "px";
         }
-        
-        // Adjust TOC height to match content
-        function adjustTOCHeight() {
-            const toc = document.getElementById('table-of-contents');
-            const post = document.querySelector('.post');
-            
-            if (toc && post) {
-                // Get the height of the post area
-                const postHeight = post.offsetHeight;
-                
-                // Set the max-height of the TOC to match the post height
-                // Leave some space for top margin and padding
-                toc.style.maxHeight = Math.min(postHeight - 30, window.innerHeight * 0.8) + 'px';
-            }
+      }
+
+      // Back to top button
+      const backToTopButton = document.getElementById("backToTop");
+
+      window.addEventListener("scroll", () => {
+        if (window.pageYOffset > 300) {
+          backToTopButton.classList.add("visible");
+        } else {
+          backToTopButton.classList.remove("visible");
         }
-        
-        // Back to top button
-        const backToTopButton = document.getElementById('backToTop');
-        
-        window.addEventListener('scroll', () => {
-            if (window.pageYOffset > 300) {
-                backToTopButton.classList.add('visible');
-            } else {
-                backToTopButton.classList.remove('visible');
+      });
+
+      backToTopButton.addEventListener("click", (e) => {
+        e.preventDefault();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      });
+
+      // Initialize TOC when page loads and adjust height
+      document.addEventListener("DOMContentLoaded", function () {
+        generateTOC();
+        adjustTOCHeight();
+
+        // Adjust height on window resize
+        window.addEventListener("resize", adjustTOCHeight);
+      });
+
+      // 页面加载完成后添加复制按钮
+      window.addEventListener("load", function () {
+        addCopyButtons();
+      });
+
+      // 监听可能的动态内容加载
+      const observer = new MutationObserver(function (mutations) {
+        let shouldAddButtons = false;
+        mutations.forEach(function (mutation) {
+          mutation.addedNodes.forEach(function (node) {
+            if (node.nodeType === 1) {
+              // 检查添加的节点是否是代码块或包含代码块
+              if (
+                (node.classList && node.classList.contains("sourceCode")) ||
+                (node.tagName === "PRE" &&
+                  !node.classList.contains("mermaid")) ||
+                node.querySelector(".sourceCode, pre:not(.mermaid)")
+              ) {
+                shouldAddButtons = true;
+              }
             }
+          });
         });
-        
-        backToTopButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        });
-        
-        // Initialize TOC when page loads and adjust height
-        document.addEventListener('DOMContentLoaded', function() {
-            generateTOC();
-            adjustTOCHeight();
-            
-            // Adjust height on window resize
-            window.addEventListener('resize', adjustTOCHeight);
-        });
-        
-        // 页面加载完成后添加复制按钮
-        window.addEventListener('load', function() {
-            addCopyButtons();
-        });
-        
-        // 监听可能的动态内容加载
-        const observer = new MutationObserver(function(mutations) {
-            let shouldAddButtons = false;
-            mutations.forEach(function(mutation) {
-                mutation.addedNodes.forEach(function(node) {
-                    if (node.nodeType === 1) {
-                        // 检查添加的节点是否是代码块或包含代码块
-                        if ((node.classList && node.classList.contains('sourceCode')) || 
-                            (node.tagName === 'PRE' && !node.classList.contains('mermaid')) ||
-                            node.querySelector('.sourceCode, pre:not(.mermaid)')) {
-                            shouldAddButtons = true;
-                        }
-                    }
-                });
-            });
-            if (shouldAddButtons) {
-                // 延迟执行以确保DOM完全更新
-                setTimeout(addCopyButtons, 100);
-            }
-        });
-        
-        // 开始监听DOM变化
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
-        
-        console.log("页面加载完成，AI 技术笔记已就绪");
+        if (shouldAddButtons) {
+          // 延迟执行以确保DOM完全更新
+          setTimeout(addCopyButtons, 100);
+        }
+      });
+
+      // 开始监听DOM变化
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+      });
+
+      console.log("页面加载完成，AI 技术笔记已就绪");
     </script>
-</body>
+  </body>
 </html>

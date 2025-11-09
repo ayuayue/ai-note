@@ -10,8 +10,7 @@
         ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
     </div>
     <div class="post-content" id="post-content">
-        
-                    <h1
+        <h1
 id="告别版本混乱windows-上使用-nvm-高效管理-node.js-环境">告别版本混乱：Windows
 上使用 NVM 高效管理 Node.js 环境</h1>
 <p>作为一名前端或 Node.js 开发者，你是否遇到过这样的场景：项目 A
@@ -92,10 +91,96 @@ PowerShell, CMD, 或 Windows Terminal）。</p>
 <p>首先，查看一下有哪些版本可以安装：</p>
 <div class="sourceCode" id="cb3"><pre
 class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 列出所有可供在线安装的版本</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">nvm</span> list available</span></code></pre>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">nvm</span> list available</span></code></pre></div>
+<p>然后，根据你的需要安装一个或多个版本。</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 安装最新的 LTS (长期支持) 版本</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">nvm</span> install lts</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 安装一个指定的版本，例如 18.17.1</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="ex">nvm</span> install 18.17.1</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 也可以只指定主版本号，nvm 会自动安装该系列最新的稳定版</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="ex">nvm</span> install 16</span></code></pre></div>
+<h4 id="查看与切换本地版本">2. 查看与切换本地版本</h4>
+<p>安装了多个版本后，如何查看和切换呢？</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 列出所有已经安装在本地的版本</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">nvm</span> list</span></code></pre></div>
+<p>你会看到一个列表，当前正在使用的版本前面会有一个星号
+<code>*</code>。</p>
+<p>要为当前项目切换到一个不同的版本，使用 <code>use</code> 命令：</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 切换到 18.17.1 版本</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">nvm</span> use 18.17.1</span></code></pre></div>
+<p>执行后，你可以立即通过 <code>node -v</code> 和 <code>npm -v</code>
+来验证版本是否已成功切换。</p>
+<p><strong>请注意</strong>：<code>nvm use</code>
+命令的效果<strong>仅限于当前的终端窗口</strong>。</p>
+<h4 id="设置全局默认版本">3. 设置全局默认版本</h4>
+<p>如果你希望每次打开新终端时都自动使用某个特定版本，你需要将其设置为默认版本。</p>
+<p>这个操作需要修改系统级的符号链接，因此必须<strong>以管理员身份</strong>打开你的命令行终端，然后执行
+<code>use</code> 命令：</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># (在管理员终端中运行)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">nvm</span> use 18.17.1</span></code></pre></div>
+<p>这样，<code>18.17.1</code> 就成为了你系统中的默认 Node.js 版本。</p>
+<h3 id="常用命令速查表">常用命令速查表</h3>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">功能</th>
+<th style="text-align: left;">命令</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>显示 nvm 版本</strong></td>
+<td style="text-align: left;"><code>nvm version</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>列出所有可安装版本</strong></td>
+<td style="text-align: left;"><code>nvm list available</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>安装最新 LTS 版本</strong></td>
+<td style="text-align: left;"><code>nvm install lts</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>安装指定版本</strong></td>
+<td
+style="text-align: left;"><code>nvm install &lt;version&gt;</code></td>
+</tr>
+<tr class="odd">
+<td
+style="text-align: left;"><strong>列出所有本地已安装版本</strong></td>
+<td style="text-align: left;"><code>nvm list</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>切换当前窗口的版本</strong></td>
+<td style="text-align: left;"><code>nvm use &lt;version&gt;</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>设置全局默认版本</strong></td>
+<td style="text-align: left;">(以管理员身份运行)
+<code>nvm use &lt;version&gt;</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>卸载一个已安装版本</strong></td>
+<td
+style="text-align: left;"><code>nvm uninstall &lt;version&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="结语">结语</h3>
+<p>通过
+<code>nvm-windows</code>，你可以告别过去那种为了兼容不同项目而反复折腾
+Node.js 环境的日子。它提供了一个干净、独立且灵活的版本管理方案，让你的
+Windows
+开发环境更加专业和高效。现在就开始享受在不同版本间丝滑切换的乐趣吧！</p>
+
     </div>
 </article>
-
 
 <script>
     // Add copy buttons to code blocks

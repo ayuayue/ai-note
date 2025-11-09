@@ -10,8 +10,7 @@
         ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
     </div>
     <div class="post-content" id="post-content">
-        
-                    <h1
+        <h1
 id="使用shell脚本和curl命令通过telegram机器人发送通知消息">使用Shell脚本和cURL命令通过Telegram机器人发送通知消息</h1>
 <h2 id="摘要">摘要</h2>
 <p>本文详细介绍如何使用Shell脚本和cURL命令通过Telegram机器人发送通知消息，涵盖机器人创建、chat_id获取、消息发送及实战应用。适合需要实现服务器监控、自动化通知的开发和运维人员。</p>
@@ -46,10 +45,369 @@ Token，格式如<code>123456789:ABCDEFGHIJKLMNOPQRSTUVWXYZ</code></p>
 通过上述getUpdates接口获取，群组chat_id为负数</p>
 <div class="sourceCode" id="cb1"><pre
 class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 获取updates示例</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-s</span> <span class="st">&quot;https://api.telegram.org/bot&lt;YourBOTToken&gt;/getUpdates&quot;</span> <span class="kw">|</span> <span class="ex">python</span> <span class="at">-m</span> json.tool</span></code></pre>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-s</span> <span class="st">&quot;https://api.telegram.org/bot&lt;YourBOTToken&gt;/getUpdates&quot;</span> <span class="kw">|</span> <span class="ex">python</span> <span class="at">-m</span> json.tool</span></code></pre></div>
+<p>下面的流程图展示了获取chat_id的完整过程：</p>
+<pre class="mermaid"><code>flowchart TD
+    A[开始获取chat_id] --&gt; B{目标类型}
+    B --&gt;|个人用户| C[向机器人发消息]
+    B --&gt;|群组| D[添加机器人到群组]
+    D --&gt; E[在群组发送消息]
+    C --&gt; F[访问getUpdates接口]
+    E --&gt; F
+    F --&gt; G[解析JSON获取id]
+    G --&gt; H[完成]</code></pre>
+<p><strong>常见误区</strong>： -
+未先向机器人发送消息就直接尝试获取updates，会导致返回空结果 -
+群组chat_id为负数，与个人chat_id格式不同 -
+需要确保机器人有权限访问群组消息</p>
+<h2 id="curl命令基础">3 cURL命令基础</h2>
+<p>cURL是一个功能丰富的命令行网络工具，支持多种协议（HTTP、FTP等），是Shell脚本中发送HTTP请求的理想选择。</p>
+<p><strong>关键参数说明</strong>： -
+<code>-X</code>：指定请求方法（GET、POST等） -
+<code>-d</code>：发送POST数据 - <code>-H</code>：设置请求头 -
+<code>-s</code>：静默模式，减少输出 -
+<code>--connect-timeout</code>：设置连接超时时间 -
+<code>--retry</code>：设置重试次数</p>
+<p><strong>基础消息发送格式</strong>：</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-s</span> <span class="at">-X</span> POST <span class="st">&quot;https://api.telegram.org/bot&lt;TOKEN&gt;/sendMessage&quot;</span> <span class="dt">\</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> chat_id=<span class="st">&quot;&lt;CHAT_ID&gt;&quot;</span> <span class="dt">\</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> text=<span class="st">&quot;Hello World&quot;</span></span></code></pre></div>
+<p><strong>设计优势</strong>：cURL支持多种数据格式和认证方式，能够灵活适应不同API需求。其简单的语法和丰富的选项使得在Shell脚本中集成HTTP请求变得简单高效。</p>
+<h2 id="shell脚本发送消息">4 Shell脚本发送消息</h2>
+<h3 id="基础消息发送">4.1 基础消息发送</h3>
+<p>最基本的消息发送脚本只需要几行代码：</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="va">TOKEN</span><span class="op">=</span><span class="st">&quot;你的机器人TOKEN&quot;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="va">CHAT_ID</span><span class="op">=</span><span class="st">&quot;你的CHAT_ID&quot;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="va">MESSAGE</span><span class="op">=</span><span class="st">&quot;这是测试消息&quot;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-s</span> <span class="at">-X</span> POST <span class="st">&quot;https://api.telegram.org/bot</span><span class="va">$TOKEN</span><span class="st">/sendMessage&quot;</span> <span class="dt">\</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> chat_id=<span class="st">&quot;</span><span class="va">$CHAT_ID</span><span class="st">&quot;</span> <span class="dt">\</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> text=<span class="st">&quot;</span><span class="va">$MESSAGE</span><span class="st">&quot;</span></span></code></pre></div>
+<h3 id="发送服务器日志的实战脚本">4.2 发送服务器日志的实战脚本</h3>
+<p>以下脚本实现将服务器日志实时传送到Telegram群组的功能：</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Telegram配置</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="va">TOKEN</span><span class="op">=</span><span class="st">&quot;你的机器人TOKEN&quot;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="va">CHAT_ID</span><span class="op">=</span><span class="st">&quot;你的群组CHAT_ID&quot;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 日志文件路径</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="va">LOG_DIR</span><span class="op">=</span><span class="st">&quot;/var/wwwroot/app/storage/logs&quot;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="va">LOG_FILE</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$LOG_DIR</span><span class="st">/laravel.log&quot;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 切割并发送最新日志</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="fu">send_log_update()</span> <span class="kw">{</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 获取最近日志</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="va">LATEST_LOG</span><span class="op">=</span><span class="va">$(</span><span class="fu">tail</span> <span class="at">-n</span> 10 <span class="va">$LOG_FILE)</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 发送到Telegram</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>  <span class="ex">curl</span> <span class="at">-s</span> <span class="at">-X</span> POST <span class="st">&quot;https://api.telegram.org/bot</span><span class="va">$TOKEN</span><span class="st">/sendMessage&quot;</span> <span class="dt">\</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">-d</span> chat_id=<span class="st">&quot;</span><span class="va">$CHAT_ID</span><span class="st">&quot;</span> <span class="dt">\</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    <span class="at">--data-urlencode</span> <span class="st">&quot;text=最新的应用日志：</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="va">$LATEST_LOG</span><span class="st">&quot;</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co"># 定时执行（每30秒检查一次）</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="fu">true</span><span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>  <span class="ex">send_log_update</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sleep</span> 30</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code></pre></div>
+<h3 id="带格式和错误处理的高级脚本">4.3 带格式和错误处理的高级脚本</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="va">TOKEN</span><span class="op">=</span><span class="st">&quot;你的机器人TOKEN&quot;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="va">CHAT_ID</span><span class="op">=</span><span class="st">&quot;你的CHAT_ID&quot;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">send_telegram_message()</span> <span class="kw">{</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="bu">local</span> <span class="va">message</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$1</span><span class="st">&quot;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="bu">local</span> <span class="va">max_retries</span><span class="op">=</span>3</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="bu">local</span> <span class="va">retry_count</span><span class="op">=</span>0</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">while</span> <span class="bu">[</span> <span class="va">$retry_count</span> <span class="ot">-lt</span> <span class="va">$max_retries</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 发送消息，设置超时避免长时间阻塞</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="va">response</span><span class="op">=</span><span class="va">$(</span><span class="ex">curl</span> <span class="at">-s</span> <span class="at">-w</span> <span class="st">&quot;%{http_code}&quot;</span> <span class="at">-X</span> POST <span class="dt">\</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">--connect-timeout</span> 10 <span class="dt">\</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">--max-time</span> 20 <span class="dt">\</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;https://api.telegram.org/bot</span><span class="va">$TOKEN</span><span class="st">/sendMessage&quot;</span> <span class="dt">\</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">-d</span> chat_id=<span class="st">&quot;</span><span class="va">$CHAT_ID</span><span class="st">&quot;</span> <span class="dt">\</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">--data-urlencode</span> <span class="st">&quot;text=</span><span class="va">$message</span><span class="st">&quot;</span><span class="va">)</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="va">http_code</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$response</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">tail</span> <span class="at">-n1</span><span class="va">)</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="va">json_response</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$response</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> <span class="at">-1</span><span class="va">)</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">[</span> <span class="st">&quot;</span><span class="va">$http_code</span><span class="st">&quot;</span> <span class="ot">-eq</span> 200 <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>      <span class="bu">echo</span> <span class="st">&quot;消息发送成功&quot;</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> <span class="dv">0</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>      <span class="bu">echo</span> <span class="st">&quot;发送失败，重试中... (</span><span class="va">$((retry_count</span><span class="op">+</span><span class="dv">1</span><span class="va">))</span><span class="st">/</span><span class="va">$max_retries</span><span class="st">)&quot;</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>      <span class="va">retry_count</span><span class="op">=</span><span class="va">$((retry_count</span><span class="op">+</span><span class="dv">1</span><span class="va">))</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sleep</span> 2</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">fi</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>  <span class="cf">done</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">&quot;错误: 消息发送失败 after </span><span class="va">$max_retries</span><span class="st"> 次重试&quot;</span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="dv">1</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a><span class="co"># 使用HTML格式发送消息</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a><span class="ex">send_telegram_message</span> <span class="st">&quot;【系统通知】服务器状态监控</span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;b&gt;时间&lt;/b&gt;: </span><span class="va">$(</span><span class="fu">date</span><span class="va">)</span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;b&gt;主机&lt;/b&gt;: </span><span class="va">$(</span><span class="fu">hostname</span><span class="va">)</span></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;b&gt;负载&lt;/b&gt;: </span><span class="va">$(</span><span class="fu">uptime</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="at">-F</span><span class="st">&#39;load average:&#39;</span> <span class="st">&#39;{print $2}&#39;</span><span class="va">)</span></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a><span class="st">状态: ✅ 正常&quot;</span></span></code></pre></div>
+<p><strong>脚本设计要点</strong>： - 添加重试机制提高可靠性 -
+设置超时避免脚本阻塞 - 支持消息格式（HTML/Markdown） -
+包含错误处理和状态反馈</p>
+<h2 id="高级应用场景">5 高级应用场景</h2>
+<h3 id="服务器监控通知">5.1 服务器监控通知</h3>
+<p>将Telegram机器人集成到服务器监控系统中：</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="va">TOKEN</span><span class="op">=</span><span class="st">&quot;你的机器人TOKEN&quot;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="va">CHAT_ID</span><span class="op">=</span><span class="st">&quot;你的CHAT_ID&quot;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 磁盘使用率监控</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">disk_alert()</span> <span class="kw">{</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="bu">local</span> <span class="va">usage</span><span class="op">=</span><span class="va">$(</span><span class="fu">df</span> / <span class="kw">|</span> <span class="fu">awk</span> <span class="st">&#39;END{print $5}&#39;</span> <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&#39;s/%//&#39;</span><span class="va">)</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="bu">[</span> <span class="va">$usage</span> <span class="ot">-gt</span> 90 <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="ex">curl</span> <span class="at">-s</span> <span class="at">-X</span> POST <span class="st">&quot;https://api.telegram.org/bot</span><span class="va">$TOKEN</span><span class="st">/sendMessage&quot;</span> <span class="dt">\</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">-d</span> chat_id=<span class="st">&quot;</span><span class="va">$CHAT_ID</span><span class="st">&quot;</span> <span class="dt">\</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">--data-urlencode</span> <span class="st">&quot;text=⚠️ 磁盘空间警告</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="st">服务器: </span><span class="va">$(</span><span class="fu">hostname</span><span class="va">)</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="st">挂载点: /</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="st">使用率: </span><span class="va">${usage}</span><span class="st">%</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="st">请及时清理磁盘空间&quot;</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">fi</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co"># 内存监控</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="fu">memory_alert()</span> <span class="kw">{</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  <span class="bu">local</span> <span class="va">mem_info</span><span class="op">=</span><span class="va">$(</span><span class="fu">free</span> <span class="at">-m</span> <span class="kw">|</span> <span class="fu">awk</span> <span class="st">&#39;NR==2{printf &quot;%.2f%%&quot;, $3*100/$2}&#39;</span><span class="va">)</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  <span class="bu">local</span> <span class="va">threshold</span><span class="op">=</span>90</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  <span class="bu">local</span> <span class="va">usage</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="va">$mem_info</span> <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&#39;s/%//&#39;</span><span class="va">)</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="kw">((</span> <span class="va">$(</span><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$usage</span><span class="st"> &gt; </span><span class="va">$threshold</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">bc</span> <span class="at">-l</span><span class="va">)</span> <span class="kw">));</span> <span class="cf">then</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    <span class="ex">curl</span> <span class="at">-s</span> <span class="at">-X</span> POST <span class="st">&quot;https://api.telegram.org/bot</span><span class="va">$TOKEN</span><span class="st">/sendMessage&quot;</span> <span class="dt">\</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>      <span class="at">-d</span> chat_id=<span class="st">&quot;</span><span class="va">$CHAT_ID</span><span class="st">&quot;</span> <span class="dt">\</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>      <span class="at">--data-urlencode</span> <span class="st">&quot;text=⚠️ 内存使用警告</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a><span class="st">服务器: </span><span class="va">$(</span><span class="fu">hostname</span><span class="va">)</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a><span class="st">使用率: </span><span class="va">$mem_info</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="st">当前阈值: </span><span class="va">${threshold}</span><span class="st">%&quot;</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>  <span class="cf">fi</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a><span class="co"># 定时执行监控</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="fu">true</span><span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>  <span class="ex">disk_alert</span></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>  <span class="ex">memory_alert</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sleep</span> 300  <span class="co"># 5分钟检查一次</span></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code></pre></div>
+<h3 id="日志实时传送优化">5.2 日志实时传送优化</h3>
+<p>针对中提到的服务器负载问题，以下是优化方案：</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 配置</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="va">TOKEN</span><span class="op">=</span><span class="st">&quot;你的机器人TOKEN&quot;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="va">CHAT_ID</span><span class="op">=</span><span class="st">&quot;你的CHAT_ID&quot;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="va">LOG_FILE</span><span class="op">=</span><span class="st">&quot;/var/log/your-app/app.log&quot;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="va">LAST_POSITION_FILE</span><span class="op">=</span><span class="st">&quot;/tmp/tg_bot_last_position&quot;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># 获取上次读取位置</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="fu">get_last_position()</span> <span class="kw">{</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="bu">[</span> <span class="ot">-f</span> <span class="st">&quot;</span><span class="va">$LAST_POSITION_FILE</span><span class="st">&quot;</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cat</span> <span class="st">&quot;</span><span class="va">$LAST_POSITION_FILE</span><span class="st">&quot;</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">&quot;0&quot;</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">fi</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co"># 保存当前位置</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="fu">save_position()</span> <span class="kw">{</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$1</span><span class="st">&quot;</span> <span class="op">&gt;</span> <span class="st">&quot;</span><span class="va">$LAST_POSITION_FILE</span><span class="st">&quot;</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="co"># 发送日志更新</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="fu">send_log_update()</span> <span class="kw">{</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  <span class="bu">local</span> <span class="va">current_position</span><span class="op">=</span><span class="va">$(</span><span class="ex">get_last_position</span><span class="va">)</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  <span class="bu">local</span> <span class="va">new_position</span><span class="op">=</span><span class="va">$(</span><span class="fu">wc</span> <span class="at">-l</span> <span class="op">&lt;</span> <span class="st">&quot;</span><span class="va">$LOG_FILE</span><span class="st">&quot;</span> <span class="dv">2</span><span class="op">&gt;</span>/dev/null <span class="kw">||</span> <span class="bu">echo</span> <span class="st">&quot;0&quot;</span><span class="va">)</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>  <span class="co"># 如果有新日志</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="bu">[</span> <span class="st">&quot;</span><span class="va">$new_position</span><span class="st">&quot;</span> <span class="ot">-gt</span> <span class="st">&quot;</span><span class="va">$current_position</span><span class="st">&quot;</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>    <span class="bu">local</span> <span class="va">new_lines</span><span class="op">=</span><span class="va">$((new_position</span> <span class="op">-</span> <span class="va">current_position))</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 读取新日志（限制行数避免消息过长）</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>    <span class="bu">local</span> <span class="va">new_content</span><span class="op">=</span><span class="va">$(</span><span class="fu">tail</span> <span class="at">-n</span> <span class="va">$new_lines</span> <span class="st">&quot;</span><span class="va">$LOG_FILE</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> 10<span class="va">)</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">[</span> <span class="ot">-n</span> <span class="st">&quot;</span><span class="va">$new_content</span><span class="st">&quot;</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>      <span class="ex">curl</span> <span class="at">-s</span> <span class="at">-X</span> POST <span class="st">&quot;https://api.telegram.org/bot</span><span class="va">$TOKEN</span><span class="st">/sendMessage&quot;</span> <span class="dt">\</span></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>        <span class="at">-d</span> chat_id=<span class="st">&quot;</span><span class="va">$CHAT_ID</span><span class="st">&quot;</span> <span class="dt">\</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>        <span class="at">--data-urlencode</span> <span class="st">&quot;text=📊 新日志更新 (</span><span class="va">$(</span><span class="fu">date</span><span class="va">)</span><span class="st">)</span></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a><span class="st">        </span></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a><span class="va">${new_content}</span><span class="st">&quot;</span> <span class="op">&gt;</span> /dev/null</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">fi</span></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>    <span class="ex">save_position</span> <span class="va">$new_position</span></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>  <span class="cf">fi</span></span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a><span class="co"># 使用inotify-twait监控文件变化，降低CPU使用</span></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="fu">true</span><span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="bu">command</span> <span class="at">-v</span> inotifywait <span class="op">&amp;&gt;</span> /dev/null<span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>    <span class="ex">inotifywait</span> <span class="at">-e</span> modify <span class="at">-t</span> 30 <span class="st">&quot;</span><span class="va">$LOG_FILE</span><span class="st">&quot;</span> <span class="dv">2</span><span class="op">&gt;</span>/dev/null <span class="kw">&amp;&amp;</span> <span class="ex">send_log_update</span></span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span></span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 如果没有inotifywait，使用轮询（效率较低）</span></span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>    <span class="ex">send_log_update</span></span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sleep</span> 30</span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>  <span class="cf">fi</span></span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code></pre></div>
+<h3 id="消息格式和多媒体发送">5.3 消息格式和多媒体发送</h3>
+<p>Telegram API支持丰富的消息格式，包括HTML和Markdown：</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="va">TOKEN</span><span class="op">=</span><span class="st">&quot;你的机器人TOKEN&quot;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="va">CHAT_ID</span><span class="op">=</span><span class="st">&quot;你的CHAT_ID&quot;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co"># 发送HTML格式消息</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">send_html_message()</span> <span class="kw">{</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="bu">local</span> <span class="va">title</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$1</span><span class="st">&quot;</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="bu">local</span> <span class="va">content</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$2</span><span class="st">&quot;</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="ex">curl</span> <span class="at">-s</span> <span class="at">-X</span> POST <span class="st">&quot;https://api.telegram.org/bot</span><span class="va">$TOKEN</span><span class="st">/sendMessage&quot;</span> <span class="dt">\</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">-d</span> chat_id=<span class="st">&quot;</span><span class="va">$CHAT_ID</span><span class="st">&quot;</span> <span class="dt">\</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">-d</span> parse_mode=<span class="st">&quot;HTML&quot;</span> <span class="dt">\</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">--data-urlencode</span> <span class="st">&quot;text=&lt;b&gt;</span><span class="va">${title}</span><span class="st">&lt;/b&gt;</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="va">${content}</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="st">    </span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;pre&gt;时间: </span><span class="va">$(</span><span class="fu">date</span><span class="va">)</span><span class="st">&lt;/pre&gt;</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;code&gt;主机: </span><span class="va">$(</span><span class="fu">hostname</span><span class="va">)</span><span class="st">&lt;/code&gt;&quot;</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a><span class="co"># 发送图片</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a><span class="fu">send_photo()</span> <span class="kw">{</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>  <span class="bu">local</span> <span class="va">photo_url</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$1</span><span class="st">&quot;</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>  <span class="bu">local</span> <span class="va">caption</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$2</span><span class="st">&quot;</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>  <span class="ex">curl</span> <span class="at">-s</span> <span class="at">-X</span> POST <span class="st">&quot;https://api.telegram.org/bot</span><span class="va">$TOKEN</span><span class="st">/sendPhoto&quot;</span> <span class="dt">\</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>    <span class="at">-d</span> chat_id=<span class="st">&quot;</span><span class="va">$CHAT_ID</span><span class="st">&quot;</span> <span class="dt">\</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">-d</span> photo=<span class="st">&quot;</span><span class="va">$photo_url</span><span class="st">&quot;</span> <span class="dt">\</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>    <span class="at">--data-urlencode</span> <span class="st">&quot;caption=</span><span class="va">$caption</span><span class="st">&quot;</span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a><span class="co"># 使用示例</span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a><span class="ex">send_html_message</span> <span class="st">&quot;服务器部署完成&quot;</span> <span class="st">&quot;✅ 应用部署成功</span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a><span class="st">版本: v1.2.0</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a><span class="st">环境: production&quot;</span></span></code></pre></div>
+<h2 id="常见问题与调试">6 常见问题与调试</h2>
+<h3 id="网络连接问题">6.1 网络连接问题</h3>
+<p><strong>代理设置</strong>：在国内环境可能需要配置代理：</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 通过代理发送消息</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-x</span> socks5://127.0.0.1:10808 <span class="dt">\</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-s</span> <span class="at">-X</span> POST <span class="st">&quot;https://api.telegram.org/bot</span><span class="va">$TOKEN</span><span class="st">/sendMessage&quot;</span> <span class="dt">\</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> chat_id=<span class="st">&quot;</span><span class="va">$CHAT_ID</span><span class="st">&quot;</span> <span class="dt">\</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> text=<span class="st">&quot;通过代理发送的消息&quot;</span></span></code></pre></div>
+<p><strong>连接超时处理</strong>：</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">--connect-timeout</span> 10 <span class="dt">\ </span> <span class="co"># 连接超时10秒</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--max-time</span> 30 <span class="dt">\ </span>           <span class="co"># 整体超时30秒</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--retry</span> 3 <span class="dt">\ </span>               <span class="co"># 失败重试3次</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--retry-delay</span> 5 <span class="dt">\ </span>         <span class="co"># 重试间隔5秒</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="ex">-s</span> <span class="at">-X</span> POST <span class="st">&quot;https://api.telegram.org/bot</span><span class="va">$TOKEN</span><span class="st">/sendMessage&quot;</span> <span class="dt">\</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> chat_id=<span class="st">&quot;</span><span class="va">$CHAT_ID</span><span class="st">&quot;</span> <span class="dt">\</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> text=<span class="st">&quot;带超时控制的消息&quot;</span></span></code></pre></div>
+<h3 id="错误代码处理">6.2 错误代码处理</h3>
+<p>常见Telegram API错误代码及处理：</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">send_message_with_error_handling()</span> <span class="kw">{</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="bu">local</span> <span class="va">token</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$1</span><span class="st">&quot;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="bu">local</span> <span class="va">chat_id</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$2</span><span class="st">&quot;</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="bu">local</span> <span class="va">message</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$3</span><span class="st">&quot;</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="va">response</span><span class="op">=</span><span class="va">$(</span><span class="ex">curl</span> <span class="at">-s</span> <span class="at">-w</span> <span class="st">&quot;%{http_code}&quot;</span> <span class="at">-X</span> POST <span class="dt">\</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;https://api.telegram.org/bot</span><span class="va">$token</span><span class="st">/sendMessage&quot;</span> <span class="dt">\</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">-d</span> chat_id=<span class="st">&quot;</span><span class="va">$chat_id</span><span class="st">&quot;</span> <span class="dt">\</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">--data-urlencode</span> <span class="st">&quot;text=</span><span class="va">$message</span><span class="st">&quot;</span><span class="va">)</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>  <span class="va">http_code</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$response</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">tail</span> <span class="at">-n1</span><span class="va">)</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="va">json_response</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$response</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> <span class="at">-1</span><span class="va">)</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="va">$http_code</span> <span class="kw">in</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    <span class="ss">200</span><span class="kw">)</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>      <span class="bu">echo</span> <span class="st">&quot;成功: 消息已发送&quot;</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>      <span class="cf">;;</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    <span class="ss">400</span><span class="kw">)</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>      <span class="bu">echo</span> <span class="st">&quot;错误: 请求错误 - 检查参数格式&quot;</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>      <span class="cf">;;</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>    <span class="ss">401</span><span class="kw">)</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>      <span class="bu">echo</span> <span class="st">&quot;错误: Token无效&quot;</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>      <span class="cf">;;</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>    <span class="ss">403</span><span class="kw">)</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>      <span class="bu">echo</span> <span class="st">&quot;错误: 机器人无权向该chat_id发送消息&quot;</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>      <span class="cf">;;</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>    <span class="ss">429</span><span class="kw">)</span></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>      <span class="bu">echo</span> <span class="st">&quot;错误: 请求频率限制 - 需要等待&quot;</span></span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>      <span class="bu">local</span> <span class="va">retry_after</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$json_response</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-o</span> <span class="st">&#39;&quot;retry_after&quot;:[0-9]*&#39;</span> <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d:</span> <span class="at">-f2</span><span class="va">)</span></span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>      <span class="bu">echo</span> <span class="st">&quot;请等待 </span><span class="va">${retry_after}</span><span class="st"> 秒后重试&quot;</span></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>      <span class="cf">;;</span></span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>    <span class="pp">*</span><span class="kw">)</span></span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>      <span class="bu">echo</span> <span class="st">&quot;错误: HTTP代码 </span><span class="va">$http_code</span><span class="st">&quot;</span></span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>      <span class="cf">;;</span></span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>  <span class="cf">esac</span></span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span></code></pre></div>
+<h3 id="性能优化建议">6.3 性能优化建议</h3>
+<ol type="1">
+<li><strong>消息频率控制</strong>：Telegram有限制频率（约30消息/秒），需合理设计发送间隔</li>
+<li><strong>消息长度限制</strong>：单条消息不超过4096字符，长消息需要分割</li>
+<li><strong>异步发送</strong>：对于非关键通知，可使用异步方式避免阻塞主流程</li>
+</ol>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 异步发送示例</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">async_send_message()</span> <span class="kw">{</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="bu">local</span> <span class="va">message</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$1</span><span class="st">&quot;</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">{</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="ex">curl</span> <span class="at">-s</span> <span class="at">-X</span> POST <span class="st">&quot;https://api.telegram.org/bot</span><span class="va">$TOKEN</span><span class="st">/sendMessage&quot;</span> <span class="dt">\</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">-d</span> chat_id=<span class="st">&quot;</span><span class="va">$CHAT_ID</span><span class="st">&quot;</span> <span class="dt">\</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">--data-urlencode</span> <span class="st">&quot;text=</span><span class="va">$message</span><span class="st">&quot;</span> <span class="op">&gt;</span> /dev/null <span class="kw">&amp;</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">}</span> <span class="dv">2</span><span class="op">&gt;</span>/dev/null</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span></code></pre></div>
+<h2 id="总结">7 总结</h2>
+<p>本文全面介绍了使用Shell脚本和cURL命令通过Telegram机器人发送通知消息的完整流程，关键要点包括：</p>
+<ol type="1">
+<li><strong>机器人创建</strong>：通过@BotFather创建机器人并获取Token，这是所有功能的基础</li>
+<li><strong>身份识别</strong>：正确获取chat_id，区分个人chat_id和群组chat_id（负值）</li>
+<li><strong>核心工具</strong>：cURL命令是Shell脚本中调用Telegram
+API的关键工具</li>
+<li><strong>实战脚本</strong>：从基础消息发送到复杂的服务器监控和日志传送</li>
+<li><strong>高级特性</strong>：支持消息格式化、多媒体发送和错误处理</li>
+<li><strong>优化方案</strong>：针对性能问题的优化策略，如使用inotifywait减少资源消耗</li>
+</ol>
+<p><strong>优势</strong>：Shell脚本+cURL的方案轻量、跨平台，适合集成到各种自动化流程中
+<strong>局限</strong>：需要处理网络连接问题，复杂交互场景可能不如Python等编程语言灵活</p>
+<h2 id="延伸阅读">延伸阅读</h2>
+<ul>
+<li>https://core.telegram.org/bots/api - 最权威的API参考</li>
+<li>https://curl.se/docs/manpage.html - 完整的cURL命令文档</li>
+<li>https://tldp.org/LDP/abs/html/ - Shell脚本编程深入学习</li>
+</ul>
+<h2 id="一句话记忆">一句话记忆</h2>
+<blockquote>
+<p>通过Shell脚本和cURL，可以高效利用Telegram机器人实现服务器监控和消息推送，关键在于正确获取Token和chat_id，并合理设计消息发送策略。</p>
+</blockquote>
+
     </div>
 </article>
-
 
 <script>
     // Add copy buttons to code blocks

@@ -856,55 +856,44 @@
 
         }
 
-        /* TABLE OF CONTENTS STYLES */
-        .toc-container {
-            position: fixed;
-            right: 20px;
-            top: 180px;
-            width: 260px;
-            max-height: calc(100vh - 220px);
-            overflow-y: auto;
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            font-size: 0.9rem;
-            z-index: 100;
-            display: none;
+        /* TOC SIDEBAR STYLES */
+        .toc-sidebar {
+            /* Styles set via inline CSS in JavaScript */
         }
 
-        .toc-container.visible {
-            display: block;
+        .toc-sidebar a {
+            font-weight: 500;
         }
 
-        .toc-container > .toc-title {
-            font-weight: bold;
-            font-size: 1rem;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--secondary-color);
-            color: var(--text-color);
+        .toc-sidebar a:hover {
+            color: var(--accent-color) !important;
+            text-decoration: underline;
         }
 
-        :root.dark-mode .toc-container {
-            background: #2a2a2a;
-            border-color: #444;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        /* Dark mode support for scrollbar */
+        .toc-sidebar::-webkit-scrollbar {
+            width: 6px;
         }
 
-        .toc { list-style: none; padding: 0; margin: 0; }
-        .toc ul { list-style: none; padding: 0; margin: 0; }
-        .toc > li { margin: 8px 0; }
-        .toc > li > a { padding-left: 0; }
-        .toc li { margin: 6px 0; }
-        .toc li ul { margin-left: 15px; }
-        .toc a { color: var(--secondary-color); text-decoration: none; transition: color 0.2s; display: block; padding: 4px 0; }
-        .toc a:hover { color: var(--accent-color); }
-        :root.dark-mode .toc a { color: #4a9eff; }
-        :root.dark-mode .toc a:hover { color: #ff6b6b; }
+        .toc-sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
 
-        @media (max-width: 1200px) { .toc-container { position: fixed; right: 20px; width: 220px; max-height: calc(100vh - 220px); } }
+        .toc-sidebar::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 3px;
+        }
+
+        .toc-sidebar::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-color);
+        }
+
+        /* Hide TOC on mobile and tablet devices */
+        @media (max-width: 1200px) {
+            .toc-sidebar {
+                display: none !important;
+            }
+        }
 
         /* MERMAID DIAGRAM STYLES */
         .mermaid { display: flex; justify-content: center; margin: 20px 0; }
@@ -1024,12 +1013,6 @@
             <!-- Content will be loaded here dynamically -->
         </div>
 
-        <!-- TABLE OF CONTENTS -->
-        <div class="toc-container" id="toc-container">
-            <div class="toc-title">目录</div>
-            <div id="toc-content" class="toc"></div>
-        </div>
-
         <!-- FOOTER -->
         <footer class="footer">
             <p>AI 个人笔记 &copy; 2025 | 所有内容均由 AI 协助生成</p>
@@ -1079,17 +1062,17 @@
         async function loadHomepage(pageNum = 1) {
             try {
                 showLoading();
-                // Hide TOC when on homepage
-                const tocContainer = document.getElementById('toc-container');
-                if (tocContainer) {
-                    tocContainer.classList.remove('visible');
+                // Remove TOC when on homepage
+                const existingToc = document.body.querySelector('.toc-sidebar');
+                if (existingToc) {
+                    existingToc.remove();
                 }
                 // Hide home button on homepage
                 const homeBtn = document.getElementById('homeButton');
                 if (homeBtn) {
                     homeBtn.style.display = 'none';
                 }
-                const feedUrl = pageNum === 1 ? 'pages/feed-content.html' : `pages/feed-page${pageNum}.html`;
+                const feedUrl = pageNum === 1 ? 'pages/index.html' : `pages/index${pageNum}.html`;
                 const response = await fetch(feedUrl);
                 if (response.ok) {
                     const html = await response.text();
@@ -1125,12 +1108,13 @@
 
                     attachEventListeners();
                     setupBackToTop();
-                    buildTableOfContents();
 
-                    // Re-render Mermaid diagrams if library is loaded
-                    if (typeof mermaid !== 'undefined') {
-                        // Use setTimeout to ensure DOM is fully updated before Mermaid processes
-                        setTimeout(() => {
+                    // Build TOC and render Mermaid with a small delay to ensure DOM is fully updated
+                    setTimeout(() => {
+                        injectTableOfContents();
+
+                        // Re-render Mermaid diagrams if library is loaded
+                        if (typeof mermaid !== 'undefined') {
                             try {
                                 // Clear the internal cache of rendered diagrams
                                 if (mermaid.contentLoaded) {
@@ -1142,8 +1126,9 @@
                             } catch (error) {
                                 console.warn('Mermaid rendering error:', error);
                             }
-                        }, 300);
-                    }
+                        }
+                    }, 100);
+
 
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else {
@@ -1188,6 +1173,23 @@
                 });
             });
 
+            // TOC links - handle anchor links without page navigation
+            const tocLinks = contentArea.querySelectorAll('.toc-sidebar a');
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const href = link.getAttribute('href');
+                    if (href && href.startsWith('#')) {
+                        // Scroll to the target heading smoothly
+                        const targetId = href.substring(1);
+                        const targetElement = document.getElementById(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        }
+                    }
+                });
+            });
+
             // Pagination links
             const paginationLinks = contentArea.querySelectorAll('.pagination a');
             paginationLinks.forEach(link => {
@@ -1196,13 +1198,14 @@
                     const href = link.getAttribute('href');
                     if (href && href !== '#') {
                         // Check if this is a feed page or article
-                        if (href.startsWith('feed-') || href.startsWith('pages/feed-')) {
-                            // Load feed page
-                            const pageMatch = href.match(/feed-page(\d+)\.html|feed-content\.html/);
+                        if (href.includes('pages/index') || (href.includes('index') && href.includes('.html'))) {
+                            // Load pagination page
                             let pageNum = 1;
-                            if (href.includes('feed-page')) {
-                                const match = href.match(/feed-page(\d+)/);
-                                if (match) pageNum = parseInt(match[1]);
+                            const match = href.match(/index(\d+)\.html|index\.html/);
+                            if (match && match[0] === 'index.html') {
+                                pageNum = 1;
+                            } else if (match) {
+                                pageNum = parseInt(match[1]);
                             }
                             loadHomepage(pageNum);
                             window.history.pushState({page: 'feed', pageNum}, '', '#');
@@ -1229,77 +1232,117 @@
             });
         }
 
-        // Build table of contents from article headings
-        function buildTableOfContents() {
-            const tocContainer = document.getElementById('toc-container');
-            const tocContent = document.getElementById('toc-content');
-
-            if (!tocContainer || !tocContent) return;
-
-            // Get all headings from the content area (h2, h3, h4)
-            // First try to get them from post-content div if it exists
-            let headings = contentArea.querySelectorAll('#post-content h2, #post-content h3, #post-content h4');
-
-            // If no headings found in post-content, try entire content area
-            if (headings.length === 0) {
-                headings = contentArea.querySelectorAll('h2, h3, h4');
-            }
-
-            if (headings.length === 0) {
-                // Hide TOC if no headings
-                tocContainer.classList.remove('visible');
+        // Inject table of contents into article page
+        function injectTableOfContents() {
+            // Get post-content div if it exists
+            const postContent = contentArea.querySelector('.post-content');
+            if (!postContent) {
+                console.log('TOC: No post-content found');
                 return;
             }
 
-            // Build TOC using HTML string
-            let tocHTML = '<ul class="toc">';
-            let lastLevel = 0;
-
-            headings.forEach((heading, index) => {
-                // Assign ID if not present
-                if (!heading.id) {
-                    heading.id = `heading-${index}`;
-                }
-
-                const level = parseInt(heading.tagName[1]); // h2->2, h3->3, h4->4
-                const text = heading.textContent;
-
-                // Close previous levels if necessary
-                if (level < lastLevel) {
-                    for (let i = lastLevel; i > level; i--) {
-                        tocHTML += '</ul></li>';
-                    }
-                }
-
-                // Open new levels if necessary
-                if (level > lastLevel) {
-                    for (let i = lastLevel; i < level; i++) {
-                        tocHTML += '<li><ul class="toc">';
-                    }
-                } else if (lastLevel > 0) {
-                    tocHTML += '</li>';
-                }
-
-                // Add the item
-                tocHTML += `<li><a href="#${heading.id}">${text}</a>`;
-                lastLevel = level;
-            });
-
-            // Close remaining open levels
-            if (lastLevel > 0) {
-                for (let i = lastLevel; i > 0; i--) {
-                    tocHTML += '</li>';
-                    if (i > 1) tocHTML += '</ul></li>';
-                }
+            // Get all headings (h2, h3, h4) from post-content
+            const headings = postContent.querySelectorAll('h2, h3, h4');
+            if (headings.length === 0) {
+                console.log('TOC: No headings found');
+                return;
             }
 
-            tocHTML += '</ul>';
+            console.log('TOC: Found', headings.length, 'headings, building TOC');
 
-            // Set the TOC content
-            tocContent.innerHTML = tocHTML;
+            // Assign IDs to headings if they don't have one
+            headings.forEach((heading, index) => {
+                if (!heading.id) {
+                    heading.id = `h-${index}`;
+                }
+            });
 
-            // Show TOC container
-            tocContainer.classList.add('visible');
+            // Build simple TOC list
+            let tocItems = [];
+            headings.forEach((heading) => {
+                const level = parseInt(heading.tagName[1]); // h2->2, h3->3, h4->4
+                const text = heading.textContent.trim();
+                tocItems.push({
+                    level: level,
+                    id: heading.id,
+                    text: text
+                });
+            });
+
+            // Generate TOC HTML as a simple list
+            let tocHTML = '<ul style="list-style: none; padding: 0; margin: 0;">\n';
+            let lastLevel = 1;
+
+            tocItems.forEach((item) => {
+                // Handle nesting
+                if (item.level > lastLevel) {
+                    for (let i = lastLevel; i < item.level; i++) {
+                        tocHTML += '<ul style="list-style: none; margin: 0; padding-left: 16px;">\n';
+                    }
+                } else if (item.level < lastLevel) {
+                    for (let i = item.level; i < lastLevel; i++) {
+                        tocHTML += '</li>\n</ul>\n';
+                    }
+                    tocHTML += '</li>\n';
+                } else if (lastLevel > 1) {
+                    tocHTML += '</li>\n';
+                }
+
+                tocHTML += `<li style="margin: 8px 0;"><a href="#${item.id}" style="color: var(--secondary-color); text-decoration: none; transition: color 0.2s;">${item.text}</a>`;
+                lastLevel = item.level;
+            });
+
+            // Close remaining tags
+            for (let i = 1; i < lastLevel; i++) {
+                tocHTML += '</li>\n</ul>\n';
+            }
+            if (lastLevel > 1) {
+                tocHTML += '</li>\n';
+            }
+            tocHTML += '</ul>\n';
+
+            // Create TOC panel and insert after article header
+            const article = contentArea.querySelector('article');
+            if (article) {
+                // Remove existing TOC if present
+                const existingToc = article.querySelector('.toc-sidebar');
+                if (existingToc) {
+                    existingToc.remove();
+                }
+
+                const tocPanel = document.createElement('div');
+                tocPanel.className = 'toc-sidebar';
+                tocPanel.style.cssText = `
+                    position: fixed;
+                    right: 20px;
+                    top: 120px;
+                    width: 280px;
+                    max-height: calc(100vh - 140px);
+                    overflow-y: auto;
+                    padding: 15px;
+                    background: var(--card-bg);
+                    border: 1px solid var(--border-color);
+                    border-radius: 8px;
+                    font-size: 0.9rem;
+                    z-index: 100;
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+                `;
+
+                const tocTitle = document.createElement('div');
+                tocTitle.style.cssText = 'font-weight: bold; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 2px solid var(--secondary-color); font-size: 0.95rem;';
+                tocTitle.textContent = '目录';
+
+                const tocContent = document.createElement('div');
+                tocContent.innerHTML = tocHTML;
+
+                tocPanel.appendChild(tocTitle);
+                tocPanel.appendChild(tocContent);
+
+                // Insert into body instead of article to avoid layout issues
+                document.body.appendChild(tocPanel);
+
+                console.log('TOC: Injected successfully at fixed position');
+            }
         }
 
         // ==================== HOME BUTTON ====================

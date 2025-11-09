@@ -84,6 +84,14 @@ function markdownToHtmlWithPandoc(markdownFilePath, title, date, monthDir, filen
 // Function to generate article detail fragment for SPA
 function generateArticleDetailFragment(htmlContent, title, date, monthDir) {
     try {
+        // Fix Mermaid code blocks - remove unnecessary code wrapper
+        // Pandoc wraps mermaid code in <pre class="mermaid"><code>...</code></pre>
+        // But Mermaid expects <pre class="mermaid">...</pre>
+        let fixedContent = htmlContent.replace(
+            /<pre class="mermaid"><code>([\s\S]*?)<\/code><\/pre>/g,
+            '<pre class="mermaid">$1</pre>'
+        );
+
         // Read article detail template
         const fragmentPath = path.join(__dirname, '..', 'pages', 'article-detail.html');
         let fragment = fs.readFileSync(fragmentPath, 'utf8');
@@ -93,7 +101,7 @@ function generateArticleDetailFragment(htmlContent, title, date, monthDir) {
             .replace('{{TITLE}}', title)
             .replace('{{DATE}}', date)
             .replace('{{CATEGORY}}', monthDir)
-            .replace('{{CONTENT}}', htmlContent);
+            .replace('{{CONTENT}}', fixedContent);
     } catch (error) {
         console.error(`Error generating article detail fragment: ${error.message}`);
         throw error;

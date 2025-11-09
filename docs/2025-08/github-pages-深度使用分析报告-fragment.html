@@ -10,8 +10,7 @@
         ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
     </div>
     <div class="post-content" id="post-content">
-        
-                    <p>好的，这是一份关于 GitHub Pages
+        <p>好的，这是一份关于 GitHub Pages
 的深度使用报告，涵盖了从入门到高级配置的各个方面。</p>
 <hr />
 <h4 id="github-pages-工作流程概览"><strong>GitHub Pages
@@ -154,10 +153,208 @@ class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="
 <span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">path</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;.&#39;</span></span>
 <span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Deploy to GitHub Pages</span></span>
 <span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">id</span><span class="kw">:</span><span class="at"> deployment</span></span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/deploy-pages@v4</span></span></code></pre>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/deploy-pages@v4</span></span></code></pre></div></li>
+<li><p><strong>推送并部署</strong>：提交并推送这个 <code>.yml</code>
+文件后，Actions 会自动运行，将你的网站部署到 GitHub Pages。</p></li>
+</ol>
+<hr />
+<h3 id="github-pages-的类型和仓库配置"><strong>3. GitHub Pages
+的类型和仓库配置</strong></h3>
+<p>GitHub Pages 分为两种类型，它们的仓库配置和最终 URL 也不同。</p>
+<h4 id="a.-用户或组织页面-userorganization-pages"><strong>a.
+用户或组织页面 (User/Organization Pages)</strong></h4>
+<ul>
+<li><strong>仓库命名</strong>：必须使用特殊格式
+<code>&lt;username&gt;.github.io</code> 或
+<code>&lt;orgname&gt;.github.io</code>。</li>
+<li><strong>发布源</strong>：通常从 <code>main</code> 或
+<code>master</code> 分支的根目录发布。</li>
+<li><strong>URL
+地址</strong>：<code>https://&lt;username&gt;.github.io</code>。这是根域名，没有子路径。</li>
+<li><strong>数量限制</strong>：<strong>每个 GitHub
+账户或组织只能拥有一个</strong>用户或组织页面。</li>
+</ul>
+<h4 id="b.-项目页面-project-pages"><strong>b. 项目页面 (Project
+Pages)</strong></h4>
+<ul>
+<li><strong>仓库命名</strong>：可以是任何常规名称，例如
+<code>my-awesome-project</code>。</li>
+<li><strong>发布源</strong>：可以从 <code>main</code>
+分支、<code>gh-pages</code> 分支或 <code>main</code> 分支的
+<code>/docs</code> 目录发布。</li>
+<li><strong>URL
+地址</strong>：<code>https://&lt;username&gt;.github.io/&lt;repository-name&gt;</code>。网站位于用户根域名下的一个子路径。</li>
+<li><strong>数量限制</strong>：<strong>没有限制</strong>。你可以为你的每一个仓库创建一个项目页面。</li>
+</ul>
+<hr />
+<h3 id="功能详解"><strong>4. 功能详解</strong></h3>
+<h4 id="自定义域名-custom-domain"><strong>自定义域名 (Custom
+Domain)</strong></h4>
+<p>你可以将自己的域名指向 GitHub Pages 网站。</p>
+<ol type="1">
+<li><strong>DNS 配置</strong>：
+<ul>
+<li><strong>根域名 (e.g., <code>example.com</code>)</strong>: 在你的 DNS
+提供商处，创建4条 <code>A</code> 记录，分别指向 GitHub Pages 的 IP
+地址：
+<code>185.199.108.153     185.199.109.153     185.199.110.153     185.199.111.153</code></li>
+<li><strong>子域名 (e.g., <code>www.example.com</code> 或
+<code>blog.example.com</code>)</strong>: 创建一条 <code>CNAME</code>
+记录，指向你的默认 GitHub Pages 地址（例如
+<code>&lt;username&gt;.github.io</code>）。</li>
+</ul></li>
+<li><strong>GitHub 仓库配置</strong>：
+<ul>
+<li>在仓库的 <strong>Settings &gt; Pages</strong> 页面，找到 “Custom
+domain” 输入框。</li>
+<li>输入你的自定义域名（例如 <code>blog.my-domain.com</code>）并点击
+<strong>Save</strong>。</li>
+<li>保存后，GitHub 会自动在你的仓库根目录创建一个名为 <code>CNAME</code>
+的文件，内容就是你的域名。</li>
+</ul></li>
+<li><strong>强制 HTTPS</strong>：
+<ul>
+<li>在配置好域名并等待 DNS 生效后，GitHub 会自动为你的域名申请并配置 SSL
+证书。</li>
+<li>之后，你应该勾选 <strong>Enforce HTTPS</strong>
+选项，确保所有访问都通过安全的加密连接进行。</li>
+</ul></li>
+</ol>
+<h4 id="jekyll-集成"><strong>Jekyll 集成</strong></h4>
+<p>如果你使用传统的分支部署方式，GitHub Pages 会自动检查你的仓库是否包含
+Jekyll 站点的结构（如 <code>_config.yml</code> 文件）。如果是，它会运行
+<code>jekyll build</code> 命令来生成静态网站。这使你可以使用 Markdown
+写文章、使用布局和模板，极大地简化了博客和文档网站的创建过程。</p>
+<hr />
+<h3 id="限制与注意事项"><strong>5. 限制与注意事项</strong></h3>
+<p>虽然 GitHub Pages 非常强大，但它也有一些使用限制：</p>
+<ul>
+<li><strong>站点大小</strong>：发布的站点大小不应超过 <strong>1
+GB</strong>。</li>
+<li><strong>仓库大小</strong>：建议仓库大小保持在 <strong>1 GB</strong>
+以下。</li>
+<li><strong>带宽限制</strong>：每月有 <strong>100 GB</strong>
+的软性带宽限制。</li>
+<li><strong>构建次数</strong>：每小时有 <strong>10
+次</strong>构建的软性限制（对于通过分支部署的方式）。</li>
+<li><strong>禁止用途</strong>：不得用于主要的商业目的（如电子商务）、密码或敏感信息交换、或任何违反
+GitHub 服务条款的活动。它主要用于展示和文档目的。</li>
+</ul>
+<hr />
+<h3 id="本项目ai-技术笔记站点的优势与-github-pages-集成"><strong>6.
+本项目（AI 技术笔记站点）的优势与 GitHub Pages 集成</strong></h3>
+<p>本项目作为一个静态博客系统，与 GitHub Pages
+具有天然的兼容性和互补优势：</p>
+<h4 id="项目优势"><strong>项目优势</strong></h4>
+<ol type="1">
+<li><strong>零依赖部署</strong>：不依赖任何第三方服务或库，可直接在
+GitHub Pages 上运行，完全符合其静态站点要求。</li>
+<li><strong>自动化构建</strong>：通过 <code>npm run build</code>
+命令一键生成完整的静态站点，包括主页、文章页面、概览页和站点地图。</li>
+<li><strong>响应式设计</strong>：所有生成的页面都采用响应式设计，适配各种设备屏幕，在
+GitHub Pages 的全球 CDN 加速下提供优秀的访问体验。</li>
+<li><strong>SEO 友好</strong>：自动生成
+<code>sitemap.xml</code>，便于搜索引擎收录，提升站点在 GitHub Pages
+上的可见性。</li>
+<li><strong>Markdown 支持</strong>：原生支持 Markdown 文档，符合 GitHub
+Pages 对 Jekyll 等静态站点生成器的友好支持。</li>
+<li><strong>时间归档</strong>：按月份组织文章，自动生成时间线视图，便于内容管理和访问。</li>
+</ol>
+<h4 id="部署到-github-pages-的方式"><strong>部署到 GitHub Pages
+的方式</strong></h4>
+<p>本项目可以通过两种方式部署到 GitHub Pages：</p>
+<ol type="1">
+<li><strong>传统分支部署</strong>：
+<ul>
+<li>将构建后的 <code>docs/</code> 目录内容推送到 <code>main</code>
+分支，然后在仓库设置中选择 <code>main</code>
+分支的根目录作为发布源。</li>
+<li>或者将构建后的内容推送到专门的 <code>gh-pages</code>
+分支，然后在设置中选择该分支作为发布源。</li>
+</ul></li>
+<li><strong>GitHub Actions 自动化部署（推荐）</strong>：
+<ul>
+<li>在仓库设置中将 Pages 源设置为 “GitHub Actions”。</li>
+<li>创建 <code>.github/workflows/deploy.yml</code>
+文件，配置自动化构建和部署流程：</li>
+</ul>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> Deploy AI Note to Pages</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">on</span><span class="kw">:</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">  # 当推送到 main 分支时触发</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">push</span><span class="kw">:</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">branches</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;main&quot;</span><span class="kw">]</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">  # 允许手动触发</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">workflow_dispatch</span><span class="kw">:</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 设置权限</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">permissions</span><span class="kw">:</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">contents</span><span class="kw">:</span><span class="at"> read</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">pages</span><span class="kw">:</span><span class="at"> write</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">id-token</span><span class="kw">:</span><span class="at"> write</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">deploy</span><span class="kw">:</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">name</span><span class="kw">:</span><span class="at"> github-pages</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">url</span><span class="kw">:</span><span class="at"> ${{ steps.deployment.outputs.page_url }}</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">runs-on</span><span class="kw">:</span><span class="at"> ubuntu-latest</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Checkout</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/checkout@v4</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Setup Node.js</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/setup-node@v3</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">node-version</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;18&#39;</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">cache</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;npm&#39;</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Install dependencies</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">run</span><span class="kw">:</span><span class="at"> npm ci</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Build site</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">run</span><span class="kw">:</span><span class="at"> npm run build</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Setup Pages</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/configure-pages@v4</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Upload artifact</span></span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/upload-pages-artifact@v3</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a><span class="co">          # 上传整个 docs 目录</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">path</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;./docs&#39;</span></span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Deploy to GitHub Pages</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">id</span><span class="kw">:</span><span class="at"> deployment</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/deploy-pages@v4</span></span></code></pre></div></li>
+</ol>
+<h4 id="使用流程"><strong>使用流程</strong></h4>
+<ol type="1">
+<li><strong>创建内容</strong>：在 <code>markdown/YYYY-MM/</code>
+目录下创建新的 Markdown 文章。</li>
+<li><strong>本地预览</strong>：运行 <code>npm run build</code>
+构建站点，然后在浏览器中打开 <code>index.html</code> 预览。</li>
+<li><strong>推送到 GitHub</strong>：将更改推送到 GitHub 仓库。</li>
+<li><strong>自动部署</strong>：如果配置了 GitHub
+Actions，站点会自动构建并部署到 GitHub Pages。</li>
+</ol>
+<h3 id="结论"><strong>7. 结论</strong></h3>
+<p>GitHub Pages
+是一个功能强大、稳定可靠且完全免费的静态网站托管解决方案。它通过与 Git
+和 GitHub
+生态系统的深度集成，为开发者和技术团队提供了一个无与伦比的便利平台。</p>
+<ul>
+<li>对于<strong>初学者</strong>，通过”从分支部署”的方式可以快速上线一个个人主页或项目介绍页。</li>
+<li>对于<strong>专业开发者和团队</strong>，利用 GitHub Actions
+的自动化部署流程，可以构建出复杂、专业且易于维护的文档站点和博客。</li>
+</ul>
+<p>无论是个人还是团队，都应该充分利用 GitHub Pages
+这一优秀资源来分享知识、展示项目成果和构建社区影响力。结合本项目的静态博客生成能力，可以轻松创建和维护一个功能丰富、外观专业的技术博客站点。</p>
+
     </div>
 </article>
-
 
 <script>
     // Add copy buttons to code blocks

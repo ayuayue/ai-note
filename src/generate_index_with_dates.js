@@ -193,12 +193,12 @@ function main() {
     // Calculate pagination
     const totalPages = Math.ceil(allDocuments.length / ITEMS_PER_PAGE);
     
-    // Read template
+    // Read template for feed list (without header)
     let template;
     try {
-        template = fs.readFileSync("template_with_dates.html", "utf8");
+        template = fs.readFileSync("template_feed_list.html", "utf8");
     } catch (error) {
-        console.error("template_with_dates.html not found");
+        console.error("template_feed_list.html not found");
         return;
     }
     
@@ -219,10 +219,10 @@ function main() {
             paginationHtml += '<div class="pagination">\n';
             // Previous page link
             if (page > 1) {
-                const prevPage = page === 2 ? '../index.html' : `index${page-1}.html`;
+                const prevPage = page === 2 ? 'pages/index.html' : `pages/index${page-1}.html`;
                 paginationHtml += `            <a href="${prevPage}">← 上一页</a>\n`;
             }
-            
+
             // Page links
             for (let i = 1; i <= totalPages; i++) {
                 if (i === page) {
@@ -230,27 +230,25 @@ function main() {
                 } else {
                     let pageLink;
                     if (i === 1) {
-                        // First page is always index.html in root directory
-                        pageLink = page > 1 ? '../index.html' : 'index.html';
+                        // First page with pages/ prefix for absolute path compatibility
+                        pageLink = 'pages/index.html';
                     } else {
-                        // Other pages are in pages directory
-                        // If we're on the first page, links to other pages need to go to pages/ directory
-                        // If we're on other pages, links to other pages are relative to current directory
-                        pageLink = page === 1 ? `pages/index${i}.html` : `index${i}.html`;
+                        // Other pages with pages/ prefix
+                        pageLink = `pages/index${i}.html`;
                     }
                     paginationHtml += `            <a href="${pageLink}">${i}</a>\n`;
                 }
             }
-            
+
             // Next page link
             if (page < totalPages) {
-                const nextPage = page === 1 ? `pages/index${page+1}.html` : `index${page+1}.html`;
+                const nextPage = `pages/index${page+1}.html`;
                 paginationHtml += `            <a href="${nextPage}">下一页 →</a>\n`;
             }
             paginationHtml += '        </div>';
         } else {
             // This case shouldn't happen since we're generating multiple pages
-            paginationHtml = '<div class="pagination">\n            <a href="../index.html" class="current">1</a>\n        </div>';
+            paginationHtml = '<div class="pagination">\n            <a href="pages/index.html" class="current">1</a>\n        </div>';
         }
         
         // Add SEO meta tags for index pages
@@ -284,48 +282,43 @@ function main() {
         // Replace placeholder with feed items
         let updatedContent = template.replace("{{DOC_CARDS}}", feedItems.join('\n'));
         
-        // Add SEO meta tags
-        updatedContent = updatedContent.replace('</title>', '</title>' + seoMetaTags);
-        
-        // Fix paths for pages in subdirectories
-        if (page > 1) {
-            // Fix logo path
-            updatedContent = updatedContent.replace('src="img/logo.png"', 'src="../img/logo.png"');
-            // Fix tools button path
-            updatedContent = updatedContent.replace('href="tools.html"', 'href="../tools.html"');
-            // Fix overview button path
-            updatedContent = updatedContent.replace('href="overview.html"', 'href="../overview.html"');
+        // Replace pagination placeholder - match various formats
+        const paginationPatterns = [
+            // 原始带缩进格式
+            /<div class="pagination">\s*<a[^>]*class="current"[^>]*>1<\/a>\s*<a[^>]*>2<\/a>\s*<a[^>]*>3<\/a>\s*<a[^>]*>下一页[^<]*<\/a>\s*<\/div>/,
+            // 无缩进或最少缩进格式
+            /<div class="pagination">[^<]*<a href="#" class="current">1<\/a>[^<]*<a href="#">2<\/a>[^<]*<a href="#">3<\/a>[^<]*<a href="#">下一页 →<\/a>[^<]*<\/div>/,
+        ];
+
+        let replaced = false;
+        for (const pattern of paginationPatterns) {
+            if (pattern.test(updatedContent)) {
+                updatedContent = updatedContent.replace(pattern, paginationHtml);
+                replaced = true;
+                break;
+            }
         }
-        
-        // Replace pagination placeholder
-        const paginationPlaceholder = '<div class="pagination">\n            <a href="#" class="current">1</a>\n            <a href="#">2</a>\n            <a href="#">3</a>\n            <a href="#">下一页 →</a>\n        </div>';
-        // Also try with Windows line endings
-        const paginationPlaceholderWindows = '<div class="pagination">\r\n            <a href="#" class="current">1</a>\r\n            <a href="#">2</a>\r\n            <a href="#">3</a>\r\n            <a href="#">下一页 →</a>\r\n        </div>';
-        
-        // Try both placeholders
-        if (updatedContent.includes(paginationPlaceholder)) {
-            updatedContent = updatedContent.replace(paginationPlaceholder, paginationHtml);
-        } else if (updatedContent.includes(paginationPlaceholderWindows)) {
-            updatedContent = updatedContent.replace(paginationPlaceholderWindows, paginationHtml);
-        } else {
+
+        if (!replaced) {
             console.log("Warning: Could not find pagination placeholder in template");
         }
         
-        // Skip generating index.html (it's the SPA file)
-        // Only generate feed pages in pages/ directory
+        // Generate pagination pages in pages/ directory
+        // Ensure pages directory exists
+        if (!fs.existsSync("pages")) {
+            fs.mkdirSync("pages");
+        }
+
         if (page === 1) {
-            // For page 1, generate feed-content.html instead of index.html
-            const feedFilename = "pages/feed-content.html";
-            fs.writeFileSync(feedFilename, updatedContent, "utf8");
-            console.log(`Generated ${feedFilename} with ${pageDocuments.length} documents`);
+            // For page 1, generate pages/index.html
+            const pageFilename = "pages/index.html";
+            fs.writeFileSync(pageFilename, updatedContent, "utf8");
+            console.log(`Generated ${pageFilename} with ${pageDocuments.length} documents`);
         } else {
-            // Ensure pages directory exists
-            if (!fs.existsSync("pages")) {
-                fs.mkdirSync("pages");
-            }
-            const feedFilename = `pages/feed-page${page}.html`;
-            fs.writeFileSync(feedFilename, updatedContent, "utf8");
-            console.log(`Generated ${feedFilename} with ${pageDocuments.length} documents`);
+            // For other pages, generate pages/index${page}.html
+            const pageFilename = `pages/index${page}.html`;
+            fs.writeFileSync(pageFilename, updatedContent, "utf8");
+            console.log(`Generated ${pageFilename} with ${pageDocuments.length} documents`);
         }
     }
     

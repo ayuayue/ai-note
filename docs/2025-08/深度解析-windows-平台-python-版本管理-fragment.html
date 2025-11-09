@@ -10,8 +10,7 @@
         ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
     </div>
     <div class="post-content" id="post-content">
-        
-                    <h1 id="windows-平台-python-版本管理">Windows 平台 Python 版本管理</h1>
+        <h1 id="windows-平台-python-版本管理">Windows 平台 Python 版本管理</h1>
 <h2 id="摘要executive-summary">1. 摘要（Executive Summary）</h2>
 <p>本报告旨在深度剖析在 Windows 操作系统中管理多个 Python
 版本的复杂性，并提出 <code>pyenv-win</code>
@@ -120,10 +119,30 @@ class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb2-
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>pyenv local 3<span class="op">.</span><span class="fu">10</span><span class="op">.</span><span class="fu">5</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 验证自动切换</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>python <span class="op">--</span>version <span class="co"># 应显示 3.10.5</span></span></code></pre>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>python <span class="op">--</span>version <span class="co"># 应显示 3.10.5</span></span></code></pre></div></li>
+<li><p><strong>结合 <code>venv</code> (最佳实践)</strong>
+<code>powershell     # 在项目目录下     python -m venv .venv     .\.venv\Scripts\Activate.ps1     pip install -r requirements.txt</code></p></li>
+</ol>
+<h2 id="结论与最终建议">4. 结论与最终建议</h2>
+<p><strong>您的判断是正确的</strong>：对于追求稳定性和希望避免潜在问题的开发者来说，放弃
+Scoop 而选择 <code>pyenv-win</code> 官方的 PowerShell 安装脚本是目前在
+Windows 平台上的最佳实践。</p>
+<ul>
+<li><strong>对所有 Windows Python 开发者</strong>：
+<ul>
+<li><strong>首选安装方法</strong>：使用本报告中详述的 PowerShell
+脚本进行安装。</li>
+<li><strong>环境隔离</strong>：始终坚持 <code>pyenv-win</code>
+(管理解释器) + <code>venv</code> (管理库) 的黄金组合。</li>
+<li><strong>版本控制</strong>：将 <code>.python-version</code>
+文件加入到项目的版本控制中，这是实现团队环境一致性的基石。</li>
+</ul></li>
+</ul>
+<p>这种方法虽然比 <code>scoop install</code>
+多了一两个步骤，但它带来的<strong>稳定性、透明度和可预测性</strong>，将为后续的开发工作节省大量排查问题的时间，是专业开发者应当做出的明智投资。</p>
+
     </div>
 </article>
-
 
 <script>
     // Add copy buttons to code blocks

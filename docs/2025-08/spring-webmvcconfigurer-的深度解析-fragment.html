@@ -10,8 +10,7 @@
         ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
     </div>
     <div class="post-content" id="post-content">
-        
-                    <h1 id="深度解析-spring-webmvcconfigurerweb-定制化的核心枢纽">深度解析
+        <h1 id="深度解析-spring-webmvcconfigurerweb-定制化的核心枢纽">深度解析
 Spring <code>WebMvcConfigurer</code>：Web 定制化的核心枢纽</h1>
 <h2 id="摘要">摘要</h2>
 <p><code>WebMvcConfigurer</code> 是 Spring MVC
@@ -54,10 +53,409 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 在这里重写你需要的方法</span></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 例如：addInterceptors, addCorsMappings 等</span></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<blockquote>
+<p><strong>⚠️ 重要警告：关于 <code>@EnableWebMvc</code></strong></p>
+<p>你可能会在一些旧的教程或文章中看到 <code>@EnableWebMvc</code>
+注解。请<strong>谨慎使用</strong>！一旦在 Spring Boot 项目中使用了
+<code>@EnableWebMvc</code>，它会完全接管 Spring MVC
+的配置，<strong>导致所有 Spring Boot 关于 Web MVC
+的自动配置（如消息转换器、静态资源处理等）全部失效</strong>。99%
+的情况下，你需要的只是实现 <code>WebMvcConfigurer</code>
+接口，而不是使用 <code>@EnableWebMvc</code>。</p>
+</blockquote>
+<hr />
+<h2 id="常用配置方法深度解析">2. 常用配置方法深度解析</h2>
+<p>下面我们将逐一剖析 <code>WebMvcConfigurer</code>
+中最常用且最重要的配置方法。</p>
+<h3 id="addinterceptorsinterceptorregistry-registry">2.1
+<code>addInterceptors(InterceptorRegistry registry)</code></h3>
+<ul>
+<li><strong>功能</strong>：注册自定义的拦截器（Interceptor）。</li>
+<li><strong>用途</strong>：这是最常用的方法之一，用于实现权限验证、日志记录、性能监控等横切关注点。</li>
+<li><strong>核心对象</strong>：<code>InterceptorRegistry</code>
+(拦截器注册表)
+<ul>
+<li><code>addInterceptor(HandlerInterceptor interceptor)</code>:
+添加一个拦截器。</li>
+<li><code>addPathPatterns(String... patterns)</code>:
+指定该拦截器要拦截的 URL 路径模式（支持 <code>*</code>, <code>**</code>
+通配符）。</li>
+<li><code>excludePathPatterns(String... patterns)</code>: 指定要排除的
+URL 路径模式。</li>
+<li><code>order(int order)</code>:
+为拦截器链指定执行顺序，值越小，优先级越高。</li>
+</ul></li>
+</ul>
+<h4
+id="demo注册一个登录校验拦截器"><strong>Demo：注册一个登录校验拦截器</strong></h4>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Override</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">addInterceptors</span><span class="op">(</span>InterceptorRegistry registry<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    registry<span class="op">.</span><span class="fu">addInterceptor</span><span class="op">(</span><span class="kw">new</span> <span class="fu">LoginInterceptor</span><span class="op">())</span> <span class="co">// 添加你的拦截器实例</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">addPathPatterns</span><span class="op">(</span><span class="st">&quot;/user/**&quot;</span><span class="op">,</span> <span class="st">&quot;/order/**&quot;</span><span class="op">)</span> <span class="co">// 拦截所有 /user/ 和 /order/ 下的请求</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">excludePathPatterns</span><span class="op">(</span><span class="st">&quot;/user/login&quot;</span><span class="op">,</span> <span class="st">&quot;/user/register&quot;</span><span class="op">)</span> <span class="co">// 排除登录和注册接口</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">order</span><span class="op">(</span><span class="dv">1</span><span class="op">);</span> <span class="co">// 设置执行顺序</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h3 id="addcorsmappingscorsregistry-registry">2.2
+<code>addCorsMappings(CorsRegistry registry)</code></h3>
+<ul>
+<li><strong>功能</strong>：配置全局的跨域资源共享（CORS）。</li>
+<li><strong>用途</strong>：在前后端分离的项目中，用于解决前端应用（如
+Vue, React）跨域访问后端 API 的问题。相比在每个
+<code>@RestController</code> 或 <code>@RequestMapping</code> 上添加
+<code>@CrossOrigin</code> 注解，这里的全局配置更加高效和易于管理。</li>
+<li><strong>核心对象</strong>：<code>CorsRegistry</code> (CORS 注册表)
+<ul>
+<li><code>addMapping(String pathPattern)</code>:
+配置对哪些路径生效。<code>/**</code> 表示所有路径。</li>
+<li><code>allowedOrigins(String... origins)</code>:
+允许的来源。<code>*</code>
+表示所有。<strong>出于安全考虑，生产环境应指定具体域名</strong>。</li>
+<li><code>allowedMethods(String... methods)</code>: 允许的 HTTP
+方法（<code>"GET"</code>, <code>"POST"</code> 等）。</li>
+<li><code>allowedHeaders(String... headers)</code>: 允许的请求头。</li>
+<li><code>allowCredentials(boolean allow)</code>: 是否允许发送
+Cookie。</li>
+<li><code>maxAge(long maxAge)</code>:
+预检请求（OPTIONS）的缓存时间（秒）。</li>
+</ul></li>
+</ul>
+<h4 id="demo配置全局跨域"><strong>Demo：配置全局跨域</strong></h4>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Override</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">addCorsMappings</span><span class="op">(</span>CorsRegistry registry<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    registry<span class="op">.</span><span class="fu">addMapping</span><span class="op">(</span><span class="st">&quot;/api/**&quot;</span><span class="op">)</span> <span class="co">// 对所有 /api/ 下的路径生效</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">allowedOrigins</span><span class="op">(</span><span class="st">&quot;https://my-frontend.com&quot;</span><span class="op">,</span> <span class="st">&quot;http://localhost:8080&quot;</span><span class="op">)</span> <span class="co">// 允许的前端域名</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">allowedMethods</span><span class="op">(</span><span class="st">&quot;GET&quot;</span><span class="op">,</span> <span class="st">&quot;POST&quot;</span><span class="op">,</span> <span class="st">&quot;PUT&quot;</span><span class="op">,</span> <span class="st">&quot;DELETE&quot;</span><span class="op">,</span> <span class="st">&quot;OPTIONS&quot;</span><span class="op">)</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">allowedHeaders</span><span class="op">(</span><span class="st">&quot;*&quot;</span><span class="op">)</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">allowCredentials</span><span class="op">(</span><span class="kw">true</span><span class="op">)</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">maxAge</span><span class="op">(</span><span class="dv">3600</span><span class="op">);</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h3 id="addresourcehandlersresourcehandlerregistry-registry">2.3
+<code>addResourceHandlers(ResourceHandlerRegistry registry)</code></h3>
+<ul>
+<li><strong>功能</strong>：配置静态资源映射。</li>
+<li><strong>用途</strong>：当你的静态资源（如 CSS, JS, 图片）没有放在
+Spring Boot 默认的
+<code>classpath:/static/</code>、<code>classpath:/public/</code>
+等目录下时，你需要手动配置映射关系。这对于访问外部文件系统（如上传文件的存储目录）也至关重要。</li>
+<li><strong>核心对象</strong>：<code>ResourceHandlerRegistry</code>
+(资源处理器注册表)
+<ul>
+<li><code>addResourceHandler(String... pathPatterns)</code>:
+定义外部访问的 URL 路径。</li>
+<li><code>addResourceLocations(String... locations)</code>:
+定义资源在服务器上的物理位置。
+<ul>
+<li><code>classpath:/</code>：从类路径下查找。</li>
+<li><code>file:/</code>：从文件系统的绝对路径或相对路径查找。</li>
+</ul></li>
+</ul></li>
+</ul>
+<h4
+id="demo映射自定义静态资源目录和文件上传目录"><strong>Demo：映射自定义静态资源目录和文件上传目录</strong></h4>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Override</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">addResourceHandlers</span><span class="op">(</span>ResourceHandlerRegistry registry<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 1. 映射 classpath 下的自定义目录</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    registry<span class="op">.</span><span class="fu">addResourceHandler</span><span class="op">(</span><span class="st">&quot;/custom-res/**&quot;</span><span class="op">)</span> <span class="co">// 如果访问 http://.../custom-res/1.css</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">addResourceLocations</span><span class="op">(</span><span class="st">&quot;classpath:/my-static/&quot;</span><span class="op">);</span> <span class="co">// 会去 classpath:my-static/ 目录下找 1.css</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 2. 映射外部文件上传目录</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    registry<span class="op">.</span><span class="fu">addResourceHandler</span><span class="op">(</span><span class="st">&quot;/uploads/**&quot;</span><span class="op">)</span> <span class="co">// 如果访问 http://.../uploads/avatar.jpg</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">addResourceLocations</span><span class="op">(</span><span class="st">&quot;file:/app/data/uploads/&quot;</span><span class="op">);</span> <span class="co">// 会去服务器 /app/data/uploads/ 目录下找 avatar.jpg</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h3
+id="configuremessageconverterslisthttpmessageconverter-converters">2.4
+<code>configureMessageConverters(List&lt;HttpMessageConverter&lt;?&gt;&gt; converters)</code></h3>
+<ul>
+<li><strong>功能</strong>：配置或扩展 HTTP
+消息转换器（<code>HttpMessageConverter</code>）。</li>
+<li><strong>用途</strong>：HTTP 消息转换器负责将请求体（如 JSON）转换为
+Java 对象，以及将 Java 对象转换为响应体。最常见的用途是<strong>定制
+Jackson (<code>ObjectMapper</code>)
+的行为</strong>，例如全局日期格式化、处理 null 值等。</li>
+<li><strong>注意</strong>：此方法是<strong>扩展</strong>现有的转换器列表。如果你想<strong>替换</strong>，应该使用
+<code>extendMessageConverters</code>。</li>
+</ul>
+<h4 id="demo定制-jackson-实现全局日期格式化"><strong>Demo：定制 Jackson
+实现全局日期格式化</strong></h4>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">com</span><span class="op">.</span><span class="im">fasterxml</span><span class="op">.</span><span class="im">jackson</span><span class="op">.</span><span class="im">databind</span><span class="op">.</span><span class="im">ObjectMapper</span><span class="op">;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">com</span><span class="op">.</span><span class="im">fasterxml</span><span class="op">.</span><span class="im">jackson</span><span class="op">.</span><span class="im">databind</span><span class="op">.</span><span class="im">module</span><span class="op">.</span><span class="im">SimpleModule</span><span class="op">;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">com</span><span class="op">.</span><span class="im">fasterxml</span><span class="op">.</span><span class="im">jackson</span><span class="op">.</span><span class="im">datatype</span><span class="op">.</span><span class="im">jsr310</span><span class="op">.</span><span class="im">deser</span><span class="op">.</span><span class="im">LocalDateTimeDeserializer</span><span class="op">;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">com</span><span class="op">.</span><span class="im">fasterxml</span><span class="op">.</span><span class="im">jackson</span><span class="op">.</span><span class="im">datatype</span><span class="op">.</span><span class="im">jsr310</span><span class="op">.</span><span class="im">ser</span><span class="op">.</span><span class="im">LocalDateTimeSerializer</span><span class="op">;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">time</span><span class="op">.</span><span class="im">LocalDateTime</span><span class="op">;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">time</span><span class="op">.</span><span class="im">format</span><span class="op">.</span><span class="im">DateTimeFormatter</span><span class="op">;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">util</span><span class="op">.</span><span class="im">List</span><span class="op">;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="at">@Override</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">configureMessageConverters</span><span class="op">(</span><span class="bu">List</span><span class="op">&lt;</span>HttpMessageConverter<span class="op">&lt;?&gt;&gt;</span> converters<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 1. 创建一个新的 ObjectMapper</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    ObjectMapper objectMapper <span class="op">=</span> <span class="kw">new</span> <span class="fu">ObjectMapper</span><span class="op">();</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 2. 创建一个模块用于定制序列化和反序列化</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    SimpleModule module <span class="op">=</span> <span class="kw">new</span> <span class="fu">SimpleModule</span><span class="op">();</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 3. 定义日期时间格式</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    DateTimeFormatter formatter <span class="op">=</span> DateTimeFormatter<span class="op">.</span><span class="fu">ofPattern</span><span class="op">(</span><span class="st">&quot;yyyy-MM-dd HH:mm:ss&quot;</span><span class="op">);</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 4. 添加 LocalDateTime 的序列化器和反序列化器</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    module<span class="op">.</span><span class="fu">addSerializer</span><span class="op">(</span>LocalDateTime<span class="op">.</span><span class="fu">class</span><span class="op">,</span> <span class="kw">new</span> <span class="fu">LocalDateTimeSerializer</span><span class="op">(</span>formatter<span class="op">));</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    module<span class="op">.</span><span class="fu">addDeserializer</span><span class="op">(</span>LocalDateTime<span class="op">.</span><span class="fu">class</span><span class="op">,</span> <span class="kw">new</span> <span class="fu">LocalDateTimeDeserializer</span><span class="op">(</span>formatter<span class="op">));</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    objectMapper<span class="op">.</span><span class="fu">registerModule</span><span class="op">(</span>module<span class="op">);</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 5. 将自定义的 ObjectMapper 设置到 MappingJackson2HttpMessageConverter 中</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 注意：这里我们通常是替换或配置已有的转换器，而不是添加新的</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    converters<span class="op">.</span><span class="fu">stream</span><span class="op">()</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">filter</span><span class="op">(</span>converter <span class="op">-&gt;</span> converter <span class="kw">instanceof</span> MappingJackson2HttpMessageConverter<span class="op">)</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>        <span class="op">.</span><span class="fu">forEach</span><span class="op">(</span>converter <span class="op">-&gt;</span> <span class="op">((</span>MappingJackson2HttpMessageConverter<span class="op">)</span> converter<span class="op">).</span><span class="fu">setObjectMapper</span><span class="op">(</span>objectMapper<span class="op">));</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h3 id="addviewcontrollersviewcontrollerregistry-registry">2.5
+<code>addViewControllers(ViewControllerRegistry registry)</code></h3>
+<ul>
+<li><strong>功能</strong>：添加简单的、无需业务逻辑的控制器，实现 URL
+到视图的直接映射。</li>
+<li><strong>用途</strong>：当你有一个页面跳转需求，但这个跳转不需要任何后端数据处理时，使用它可以避免创建一个空的
+Controller 方法。</li>
+<li><strong>核心对象</strong>：<code>ViewControllerRegistry</code></li>
+</ul>
+<h4 id="demo将-和-home-直接映射到-home.html-视图"><strong>Demo：将
+<code>/</code> 和 <code>/home</code> 直接映射到 <code>home.html</code>
+视图</strong></h4>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Override</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">addViewControllers</span><span class="op">(</span>ViewControllerRegistry registry<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    registry<span class="op">.</span><span class="fu">addViewController</span><span class="op">(</span><span class="st">&quot;/&quot;</span><span class="op">).</span><span class="fu">setViewName</span><span class="op">(</span><span class="st">&quot;home&quot;</span><span class="op">);</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    registry<span class="op">.</span><span class="fu">addViewController</span><span class="op">(</span><span class="st">&quot;/home&quot;</span><span class="op">).</span><span class="fu">setViewName</span><span class="op">(</span><span class="st">&quot;home&quot;</span><span class="op">);</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    registry<span class="op">.</span><span class="fu">addViewController</span><span class="op">(</span><span class="st">&quot;/login&quot;</span><span class="op">).</span><span class="fu">setViewName</span><span class="op">(</span><span class="st">&quot;loginPage&quot;</span><span class="op">);</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>这比写一个如下的 Controller 要简洁得多：</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Controller</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> HomeController <span class="op">{</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">@GetMapping</span><span class="op">(</span><span class="st">&quot;/home&quot;</span><span class="op">)</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="bu">String</span> <span class="fu">home</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">&quot;home&quot;</span><span class="op">;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h2 id="完整配置示例">3. 完整配置示例</h2>
+<p>下面是一个集成了多种常用配置的 <code>WebMvcConfigurer</code>
+完整示例，可作为项目模板使用。</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span><span class="im"> com</span><span class="op">.</span><span class="im">example</span><span class="op">.</span><span class="im">demo</span><span class="op">.</span><span class="im">config</span><span class="op">;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">com</span><span class="op">.</span><span class="im">example</span><span class="op">.</span><span class="im">demo</span><span class="op">.</span><span class="im">interceptor</span><span class="op">.</span><span class="im">AuthInterceptor</span><span class="op">;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">beans</span><span class="op">.</span><span class="im">factory</span><span class="op">.</span><span class="im">annotation</span><span class="op">.</span><span class="im">Autowired</span><span class="op">;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">context</span><span class="op">.</span><span class="im">annotation</span><span class="op">.</span><span class="im">Configuration</span><span class="op">;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">web</span><span class="op">.</span><span class="im">servlet</span><span class="op">.</span><span class="im">config</span><span class="op">.</span><span class="im">annotation</span><span class="op">.*;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="at">@Configuration</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> ComprehensiveWebMvcConfig <span class="kw">implements</span> WebMvcConfigurer <span class="op">{</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Autowired</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> AuthInterceptor authInterceptor<span class="op">;</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">/**</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>     <span class="co">*</span> <span class="co">注册拦截器</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>     <span class="co">*/</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">addInterceptors</span><span class="op">(</span>InterceptorRegistry registry<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>        registry<span class="op">.</span><span class="fu">addInterceptor</span><span class="op">(</span>authInterceptor<span class="op">)</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">addPathPatterns</span><span class="op">(</span><span class="st">&quot;/api/**&quot;</span><span class="op">)</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">excludePathPatterns</span><span class="op">(</span><span class="st">&quot;/api/auth/login&quot;</span><span class="op">);</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    <span class="co">/**</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>     <span class="co">*</span> <span class="co">配置全局跨域</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>     <span class="co">*/</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">addCorsMappings</span><span class="op">(</span>CorsRegistry registry<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>        registry<span class="op">.</span><span class="fu">addMapping</span><span class="op">(</span><span class="st">&quot;/**&quot;</span><span class="op">)</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">allowedOriginPatterns</span><span class="op">(</span><span class="st">&quot;*&quot;</span><span class="op">)</span> <span class="co">// 使用 allowedOriginPatterns 替代 allowedOrigins</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">allowedMethods</span><span class="op">(</span><span class="st">&quot;GET&quot;</span><span class="op">,</span> <span class="st">&quot;POST&quot;</span><span class="op">,</span> <span class="st">&quot;PUT&quot;</span><span class="op">,</span> <span class="st">&quot;DELETE&quot;</span><span class="op">)</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">allowedHeaders</span><span class="op">(</span><span class="st">&quot;*&quot;</span><span class="op">)</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">allowCredentials</span><span class="op">(</span><span class="kw">true</span><span class="op">)</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">maxAge</span><span class="op">(</span><span class="dv">3600</span><span class="op">);</span></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>    <span class="co">/**</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>     <span class="co">*</span> <span class="co">静态资源映射</span></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>     <span class="co">*/</span></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">addResourceHandlers</span><span class="op">(</span>ResourceHandlerRegistry registry<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>        registry<span class="op">.</span><span class="fu">addResourceHandler</span><span class="op">(</span><span class="st">&quot;/uploads/**&quot;</span><span class="op">)</span></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">addResourceLocations</span><span class="op">(</span><span class="st">&quot;file:/var/www/uploads/&quot;</span><span class="op">);</span></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>    <span class="co">/**</span></span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>     <span class="co">*</span> <span class="co">无业务逻辑的视图跳转</span></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>     <span class="co">*/</span></span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">addViewControllers</span><span class="op">(</span>ViewControllerRegistry registry<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>        registry<span class="op">.</span><span class="fu">addViewController</span><span class="op">(</span><span class="st">&quot;/to-login&quot;</span><span class="op">).</span><span class="fu">setViewName</span><span class="op">(</span><span class="st">&quot;login&quot;</span><span class="op">);</span></span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h2 id="补充章节enablewebmvc-的高级用法与风险">5.
+补充章节：<code>@EnableWebMvc</code> 的高级用法与风险</h2>
+<p>在前文中，我们强调了应优先使用 <code>WebMvcConfigurer</code>
+接口，并对 <code>@EnableWebMvc</code> 提出了警告。本章节将进一步深入探讨
+<code>@EnableWebMvc</code> 的工作原理，以及它与
+<code>WebMvcConfigurer</code>
+组合使用时的特殊行为，帮助开发者在复杂场景下做出更明智的决策。</p>
+<h3
+id="enablewebmvc-的核心作用全面接管与-webmvcconfigurationsupport">5.1
+<code>@EnableWebMvc</code> 的核心作用：全面接管与
+<code>WebMvcConfigurationSupport</code></h3>
+<p><code>@EnableWebMvc</code> 注解的核心功能是通过 <code>@Import</code>
+语句，将 Spring MVC <strong>最底层、最核心</strong>的 Java 配置类
+<code>WebMvcConfigurationSupport</code> 导入到 Spring
+容器中。<code>WebMvcConfigurationSupport</code> 负责创建和配置 Spring
+MVC 运行所需的所有基础 Bean，如
+<code>RequestMappingHandlerMapping</code>、<code>RequestMappingHandlerAdapter</code>
+等。</p>
+<p><strong>关键冲突点</strong>：Spring Boot 的 Web 自动配置类
+<code>WebMvcAutoConfiguration</code>
+上有一个关键的条件注解：<code>@ConditionalOnMissingBean(WebMvcConfigurationSupport.class)</code>。</p>
+<p>这个注解的含义是：“<strong>只有当 Spring 容器中不存在
+<code>WebMvcConfigurationSupport</code> 类型的 Bean
+时，我这个自动配置类才会生效。</strong>”</p>
+<p>因此，整个逻辑链非常清晰： 1. 你添加了 <code>@EnableWebMvc</code>。
+2. <code>WebMvcConfigurationSupport</code> Bean 被创建。 3.
+<code>WebMvcAutoConfiguration</code>
+的生效条件不满足，<strong>导致其完全失效</strong>。</p>
+<p><strong>后果</strong>：你将失去所有 Spring Boot 提供的 Web
+便利性，包括但不限于默认的静态资源处理、JSON
+消息转换器、<code>application.properties</code> 中的
+<code>spring.mvc.*</code>
+配置支持等。你等于回到了需要手动配置一切的“石器时代”。</p>
+<h3 id="组合写法enablewebmvc-与-implements-webmvcconfigurer">5.2
+组合写法：<code>@EnableWebMvc</code> 与
+<code>implements WebMvcConfigurer</code></h3>
+<p>现在，我们来分析一种特殊的组合写法：</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Configuration</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="at">@EnableWebMvc</span> <span class="co">// &lt;--- 关键点1</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> MyWebMvcConfig <span class="kw">implements</span> WebMvcConfigurer <span class="op">{</span> <span class="co">// &lt;--- 关键点2</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">addInterceptors</span><span class="op">(</span>InterceptorRegistry registry<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        <span class="co">// ... 添加拦截器</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>这种写法的最终效果是：</p>
+<ol type="1">
+<li><strong>基础配置由 <code>@EnableWebMvc</code>
+提供</strong>：你放弃了 Spring Boot
+的“精装修套餐”（<code>WebMvcAutoConfiguration</code>），选择了一个“毛坯房”（<code>WebMvcConfigurationSupport</code>）。</li>
+<li><strong>自定义配置由 <code>WebMvcConfigurer</code>
+提供</strong>：你的自定义配置（如拦截器、CORS
+映射等）<strong>依然是有效的</strong>。<code>WebMvcConfigurationSupport</code>
+在其内部设计中，会主动查找容器中所有的 <code>WebMvcConfigurer</code>
+Bean，并调用它们的方法，将这些增量配置应用到自己创建的“毛坯房”基础之上。</li>
+</ol>
+<p><strong>可以理解为</strong>：你完全接管了 Spring MVC
+的底层配置，但仍然利用 <code>WebMvcConfigurer</code>
+这个便利的接口来组织你的自定义代码，而不是去直接重写
+<code>WebMvcConfigurationSupport</code> 那些庞大复杂的
+<code>protected</code> 方法。</p>
+<p><strong>结论</strong>：这种写法并没有让你绕开
+<code>@EnableWebMvc</code>
+禁用自动配置的“副作用”。它只是在手动配置的道路上，提供了一种相对优雅的代码组织方式。<strong>对于绝大多数
+Spring Boot 应用，这都不是推荐的写法。</strong></p>
+<hr />
+<h2 id="补充章节多个-webmvcconfigurer-实现的协作机制">6. 补充章节：多个
+<code>WebMvcConfigurer</code> 实现的协作机制</h2>
+<p>在大型或模块化的项目中，可能会出现多个配置类都实现了
+<code>WebMvcConfigurer</code>
+接口的情况。理解它们如何协同工作至关重要。</p>
+<h3 id="核心规则合并与累加">6.1 核心规则：合并与累加</h3>
+<p>当 Spring 容器中存在多个 <code>WebMvcConfigurer</code> Bean
+时，它们的配置规则不是“覆盖”，而是“<strong>合并与累加</strong>”。</p>
+<p>Spring 在启动时会找到<strong>所有</strong>的
+<code>WebMvcConfigurer</code>
+Bean，然后按照一定的顺序，将它们的配置应用到一个共享的注册表（Registry）实例上。</p>
+<p>假设我们有两个配置类，<code>WebConfigA</code> 和
+<code>WebConfigB</code>：</p>
+<p><strong>WebConfigA:</strong></p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Configuration</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="at">@Order</span><span class="op">(</span><span class="dv">10</span><span class="op">)</span> <span class="co">// 使用 @Order 控制顺序，值越小优先级越高</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> WebConfigA <span class="kw">implements</span> WebMvcConfigurer <span class="op">{</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">addInterceptors</span><span class="op">(</span>InterceptorRegistry registry<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        registry<span class="op">.</span><span class="fu">addInterceptor</span><span class="op">(</span><span class="kw">new</span> <span class="fu">LoggingInterceptor</span><span class="op">()).</span><span class="fu">addPathPatterns</span><span class="op">(</span><span class="st">&quot;/**&quot;</span><span class="op">);</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>WebConfigB:</strong></p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="at">@Configuration</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="at">@Order</span><span class="op">(</span><span class="dv">20</span><span class="op">)</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> WebConfigB <span class="kw">implements</span> WebMvcConfigurer <span class="op">{</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">addInterceptors</span><span class="op">(</span>InterceptorRegistry registry<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        registry<span class="op">.</span><span class="fu">addInterceptor</span><span class="op">(</span><span class="kw">new</span> <span class="fu">AuthInterceptor</span><span class="op">()).</span><span class="fu">addPathPatterns</span><span class="op">(</span><span class="st">&quot;/admin/**&quot;</span><span class="op">);</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h4 id="生效机制">生效机制：</h4>
+<p>Spring 会创建一个<strong>共享的 <code>InterceptorRegistry</code>
+实例</strong>。</p>
+<ol type="1">
+<li>首先，调用 <code>WebConfigA</code> 的 <code>addInterceptors</code>
+方法，将 <code>LoggingInterceptor</code> 注册进去。</li>
+<li>然后，调用 <code>WebConfigB</code> 的 <code>addInterceptors</code>
+方法，将 <code>AuthInterceptor</code> 注册到<strong>同一个</strong>
+<code>InterceptorRegistry</code> 实例中。</li>
+</ol>
+<p><strong>最终结果</strong>：应用中会<strong>同时存在</strong>
+<code>LoggingInterceptor</code> 和 <code>AuthInterceptor</code>
+两个拦截器。这个原则同样适用于 <code>addCorsMappings</code>,
+<code>addResourceHandlers</code> 等其他所有配置方法。</p>
+<h3 id="控制顺序与最佳实践">6.2 控制顺序与最佳实践</h3>
+<ol type="1">
+<li><strong>控制加载顺序</strong>：
+<ul>
+<li>可以通过在配置类上添加 <code>@Order(value)</code> 注解或实现
+<code>Ordered</code> 接口来精确控制 <code>WebMvcConfigurer</code> Bean
+的加载顺序。顺序值越小，越先被调用。这对于定义有先后依赖关系的配置非常重要。</li>
+</ul></li>
+<li><strong>处理配置冲突</strong>：
+<ul>
+<li>对于列表型配置（如拦截器），它们是累加的，一般不存在冲突。</li>
+<li>对于映射型配置（如
+CORS），如果不同的配置类为<strong>完全相同的路径模式</strong>定义了规则，通常是<strong>后加载的配置会覆盖</strong>先加载的配置中的相应属性。最佳实践是避免这种情况，确保路径职责清晰。</li>
+</ul></li>
+<li><strong>最佳实践</strong>：
+<ul>
+<li><strong>集中管理</strong>：在大多数项目中，推荐将所有 Web MVC
+相关配置放在一个<strong>统一的 <code>WebMvcConfig</code>
+类</strong>中。这使得配置一目了然，便于维护。</li>
+<li><strong>模块化配置</strong>：如果项目确实需要按功能模块分散配置，请务必使用
+<code>@Order</code>
+注解来明确地控制它们的加载顺序，并确保每个配置类的职责单一且清晰，避免交叉配置和潜在冲突。</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="结论">7. 结论</h2>
+<p><code>WebMvcConfigurer</code> 是 Spring Boot Web
+开发中不可或缺的一环。它像一个精密的瑞士军刀，为我们提供了在不破坏自动配置这架“精良跑车”的前提下，对其进行“个性化改装”的能力。熟练掌握其核心配置方法，如拦截器注册、CORS
+配置、静态资源映射等，是衡量一个合格 Spring Boot
+开发者的重要标准。始终记住，<strong>拥抱自动配置，使用
+<code>WebMvcConfigurer</code>
+进行扩展</strong>，这是实现高效、简洁、可维护的 Spring Boot
+应用的最佳实践。</p>
+
     </div>
 </article>
-
 
 <script>
     // Add copy buttons to code blocks

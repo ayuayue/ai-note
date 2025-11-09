@@ -10,8 +10,7 @@
         ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
     </div>
     <div class="post-content" id="post-content">
-        
-                    <h3
+        <h3
 id="官方正解告别踩坑在-2025-年用-idea-编译-spring-5.1.x-源码"><strong>官方正解：告别踩坑，在
 2025 年用 IDEA 编译 Spring 5.1.x 源码</strong></h3>
 <h4 id="全文流程概览图"><strong>全文流程概览图</strong></h4>
@@ -71,10 +70,143 @@ class="sourceCode gradle"><code class="sourceCode groovy"><span id="cb2-1"><a hr
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        maven <span class="op">{</span> url <span class="st">&quot;https://maven.aliyun.com/repository/spring-plugin&quot;</span> <span class="op">}</span></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// ... dependencies</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h4 id="第-2-步预编译魔法最关键的一步"><strong>第 2
+步：预编译魔法（最关键的一步！）</strong></h4>
+<p>这是官方指南的核心，也是解决绝大多数编译错误的秘诀。</p>
+<p><strong>操作</strong>：在项目根目录打开终端，执行以下命令：</p>
+<ul>
+<li><strong>Windows:</strong>
+<code>cmd     .\gradlew.bat :spring-oxm:compileTestJava</code></li>
+<li><strong>Linux / macOS:</strong>
+<code>sh     ./gradlew :spring-oxm:compileTestJava</code></li>
+</ul>
+<p><strong>原因揭秘</strong>：<code>spring-oxm</code> 和
+<code>spring-core</code>
+模块包含一些特殊的打包任务，它们会生成一些代码。IntelliJ IDEA
+的标准导入流程无法自动触发这些特殊任务。如果我们不预先手动执行此命令，IDEA
+在分析项目时就会因为找不到这些生成的代码而报错。这一步确保了在 IDEA
+“视察”之前，所有“建材”都已准备就绪。</p>
+<h4 id="第-3-步从-idea-导入项目"><strong>第 3 步：从 IDEA
+导入项目</strong></h4>
+<p>现在，可以安全地导入了。</p>
+<ol type="1">
+<li>在 IDEA 中，选择 <code>File</code> -&gt; <code>New</code> -&gt;
+<code>Project from Existing Sources...</code>。</li>
+<li>导航到 Spring 源码的根目录，选中
+<strong><code>build.gradle</code></strong> 文件，点击
+<code>OK</code>。</li>
+<li>让 IDEA 自动完成 Gradle 项目的同步。</li>
+</ol>
+<h4 id="第-4-步排除-spring-aspects-模块"><strong>第 4 步：排除
+<code>spring-aspects</code> 模块</strong></h4>
+<p><strong>操作</strong>：项目导入后，进入 <code>File</code> -&gt;
+<code>Project Structure...</code> -&gt;
+<code>Modules</code>。在中间的模块列表中找到
+<code>spring-aspects</code>，选中它，然后点击上方的 <code>-</code>
+(Remove) 按钮将其移除。</p>
+<p><strong>原因揭秘</strong>：<code>spring-aspects</code>
+模块使用了高级的 AspectJ 语法，而 IDEA
+内置的编译器无法完全理解，这是一个已知的历史问题。如果不排除它，IDE
+的“Problems”窗口会充满你无法解决的编译错误。</p>
+<p>至此，你的 Spring Framework
+项目已经以最稳定、最官方的方式成功导入！</p>
+<hr />
+<h3
+id="第二部分搭建你的私人调试实验室"><strong>第二部分：搭建你的私人调试实验室</strong></h3>
+<p>现在，让我们添加一个自己的模块，用来编写测试代码和调试源码。</p>
+<h4 id="第-1-步创建并注册模块"><strong>第 1
+步：创建并注册模块</strong></h4>
+<ol type="1">
+<li><p>在项目根目录（用文件资源管理器）创建一个新文件夹
+<code>spring-my-playground</code>，并在其中创建
+<code>src/main/java</code> 目录结构。</p></li>
+<li><p>在 <code>spring-my-playground</code> 文件夹下创建一个
+<code>build.gradle</code> 文件，内容如下：</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode groovy"><code class="sourceCode groovy"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>plugins <span class="op">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    id <span class="st">&#39;java&#39;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>dependencies <span class="op">{</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 依赖 spring-context，它会自动引入 beans, core 等核心模块</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    implementation <span class="fu">project</span><span class="op">(</span><span class="st">&#39;:spring-context&#39;</span><span class="op">)</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></li>
+<li><p>打开根目录的 <strong><code>settings.gradle</code></strong>
+文件，在<strong>最末尾</strong>加上你的模块：
+<code>groovy     include("spring-my-playground")</code></p></li>
+<li><p>回到 IDEA，打开 Gradle 工具窗口，点击 <strong>“Reload All Gradle
+Projects”</strong>。</p></li>
+</ol>
+<h4 id="第-2-步最后的也是最关键的-ide-配置"><strong>第 2
+步：最后的、也是最关键的 IDE 配置</strong></h4>
+<p>为了避免在运行时出现
+<code>Circular dependency</code>（循环依赖）错误，我们需要告诉 IDEA
+把运行和构建的权力完全交给 Gradle。</p>
+<ol type="1">
+<li>进入 <code>File</code> -&gt; <code>Settings</code> -&gt;
+<code>Build, Execution, Deployment</code> -&gt; <code>Build Tools</code>
+-&gt; <code>Gradle</code>。</li>
+<li>将 <strong>“Build and run using:”</strong> 从
+<code>IntelliJ IDEA</code> 修改为
+<strong><code>Gradle</code></strong>。</li>
+<li>将 <strong>“Run tests using:”</strong> 从 <code>IntelliJ IDEA</code>
+修改为 <strong><code>Gradle</code></strong>。</li>
+<li>点击 <code>OK</code> 保存。</li>
+</ol>
+<p><strong>原因揭秘</strong>：这个配置可以阻止 IDEA
+用它自己的、可能无法理解 Spring
+复杂构建逻辑的分析器去运行代码，从而保证了每次运行都使用项目自身最正确的构建流程。</p>
+<h4 id="第-3-步编写代码开始调试"><strong>第 3
+步：编写代码，开始调试！</strong></h4>
+<ol type="1">
+<li><p>在 <code>spring-my-playground</code> 的
+<code>src/main/java</code> 下创建你的测试类，例如
+<code>com.mytests.Main</code>。</p></li>
+<li><p>贴入以下代码：</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span><span class="im"> com</span><span class="op">.</span><span class="im">mytests</span><span class="op">;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">context</span><span class="op">.</span><span class="im">annotation</span><span class="op">.</span><span class="im">AnnotationConfigApplicationContext</span><span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">context</span><span class="op">.</span><span class="im">annotation</span><span class="op">.</span><span class="im">Bean</span><span class="op">;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">context</span><span class="op">.</span><span class="im">annotation</span><span class="op">.</span><span class="im">Configuration</span><span class="op">;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="at">@Configuration</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Main <span class="op">{</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Bean</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="bu">String</span> <span class="fu">myCustomBean</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">&quot;Hello from a correctly imported project!&quot;</span><span class="op">;</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 在下一行设置断点，开始你的源码探索之旅！</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        AnnotationConfigApplicationContext context <span class="op">=</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>                <span class="kw">new</span> <span class="fu">AnnotationConfigApplicationContext</span><span class="op">(</span>Main<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;容器已成功启动！&quot;</span><span class="op">);</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        context<span class="op">.</span><span class="fu">close</span><span class="op">();</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></li>
+<li><p>在 <code>new AnnotationConfigApplicationContext(...)</code>
+这一行设置断点，点击旁边的<strong>甲虫图标 “Debug”</strong>，你就可以按
+<code>F7</code> (Step Into) 自由地进入 Spring 源码的深处了！</p></li>
+</ol>
+<h4 id="总结"><strong>总结</strong></h4>
+<p>告别所有复杂的修改，回归官方指南才是编译 Spring
+源码的康庄大道。核心要点只有三个： 1.
+<strong>修正仓库地址</strong>：解决因时代变迁导致的 <code>401</code>
+错误。 2. <strong>遵循官方三步曲</strong>：<strong>预编译
+<code>spring-oxm</code></strong> -&gt; <strong>导入
+<code>build.gradle</code></strong> -&gt; <strong>排除
+<code>spring-aspects</code></strong>。 3. <strong>配置 IDEA
+代理</strong>：将构建和运行全权委托给 Gradle，避免 IDE
+的“智能”分析引发冲突。</p>
+<p>希望这篇最终版的指南能帮你扫清所有障碍，顺利开启你的 Spring
+源码探索之旅！</p>
+
     </div>
 </article>
-
 
 <script>
     // Add copy buttons to code blocks

@@ -10,8 +10,7 @@
         ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
     </div>
     <div class="post-content" id="post-content">
-        
-                    <h1
+        <h1
 id="飞书机器人发送消息完全指南从curl命令到自动化脚本">飞书机器人发送消息完全指南：从curl命令到自动化脚本</h1>
 <h2 id="摘要">摘要</h2>
 <p>本文详细介绍如何使用飞书机器人通过Webhook发送消息，涵盖自定义机器人创建、cURL命令调用、多种消息格式实现以及Shell脚本自动化实践。适合需要实现服务器监控、自动化通知的运维人员和开发者。</p>
@@ -52,10 +51,260 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="st">        &quot;content&quot;: {</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="st">          &quot;text&quot;: &quot;这是一条来自cURL的测试消息&quot;</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="st">        }</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="st">      }&#39;</span></span></code></pre>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="st">      }&#39;</span></span></code></pre></div>
+<p>如果请求成功，你会收到类似
+<code>{"StatusCode":0,"StatusMessage":"success"}</code>
+的响应，并且消息会出现在群聊中。</p>
+<h2 id="消息类型与格式详解">4 消息类型与格式详解</h2>
+<p>飞书自定义机器人支持多种消息类型，以下是常见格式的示例。</p>
+<h3 id="文本消息-text">4.1 文本消息 (text)</h3>
+<p>最基本的消息类型，支持纯文本。可以使用 <code>&lt;at&gt;</code>
+标签来@群成员或所有人。</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-X</span> POST <span class="dt">\</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;https://open.feishu.cn/open-apis/bot/v2/hook/你的Webhook地址&quot;</span> <span class="dt">\</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-H</span> <span class="st">&quot;Content-Type: application/json&quot;</span> <span class="dt">\</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> <span class="st">&#39;{</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="st">        &quot;msg_type&quot;: &quot;text&quot;,</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="st">        &quot;content&quot;: {</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="st">          &quot;text&quot;: &quot;服务器状态告警\n时间：2023-10-26 10:00:00\n内容：CPU使用率超过90% &lt;at user_id=\&quot;all\&quot;&gt;所有人&lt;/at&gt;&quot;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="st">        }</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="st">      }&#39;</span></span></code></pre></div>
+<h3 id="富文本消息-post">4.2 富文本消息 (post)</h3>
+<p>富文本消息 (<code>post</code>)
+支持更复杂的排版，可以在一条消息中组合文本、链接、<span class="citation"
+data-cites="提及等元素">@提及等元素</span>，通常用于需要良好排版的通知。</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-X</span> POST <span class="dt">\</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;https://open.feishu.cn/open-apis/bot/v2/hook/你的Webhook地址&quot;</span> <span class="dt">\</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-H</span> <span class="st">&quot;Content-Type: application/json&quot;</span> <span class="dt">\</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> <span class="st">&#39;{</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="st">        &quot;msg_type&quot;: &quot;post&quot;,</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="st">        &quot;content&quot;: {</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="st">          &quot;post&quot;: {</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="st">            &quot;zh_cn&quot;: {</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="st">              &quot;title&quot;: &quot;每日报表&quot;,</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="st">              &quot;content&quot;: [</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="st">                [</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="st">                  {&quot;tag&quot;: &quot;text&quot;, &quot;text&quot;: &quot;今日活跃用户: &quot;},</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="st">                  {&quot;tag&quot;: &quot;text&quot;, &quot;text&quot;: &quot;1,250&quot;, &quot;style&quot;: &quot;bold&quot;}</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="st">                ],</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="st">                [</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="st">                  {&quot;tag&quot;: &quot;text&quot;, &quot;text&quot;: &quot;关键指标: &quot;},</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="st">                  {&quot;tag&quot;: &quot;a&quot;, &quot;text&quot;: &quot;查看详情&quot;, &quot;href&quot;: &quot;http://example.com/dashboard&quot;}</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="st">                ],</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="st">                [</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="st">                  {&quot;tag&quot;: &quot;at&quot;, &quot;user_id&quot;: &quot;all&quot;, &quot;user_name&quot;: &quot;所有人&quot;}</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="st">                ]</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="st">              ]</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="st">            }</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="st">          }</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="st">        }</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="st">      }&#39;</span></span></code></pre></div>
+<h3 id="消息卡片-interactive">4.3 消息卡片 (interactive)</h3>
+<p>消息卡片 (<code>interactive</code>)
+是功能最丰富的消息形式，支持图片、按钮、分栏等交互元素（尽管自定义机器人的按钮通常仅支持跳转链接）。可以使用飞书提供的[消息卡片搭建工具]进行可视化设计。</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-X</span> POST <span class="dt">\</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;https://open.feishu.cn/open-apis/bot/v2/hook/你的Webhook地址&quot;</span> <span class="dt">\</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-H</span> <span class="st">&quot;Content-Type: application/json&quot;</span> <span class="dt">\</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> <span class="st">&#39;{</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="st">        &quot;msg_type&quot;: &quot;interactive&quot;,</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="st">        &quot;card&quot;: {</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="st">          &quot;elements&quot;: [</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="st">            {</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="st">              &quot;tag&quot;: &quot;div&quot;,</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="st">              &quot;text&quot;: {</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="st">                &quot;content&quot;: &quot;**任务执行结果**\n时间: 2023-10-26 10:00:00\n状态: &lt;font color=\&quot;green\&quot;&gt;成功&lt;/font&gt;\n详情: 数据备份任务已完成。&quot;,</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="st">                &quot;tag&quot;: &quot;lark_md&quot;</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="st">              }</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="st">            },</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="st">            {</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="st">              &quot;tag&quot;: &quot;action&quot;,</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="st">              &quot;actions&quot;: [</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="st">                {</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="st">                  &quot;tag&quot;: &quot;button&quot;,</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="st">                  &quot;text&quot;: {&quot;tag&quot;: &quot;plain_text&quot;, &quot;content&quot;: &quot;查看日志&quot;},</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="st">                  &quot;type&quot;: &quot;primary&quot;,</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="st">                  &quot;url&quot;: &quot;http://example.com/logs&quot;</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="st">                }</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="st">              ]</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="st">            }</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="st">          ],</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="st">          &quot;header&quot;: {</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="st">            &quot;title&quot;: {&quot;tag&quot;: &quot;plain_text&quot;, &quot;content&quot;: &quot;系统通知&quot;}</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="st">          }</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="st">        }</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="st">      }&#39;</span></span></code></pre></div>
+<h2 id="安全设置指南">5 安全设置指南</h2>
+<p>为了保护Webhook
+URL，防止被恶意调用发送垃圾信息，飞书提供了三种安全设置，建议至少配置一种。</p>
+<ul>
+<li><strong>自定义关键词</strong>：最多设置10个关键词。只有消息内容中包含至少一个已设置的关键词时，消息才会被发送。例如，设置关键词”监控”，那么消息中必须包含”监控”一词。</li>
+<li><strong>IP白名单</strong>：最多设置10个IP地址或地址段。只有来自这些IP的请求才会被处理。</li>
+<li><strong>签名校验</strong>：系统提供一个密钥。发送请求时，需要根据时间戳和密钥生成签名，并将签名和时间戳一同放入请求体中。服务器会验证签名是否有效且时间戳与当前时间相差不超过1小时。</li>
+</ul>
+<p>启用签名校验后，请求体格式如下：</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;timestamp&quot;</span><span class="ex">:</span> <span class="st">&quot;1599360473&quot;</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;sign&quot;</span><span class="ex">:</span> <span class="st">&quot;计算得到的签名&quot;</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;msg_type&quot;</span><span class="ex">:</span> <span class="st">&quot;text&quot;</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;content&quot;</span><span class="ex">:</span> {</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;text&quot;</span><span class="ex">:</span> <span class="st">&quot;这是一条带签名验证的消息&quot;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">}</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span></code></pre></div>
+<p>签名 (<code>sign</code>) 的生成方法（Python示例）如下：</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> hashlib</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> base64</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> hmac</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> time</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> gen_sign(secret):</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    timestamp <span class="op">=</span> <span class="bu">int</span>(time.time())</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    string_to_sign <span class="op">=</span> <span class="ss">f&#39;</span><span class="sc">{</span>timestamp<span class="sc">}</span><span class="ch">\n</span><span class="sc">{</span>secret<span class="sc">}</span><span class="ss">&#39;</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    hmac_code <span class="op">=</span> hmac.new(string_to_sign.encode(<span class="st">&#39;utf-8&#39;</span>), digestmod<span class="op">=</span>hashlib.sha256).digest()</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    sign <span class="op">=</span> base64.b64encode(hmac_code).decode(<span class="st">&#39;utf-8&#39;</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> timestamp, sign</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co"># 使用从飞书机器人安全设置页面获取的SECRET</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>timestamp, sign <span class="op">=</span> gen_sign(<span class="st">&quot;你的SECRET&quot;</span>)</span></code></pre></div>
+<h2 id="shell脚本实战案例">6 Shell脚本实战案例</h2>
+<p>下面是一个综合性的Shell脚本示例，用于发送服务器磁盘使用率告警，并包含安全设置（签名校验）和简单的错误处理。</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 飞书机器人配置</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="va">FEISHU_WEBHOOK</span><span class="op">=</span><span class="st">&quot;https://open.feishu.cn/open-apis/bot/v2/hook/你的Webhook地址&quot;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="va">SECRET</span><span class="op">=</span><span class="st">&quot;你的签名密钥&quot;</span>  <span class="co"># 如果在安全设置中启用了签名校验则需要</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 生成签名 (如果启用了签名校验)</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">gen_feishu_sign()</span> <span class="kw">{</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">local</span> <span class="va">timestamp</span><span class="op">=</span><span class="va">$(</span><span class="fu">date</span> +%s<span class="va">)</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">local</span> <span class="va">string_to_sign</span><span class="op">=</span><span class="st">&quot;</span><span class="va">${timestamp}</span><span class="st">\n</span><span class="va">${SECRET}</span><span class="st">&quot;</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">local</span> <span class="va">sign</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="at">-en</span> <span class="st">&quot;</span><span class="va">$string_to_sign</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="ex">openssl</span> dgst <span class="at">-sha256</span> <span class="at">-hmac</span> <span class="st">&quot;</span><span class="va">$SECRET</span><span class="st">&quot;</span> <span class="at">-binary</span> <span class="kw">|</span> <span class="fu">base64</span><span class="va">)</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$timestamp</span><span class="st"> </span><span class="va">$sign</span><span class="st">&quot;</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 发送飞书消息函数</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="fu">send_feishu_alert()</span> <span class="kw">{</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">local</span> <span class="va">message</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$1</span><span class="st">&quot;</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="bu">local</span> <span class="va">message_type</span><span class="op">=</span><span class="st">&quot;</span><span class="va">${2</span><span class="op">:-</span>text<span class="va">}</span><span class="st">&quot;</span>  <span class="co"># 默认为文本消息</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 判断是否需要生成签名</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">[[</span> <span class="ot">-n</span> <span class="st">&quot;</span><span class="va">$SECRET</span><span class="st">&quot;</span> <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>        <span class="bu">read</span> <span class="at">-r</span> <span class="va">timestamp</span> <span class="va">sign</span> <span class="op">&lt;&lt;&lt;</span> <span class="st">&quot;</span><span class="va">$(</span><span class="ex">gen_feishu_sign</span><span class="va">)</span><span class="st">&quot;</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>        <span class="bu">local</span> <span class="va">extra_data</span><span class="op">=</span><span class="st">&quot;</span><span class="dt">\&quot;</span><span class="st">timestamp</span><span class="dt">\&quot;</span><span class="st">: </span><span class="dt">\&quot;</span><span class="va">$timestamp</span><span class="dt">\&quot;</span><span class="st">, </span><span class="dt">\&quot;</span><span class="st">sign</span><span class="dt">\&quot;</span><span class="st">: </span><span class="dt">\&quot;</span><span class="va">$sign</span><span class="dt">\&quot;</span><span class="st">,&quot;</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        <span class="bu">local</span> <span class="va">extra_data</span><span class="op">=</span><span class="st">&quot;&quot;</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">fi</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 构建JSON数据</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    <span class="bu">local</span> <span class="va">json_data</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    <span class="cf">case</span> <span class="va">$message_type</span> <span class="kw">in</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;text&quot;</span><span class="kw">)</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>            <span class="va">json_data</span><span class="op">=</span><span class="st">&quot;{</span><span class="dt">\&quot;</span><span class="st">msg_type</span><span class="dt">\&quot;</span><span class="st">: </span><span class="dt">\&quot;</span><span class="st">text</span><span class="dt">\&quot;</span><span class="st">, </span><span class="dt">\&quot;</span><span class="st">content</span><span class="dt">\&quot;</span><span class="st">: {</span><span class="dt">\&quot;</span><span class="st">text</span><span class="dt">\&quot;</span><span class="st">: </span><span class="dt">\&quot;</span><span class="va">$message</span><span class="dt">\&quot;</span><span class="st">}}&quot;</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>            <span class="cf">;;</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;post&quot;</span><span class="kw">)</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>            <span class="va">json_data</span><span class="op">=</span><span class="st">&quot;{</span><span class="dt">\&quot;</span><span class="st">msg_type</span><span class="dt">\&quot;</span><span class="st">: </span><span class="dt">\&quot;</span><span class="st">post</span><span class="dt">\&quot;</span><span class="st">, </span><span class="dt">\&quot;</span><span class="st">content</span><span class="dt">\&quot;</span><span class="st">: {</span><span class="dt">\&quot;</span><span class="st">post</span><span class="dt">\&quot;</span><span class="st">: {</span><span class="dt">\&quot;</span><span class="st">zh_cn</span><span class="dt">\&quot;</span><span class="st">: {</span><span class="dt">\&quot;</span><span class="st">title</span><span class="dt">\&quot;</span><span class="st">: </span><span class="dt">\&quot;</span><span class="st">系统告警</span><span class="dt">\&quot;</span><span class="st">, </span><span class="dt">\&quot;</span><span class="st">content</span><span class="dt">\&quot;</span><span class="st">: [[{</span><span class="dt">\&quot;</span><span class="st">tag</span><span class="dt">\&quot;</span><span class="st">: </span><span class="dt">\&quot;</span><span class="st">text</span><span class="dt">\&quot;</span><span class="st">, </span><span class="dt">\&quot;</span><span class="st">text</span><span class="dt">\&quot;</span><span class="st">: </span><span class="dt">\&quot;</span><span class="va">$message</span><span class="dt">\&quot;</span><span class="st">}]]}}}}&quot;</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>            <span class="cf">;;</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>        <span class="pp">*</span><span class="kw">)</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>            <span class="va">json_data</span><span class="op">=</span><span class="st">&quot;{</span><span class="dt">\&quot;</span><span class="st">msg_type</span><span class="dt">\&quot;</span><span class="st">: </span><span class="dt">\&quot;</span><span class="st">text</span><span class="dt">\&quot;</span><span class="st">, </span><span class="dt">\&quot;</span><span class="st">content</span><span class="dt">\&quot;</span><span class="st">: {</span><span class="dt">\&quot;</span><span class="st">text</span><span class="dt">\&quot;</span><span class="st">: </span><span class="dt">\&quot;</span><span class="va">$message</span><span class="dt">\&quot;</span><span class="st">}}&quot;</span></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>            <span class="cf">;;</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">esac</span></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 如果有签名信息，插入到JSON中</span></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="kw">[[</span> <span class="ot">-n</span> <span class="st">&quot;</span><span class="va">$extra_data</span><span class="st">&quot;</span> <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>        <span class="va">json_data</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$json_data</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&quot;s/{</span><span class="dt">\&quot;</span><span class="st">/{</span><span class="dt">\&quot;</span><span class="va">$extra_data</span><span class="dt">\&quot;</span><span class="st">/&quot;</span><span class="va">)</span></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">fi</span></span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 发送请求</span></span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>    <span class="va">response</span><span class="op">=</span><span class="va">$(</span><span class="ex">curl</span> <span class="at">-s</span> <span class="at">-w</span> <span class="st">&quot;%{http_code}&quot;</span> <span class="at">-X</span> POST <span class="dt">\</span></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;</span><span class="va">$FEISHU_WEBHOOK</span><span class="st">&quot;</span> <span class="dt">\</span></span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>        <span class="at">-H</span> <span class="st">&quot;Content-Type: application/json&quot;</span> <span class="dt">\</span></span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>        <span class="at">-d</span> <span class="st">&quot;</span><span class="va">$json_data</span><span class="st">&quot;</span><span class="va">)</span></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>    <span class="va">http_code</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$response</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">tail</span> <span class="at">-n1</span><span class="va">)</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>    <span class="va">body</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$response</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> <span class="at">-1</span><span class="va">)</span></span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">[</span> <span class="st">&quot;</span><span class="va">$http_code</span><span class="st">&quot;</span> <span class="ot">-eq</span> 200 <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>        <span class="bu">echo</span> <span class="st">&quot;消息发送成功&quot;</span></span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dv">0</span></span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span></span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>        <span class="bu">echo</span> <span class="st">&quot;消息发送失败, HTTP代码: </span><span class="va">$http_code</span><span class="st">, 响应: </span><span class="va">$body</span><span class="st">&quot;</span></span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="dv">1</span></span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>    <span class="cf">fi</span></span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a><span class="co"># 检查磁盘使用率并发送告警</span></span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a><span class="fu">check_disk_usage()</span> <span class="kw">{</span></span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>    <span class="bu">local</span> <span class="va">threshold</span><span class="op">=</span>90  <span class="co"># 设置阈值百分比</span></span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>    <span class="bu">local</span> <span class="va">usage</span><span class="op">=</span><span class="va">$(</span><span class="fu">df</span> / <span class="kw">|</span> <span class="fu">awk</span> <span class="st">&#39;NR==2 {print $5}&#39;</span> <span class="kw">|</span> <span class="fu">sed</span> <span class="st">&#39;s/%//&#39;</span><span class="va">)</span></span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">[</span> <span class="st">&quot;</span><span class="va">$usage</span><span class="st">&quot;</span> <span class="ot">-gt</span> <span class="st">&quot;</span><span class="va">$threshold</span><span class="st">&quot;</span> <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>        <span class="bu">local</span> <span class="va">hostname</span><span class="op">=</span><span class="va">$(</span><span class="fu">hostname</span><span class="va">)</span></span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>        <span class="bu">local</span> <span class="va">current_time</span><span class="op">=</span><span class="va">$(</span><span class="fu">date</span> <span class="st">&quot;+%Y-%m-%d %H:%M:%S&quot;</span><span class="va">)</span></span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>        <span class="bu">local</span> <span class="va">message</span><span class="op">=</span><span class="st">&quot;🚨 磁盘空间告警 🚨</span></span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a><span class="st">服务器: </span><span class="va">$hostname</span></span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a><span class="st">时间: </span><span class="va">$current_time</span></span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a><span class="st">根分区使用率: </span><span class="va">${usage}</span><span class="st">%</span></span>
+<span id="cb7-78"><a href="#cb7-78" aria-hidden="true" tabindex="-1"></a><span class="st">状态: ⚠️ 超过阈值 </span><span class="va">${threshold}</span><span class="st">%</span></span>
+<span id="cb7-79"><a href="#cb7-79" aria-hidden="true" tabindex="-1"></a><span class="st">建议: 请及时清理磁盘空间 &lt;at user_id=</span><span class="dt">\&quot;</span><span class="st">all</span><span class="dt">\&quot;</span><span class="st">&gt;所有人&lt;/at&gt;&quot;</span></span>
+<span id="cb7-80"><a href="#cb7-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-81"><a href="#cb7-81" aria-hidden="true" tabindex="-1"></a>        <span class="bu">echo</span> <span class="st">&quot;检测到磁盘使用率过高，发送告警...&quot;</span></span>
+<span id="cb7-82"><a href="#cb7-82" aria-hidden="true" tabindex="-1"></a>        <span class="ex">send_feishu_alert</span> <span class="st">&quot;</span><span class="va">$message</span><span class="st">&quot;</span></span>
+<span id="cb7-83"><a href="#cb7-83" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span></span>
+<span id="cb7-84"><a href="#cb7-84" aria-hidden="true" tabindex="-1"></a>        <span class="bu">echo</span> <span class="st">&quot;磁盘使用率正常: </span><span class="va">${usage}</span><span class="st">%&quot;</span></span>
+<span id="cb7-85"><a href="#cb7-85" aria-hidden="true" tabindex="-1"></a>    <span class="cf">fi</span></span>
+<span id="cb7-86"><a href="#cb7-86" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb7-87"><a href="#cb7-87" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-88"><a href="#cb7-88" aria-hidden="true" tabindex="-1"></a><span class="co"># 主程序</span></span>
+<span id="cb7-89"><a href="#cb7-89" aria-hidden="true" tabindex="-1"></a><span class="fu">main()</span> <span class="kw">{</span></span>
+<span id="cb7-90"><a href="#cb7-90" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> <span class="st">&quot;开始检查系统状态...&quot;</span></span>
+<span id="cb7-91"><a href="#cb7-91" aria-hidden="true" tabindex="-1"></a>    <span class="ex">check_disk_usage</span></span>
+<span id="cb7-92"><a href="#cb7-92" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 可以添加其他检查函数，如内存、CPU等</span></span>
+<span id="cb7-93"><a href="#cb7-93" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb7-94"><a href="#cb7-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-95"><a href="#cb7-95" aria-hidden="true" tabindex="-1"></a><span class="co"># 执行主程序</span></span>
+<span id="cb7-96"><a href="#cb7-96" aria-hidden="true" tabindex="-1"></a><span class="ex">main</span></span></code></pre></div>
+<h2 id="常见问题与调试">7 常见问题与调试</h2>
+<ol type="1">
+<li><strong>返回错误码 19024 (Key Words Not Found)</strong>
+<ul>
+<li><strong>原因</strong>：机器人的安全设置中启用了”自定义关键词”，但发送的消息中不包含任何已设置的关键词。</li>
+<li><strong>解决</strong>：在消息内容中加入你设置的关键词，或者修改/关闭自定义关键词设置。</li>
+</ul></li>
+<li><strong>返回错误码 19022 (Ip Not Allowed)</strong>
+<ul>
+<li><strong>原因</strong>：启用了IP白名单，但发送请求的服务器IP不在白名单中。</li>
+<li><strong>解决</strong>：将发送请求的服务器IP添加到机器人的IP白名单中。</li>
+</ul></li>
+<li><strong>返回错误码 19021 (sign match fail…)</strong>
+<ul>
+<li><strong>原因</strong>：签名校验失败。可能因为时间戳过期（与当前时间相差超过1小时）、服务器时间不准确，或签名计算错误。</li>
+<li><strong>解决</strong>：检查服务器时间是否准确，并确认签名算法是否正确。</li>
+</ul></li>
+<li><strong>消息格式错误或显示异常</strong>
+<ul>
+<li><strong>原因</strong>：JSON格式不正确，或特定的消息类型结构有误。</li>
+<li><strong>解决</strong>：使用在线JSON验证工具检查JSON格式。仔细阅读官方文档，确保消息体结构符合对应消息类型的要求。</li>
+</ul></li>
+<li><strong><span class="citation"
+data-cites="某人或">@某人或</span><span class="citation"
+data-cites="所有人不生效">@所有人不生效</span></strong>
+<ul>
+<li><strong>原因</strong>：语法错误或ID不正确。<code>@</code>指定成员时，<code>user_id</code>
+必须使用正确的 <code>ou_xxxxx</code> 格式的
+open_id。<code>@</code>所有人需要群组开启了<code>@所有人</code>功能。</li>
+</ul></li>
+</ol>
+<p>通过本文的介绍，你应该已经掌握了使用飞书自定义机器人通过cURL和Shell脚本发送消息的基本方法。关键在于获取正确的Webhook
+URL，构造合法的JSON消息体，并根据需要配置好安全设置。</p>
+
     </div>
 </article>
-
 
 <script>
     // Add copy buttons to code blocks

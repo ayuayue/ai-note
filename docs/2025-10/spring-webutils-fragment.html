@@ -10,8 +10,7 @@
         ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
     </div>
     <div class="post-content" id="post-content">
-        
-                    <p>Spring 框架中的<code>WebUtils</code>是一个强大且实用的 Web
+        <p>Spring 框架中的<code>WebUtils</code>是一个强大且实用的 Web
 开发工具类，它能帮你大幅简化 Servlet API
 的常见操作。下面这个表格汇总了它的核心功能，让你快速了解其全貌：</p>
 <table>
@@ -102,10 +101,45 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> User <span class="fu">getCurrentUser</span><span class="op">(</span>HttpServletRequest request<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 安全地获取，如果未登录则返回null</span></span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">(</span>User<span class="op">)</span> WebUtils<span class="op">.</span><span class="fu">getSessionAttribute</span><span class="op">(</span>request<span class="op">,</span> <span class="st">&quot;currentUser&quot;</span><span class="op">);</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></li>
+<li><p><strong>API 接口的前缀参数处理</strong>
+在处理类似<code>filter_name</code>、<code>filter_age</code>这样的筛选参数时，<code>getParametersStartingWith</code>方法能大幅简化代码。</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="at">@GetMapping</span><span class="op">(</span><span class="st">&quot;/users&quot;</span><span class="op">)</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="bu">List</span><span class="op">&lt;</span>User<span class="op">&gt;</span> <span class="fu">getUsers</span><span class="op">(</span>HttpServletRequest request<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 获取所有以&quot;filter_&quot;开头的参数</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">Map</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">,</span> <span class="bu">Object</span><span class="op">&gt;</span> filterParams <span class="op">=</span> WebUtils<span class="op">.</span><span class="fu">getParametersStartingWith</span><span class="op">(</span>request<span class="op">,</span> <span class="st">&quot;filter_&quot;</span><span class="op">);</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 然后将这个Map传递给Service层进行查询</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> userService<span class="op">.</span><span class="fu">findUsersByCriteria</span><span class="op">(</span>filterParams<span class="op">);</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div></li>
+<li><p><strong>访问底层原生对象</strong> 当应用运行在 Spring
+或其它框架包装的请求/响应对象之下时，有时需要访问容器的原生实现以使用某些特定功能。</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 获取底层的HttpServletRequest，例如为了使用Servlet容器特有的方法</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>HttpServletRequest nativeRequest <span class="op">=</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    WebUtils<span class="op">.</span><span class="fu">getNativeRequest</span><span class="op">(</span>request<span class="op">,</span> HttpServletRequest<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span></code></pre></div></li>
+</ul>
+<h3 id="使用注意与最佳实践">⚠️ 使用注意与最佳实践</h3>
+<p>虽然<code>WebUtils</code>很强大，但为了写出更专业的代码，有几点需要特别注意：</p>
+<ol type="1">
+<li><strong>并非万能钥匙</strong>：<code>WebUtils</code>旨在简化 Servlet
+API
+的常见操作，但对于非常复杂的业务逻辑，可能仍需手动编写特定代码。它更像是一个<strong>辅助工具</strong>，而非业务逻辑的核心。</li>
+<li><strong>理解空值安全</strong>：其很多方法（如<code>getSessionAttribute</code>）在目标不存在时返回<code>null</code>。调用方<strong>必须做好空值判断</strong>，避免将<code>null</code>异常简单地转移到了业务代码中。</li>
+<li><strong>注意性能影响</strong>：像<code>getParametersStartingWith</code>这类方法会遍历所有参数，在参数极多且频繁调用的场景下，需关注其性能开销。</li>
+<li><strong>优先使用 Spring 更高层次的抽象</strong>：在现代 Spring
+开发中，对于 Session
+管理，可以考虑使用<code>@SessionAttributes</code>注解；对于参数绑定，可以使用<code>@ModelAttribute</code>。这些是更声明式、更
+Spring
+化的方式。<code>WebUtils</code>通常在这些抽象不适用时作为补充。</li>
+</ol>
+<h3 id="总结">💎 总结</h3>
+<p>总的来说，<code>WebUtils</code>是 Spring 为你准备的一个非常实用的 Web
+开发“工具箱”，它通过简洁的静态方法封装了 Servlet API
+的常见模板代码，能有效提高开发效率，并让代码更加健壮。</p>
+
     </div>
 </article>
-
 
 <script>
     // Add copy buttons to code blocks

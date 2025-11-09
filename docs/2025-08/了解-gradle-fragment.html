@@ -10,8 +10,7 @@
         ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
     </div>
     <div class="post-content" id="post-content">
-        
-                    <h3
+        <h3
 id="gradle-vs.-maven-终极对决为什么-spring-也选择了它"><strong>Gradle
 vs. Maven: 终极对决，为什么 Spring 也选择了它？</strong></h3>
 <h4 id="gradle-vs-maven-核心差异对比图"><strong>Gradle vs Maven
@@ -244,10 +243,71 @@ class="sourceCode xml"><code class="sourceCode xml"><span id="cb2-1"><a href="#c
 <span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>            &lt;<span class="kw">artifactId</span>&gt;spring-boot-maven-plugin&lt;/<span class="kw">artifactId</span>&gt;</span>
 <span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>        &lt;/<span class="kw">plugin</span>&gt;</span>
 <span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">plugins</span>&gt;</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">build</span>&gt;</span></code></pre>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">build</span>&gt;</span></code></pre></div>
+<ol start="4" type="1">
+<li><strong>如何运行？</strong> 在项目根目录下打开终端，运行：</li>
+</ol>
+<div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mvn</span> spring-boot:run</span></code></pre></div>
+<h5 id="如果你选择-gradle"><strong>如果你选择 Gradle</strong></h5>
+<ol type="1">
+<li><strong>项目类型</strong>：选择 <strong>Gradle - Groovy</strong> (或
+Kotlin)。</li>
+<li><strong>填写元数据</strong>：Group, Artifact 等。</li>
+<li><strong>生成并下载</strong>：解压后，你会看到核心配置文件
+<code>build.gradle</code>。</li>
+</ol>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode groovy"><code class="sourceCode groovy"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// build.gradle (关键部分)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>plugins <span class="op">{</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    id <span class="st">&#39;java&#39;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    id <span class="st">&#39;org.springframework.boot&#39;</span> version <span class="st">&#39;3.x.x&#39;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    id <span class="st">&#39;io.spring.dependency-management&#39;</span> version <span class="st">&#39;1.1.x&#39;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>repositories <span class="op">{</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mavenCentral</span><span class="op">()</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>dependencies <span class="op">{</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    implementation <span class="st">&#39;org.springframework.boot:spring-boot-starter-web&#39;</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    testImplementation <span class="st">&#39;org.springframework.boot:spring-boot-starter-test&#39;</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>tasks<span class="op">.</span><span class="fu">named</span><span class="op">(</span><span class="st">&#39;test&#39;</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">useJUnitPlatform</span><span class="op">()</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>看到了吗？同样的功能，代码行数少了将近一半，而且更像代码，不是吗？</strong></p>
+<ol start="4" type="1">
+<li><strong>如何运行？</strong> 在项目根目录下打开终端，运行：</li>
+</ol>
+<div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Windows</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">.</span><span class="dt">\g</span>radlew.bat bootRun</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Linux / macOS</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ex">./gradlew</span> bootRun</span></code></pre></div>
+<h4 id="结论我应该选择谁"><strong>结论：我应该选择谁？</strong></h4>
+<ul>
+<li><strong>选择 Maven，如果</strong>：
+<ul>
+<li>你是一个 Java 新手，希望从一个标准化的、规则明确的工具开始。</li>
+<li>你的项目是比较常规的 Web 应用或库，没有复杂的构建需求。</li>
+<li>你所在的团队非常看重“约定”和“标准化”，希望限制构建过程的“自由度”。</li>
+</ul></li>
+<li><strong>选择 Gradle，如果</strong>：
+<ul>
+<li>你追求极致的构建性能，尤其是在大型、多模块项目中。</li>
+<li>你的项目有复杂的、非标准的构建需求，需要高度定制化。</li>
+<li>你和你的团队更喜欢用代码（而不是
+XML）来管理和定义构建过程，欣赏其简洁性和灵活性。</li>
+<li>你正在开发 Android 应用（Gradle 是官方指定工具）。</li>
+</ul></li>
+</ul>
+<p>总而言之，Maven 是一个久经考验、稳定可靠的“老兵”，而 Gradle
+则是一个更现代化、更强大、更灵活的“未来战士”。对于新项目，尤其是那些可能变得复杂的项目，<strong>我强烈建议你尝试一下
+Gradle</strong>，它所带来的效率和灵活性提升，绝对会让你物有所值。</p>
+
     </div>
 </article>
-
 
 <script>
     // Add copy buttons to code blocks
