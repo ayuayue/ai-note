@@ -77,10 +77,10 @@ function generateDocCard(doc, currentPage) {
     
     // Different handling for markdown and html files
     if (doc.type === 'markdown') {
-        const htmlFilename = doc.filename.replace('.md', '.html');
+        const fragmentFilename = doc.filename.replace('.md', '-fragment.html');
         return `            <div class="feed-item">
                 <div class="feed-item-header">
-                    <h2 class="feed-item-title"><a href="/docs/${doc.monthDir}/${htmlFilename}">${doc.title}</a></h2>
+                    <h2 class="feed-item-title"><a href="/docs/${doc.monthDir}/${fragmentFilename}">${doc.title}</a></h2>
                     <div class="feed-item-meta">
                         <span class="feed-item-date">${formattedDate}</span>
                         <span class="feed-item-category">Markdown 文档</span>
@@ -90,7 +90,7 @@ function generateDocCard(doc, currentPage) {
                     <p>${doc.excerpt}...</p>
                 </div>
                 <div class="feed-item-footer">
-                    <a href="docs/${doc.monthDir}/${htmlFilename}" class="read-more">阅读更多 →</a>
+                    <a href="docs/${doc.monthDir}/${fragmentFilename}" class="read-more">阅读更多 →</a>
                 </div>
             </div>`;
     } else {

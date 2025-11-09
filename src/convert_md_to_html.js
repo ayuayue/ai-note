@@ -437,12 +437,6 @@ function markdownToHtml(markdownContent, title, date, monthDir, filename) {
             </footer>
         </div>
         
-        <div class="toc-container">
-            <nav class="toc" id="table-of-contents">
-                <h2>目录</h2>
-                <div id="toc-content"></div>
-            </nav>
-        </div>
     </div>
     
     <a href="#" class="back-to-top" id="backToTop">↑</a>

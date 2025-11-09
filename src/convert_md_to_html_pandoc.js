@@ -180,33 +180,31 @@ async function main() {
                 return new Promise((resolve, reject) => {
                     try {
                         const filePath = path.join(monthPath, filename);
-                        
+
                         // Create HTML filename
                         const htmlFilename = path.basename(filename, '.md') + '.html';
-                        const htmlPath = path.join(docsMonthPath, htmlFilename);
-                        
+                        const fragmentFilename = path.basename(filename, '.md') + '-fragment.html';
+                        const fragmentPath = path.join(docsMonthPath, fragmentFilename);
+
                         // Check if we need to convert this file (incremental build)
-                        if (!shouldConvertFile(filePath, htmlPath)) {
+                        if (!shouldConvertFile(filePath, fragmentPath)) {
                             skippedFiles++;
                             resolve();
                             return;
                         }
-                        
+
                         // Extract title from first line (assuming it's a # heading)
                         const markdownContent = fs.readFileSync(filePath, 'utf8');
                         const titleLine = markdownContent.split('\n')[0];
                         const title = titleLine.startsWith('# ') ? titleLine.substring(2) : path.basename(filename, '.md');
-                        
+
                         // Get file date
                         const fileStats = fs.statSync(filePath);
                         const date = fileStats.mtime.toLocaleDateString('zh-CN');
-                        
+
                         const htmlContent = markdownToHtmlWithPandoc(filePath, title, date, monthDir, filename);
 
-                        fs.writeFileSync(htmlPath, htmlContent, 'utf8');
-                        console.log(`Converted ${monthDir}/${filename} to ${monthDir}/${htmlFilename}`);
-
-                        // Also generate article fragment for SPA
+                        // Generate ONLY fragment for SPA (no need for full HTML anymore)
                         try {
                             // Extract the post-content div content from the full HTML
                             // This is what will be displayed in the SPA
@@ -230,12 +228,12 @@ async function main() {
                             }
 
                             const fragmentContent = generateArticleDetailFragment(contentToUse, title, date, monthDir);
-                            const fragmentPath = path.join(docsMonthPath, htmlFilename.replace('.html', '-fragment.html'));
                             fs.writeFileSync(fragmentPath, fragmentContent, 'utf8');
-                            console.log(`Generated fragment ${monthDir}/${htmlFilename.replace('.html', '-fragment.html')}`);
+                            console.log(`Generated ${monthDir}/${fragmentFilename}`);
                         } catch (fragmentError) {
-                            console.warn(`Warning: Could not generate fragment for ${monthDir}/${filename}: ${fragmentError.message}`);
-                            // Continue anyway, fragment generation is optional
+                            console.error(`Error generating fragment for ${monthDir}/${filename}: ${fragmentError.message}`);
+                            reject(fragmentError);
+                            return;
                         }
 
                         totalFiles++;
