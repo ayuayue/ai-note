@@ -30,7 +30,18 @@
       "Bash(npm info chokidar version:*)",
       "Bash(npm info nodemon version:*)",
       "Bash(pandoc:*)",
-      "Bash(npx http-server:*)"
+      "Bash(npx http-server:*)",
+      "mcp__chrome-devtools__new_page",
+      "mcp__chrome-devtools__take_screenshot",
+      "mcp__chrome-devtools__take_snapshot",
+      "mcp__chrome-devtools__click",
+      "mcp__chrome-devtools__list_console_messages",
+      "mcp__chrome-devtools__evaluate_script",
+      "mcp__chrome-devtools__navigate_page",
+      "mcp__chrome-devtools__hover",
+      "mcp__chrome-devtools__list_pages",
+      "Bash(timeout 10 bash:*)",
+      "Bash(start http://localhost:3003/)"
     ],
     "defaultMode": "acceptEdits"
   }

@@ -63,6 +63,17 @@ MySQL：为何 INSERT 自增主键 0 会变成自增值？
             --hover-color: #f8f9fa;
         }
 
+        :root.dark-mode {
+            --primary-color: #ecf0f1;
+            --secondary-color: #3498db;
+            --accent-color: #e74c3c;
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --border-color: #333333;
+            --card-bg: #2d2d2d;
+            --hover-color: #3a3a3a;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -129,6 +140,55 @@ MySQL：为何 INSERT 自增主键 0 会变成自增值？
             background: #000;
         }
 
+        .theme-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .theme-toggle:hover {
+            background: rgba(255, 255, 255, 1);
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+            color: #CE3321;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover svg {
+            transform: rotate(20deg);
+        }
+
+        :root.dark-mode .theme-toggle {
+            background: rgba(45, 45, 45, 0.95);
+            border-color: rgba(200, 200, 200, 0.3);
+        }
+
+        :root.dark-mode .theme-toggle svg {
+            color: #FFC107;
+        }
+
+        :root.dark-mode .theme-toggle:hover {
+            background: rgba(60, 60, 60, 1);
+        }
+
         .main-content {
             flex: 1;
             min-width: 0;
@@ -163,6 +223,10 @@ MySQL：为何 INSERT 自增主键 0 会变成自增值？
             font-size: 0.95rem;
         }
 
+        :root.dark-mode .post-meta {
+            color: #a0a0a0;
+        }
+
         .post-date {
             background-color: #e3f2fd;
             color: var(--secondary-color);
@@ -171,12 +235,22 @@ MySQL：为何 INSERT 自增主键 0 会变成自增值？
             font-weight: 500;
         }
 
+        :root.dark-mode .post-date {
+            background-color: rgba(52, 152, 219, 0.2);
+            color: #64B5F6;
+        }
+
         .post-category {
             background-color: #e8f5e9;
             color: #4caf50;
             padding: 5px 15px;
             border-radius: 20px;
             font-weight: 500;
+        }
+
+        :root.dark-mode .post-category {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: #81C784;
         }
 
         .post-content {
@@ -284,6 +358,11 @@ MySQL：为何 INSERT 自增主键 0 会变成自增值？
             font-size: 0.9em;
         }
 
+        :root.dark-mode .post-content code {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #FF7043;
+        }
+
         .post-content pre {
             background-color: #2d2d2d;
             color: #f8f8f2;
@@ -344,6 +423,11 @@ MySQL：为何 INSERT 自增主键 0 会变成自增值？
             border-radius: 0 5px 5px 0;
         }
 
+        :root.dark-mode .post-content blockquote {
+            background-color: rgba(52, 152, 219, 0.15);
+            color: #B3E5FC;
+        }
+
         .post-content table {
             width: 100%;
             border-collapse: collapse;
@@ -374,6 +458,22 @@ MySQL：为何 INSERT 自增主键 0 会变成自增值？
             background-color: #e9ecef;
         }
 
+        :root.dark-mode .post-content th {
+            background-color: #2196F3;
+        }
+
+        :root.dark-mode .post-content th, :root.dark-mode .post-content td {
+            border: 1px solid #444;
+        }
+
+        :root.dark-mode .post-content tbody tr:nth-child(even) {
+            background-color: #2a2a2a;
+        }
+
+        :root.dark-mode .post-content tbody tr:hover {
+            background-color: #3a3a3a;
+        }
+
         .post-content a {
             color: var(--secondary-color);
             text-decoration: none;
@@ -392,6 +492,12 @@ MySQL：为何 INSERT 自增主键 0 会变成自增值？
             margin: 25px 0;
             text-align: center;
             font-size: 0.9rem;
+        }
+
+        :root.dark-mode .warning {
+            background-color: rgba(255, 193, 7, 0.15);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            color: #FFD54F;
         }
 
         .footer {
@@ -432,6 +538,11 @@ MySQL：为何 INSERT 自增主键 0 会变成自增值？
             padding: 20px;
             margin: 25px 0;
             text-align: center;
+        }
+
+        :root.dark-mode .mermaid {
+            background-color: #2d2d2d;
+            border: 1px solid #444;
         }
 
         @media (max-width: 768px) {
@@ -990,9 +1101,41 @@ href="https://mybatis.org/mybatis-3/sqlmap-xml.html#insert">MyBatis
         </div>
     </div>
     
+    <button class="theme-toggle" id="themeToggle" title="切换暗色模式">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+    </button>
+
     <a href="#" class="back-to-top" id="backToTop">↑</a>
-    
+
     <script>
+        // Dark mode toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('theme-mode');
+        if (savedTheme === 'dark') {
+            html.classList.add('dark-mode');
+        }
+
+        // Theme toggle click handler
+        themeToggle.addEventListener('click', () => {
+            html.classList.toggle('dark-mode');
+            const isDarkMode = html.classList.contains('dark-mode');
+            localStorage.setItem('theme-mode', isDarkMode ? 'dark' : 'light');
+            console.log('主题切换为:', isDarkMode ? '暗色模式' : '亮色模式');
+        });
+
         // Generate Table of Contents
         function generateTOC() {
             const tocContainer = document.getElementById('toc-content');
