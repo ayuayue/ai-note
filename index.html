@@ -1310,19 +1310,25 @@
             const article = contentArea.querySelector('article');
             if (article) {
                 // Remove existing TOC if present
-                const existingToc = article.querySelector('.toc-sidebar');
+                const existingToc = document.querySelector('.toc-sidebar');
                 if (existingToc) {
                     existingToc.remove();
                 }
 
                 const tocPanel = document.createElement('div');
                 tocPanel.className = 'toc-sidebar';
+
+                // Calculate header height dynamically
+                const header = document.querySelector('.header');
+                const headerHeight = header ? header.offsetHeight + 20 : 120; // Add 20px gap after header
+                const maxHeight = `calc(100vh - ${headerHeight + 20}px)`;
+
                 tocPanel.style.cssText = `
                     position: fixed;
                     right: 20px;
-                    top: 100px;
+                    top: ${headerHeight}px;
                     width: 280px;
-                    max-height: calc(100vh - 120px);
+                    max-height: ${maxHeight};
                     overflow-y: auto;
                     padding: 15px;
                     background: var(--card-bg);
@@ -1346,7 +1352,7 @@
                 // Insert into body instead of article to avoid layout issues
                 document.body.appendChild(tocPanel);
 
-                console.log('TOC: Injected successfully at fixed position');
+                console.log(`TOC: Injected successfully at fixed position (top: ${headerHeight}px)`);
             }
         }
 
