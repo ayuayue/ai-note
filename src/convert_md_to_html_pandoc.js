@@ -81,17 +81,36 @@ function markdownToHtmlWithPandoc(markdownFilePath, title, date, monthDir, filen
     }
 }
 
+// Function to generate article detail fragment for SPA
+function generateArticleDetailFragment(htmlContent, title, date, monthDir) {
+    try {
+        // Read article detail template
+        const fragmentPath = path.join(__dirname, '..', 'pages', 'article-detail.html');
+        let fragment = fs.readFileSync(fragmentPath, 'utf8');
+
+        // Replace placeholders
+        return fragment
+            .replace('{{TITLE}}', title)
+            .replace('{{DATE}}', date)
+            .replace('{{CATEGORY}}', monthDir)
+            .replace('{{CONTENT}}', htmlContent);
+    } catch (error) {
+        console.error(`Error generating article detail fragment: ${error.message}`);
+        throw error;
+    }
+}
+
 // Function to check if file needs to be converted (incremental build)
 function shouldConvertFile(markdownPath, htmlPath) {
     // If HTML file doesn't exist, we need to convert
     if (!fs.existsSync(htmlPath)) {
         return true;
     }
-    
+
     // Compare modification times
     const markdownStats = fs.statSync(markdownPath);
     const htmlStats = fs.statSync(htmlPath);
-    
+
     // Convert if markdown file is newer than HTML file
     return markdownStats.mtime > htmlStats.mtime;
 }
@@ -175,9 +194,25 @@ async function main() {
                         const date = fileStats.mtime.toLocaleDateString('zh-CN');
                         
                         const htmlContent = markdownToHtmlWithPandoc(filePath, title, date, monthDir, filename);
-                        
+
                         fs.writeFileSync(htmlPath, htmlContent, 'utf8');
                         console.log(`Converted ${monthDir}/${filename} to ${monthDir}/${htmlFilename}`);
+
+                        // Also generate article fragment for SPA
+                        try {
+                            // Extract just the HTML content for the fragment
+                            const contentMatch = htmlContent.match(/<div class="post-content"[^>]*>([\s\S]*?)<\/div>/);
+                            const contentHtml = contentMatch ? contentMatch[1] : htmlContent;
+
+                            const fragmentContent = generateArticleDetailFragment(contentHtml, title, date, monthDir);
+                            const fragmentPath = path.join(docsMonthPath, htmlFilename.replace('.html', '-fragment.html'));
+                            fs.writeFileSync(fragmentPath, fragmentContent, 'utf8');
+                            console.log(`Generated fragment ${monthDir}/${htmlFilename.replace('.html', '-fragment.html')}`);
+                        } catch (fragmentError) {
+                            console.warn(`Warning: Could not generate fragment for ${monthDir}/${filename}: ${fragmentError.message}`);
+                            // Continue anyway, fragment generation is optional
+                        }
+
                         totalFiles++;
                         resolve();
                     } catch (error) {
@@ -203,6 +238,7 @@ async function main() {
 // Export the function for use in other scripts
 module.exports = {
     markdownToHtmlWithPandoc,
+    generateArticleDetailFragment,
     main,
     shouldConvertFile
 };

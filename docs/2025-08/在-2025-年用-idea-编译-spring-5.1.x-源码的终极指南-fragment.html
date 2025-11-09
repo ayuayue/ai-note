@@ -1,0 +1,155 @@
+<article class="post">
+    <header class="post-header">
+        <h1 class="post-title">在-2025-年用-idea-编译-spring-5.1.x-源码的终极指南</h1>
+        <div class="post-meta">
+            <div class="post-date">2025/8/24</div>
+            <div class="post-category">2025-08</div>
+        </div>
+    </header>
+    <div class="warning">
+        ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+    </div>
+    <div class="post-content" id="post-content">
+        
+                    <h3
+id="官方正解告别踩坑在-2025-年用-idea-编译-spring-5.1.x-源码"><strong>官方正解：告别踩坑，在
+2025 年用 IDEA 编译 Spring 5.1.x 源码</strong></h3>
+<h4 id="全文流程概览图"><strong>全文流程概览图</strong></h4>
+<pre class="mermaid"><code>graph TB
+    A[开始编译Spring 5.1.x源码] --&gt; B[环境准备]
+    B --&gt; C[清理环境&lt;br/&gt;.idea和.gradle文件夹]
+    C --&gt; D[修正仓库配置&lt;br/&gt;解决401错误]
+    D --&gt; E[预编译关键模块&lt;br/&gt;.\\gradlew :spring-oxm:compileTestJava]
+    E --&gt; F[导入IDEA项目&lt;br/&gt;File -&gt; New -&gt; Project from Existing Sources]
+    F --&gt; G[排除问题模块&lt;br/&gt;移除spring-aspects模块]
+    G --&gt; H[创建调试模块&lt;br/&gt;spring-my-playground]
+    H --&gt; I[配置IDEA代理&lt;br/&gt;Build and run using: Gradle]
+    I --&gt; J[编写测试代码&lt;br/&gt;设置断点开始调试]
+    J --&gt; K[成功调试Spring源码]</code></pre>
+<h4 id="前言"><strong>前言</strong></h4>
+<p>在尝试编译 Spring Framework 5.1.x
+源码的路上，我曾掉入过无数个陷阱：修改 Kotlin
+版本、调整构建脚本、与循环依赖作斗争……在几乎要放弃的时候，我回到了起点，找到了那份藏在源码中的官方指南
+<code>import-into-idea.md</code>。</p>
+<p>原来，我们不需要任何“黑魔法”或侵入式修改。真正的秘诀是遵循一套由
+Spring
+官方制定的、略显古怪但绝对可靠的“导入圣典”。这篇文章将摒弃所有野路子，为你呈现官方的、唯一的正确编译方式，并补充上因时代变迁而必需的关键修正。</p>
+<h4 id="最终成功的环境配置"><strong>最终成功的环境配置</strong></h4>
+<ul>
+<li><strong>IDE</strong>: IntelliJ IDEA 2025.2</li>
+<li><strong>源码</strong>: Spring Framework 5.1.x</li>
+<li><strong>Gradle 版本</strong>: 4.10.3 (由项目自带的 Gradle Wrapper
+决定)</li>
+<li><strong>Gradle JVM</strong>: JDK 8 (1.8)</li>
+</ul>
+<hr />
+<h3
+id="第一部分官方导入圣典"><strong>第一部分：官方导入圣典</strong></h3>
+<p>这个过程有四个环环相扣的关键步骤，请严格按照顺序执行，不要跳过任何一步。</p>
+<h4 id="第-0-步黄金法则---纯净的环境"><strong>第 0 步：黄金法则 -
+纯净的环境</strong></h4>
+<p>如果你之前有过失败的尝试，为了避免任何缓存干扰，请务必先清理环境： *
+删除项目根目录下的 <strong><code>.idea</code></strong> 文件夹。 *
+删除项目根目录下的 <strong><code>.gradle</code></strong> 文件夹。</p>
+<h4 id="第-1-步修正-401-错误与仓库配置时代修正案"><strong>第 1 步：修正
+<code>401</code> 错误与仓库配置（时代修正案）</strong></h4>
+<p>官方指南编写时，Spring 的仓库是开放的。但在今天，直接构建会遇到
+<code>401 Unauthorized</code> 错误。因此，在执行任何 Gradle
+命令之前，我们必须先解决仓库访问问题。</p>
+<p><strong>操作</strong>：打开项目根目录下的 <code>build.gradle</code>
+文件，找到 <code>buildscript</code> -&gt; <code>repositories</code>
+部分，将其替换为国内镜像：</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode gradle"><code class="sourceCode groovy"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>buildscript <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    repositories <span class="op">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="fu">gradlePluginPortal</span><span class="op">()</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 注释或删除下面这行官方仓库</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">// maven { url &quot;https://repo.spring.io/plugins-release&quot; }</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 添加阿里云的插件镜像</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        maven <span class="op">{</span> url <span class="st">&quot;https://maven.aliyun.com/repository/gradle-plugin&quot;</span> <span class="op">}</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        maven <span class="op">{</span> url <span class="st">&quot;https://maven.aliyun.com/repository/spring-plugin&quot;</span> <span class="op">}</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// ... dependencies</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre>
+    </div>
+</article>
+
+
+<script>
+    // Add copy buttons to code blocks
+    function addCopyButtons() {
+        const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
+        sourceCodeBlocks.forEach(function(block) {
+            if (block.querySelector('.copy-button')) return;
+            const preElement = block.querySelector('pre');
+            if (!preElement) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = preElement.querySelector('code');
+                const text = code ? code.innerText : preElement.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+
+        const allPreBlocks = document.querySelectorAll('pre:not(.mermaid)');
+        allPreBlocks.forEach(function(block) {
+            if (block.closest('.sourceCode') || block.querySelector('.copy-button')) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = block.querySelector('code');
+                const text = code ? code.innerText : block.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+    }
+
+    // Initialize copy buttons after content loads
+    window.addEventListener('load', function() {
+        addCopyButtons();
+    });
+</script>

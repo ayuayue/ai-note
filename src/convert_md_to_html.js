@@ -81,24 +81,7 @@ function markdownToHtml(markdownContent, title, date, monthDir, filename) {
             border-bottom: 1px solid var(--border-color);
         }
 
-        .back-home {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--secondary-color);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 500;
-            transition: background 0.3s;
-        }
-
-        .back-home:hover {
-            background: #2980b9;
-        }
-
-        .github-link {
+.github-link {
             display: inline-flex;
             align-items: center;
             gap: 8px;
@@ -433,12 +416,6 @@ function markdownToHtml(markdownContent, title, date, monthDir, filename) {
 <body>
     <div class="container">
         <div class="main-content">
-            <header class="header">
-                <a href="../../index.html" class="back-home">
-                    ← 返回首页
-                </a>
-            </header>
-            
             <article class="post">
                 <header class="post-header">
                     <h1 class="post-title">${title}</h1>

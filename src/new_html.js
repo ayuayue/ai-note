@@ -113,8 +113,6 @@ const content = `<!DOCTYPE html>
             </tr>
         </tbody>
     </table>
-    
-    <p><a href="../index.html">← 返回首页</a></p>
 </body>
 </html>
 `;

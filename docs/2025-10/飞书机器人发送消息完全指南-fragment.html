@@ -1,0 +1,136 @@
+<article class="post">
+    <header class="post-header">
+        <h1 class="post-title">飞书机器人发送消息完全指南：从curl命令到自动化脚本</h1>
+        <div class="post-meta">
+            <div class="post-date">2025/10/26</div>
+            <div class="post-category">2025-10</div>
+        </div>
+    </header>
+    <div class="warning">
+        ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+    </div>
+    <div class="post-content" id="post-content">
+        
+                    <h1
+id="飞书机器人发送消息完全指南从curl命令到自动化脚本">飞书机器人发送消息完全指南：从curl命令到自动化脚本</h1>
+<h2 id="摘要">摘要</h2>
+<p>本文详细介绍如何使用飞书机器人通过Webhook发送消息，涵盖自定义机器人创建、cURL命令调用、多种消息格式实现以及Shell脚本自动化实践。适合需要实现服务器监控、自动化通知的运维人员和开发者。</p>
+<h2 id="目录">目录</h2>
+<ol type="1">
+<li>#1-飞书机器人类型与选择</li>
+<li>#2-创建与配置自定义机器人</li>
+<li>#3-使用curl命令发送消息</li>
+<li>#4-消息类型与格式详解</li>
+<li>#5-安全设置指南</li>
+<li>#6-shell脚本实战案例</li>
+<li>#7-常见问题与调试</li>
+</ol>
+<h2 id="飞书机器人类型与选择">1 飞书机器人类型与选择</h2>
+<p>飞书提供两种类型的机器人：<strong>应用机器人</strong>和<strong>自定义机器人</strong>，两者在使用场景和能力上有显著差异。</p>
+<p><strong>应用机器人</strong>功能全面，需要企业在飞书开放平台创建应用并开启机器人能力，支持发送消息、接收并回复消息（需订阅事件）、管理群组以及调用飞书丰富的开放接口，但需要发版并经过企业管理员审核。它适合深度集成企业业务系统的场景。</p>
+<p><strong>自定义机器人</strong>配置简单，通过在群聊中直接添加”自定义机器人”生成，主要能力是向所在群组单向推送消息，无法交互或获取群信息，无需审核即可使用。它非常适合临时或简单的群消息推送需求。</p>
+<p>对于大多数通过脚本发送通知的场景，<strong>自定义机器人</strong>因其简单的Webhook调用方式而更为常用。它核心的功能就是一个Webhook地址，允许你通过向该地址发送HTTP
+POST请求来推送消息到群聊。</p>
+<h2 id="创建与配置自定义机器人">2 创建与配置自定义机器人</h2>
+<ol type="1">
+<li><strong>进入目标飞书群组</strong>，点击右上角的群设置（<code>...</code>）。</li>
+<li>选择「群机器人」-&gt;「添加机器人」-&gt;「自定义机器人」。</li>
+<li>为机器人设置名称和描述（可选），然后点击添加。</li>
+<li>添加成功后，系统会提供一个 <strong>Webhook URL</strong>，格式通常为
+<code>https://open.feishu.cn/open-apis/bot/v2/hook/xxxxxxxxxxxxxxxxx</code>
+。请妥善保存此URL。</li>
+</ol>
+<h2 id="使用curl命令发送消息">3 使用cURL命令发送消息</h2>
+<p>获取Webhook URL后，即可使用 <code>curl</code>
+命令发送消息。基本命令结构如下：</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-X</span> POST <span class="dt">\</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;https://open.feishu.cn/open-apis/bot/v2/hook/你的Webhook地址&quot;</span> <span class="dt">\</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">-H</span> <span class="st">&quot;Content-Type: application/json&quot;</span> <span class="dt">\</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">-d</span> <span class="st">&#39;{</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="st">        &quot;msg_type&quot;: &quot;text&quot;,</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="st">        &quot;content&quot;: {</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="st">          &quot;text&quot;: &quot;这是一条来自cURL的测试消息&quot;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="st">        }</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="st">      }&#39;</span></span></code></pre>
+    </div>
+</article>
+
+
+<script>
+    // Add copy buttons to code blocks
+    function addCopyButtons() {
+        const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
+        sourceCodeBlocks.forEach(function(block) {
+            if (block.querySelector('.copy-button')) return;
+            const preElement = block.querySelector('pre');
+            if (!preElement) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = preElement.querySelector('code');
+                const text = code ? code.innerText : preElement.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+
+        const allPreBlocks = document.querySelectorAll('pre:not(.mermaid)');
+        allPreBlocks.forEach(function(block) {
+            if (block.closest('.sourceCode') || block.querySelector('.copy-button')) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = block.querySelector('code');
+                const text = code ? code.innerText : block.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+    }
+
+    // Initialize copy buttons after content loads
+    window.addEventListener('load', function() {
+        addCopyButtons();
+    });
+</script>

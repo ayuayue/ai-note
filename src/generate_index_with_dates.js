@@ -333,6 +333,17 @@ function main() {
         const dir = doc.type === 'markdown' ? `${doc.monthDir}/` : 'html/';
         console.log(`  - ${dir}${doc.filename} (${formatDate(doc.date)})`);
     });
+
+    // Replace index.html with SPA version
+    try {
+        if (fs.existsSync('index-spa.html')) {
+            const spaContent = fs.readFileSync('index-spa.html', 'utf8');
+            fs.writeFileSync('index.html', spaContent, 'utf8');
+            console.log('✅ Replaced index.html with SPA version');
+        }
+    } catch (error) {
+        console.warn('Warning: Could not replace index.html with SPA version:', error.message);
+    }
 }
 
 // Run the main function

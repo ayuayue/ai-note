@@ -1,0 +1,176 @@
+<article class="post">
+    <header class="post-header">
+        <h1 class="post-title">windows-上使用-nvm-高效管理-node.js-环境</h1>
+        <div class="post-meta">
+            <div class="post-date">2025/8/24</div>
+            <div class="post-category">2025-08</div>
+        </div>
+    </header>
+    <div class="warning">
+        ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+    </div>
+    <div class="post-content" id="post-content">
+        
+                    <h1
+id="告别版本混乱windows-上使用-nvm-高效管理-node.js-环境">告别版本混乱：Windows
+上使用 NVM 高效管理 Node.js 环境</h1>
+<p>作为一名前端或 Node.js 开发者，你是否遇到过这样的场景：项目 A
+需要最新的 Node.js 20 LTS 版本，而一个旧项目 B 却必须在 Node.js 16
+的环境下才能运行？手动卸载、重装不同版本的 Node.js
+不仅效率低下，还容易因环境变量混乱而导致各种奇怪的错误。</p>
+<p>幸运的是，我们有 NVM (Node Version
+Manager)。它允许你在同一台机器上轻松安装、切换和管理多个 Node.js
+版本。本文将为你详细介绍 Windows 平台下的 <code>nvm-windows</code>
+的安装和使用方法，让你彻底告别版本管理的烦恼。</p>
+<h3 id="核心流程一览">核心流程一览</h3>
+<p>在开始之前，让我们通过一个流程图来快速了解整个过程：从环境准备到日常使用。</p>
+<pre class="mermaid"><code>graph TD;
+    A[开始] --&gt; B{系统中是否已安装 Node.js?};
+    B --&gt;|是| C[从“应用和功能”中卸载所有现有 Node.js 版本];
+    C --&gt; D[下载 nvm-windows 安装包];
+    B --&gt;|否| D;
+    D --&gt; E[运行 nvm-setup.exe 并完成安装];
+    E --&gt; F[&quot;打开一个新终端验证安装 (nvm version)&quot;];
+    
+    F --&gt; G1;
+
+    subgraph &quot;使用 NVM 的核心操作&quot;
+        direction LR
+        G1[查看可用版本&lt;br/&gt;nvm list available] --&gt; G2[安装指定版本&lt;br/&gt;nvm install lts];
+        G2 --&gt; G3[查看已安装版本&lt;br/&gt;nvm list];
+        G3 --&gt; G4[切换当前版本&lt;br/&gt;nvm use 18.17.1];
+        G4 --&gt; G5[&quot;设置默认版本&lt;br/&gt;(管理员) nvm use 18.17.1&quot;];
+    end
+    
+    G4 --&gt; H[愉快地在不同项目间切换 Node.js 版本];
+    G5 --&gt; H;</code></pre>
+<hr />
+<h3 id="第一步清理战场-卸载现有的-node.js">第一步：清理战场 ——
+卸载现有的 Node.js</h3>
+<p>这是最重要也是最容易被忽略的一步。为了避免 <code>nvm-windows</code>
+和系统中已有的 Node.js 发生冲突，我们必须在安装前将其彻底卸载。</p>
+<ol type="1">
+<li>打开 Windows 的 <strong>设置</strong> → <strong>应用</strong> →
+<strong>应用和功能</strong>。</li>
+<li>在列表中搜索并找到 “Node.js”。</li>
+<li>点击它，选择 <strong>卸载</strong>，并根据提示完成卸载过程。</li>
+<li><strong>（可选但推荐）</strong> 检查并删除用户目录下的
+<code>npm</code> 和 <code>npm-cache</code> 文件夹，它们通常位于
+<code>C:\Users\&lt;你的用户名&gt;\AppData\Roaming</code> 目录下。</li>
+</ol>
+<p>确保环境干净是后续所有步骤顺利进行的前提。</p>
+<h3 id="第二步下载与安装-nvm-windows">第二步：下载与安装
+nvm-windows</h3>
+<p>与 macOS/Linux 上的 NVM 不同，Windows 平台的 NVM 是一个由 Corey
+Butler 独立开发和维护的项目。</p>
+<ol type="1">
+<li><strong>访问发布页面</strong>：打开 <code>nvm-windows</code> 的官方
+<a href="https://github.com/coreybutler/nvm-windows/releases">GitHub
+Releases 页面</a>。</li>
+<li><strong>下载安装包</strong>：在最新版本中，找到并下载
+<code>nvm-setup.zip</code> 文件。</li>
+<li><strong>解压并安装</strong>：
+<ul>
+<li>解压下载的 <code>.zip</code> 文件。</li>
+<li>双击运行 <code>nvm-setup.exe</code>。</li>
+<li>安装向导会让你选择 NVM 的安装路径和 Node.js
+的符号链接路径。<strong>强烈建议保持默认设置</strong>，除非你明确知道为什么要修改它们。一路点击“下一步”即可完成安装。</li>
+</ul></li>
+</ol>
+<h3 id="第三步验证安装是否成功">第三步：验证安装是否成功</h3>
+<p>安装程序会自动配置好环境变量。为了让这些变量生效，你需要<strong>重新打开一个新的命令行终端</strong>（如
+PowerShell, CMD, 或 Windows Terminal）。</p>
+<p>在新的终端窗口中，输入以下命令：</p>
+<pre><code>nvm version</code></pre>
+<p>如果屏幕上成功打印出了 <code>nvm-windows</code> 的版本号（例如
+<code>1.1.11</code>），那么恭喜你，安装成功！如果提示命令未找到，请尝试重启电脑。</p>
+<h3 id="第四步nvm-核心命令与日常使用">第四步：NVM
+核心命令与日常使用</h3>
+<p>现在，你已经掌握了管理 Node.js
+版本的“神器”。以下是日常开发中最常用的几个命令。</p>
+<h4 id="查看与安装-node.js-版本">1. 查看与安装 Node.js 版本</h4>
+<p>首先，查看一下有哪些版本可以安装：</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 列出所有可供在线安装的版本</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">nvm</span> list available</span></code></pre>
+    </div>
+</article>
+
+
+<script>
+    // Add copy buttons to code blocks
+    function addCopyButtons() {
+        const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
+        sourceCodeBlocks.forEach(function(block) {
+            if (block.querySelector('.copy-button')) return;
+            const preElement = block.querySelector('pre');
+            if (!preElement) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = preElement.querySelector('code');
+                const text = code ? code.innerText : preElement.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+
+        const allPreBlocks = document.querySelectorAll('pre:not(.mermaid)');
+        allPreBlocks.forEach(function(block) {
+            if (block.closest('.sourceCode') || block.querySelector('.copy-button')) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = block.querySelector('code');
+                const text = code ? code.innerText : block.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+    }
+
+    // Initialize copy buttons after content loads
+    window.addEventListener('load', function() {
+        addCopyButtons();
+    });
+</script>

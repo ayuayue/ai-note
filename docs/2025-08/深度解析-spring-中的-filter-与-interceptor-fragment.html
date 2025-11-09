@@ -1,0 +1,173 @@
+<article class="post">
+    <header class="post-header">
+        <h1 class="post-title">深度解析-spring-中的-filter-与-interceptor</h1>
+        <div class="post-meta">
+            <div class="post-date">2025/8/19</div>
+            <div class="post-category">2025-08</div>
+        </div>
+    </header>
+    <div class="warning">
+        ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+    </div>
+    <div class="post-content" id="post-content">
+        
+                    <h1 id="深度解析-spring-中的-filter-与-interceptor">深度解析 Spring 中的
+Filter 与 Interceptor</h1>
+<h2 id="摘要">摘要</h2>
+<p>在基于 Spring/Spring Boot 的 Web
+开发中，过滤器（Filter）和拦截器（Interceptor）是实现横切关注点（Cross-Cutting
+Concerns）如日志记录、权限校验、性能监控等功能的核心工具。尽管它们在功能上看似相似，但其底层原理、作用范围、执行时机和能力边界却有着本质的区别。本报告旨在深入剖析
+Filter 和 Interceptor
+的核心知识点，通过详细的对比和代码示例，帮助开发者理解它们的差异，并为在具体场景中做出正确的技术选型提供指导。</p>
+<hr />
+<h2 id="filter-过滤器---servlet-的守护者">1. Filter (过滤器) - Servlet
+的守护者</h2>
+<h3 id="核心概念">1.1 核心概念</h3>
+<p>Filter 是 <strong>Java Servlet 规范</strong>
+的一部分（<code>javax.servlet.Filter</code>），它不是 Spring
+框架特有的。它的核心职责是在 Servlet 容器级别，对进入的 HTTP
+请求和返回的响应进行拦截和处理。</p>
+<p>可以把 Filter 想象成是进入你整个 Web 应用（在 Spring Boot 中就是
+<code>DispatcherServlet</code>）之前的第一道大门。</p>
+<h3 id="关键知识点">1.2 关键知识点</h3>
+<ul>
+<li><strong>来源</strong>：源自 Servlet API，任何支持 Servlet 的 Web
+容器（如 Tomcat, Jetty）都支持它。</li>
+<li><strong>执行时机</strong>：在 <code>DispatcherServlet</code>
+接收到请求<strong>之前</strong>执行，在响应返回给客户端<strong>之后</strong>执行。它包裹着整个
+Servlet 的处理流程。</li>
+<li><strong>作用范围</strong>：能够接触到最原始的
+<code>HttpServletRequest</code> 和 <code>HttpServletResponse</code>
+对象。因此，它可以修改请求的 Header、Body，甚至可以阻止请求到达
+Servlet。</li>
+<li><strong>生命周期</strong>：由 Servlet
+容器管理，随应用的启动而创建，随应用的关闭而销毁。主要方法是
+<code>init()</code>, <code>doFilter()</code>,
+<code>destroy()</code>。</li>
+<li><strong>依赖注入</strong>：默认情况下，Filter 的实例由 Servlet
+容器创建，它本身不在 Spring 的 IoC
+容器中，因此<strong>不能直接注入</strong> Spring 管理的 Bean。但在
+Spring Boot 中，通过 <code>@Component</code> 注解可以让 Filter 成为一个
+Spring Bean，从而实现依赖注入。</li>
+</ul>
+<h3 id="demo-实现一个日志-filter">1.3 Demo: 实现一个日志 Filter</h3>
+<h4 id="步骤-1-创建-filter-实现">步骤 1: 创建 Filter 实现</h4>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span><span class="im"> com</span><span class="op">.</span><span class="im">example</span><span class="op">.</span><span class="im">demo</span><span class="op">.</span><span class="im">filter</span><span class="op">;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">slf4j</span><span class="op">.</span><span class="im">Logger</span><span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">slf4j</span><span class="op">.</span><span class="im">LoggerFactory</span><span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">core</span><span class="op">.</span><span class="im">annotation</span><span class="op">.</span><span class="im">Order</span><span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">stereotype</span><span class="op">.</span><span class="im">Component</span><span class="op">;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">javax</span><span class="op">.</span><span class="im">servlet</span><span class="op">.*;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">javax</span><span class="op">.</span><span class="im">servlet</span><span class="op">.</span><span class="im">http</span><span class="op">.</span><span class="im">HttpServletRequest</span><span class="op">;</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">io</span><span class="op">.</span><span class="im">IOException</span><span class="op">;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="at">@Component</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="at">@Order</span><span class="op">(</span><span class="dv">1</span><span class="op">)</span> <span class="co">// 使用 @Order 注解指定 Filter 的执行顺序，值越小，优先级越高</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> LoggingFilter <span class="kw">implements</span> <span class="bu">Filter</span> <span class="op">{</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">final</span> <span class="bu">Logger</span> logger <span class="op">=</span> LoggerFactory<span class="op">.</span><span class="fu">getLogger</span><span class="op">(</span>LoggingFilter<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">doFilter</span><span class="op">(</span>ServletRequest request<span class="op">,</span> ServletResponse response<span class="op">,</span> FilterChain chain<span class="op">)</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>            <span class="kw">throws</span> <span class="bu">IOException</span><span class="op">,</span> ServletException <span class="op">{</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        HttpServletRequest httpRequest <span class="op">=</span> <span class="op">(</span>HttpServletRequest<span class="op">)</span> request<span class="op">;</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>        <span class="dt">long</span> startTime <span class="op">=</span> <span class="bu">System</span><span class="op">.</span><span class="fu">currentTimeMillis</span><span class="op">();</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>        logger<span class="op">.</span><span class="fu">info</span><span class="op">(</span><span class="st">&quot;请求进入 Filter - URI: {}, Method: {}&quot;</span><span class="op">,</span> </span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>                     httpRequest<span class="op">.</span><span class="fu">getRequestURI</span><span class="op">(),</span> httpRequest<span class="op">.</span><span class="fu">getMethod</span><span class="op">());</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>        <span class="co">// !!! 关键：调用 chain.doFilter() 将请求传递给下一个 Filter 或目标 Servlet</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>        chain<span class="op">.</span><span class="fu">doFilter</span><span class="op">(</span>request<span class="op">,</span> response<span class="op">);</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>        <span class="dt">long</span> duration <span class="op">=</span> <span class="bu">System</span><span class="op">.</span><span class="fu">currentTimeMillis</span><span class="op">()</span> <span class="op">-</span> startTime<span class="op">;</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>        logger<span class="op">.</span><span class="fu">info</span><span class="op">(</span><span class="st">&quot;请求处理完毕 Filter - URI: {}, 耗时: {}ms&quot;</span><span class="op">,</span> </span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>                     httpRequest<span class="op">.</span><span class="fu">getRequestURI</span><span class="op">(),</span> duration<span class="op">);</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 其他 init 和 destroy 方法可以根据需要实现</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre>
+    </div>
+</article>
+
+
+<script>
+    // Add copy buttons to code blocks
+    function addCopyButtons() {
+        const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
+        sourceCodeBlocks.forEach(function(block) {
+            if (block.querySelector('.copy-button')) return;
+            const preElement = block.querySelector('pre');
+            if (!preElement) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = preElement.querySelector('code');
+                const text = code ? code.innerText : preElement.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+
+        const allPreBlocks = document.querySelectorAll('pre:not(.mermaid)');
+        allPreBlocks.forEach(function(block) {
+            if (block.closest('.sourceCode') || block.querySelector('.copy-button')) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = block.querySelector('code');
+                const text = code ? code.innerText : block.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+    }
+
+    // Initialize copy buttons after content loads
+    window.addEventListener('load', function() {
+        addCopyButtons();
+    });
+</script>

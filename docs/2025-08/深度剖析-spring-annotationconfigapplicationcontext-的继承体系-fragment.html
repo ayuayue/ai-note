@@ -1,0 +1,100 @@
+<article class="post">
+    <header class="post-header">
+        <h1 class="post-title">从基石到殿堂：深度剖析 Spring AnnotationConfigApplicationContext 的继承体系</h1>
+        <div class="post-meta">
+            <div class="post-date">2025/8/29</div>
+            <div class="post-category">2025-08</div>
+        </div>
+    </header>
+    <div class="warning">
+        ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+    </div>
+    <div class="post-content" id="post-content">
+        
+                    <h1
+id="从基石到殿堂深度剖析-spring-annotationconfigapplicationcontext-的继承体系">从基石到殿堂：深度剖析
+Spring AnnotationConfigApplicationContext 的继承体系</h1>
+<p>当我们写下：</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">new</span> <span class="fu">AnnotationConfigApplicationContext</span><span class="op">(</span>AppConfig<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span></code></pre>
+    </div>
+</article>
+
+
+<script>
+    // Add copy buttons to code blocks
+    function addCopyButtons() {
+        const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
+        sourceCodeBlocks.forEach(function(block) {
+            if (block.querySelector('.copy-button')) return;
+            const preElement = block.querySelector('pre');
+            if (!preElement) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = preElement.querySelector('code');
+                const text = code ? code.innerText : preElement.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+
+        const allPreBlocks = document.querySelectorAll('pre:not(.mermaid)');
+        allPreBlocks.forEach(function(block) {
+            if (block.closest('.sourceCode') || block.querySelector('.copy-button')) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = block.querySelector('code');
+                const text = code ? code.innerText : block.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+    }
+
+    // Initialize copy buttons after content loads
+    window.addEventListener('load', function() {
+        addCopyButtons();
+    });
+</script>

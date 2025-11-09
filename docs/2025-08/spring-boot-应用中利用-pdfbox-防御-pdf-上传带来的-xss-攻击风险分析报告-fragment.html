@@ -1,0 +1,129 @@
+<article class="post">
+    <header class="post-header">
+        <h1 class="post-title">spring-boot-应用中利用-pdfbox-防御-pdf-上传带来的-xss-攻击风险分析报告</h1>
+        <div class="post-meta">
+            <div class="post-date">2025/8/19</div>
+            <div class="post-category">2025-08</div>
+        </div>
+    </header>
+    <div class="warning">
+        ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+    </div>
+    <div class="post-content" id="post-content">
+        
+                    <h3
+id="spring-boot-应用中利用-pdfbox-防御-pdf-上传带来的-xss-攻击风险分析报告">Spring
+Boot 应用中利用 PDFBox 防御 PDF 上传带来的 XSS 攻击风险分析报告</h3>
+<p><strong>摘要</strong></p>
+<p>本报告详细阐述了在 Spring Boot Web 应用中，如何运用 Apache PDFBox
+库来检测并防范用户上传的 PDF
+文件中潜藏的跨站脚本（XSS）攻击。报告将深入探讨并提供多种解决方案的实现细节，包括在现有上传功能中集成验证工具类、采用过滤器（Filter）进行全局拦截，以及介绍拦截器（Interceptor）和面向切面编程（AOP）等更高级的实现方案，旨在为不同应用场景提供全面且可行的安全增强指导。</p>
+<hr />
+<p><strong>1. 引言：PDF 与 XSS 的安全风险</strong></p>
+<p>在现代 Web 应用中，文件上传功能极为普遍。然而，PDF
+文件格式的灵活性也带来了潜在的安全隐患。PDF 规范允许在文档的多个位置嵌入
+JavaScript
+脚本，例如在文档打开时、用户点击链接或与表单域交互时自动执行。攻击者可以精心构造一个含有恶意
+JavaScript 的 PDF
+文件，一旦其他用户在浏览器中打开此文件，嵌入的脚本便可能被执行。这会引发一系列严重的安全问题，包括但不限于：</p>
+<ul>
+<li><strong>会话劫持</strong>: 恶意脚本可能窃取用户的 Session
+Cookies，并发送到攻击者的服务器。</li>
+<li><strong>数据窃取</strong>: 脚本可以读取并篡改页面上的敏感信息。</li>
+<li><strong>恶意跳转</strong>: 用户可能被重定向到钓鱼网站。</li>
+</ul>
+<p>因此，对用户上传的 PDF
+文件进行严格的安全校验，是保护应用和用户安全的关键环节。Apache PDFBox
+作为一个功能强大的开源 Java 库，为我们提供了深入解析和操作 PDF
+文档的能力，使其成为检测嵌入脚本的理想工具。</p>
+<p><strong>2. 环境准备：集成 Apache PDFBox</strong></p>
+<p>首先，在您的 Spring Boot 项目的 <code>pom.xml</code> 文件中添加
+Apache PDFBox
+的依赖。建议选用最新的稳定版本以获取更好的性能和安全更新。</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">dependency</span>&gt;</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">groupId</span>&gt;org.apache.pdfbox&lt;/<span class="kw">groupId</span>&gt;</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">artifactId</span>&gt;pdfbox&lt;/<span class="kw">artifactId</span>&gt;</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">version</span>&gt;2.0.31&lt;/<span class="kw">version</span>&gt; <span class="co">&lt;!-- 请关注并使用最新的稳定版本 --&gt;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">dependency</span>&gt;</span></code></pre>
+    </div>
+</article>
+
+
+<script>
+    // Add copy buttons to code blocks
+    function addCopyButtons() {
+        const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
+        sourceCodeBlocks.forEach(function(block) {
+            if (block.querySelector('.copy-button')) return;
+            const preElement = block.querySelector('pre');
+            if (!preElement) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = preElement.querySelector('code');
+                const text = code ? code.innerText : preElement.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+
+        const allPreBlocks = document.querySelectorAll('pre:not(.mermaid)');
+        allPreBlocks.forEach(function(block) {
+            if (block.closest('.sourceCode') || block.querySelector('.copy-button')) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = block.querySelector('code');
+                const text = code ? code.innerText : block.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+    }
+
+    // Initialize copy buttons after content loads
+    window.addEventListener('load', function() {
+        addCopyButtons();
+    });
+</script>

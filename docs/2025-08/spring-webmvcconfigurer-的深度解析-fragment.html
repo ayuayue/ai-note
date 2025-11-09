@@ -1,0 +1,138 @@
+<article class="post">
+    <header class="post-header">
+        <h1 class="post-title">spring-webmvcconfigurer-的深度解析</h1>
+        <div class="post-meta">
+            <div class="post-date">2025/8/19</div>
+            <div class="post-category">2025-08</div>
+        </div>
+    </header>
+    <div class="warning">
+        ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+    </div>
+    <div class="post-content" id="post-content">
+        
+                    <h1 id="深度解析-spring-webmvcconfigurerweb-定制化的核心枢纽">深度解析
+Spring <code>WebMvcConfigurer</code>：Web 定制化的核心枢纽</h1>
+<h2 id="摘要">摘要</h2>
+<p><code>WebMvcConfigurer</code> 是 Spring MVC
+框架中一个至关重要的配置接口。它为开发者提供了一系列回调方法，允许我们在<strong>不破坏
+Spring Boot 自动配置</strong>的前提下，对 Spring MVC
+的核心组件进行精细化的定制。本报告将深入探讨
+<code>WebMvcConfigurer</code>
+的设计理念，详细介绍其常用配置方法的用途、场景和具体实现，旨在为开发者提供一份全面而实用的
+Web Mvc 定制化指南。</p>
+<hr />
+<h2 id="核心概念webmvcconfigurer-是什么">1.
+核心概念：<code>WebMvcConfigurer</code> 是什么？</h2>
+<p><code>WebMvcConfigurer</code> 是一个接口，它定义了多个用于定制 Spring
+MVC 配置的方法。在 Spring Boot 出现之前，配置 Spring MVC 通常需要继承
+<code>WebMvcConfigurationSupport</code> 类并进行大量复杂的 XML 或 Java
+配置。这种方式的缺点是，一旦我们继承了它，Spring MVC
+的所有自动配置都会失效，我们需要手动配置所有东西，非常繁琐。</p>
+<p><strong>Spring Boot 的革命性改变</strong>在于其强大的自动配置。而
+<code>WebMvcConfigurer</code>
+的设计哲学正是为了与这种自动配置和谐共存。</p>
+<p><strong>核心思想</strong>：你不必从零开始，你只需要在我（Spring Boot
+自动配置）已经为你准备好的一切基础上，<strong>添加、修改或扩展</strong>你需要的特定功能即可。</p>
+<h3 id="如何使用">如何使用？</h3>
+<p>实现 <code>WebMvcConfigurer</code> 非常简单：</p>
+<ol type="1">
+<li>创建一个类。</li>
+<li>使用 <code>@Configuration</code> 注解将其标记为一个配置类。</li>
+<li>实现 <code>WebMvcConfigurer</code> 接口。</li>
+<li>重写你需要的配置方法。</li>
+</ol>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span><span class="im"> com</span><span class="op">.</span><span class="im">example</span><span class="op">.</span><span class="im">demo</span><span class="op">.</span><span class="im">config</span><span class="op">;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">context</span><span class="op">.</span><span class="im">annotation</span><span class="op">.</span><span class="im">Configuration</span><span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">web</span><span class="op">.</span><span class="im">servlet</span><span class="op">.</span><span class="im">config</span><span class="op">.</span><span class="im">annotation</span><span class="op">.</span><span class="im">WebMvcConfigurer</span><span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="at">@Configuration</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> MyWebMvcConfig <span class="kw">implements</span> WebMvcConfigurer <span class="op">{</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 在这里重写你需要的方法</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 例如：addInterceptors, addCorsMappings 等</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre>
+    </div>
+</article>
+
+
+<script>
+    // Add copy buttons to code blocks
+    function addCopyButtons() {
+        const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
+        sourceCodeBlocks.forEach(function(block) {
+            if (block.querySelector('.copy-button')) return;
+            const preElement = block.querySelector('pre');
+            if (!preElement) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = preElement.querySelector('code');
+                const text = code ? code.innerText : preElement.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+
+        const allPreBlocks = document.querySelectorAll('pre:not(.mermaid)');
+        allPreBlocks.forEach(function(block) {
+            if (block.closest('.sourceCode') || block.querySelector('.copy-button')) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = block.querySelector('code');
+                const text = code ? code.innerText : block.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+    }
+
+    // Initialize copy buttons after content loads
+    window.addEventListener('load', function() {
+        addCopyButtons();
+    });
+</script>

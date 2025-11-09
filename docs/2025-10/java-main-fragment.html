@@ -1,0 +1,145 @@
+<article class="post">
+    <header class="post-header">
+        <h1 class="post-title">Java中的多个Main方法：解构项目入口与依赖共享</h1>
+        <div class="post-meta">
+            <div class="post-date">2025/10/31</div>
+            <div class="post-category">2025-10</div>
+        </div>
+    </header>
+    <div class="warning">
+        ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+    </div>
+    <div class="post-content" id="post-content">
+        
+                    <h1
+id="java中的多个main方法解构项目入口与依赖共享">Java中的多个Main方法：解构项目入口与依赖共享</h1>
+<h2 id="开头摘要">开头摘要</h2>
+<p>本文深入探讨了Java项目中关于<code>main</code>方法的两个核心问题：一个项目能否拥有多个<code>main</code>方法，以及这些方法如何共享依赖。文章旨在帮助Java初学者和中级开发者彻底理解程序入口的本质、JVM的执行机制以及类路径的共享原理，从而更灵活地组织项目结构、进行代码测试和实现多功能启动模式。</p>
+<h2 id="目录">目录</h2>
+<ul>
+<li><a href="#1-核心概念main方法的本质">1.
+核心概念：main方法的本质</a></li>
+<li><a href="#2-jvm的抉择如何指定唯一的入口">2.
+JVM的抉择：如何指定唯一的入口</a></li>
+<li><a href="#3-资源共享依赖与包的共用机制">3.
+资源共享：依赖与包的共用机制</a></li>
+<li><a href="#4-跨语言视角其他语言如何处理程序入口">4.
+跨语言视角：其他语言如何处理程序入口</a></li>
+<li><a href="#5-实战案例spring-boot与多入口模式">5. 实战案例：Spring
+Boot与多入口模式</a></li>
+<li><a href="#6-总结">6. 总结</a></li>
+<li><a href="#7-延伸阅读">7. 延伸阅读</a></li>
+<li><a href="#8-一句话记忆">8. 一句话记忆</a></li>
+</ul>
+<hr />
+<h3 id="核心概念main方法的本质">1. 核心概念：main方法的本质</h3>
+<h4 id="概念解释">概念解释</h4>
+<p>在Java中，<code>public static void main(String[] args)</code>
+并非一个全局的、项目唯一的函数，而是一个<strong>特殊的静态方法</strong>，它属于某个特定的类。JVM（Java虚拟机）在启动一个应用程序时，会寻找一个符合此签名的方法作为程序的执行入口。这个设计源于Java的纯面向对象思想：一切皆对象，代码必须存在于类中。这与C/C++等语言拥有一个全局的、独立的<code>main</code>函数形成了鲜明对比。因此，<strong>“一个项目有多少个main方法”</strong>
+这个问题，实际上等同于
+<strong>“这个项目里有多少个类定义了<code>main</code>方法”</strong>。只要在不同的类中，你就可以定义任意数量的<code>main</code>方法。</p>
+<h4 id="示例代码">示例代码</h4>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// File: src/com/example/MainApp.java</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span><span class="im"> com</span><span class="op">.</span><span class="im">example</span><span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> MainApp <span class="op">{</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;MainApp.main() 启动，这是应用程序的主入口。&quot;</span><span class="op">);</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">// File: src/com/example/UtilityClass.java</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span><span class="im"> com</span><span class="op">.</span><span class="im">example</span><span class="op">;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> UtilityClass <span class="op">{</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;UtilityClass.main() 启动，用于独立测试工具类。&quot;</span><span class="op">);</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 在这里可以调用 UtilityClass 的其他静态方法进行测试</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="bu">String</span> <span class="fu">format</span><span class="op">(</span><span class="bu">String</span> input<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">&quot;[&quot;</span> <span class="op">+</span> input <span class="op">+</span> <span class="st">&quot;]&quot;</span><span class="op">;</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre>
+    </div>
+</article>
+
+
+<script>
+    // Add copy buttons to code blocks
+    function addCopyButtons() {
+        const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
+        sourceCodeBlocks.forEach(function(block) {
+            if (block.querySelector('.copy-button')) return;
+            const preElement = block.querySelector('pre');
+            if (!preElement) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = preElement.querySelector('code');
+                const text = code ? code.innerText : preElement.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+
+        const allPreBlocks = document.querySelectorAll('pre:not(.mermaid)');
+        allPreBlocks.forEach(function(block) {
+            if (block.closest('.sourceCode') || block.querySelector('.copy-button')) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = block.querySelector('code');
+                const text = code ? code.innerText : block.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+    }
+
+    // Initialize copy buttons after content loads
+    window.addEventListener('load', function() {
+        addCopyButtons();
+    });
+</script>

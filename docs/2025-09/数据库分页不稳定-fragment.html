@@ -1,0 +1,159 @@
+<article class="post">
+    <header class="post-header">
+        <h1 class="post-title">数据库分页不稳定</h1>
+        <div class="post-meta">
+            <div class="post-date">2025/10/19</div>
+            <div class="post-category">2025-09</div>
+        </div>
+    </header>
+    <div class="warning">
+        ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+    </div>
+    <div class="post-content" id="post-content">
+        
+                    <h1
+id="数据库分页不稳定成因误区与解决方案">数据库分页不稳定：成因、误区与解决方案</h1>
+<h2 id="开头摘要">开头摘要</h2>
+<p>本文深入剖析数据库分页查询中的不稳定现象，揭示其技术根源并提供实用解决方案，帮助开发者构建健壮的分页功能。适合后端开发人员、数据库管理员及对数据一致性有高要求的系统架构师。</p>
+<h2 id="目录">目录</h2>
+<ul>
+<li><a href="#1-概念解释">1. 概念解释</a></li>
+<li><a href="#2-示例代码">2. 示例代码</a></li>
+<li><a href="#3-mermaid图">3. Mermaid图</a></li>
+<li><a href="#4-问题分析">4. 问题分析</a></li>
+<li><a href="#5-应用场景">5. 应用场景</a></li>
+<li><a href="#6-跨语言或跨框架对比">6. 跨语言或跨框架对比</a></li>
+<li><a href="#7-实战案例">7. 实战案例</a></li>
+<li><a href="#8-总结">8. 总结</a></li>
+<li><a href="#9-延伸阅读">9. 延伸阅读</a></li>
+<li><a href="#10-一句话记忆">10. 一句话记忆</a></li>
+</ul>
+<hr />
+<h2 id="概念解释">1. 概念解释</h2>
+<p>数据库分页不稳定是指在使用传统<code>LIMIT offset, size</code>方式进行分页查询时，由于数据在两次查询间发生变化（增删改），导致后续分页结果出现数据重复或遗漏的现象。这种不稳定性在动态数据环境中尤为突出。</p>
+<p><strong>历史背景</strong>：传统分页方式源于静态数据时代的设计，当时数据变动较少。随着Web应用的发展，实时数据交互成为常态，这种分页方式的缺陷逐渐暴露。核心问题在于<code>OFFSET</code>的语义是”跳过前N条记录”，而非”从某个位置开始”，当记录顺序因数据变动而改变时，就会导致分页错位。</p>
+<p><strong>技术本质</strong>：分页不稳定源于三个关键因素： 1.
+<strong>数据变动</strong>：两次分页查询间发生DML操作 2.
+<strong>非原子性</strong>：分页操作非原子事务，无法保证数据快照一致性 3.
+<strong>OFFSET语义缺陷</strong>：基于物理位置的分页在逻辑数据变动时失效</p>
+<hr />
+<h2 id="示例代码">2. 示例代码</h2>
+<p>以下通过Java和MySQL演示分页不稳定场景：</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 实体类</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Product <span class="op">{</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">Long</span> id<span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">String</span> name<span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">BigDecimal</span> price<span class="op">;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// getters &amp; setters</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">// 不稳定分页实现</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="bu">List</span><span class="op">&lt;</span>Product<span class="op">&gt;</span> <span class="fu">unstablePagination</span><span class="op">(</span><span class="dt">int</span> page<span class="op">,</span> <span class="dt">int</span> size<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> offset <span class="op">=</span> <span class="op">(</span>page <span class="op">-</span> <span class="dv">1</span><span class="op">)</span> <span class="op">*</span> size<span class="op">;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">String</span> sql <span class="op">=</span> <span class="st">&quot;SELECT * FROM products ORDER BY price DESC LIMIT ? OFFSET ?&quot;</span><span class="op">;</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> jdbcTemplate<span class="op">.</span><span class="fu">query</span><span class="op">(</span>sql<span class="op">,</span> </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="kw">new</span> <span class="bu">Object</span><span class="op">[]{</span>size<span class="op">,</span> offset<span class="op">},</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        <span class="op">(</span>rs<span class="op">,</span> rowNum<span class="op">)</span> <span class="op">-&gt;</span> <span class="kw">new</span> <span class="fu">Product</span><span class="op">(</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>            rs<span class="op">.</span><span class="fu">getLong</span><span class="op">(</span><span class="st">&quot;id&quot;</span><span class="op">),</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>            rs<span class="op">.</span><span class="fu">getString</span><span class="op">(</span><span class="st">&quot;name&quot;</span><span class="op">),</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>            rs<span class="op">.</span><span class="fu">getBigDecimal</span><span class="op">(</span><span class="st">&quot;price&quot;</span><span class="op">)</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>        <span class="op">));</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="co">// 模拟数据变动导致的不稳定</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">demonstrateInstability</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 第一页查询（价格降序）</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="bu">List</span><span class="op">&lt;</span>Product<span class="op">&gt;</span> page1 <span class="op">=</span> <span class="fu">unstablePagination</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">10</span><span class="op">);</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 在两次查询间插入新数据</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    jdbcTemplate<span class="op">.</span><span class="fu">update</span><span class="op">(</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;INSERT INTO products(name, price) VALUES(&#39;New Product&#39;, 999.99)&quot;</span><span class="op">);</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 第二页查询</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="bu">List</span><span class="op">&lt;</span>Product<span class="op">&gt;</span> page2 <span class="op">=</span> <span class="fu">unstablePagination</span><span class="op">(</span><span class="dv">2</span><span class="op">,</span> <span class="dv">10</span><span class="op">);</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 问题：page2可能包含page1已显示的数据（因新插入高价商品改变了排序）</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre>
+    </div>
+</article>
+
+
+<script>
+    // Add copy buttons to code blocks
+    function addCopyButtons() {
+        const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
+        sourceCodeBlocks.forEach(function(block) {
+            if (block.querySelector('.copy-button')) return;
+            const preElement = block.querySelector('pre');
+            if (!preElement) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = preElement.querySelector('code');
+                const text = code ? code.innerText : preElement.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+
+        const allPreBlocks = document.querySelectorAll('pre:not(.mermaid)');
+        allPreBlocks.forEach(function(block) {
+            if (block.closest('.sourceCode') || block.querySelector('.copy-button')) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = block.querySelector('code');
+                const text = code ? code.innerText : block.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+    }
+
+    // Initialize copy buttons after content loads
+    window.addEventListener('load', function() {
+        addCopyButtons();
+    });
+</script>

@@ -1,0 +1,238 @@
+<article class="post">
+    <header class="post-header">
+        <h1 class="post-title">github-pages-深度使用分析报告</h1>
+        <div class="post-meta">
+            <div class="post-date">2025/8/24</div>
+            <div class="post-category">2025-08</div>
+        </div>
+    </header>
+    <div class="warning">
+        ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+    </div>
+    <div class="post-content" id="post-content">
+        
+                    <p>好的，这是一份关于 GitHub Pages
+的深度使用报告，涵盖了从入门到高级配置的各个方面。</p>
+<hr />
+<h4 id="github-pages-工作流程概览"><strong>GitHub Pages
+工作流程概览</strong></h4>
+<pre class="mermaid"><code>graph LR
+    A[创建仓库] --&gt; B[推送代码]
+    B --&gt; C[进入仓库设置]
+    C --&gt; D[选择 Pages 选项]
+    D --&gt; E[配置发布源]
+    E --&gt; F[选择部署方式]
+    
+    F --&gt; G1[从分支部署]
+    G1 --&gt; H1[选择分支和文件夹]
+    H1 --&gt; I1[保存并访问]
+    
+    F --&gt; G2[通过 GitHub Actions]
+    G2 --&gt; H2[创建工作流文件]
+    H2 --&gt; I2[推送并自动部署]
+    
+    I1 --&gt; J[网站上线]
+    I2 --&gt; J
+    
+    J --&gt; K[自定义域名配置]
+    K --&gt; L[DNS 配置]
+    L --&gt; M[GitHub 仓库配置]
+    M --&gt; N[强制 HTTPS]</code></pre>
+<h3 id="github-pages-深度使用分析报告"><strong>GitHub Pages
+深度使用分析报告</strong></h3>
+<p><strong>摘要</strong></p>
+<p>GitHub Pages 是 GitHub 提供的一项免费的静态网站托管服务。它直接从
+GitHub 仓库中获取 HTML、CSS 和 JavaScript
+文件，通过可选的构建过程运行它们，然后发布一个公开可用的网站。凭借其与
+Git 和 GitHub 生态系统的无缝集成、对自定义域名的支持以及通过 GitHub
+Actions 实现的强大自动化能力，GitHub Pages
+已成为开发者、项目和组织展示作品、编写文档和托管博客的首选平台之一。本报告将详细介绍其核心概念、使用方法、功能特性、域名配置及限制等。</p>
+<hr />
+<h3 id="简介github-pages-是什么"><strong>1. 简介：GitHub Pages
+是什么？</strong></h3>
+<p>从本质上讲，GitHub Pages
+是一个<strong>静态站点托管服务</strong>。这意味着它不执行服务器端代码（如
+PHP、Python 或 Ruby on
+Rails），而是直接向访问者提供预先构建好的静态文件。</p>
+<p><strong>主要用途：</strong> *
+<strong>个人作品集与博客</strong>：展示个人项目、技能和撰写技术文章。 *
+<strong>项目文档</strong>：为开源或私有项目创建官方文档网站。 *
+<strong>组织或团队主页</strong>：为公司或开源组织创建一个简单的信息展示页面。
+*
+<strong>课程或活动网站</strong>：为学术课程或技术会议创建一个信息发布站点。</p>
+<p><strong>核心特性：</strong> *
+<strong>完全免费</strong>：为公共仓库和私有仓库（对于拥有 Pro、Team 或
+Enterprise 账户的用户）提供免费托管。 * <strong>与 Git
+集成</strong>：网站的每一次更新都通过 <code>git push</code>
+完成，版本控制清晰，易于协作和回滚。 * <strong>内置 Jekyll
+支持</strong>：可自动将使用 <a
+href="https://jekyllrb.com/">Jekyll</a>（一个流行的静态站点生成器）构建的源文件转换为完整的静态网站。
+* <strong>CDN 加速</strong>：GitHub Pages 上的所有站点都通过 GitHub
+的全球 CDN (Fastly) 提供服务，确保了全球范围内的快速访问速度。</p>
+<hr />
+<h3 id="如何开启和使用-github-pages"><strong>2. 如何开启和使用 GitHub
+Pages</strong></h3>
+<p>开启一个 GitHub Pages 网站非常简单，主要有两种方式：从分支部署和通过
+GitHub Actions 部署。</p>
+<h4
+id="方法一从分支部署传统方式"><strong>方法一：从分支部署（传统方式）</strong></h4>
+<p>这是最经典和直接的方法，适合简单的静态网站或 Jekyll 站点。</p>
+<ol type="1">
+<li><strong>创建仓库</strong>：首先，你需要一个 GitHub 仓库。</li>
+<li><strong>推送代码</strong>：将你的网站文件（<code>index.html</code>
+等）推送到该仓库。</li>
+<li><strong>进入设置</strong>：导航到你的仓库页面，点击右上角的
+<strong>Settings</strong>。</li>
+<li><strong>选择 Pages</strong>：在左侧菜单中，选择
+<strong>Pages</strong>。</li>
+<li><strong>配置发布源 (Source)</strong>：
+<ul>
+<li>在 “Build and deployment” 下，选择 <strong>Deploy from a
+branch</strong>。</li>
+<li>在 “Branch”
+下拉菜单中，选择你要用于发布的<strong>分支</strong>和<strong>文件夹</strong>。你有以下几个常见选择：
+<ul>
+<li><strong><code>main</code> 分支的 <code>/</code> (root)
+目录</strong>：整个分支都是你的网站内容。</li>
+<li><strong><code>main</code> 分支的 <code>/docs</code>
+目录</strong>：只有 <code>/docs</code>
+文件夹下的内容会被发布。这很适合将项目代码和文档放在同一个分支。</li>
+<li><strong><code>gh-pages</code>
+分支</strong>：一个专门用于存放网站文件的独立分支。这是许多项目的最佳实践，可以保持主分支的整洁。</li>
+</ul></li>
+</ul></li>
+<li><strong>保存并访问</strong>：点击 <strong>Save</strong> 后，GitHub
+会开始构建和部署你的网站。几分钟后，页面顶部会显示你的网站
+URL，格式通常为
+<code>https://&lt;username&gt;.github.io/&lt;repository-name&gt;</code>。</li>
+</ol>
+<h4 id="方法二通过-github-actions-部署现代方式"><strong>方法二：通过
+GitHub Actions 部署（现代方式）</strong></h4>
+<p>这是目前官方推荐的、功能更强大的方式。它允许你完全自定义构建过程，可以使用任何静态站点生成器（如
+Hugo, Next.js, VitePress），并在部署前执行测试、代码检查等步骤。</p>
+<ol type="1">
+<li><p><strong>选择 Actions</strong>：在 Pages 设置页面，将 Source 从
+“Deploy from a branch” 改为 <strong>GitHub Actions</strong>。</p></li>
+<li><p><strong>配置工作流</strong>：GitHub 会建议几个预设的 Actions
+工作流（如 Jekyll 或静态
+HTML）。你可以选择一个作为模板或从头创建。</p></li>
+<li><p><strong>创建工作流文件</strong>：在你的仓库中创建
+<code>.github/workflows/deploy.yml</code> 文件。以下是一个部署纯静态
+HTML 网站的简单示例：</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> Deploy static content to Pages</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">on</span><span class="kw">:</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">  # 当推送到 main 分支时触发</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">push</span><span class="kw">:</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">branches</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;main&quot;</span><span class="kw">]</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">  # 允许你手动在 Actions 标签页中运行此工作流</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">workflow_dispatch</span><span class="kw">:</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 设置 GITHUB_TOKEN 的权限，以允许部署到 GitHub Pages</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">permissions</span><span class="kw">:</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">contents</span><span class="kw">:</span><span class="at"> read</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">pages</span><span class="kw">:</span><span class="at"> write</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">id-token</span><span class="kw">:</span><span class="at"> write</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">deploy</span><span class="kw">:</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">name</span><span class="kw">:</span><span class="at"> github-pages</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">url</span><span class="kw">:</span><span class="at"> ${{ steps.deployment.outputs.page_url }}</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">runs-on</span><span class="kw">:</span><span class="at"> ubuntu-latest</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Checkout</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/checkout@v4</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Setup Pages</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/configure-pages@v4</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Upload artifact</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/upload-pages-artifact@v3</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">with</span><span class="kw">:</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="co">          # 上传整个仓库</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">path</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;.&#39;</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> Deploy to GitHub Pages</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">id</span><span class="kw">:</span><span class="at"> deployment</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">uses</span><span class="kw">:</span><span class="at"> actions/deploy-pages@v4</span></span></code></pre>
+    </div>
+</article>
+
+
+<script>
+    // Add copy buttons to code blocks
+    function addCopyButtons() {
+        const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
+        sourceCodeBlocks.forEach(function(block) {
+            if (block.querySelector('.copy-button')) return;
+            const preElement = block.querySelector('pre');
+            if (!preElement) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = preElement.querySelector('code');
+                const text = code ? code.innerText : preElement.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+
+        const allPreBlocks = document.querySelectorAll('pre:not(.mermaid)');
+        allPreBlocks.forEach(function(block) {
+            if (block.closest('.sourceCode') || block.querySelector('.copy-button')) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = block.querySelector('code');
+                const text = code ? code.innerText : block.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+    }
+
+    // Initialize copy buttons after content loads
+    window.addEventListener('load', function() {
+        addCopyButtons();
+    });
+</script>

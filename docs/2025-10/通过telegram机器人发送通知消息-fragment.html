@@ -1,0 +1,130 @@
+<article class="post">
+    <header class="post-header">
+        <h1 class="post-title">使用Shell脚本和cURL命令通过Telegram机器人发送通知消息</h1>
+        <div class="post-meta">
+            <div class="post-date">2025/10/26</div>
+            <div class="post-category">2025-10</div>
+        </div>
+    </header>
+    <div class="warning">
+        ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+    </div>
+    <div class="post-content" id="post-content">
+        
+                    <h1
+id="使用shell脚本和curl命令通过telegram机器人发送通知消息">使用Shell脚本和cURL命令通过Telegram机器人发送通知消息</h1>
+<h2 id="摘要">摘要</h2>
+<p>本文详细介绍如何使用Shell脚本和cURL命令通过Telegram机器人发送通知消息，涵盖机器人创建、chat_id获取、消息发送及实战应用。适合需要实现服务器监控、自动化通知的开发和运维人员。</p>
+<h2 id="目录">目录</h2>
+<ol type="1">
+<li>#1-telegram机器人创建与配置</li>
+<li>#2-获取chat_id</li>
+<li>#3-curl命令基础</li>
+<li>#4-shell脚本发送消息</li>
+<li>#5-高级应用场景</li>
+<li>#6-常见问题与调试</li>
+<li>#7-总结</li>
+</ol>
+<h2 id="telegram机器人创建与配置">1 Telegram机器人创建与配置</h2>
+<p>Telegram机器人通过BotFather创建，BotFather是Telegram官方的机器人管理工具。创建过程简单且完全免费，只需在Telegram中搜索@BotFather即可开始交互。</p>
+<p><strong>创建流程</strong>： 1. 在Telegram中搜索@BotFather并开启对话
+2. 发送<code>/newbot</code>命令创建新机器人 3.
+按提示设置机器人名称和用户名（必须以bot结尾） 4.
+创建成功后，BotFather会提供API
+Token，格式如<code>123456789:ABCDEFGHIJKLMNOPQRSTUVWXYZ</code></p>
+<p><strong>设计动机</strong>：Telegram机器人提供了一种标准化的API接口，允许开发者通过HTTP请求与平台交互，无需复杂的认证协议。这种设计使得任何能发送HTTP请求的工具都能使用Telegram机器人功能。</p>
+<p><strong>关键要点</strong>： - Token是机器人的唯一凭证，必须妥善保管 -
+机器人用户名必须全局唯一且以”bot”结尾 -
+创建后需要先向机器人发送任意消息激活</p>
+<h2 id="获取chat_id">2 获取chat_id</h2>
+<p>chat_id是消息发送的目标标识，可以是用户ID或群组ID。获取chat_id的方法因目标类型而异。</p>
+<p><strong>个人chat_id获取</strong>： 1. 向机器人发送任意消息 2.
+访问<code>https://api.telegram.org/bot&lt;YourBOTToken&gt;/getUpdates</code>
+3. 在返回的JSON中查找”chat”下的”id”字段</p>
+<p><strong>群组chat_id获取</strong>： 1. 将机器人添加到群组 2.
+在群组中发送一条以”/“开头的消息 3.
+通过上述getUpdates接口获取，群组chat_id为负数</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 获取updates示例</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-s</span> <span class="st">&quot;https://api.telegram.org/bot&lt;YourBOTToken&gt;/getUpdates&quot;</span> <span class="kw">|</span> <span class="ex">python</span> <span class="at">-m</span> json.tool</span></code></pre>
+    </div>
+</article>
+
+
+<script>
+    // Add copy buttons to code blocks
+    function addCopyButtons() {
+        const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
+        sourceCodeBlocks.forEach(function(block) {
+            if (block.querySelector('.copy-button')) return;
+            const preElement = block.querySelector('pre');
+            if (!preElement) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = preElement.querySelector('code');
+                const text = code ? code.innerText : preElement.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+
+        const allPreBlocks = document.querySelectorAll('pre:not(.mermaid)');
+        allPreBlocks.forEach(function(block) {
+            if (block.closest('.sourceCode') || block.querySelector('.copy-button')) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = block.querySelector('code');
+                const text = code ? code.innerText : block.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+    }
+
+    // Initialize copy buttons after content loads
+    window.addEventListener('load', function() {
+        addCopyButtons();
+    });
+</script>

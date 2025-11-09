@@ -1,0 +1,138 @@
+<article class="post">
+    <header class="post-header">
+        <h1 class="post-title">java-中的多继承与菱形问题</h1>
+        <div class="post-meta">
+            <div class="post-date">2025/8/29</div>
+            <div class="post-category">2025-08</div>
+        </div>
+    </header>
+    <div class="warning">
+        ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+    </div>
+    <div class="post-content" id="post-content">
+        
+                    <h1 id="深度剖析java-中的多继承与菱形问题">深度剖析：Java
+中的多继承与菱形问题</h1>
+<blockquote>
+<p><strong>摘要</strong>：
+在面向对象编程中，多继承常常带来二义性和复杂性，最典型的问题就是“菱形继承”。
+本文将从 C++ 的多继承问题谈起，深入剖析 Java
+为什么禁止类的多继承、接口如何优雅地支持多继承，并结合 Spring 框架中的
+<code>ApplicationContext</code> 接口做实战分析。 读完后，你将彻底理解
+Java 的继承设计哲学。</p>
+</blockquote>
+<hr />
+<h2 id="目录">📑 目录</h2>
+<ol type="1">
+<li><a href="#继承与多继承的基本概念">继承与多继承的基本概念</a></li>
+<li><a href="#什么是菱形继承问题">什么是菱形继承问题</a></li>
+<li><a href="#java-为什么禁止类的多继承">Java
+为什么禁止类的多继承</a></li>
+<li><a href="#接口的多继承与默认方法">接口的多继承与默认方法</a></li>
+<li><a href="#如何在-java-中避免菱形问题">如何在 Java
+中避免菱形问题</a></li>
+<li><a href="#spring-框架中的实战案例">Spring 框架中的实战案例</a></li>
+<li><a href="#总结">总结</a></li>
+<li><a href="#延伸阅读">延伸阅读</a></li>
+</ol>
+<hr />
+<h2 id="继承与多继承的基本概念">继承与多继承的基本概念</h2>
+<ul>
+<li><strong>继承</strong>：一个类（子类）可以继承另一个类（父类）的属性和方法。</li>
+<li><strong>多继承</strong>：一个类可以同时继承多个父类。</li>
+</ul>
+<p>在 <strong>C++</strong> 中，多继承是允许的；而在
+<strong>Java</strong> 中，类只允许单继承，但接口可以多继承。</p>
+<hr />
+<h2 id="什么是菱形继承问题">什么是菱形继承问题</h2>
+<p>先看一个 <strong>C++ 风格</strong> 的例子：</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> A <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> hello<span class="op">()</span> <span class="op">{</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;Hello from A&quot;</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> B <span class="op">:</span> <span class="kw">public</span> A <span class="op">{};</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> C <span class="op">:</span> <span class="kw">public</span> A <span class="op">{};</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> D <span class="op">:</span> <span class="kw">public</span> B<span class="op">,</span> <span class="kw">public</span> C <span class="op">{};</span></span></code></pre>
+    </div>
+</article>
+
+
+<script>
+    // Add copy buttons to code blocks
+    function addCopyButtons() {
+        const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
+        sourceCodeBlocks.forEach(function(block) {
+            if (block.querySelector('.copy-button')) return;
+            const preElement = block.querySelector('pre');
+            if (!preElement) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = preElement.querySelector('code');
+                const text = code ? code.innerText : preElement.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+
+        const allPreBlocks = document.querySelectorAll('pre:not(.mermaid)');
+        allPreBlocks.forEach(function(block) {
+            if (block.closest('.sourceCode') || block.querySelector('.copy-button')) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = block.querySelector('code');
+                const text = code ? code.innerText : block.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+    }
+
+    // Initialize copy buttons after content loads
+    window.addEventListener('load', function() {
+        addCopyButtons();
+    });
+</script>

@@ -1,0 +1,186 @@
+<article class="post">
+    <header class="post-header">
+        <h1 class="post-title">spring-webutils</h1>
+        <div class="post-meta">
+            <div class="post-date">2025/10/19</div>
+            <div class="post-category">2025-10</div>
+        </div>
+    </header>
+    <div class="warning">
+        ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+    </div>
+    <div class="post-content" id="post-content">
+        
+                    <p>Spring 框架中的<code>WebUtils</code>是一个强大且实用的 Web
+开发工具类，它能帮你大幅简化 Servlet API
+的常见操作。下面这个表格汇总了它的核心功能，让你快速了解其全貌：</p>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 44%" />
+<col style="width: 36%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">功能类别</th>
+<th style="text-align: left;">主要方法示例</th>
+<th style="text-align: left;">核心用途</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Session 管理</strong></td>
+<td style="text-align: left;"><code>getSessionAttribute()</code>,
+<code>setSessionAttribute()</code></td>
+<td style="text-align: left;">安全地读写 Session
+数据，避免空指针异常</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Cookie 操作</strong></td>
+<td style="text-align: left;"><code>getCookie()</code></td>
+<td style="text-align: left;">便捷地获取特定名称的 Cookie 对象</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>请求参数处理</strong></td>
+<td
+style="text-align: left;"><code>getParametersStartingWith()</code></td>
+<td style="text-align: left;">提取具有特定前缀的请求参数</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>文件与 URL 解析</strong></td>
+<td
+style="text-align: left;"><code>extractFilenameFromUrlPath()</code></td>
+<td style="text-align: left;">从 URL 路径中准确提取文件名</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>请求属性管理</strong></td>
+<td
+style="text-align: left;"><code>exposeRequestAttributes()</code></td>
+<td style="text-align: left;">向请求对象中批量设置属性</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>原生请求/响应访问</strong></td>
+<td style="text-align: left;"><code>getNativeRequest()</code></td>
+<td style="text-align: left;">获取底层 Servlet
+容器的原生请求/响应对象</td>
+</tr>
+</tbody>
+</table>
+<h3 id="核心方法详解">💡 核心方法详解</h3>
+<p><code>WebUtils</code>的真正价值在于其方法的细节设计，它们让很多繁琐的操作变得简单安全。</p>
+<ul>
+<li><p><strong>Session
+操作更稳健</strong>：传统的<code>request.getSession().getAttribute(name)</code>写法在
+Session
+不存在时可能引发问题。而<code>WebUtils</code>的<code>getSessionAttribute(HttpServletRequest request, String name)</code>方法会先检查
+Session
+是否存在，如果不存在则直接返回<code>null</code>，确保了代码的健壮性。<code>setSessionAttribute</code>方法还能在传入值为<code>null</code>时自动移除该属性，非常智能。</p></li>
+<li><p><strong>精准的 Cookie
+获取</strong>：使用<code>getCookie(HttpServletRequest request, String name)</code>可以快速从请求中查找指定名称的
+Cookie，无需手动遍历 Cookie 数组，代码更简洁。</p></li>
+<li><p><strong>前缀参数批量处理</strong>：<code>getParametersStartingWith(ServletRequest request, String prefix)</code>方法能一次性获取所有以指定前缀开头的请求参数，并将其组装成
+Map，非常适合处理一组相关的配置项或筛选条件。</p></li>
+<li><p><strong>智能的文件名提取</strong>：<code>extractFilenameFromUrlPath(String urlPath)</code>方法能够正确处理包含查询参数或会话
+ID 的复杂
+URL，准确抽取出核心文件名，这在处理文件下载或静态资源时非常有用。</p></li>
+</ul>
+<h3 id="实际应用场景">🛠️ 实际应用场景</h3>
+<p>了解这些方法在真实项目中的用法，能帮助你更好地理解和运用<code>WebUtils</code>。</p>
+<ul>
+<li><p><strong>用户身份验证与 Session 管理</strong>
+在用户登录后，将用户信息存入 Session，并在后续请求中安全地获取。</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 用户登录成功时，将用户对象存入Session</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="at">@PostMapping</span><span class="op">(</span><span class="st">&quot;/login&quot;</span><span class="op">)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="bu">String</span> <span class="fu">login</span><span class="op">(</span>User user<span class="op">,</span> HttpServletRequest request<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">// ... 验证逻辑</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    WebUtils<span class="op">.</span><span class="fu">setSessionAttribute</span><span class="op">(</span>request<span class="op">,</span> <span class="st">&quot;currentUser&quot;</span><span class="op">,</span> user<span class="op">);</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="st">&quot;redirect:/dashboard&quot;</span><span class="op">;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">// 在拦截器或控制器中获取当前用户</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> User <span class="fu">getCurrentUser</span><span class="op">(</span>HttpServletRequest request<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 安全地获取，如果未登录则返回null</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">(</span>User<span class="op">)</span> WebUtils<span class="op">.</span><span class="fu">getSessionAttribute</span><span class="op">(</span>request<span class="op">,</span> <span class="st">&quot;currentUser&quot;</span><span class="op">);</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre>
+    </div>
+</article>
+
+
+<script>
+    // Add copy buttons to code blocks
+    function addCopyButtons() {
+        const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
+        sourceCodeBlocks.forEach(function(block) {
+            if (block.querySelector('.copy-button')) return;
+            const preElement = block.querySelector('pre');
+            if (!preElement) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = preElement.querySelector('code');
+                const text = code ? code.innerText : preElement.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+
+        const allPreBlocks = document.querySelectorAll('pre:not(.mermaid)');
+        allPreBlocks.forEach(function(block) {
+            if (block.closest('.sourceCode') || block.querySelector('.copy-button')) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = block.querySelector('code');
+                const text = code ? code.innerText : block.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+    }
+
+    // Initialize copy buttons after content loads
+    window.addEventListener('load', function() {
+        addCopyButtons();
+    });
+</script>

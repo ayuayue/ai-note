@@ -41,7 +41,14 @@
       "mcp__chrome-devtools__hover",
       "mcp__chrome-devtools__list_pages",
       "Bash(timeout 10 bash:*)",
-      "Bash(start http://localhost:3003/)"
+      "Bash(start http://localhost:3003/)",
+      "Bash(netstat:*)",
+      "mcp__chrome-devtools__wait_for",
+      "Bash(git -C \"D:\\project\\github\\ai-note\" status)",
+      "Bash(git -C \"D:\\project\\github\\ai-note\" log --oneline -5)",
+      "Bash(cat:*)",
+      "mcp__chrome-devtools__list_network_requests",
+      "Bash(find:*)"
     ],
     "defaultMode": "acceptEdits"
   }
