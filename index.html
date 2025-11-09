@@ -514,7 +514,6 @@
             border-radius: 8px;
             padding: 30px;
             margin-bottom: 30px;
-            margin-right: 320px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             border: 1px solid var(--border-color);
         }
@@ -894,10 +893,6 @@
             .toc-sidebar {
                 display: none !important;
             }
-
-            .post {
-                margin-right: 0;
-            }
         }
 
         /* MERMAID DIAGRAM STYLES */
@@ -1067,11 +1062,6 @@
         async function loadHomepage(pageNum = 1) {
             try {
                 showLoading();
-                // Remove TOC when on homepage
-                const existingToc = document.body.querySelector('.toc-sidebar');
-                if (existingToc) {
-                    existingToc.remove();
-                }
                 // Hide home button on homepage
                 const homeBtn = document.getElementById('homeButton');
                 if (homeBtn) {
@@ -1306,11 +1296,11 @@
             }
             tocHTML += '</ul>\n';
 
-            // Create TOC panel and insert after article header
+            // Create TOC panel and insert into article
             const article = contentArea.querySelector('article');
             if (article) {
                 // Remove existing TOC if present
-                const existingToc = document.querySelector('.toc-sidebar');
+                const existingToc = article.querySelector('.toc-sidebar');
                 if (existingToc) {
                     existingToc.remove();
                 }
@@ -1321,21 +1311,22 @@
                 // Calculate header height dynamically
                 const header = document.querySelector('.header');
                 const headerHeight = header ? header.offsetHeight + 20 : 120; // Add 20px gap after header
-                const maxHeight = `calc(100vh - ${headerHeight + 20}px)`;
 
                 tocPanel.style.cssText = `
-                    position: fixed;
-                    right: 20px;
+                    position: sticky;
                     top: ${headerHeight}px;
+                    right: 0;
+                    float: right;
                     width: 280px;
-                    max-height: ${maxHeight};
+                    max-height: calc(100vh - ${headerHeight + 20}px);
                     overflow-y: auto;
+                    margin: 0 0 20px 20px;
                     padding: 15px;
                     background: var(--card-bg);
                     border: 1px solid var(--border-color);
                     border-radius: 8px;
                     font-size: 0.9rem;
-                    z-index: 100;
+                    z-index: 10;
                     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
                 `;
 
@@ -1349,10 +1340,15 @@
                 tocPanel.appendChild(tocTitle);
                 tocPanel.appendChild(tocContent);
 
-                // Insert into body instead of article to avoid layout issues
-                document.body.appendChild(tocPanel);
+                // Insert at the beginning of article (after header if exists)
+                const articleHeader = article.querySelector('.post-header');
+                if (articleHeader) {
+                    articleHeader.insertAdjacentElement('afterend', tocPanel);
+                } else {
+                    article.insertBefore(tocPanel, article.firstChild);
+                }
 
-                console.log(`TOC: Injected successfully at fixed position (top: ${headerHeight}px)`);
+                console.log(`TOC: Injected successfully with sticky positioning (top: ${headerHeight}px)`);
             }
         }
 
