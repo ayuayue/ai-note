@@ -904,7 +904,7 @@
         :root.dark-mode .toc a { color: #4a9eff; }
         :root.dark-mode .toc a:hover { color: #ff6b6b; }
 
-        @media (max-width: 1200px) { .toc-container { display: none !important; } }
+        @media (max-width: 1200px) { .toc-container { position: fixed; right: 20px; width: 220px; max-height: calc(100vh - 220px); } }
 
         /* MERMAID DIAGRAM STYLES */
         .mermaid { display: flex; justify-content: center; margin: 20px 0; }
