@@ -311,20 +311,22 @@ function main() {
             console.log("Warning: Could not find pagination placeholder in template");
         }
         
-        // Write to index.html (first page) or pages/indexN.html (other pages)
-        let filename;
+        // Skip generating index.html (it's the SPA file)
+        // Only generate feed pages in pages/ directory
         if (page === 1) {
-            filename = "index.html";
+            // For page 1, generate feed-content.html instead of index.html
+            const feedFilename = "pages/feed-content.html";
+            fs.writeFileSync(feedFilename, updatedContent, "utf8");
+            console.log(`Generated ${feedFilename} with ${pageDocuments.length} documents`);
         } else {
             // Ensure pages directory exists
             if (!fs.existsSync("pages")) {
                 fs.mkdirSync("pages");
             }
-            filename = `pages/index${page}.html`;
+            const feedFilename = `pages/feed-page${page}.html`;
+            fs.writeFileSync(feedFilename, updatedContent, "utf8");
+            console.log(`Generated ${feedFilename} with ${pageDocuments.length} documents`);
         }
-        fs.writeFileSync(filename, updatedContent, "utf8");
-        
-        console.log(`Generated ${filename} with ${pageDocuments.length} documents`);
     }
     
     console.log(`Generated ${totalPages} pages with ${allDocuments.length} total documents`);
