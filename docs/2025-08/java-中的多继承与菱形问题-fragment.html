@@ -1,3 +1,79 @@
+<style>
+    .toc-sidebar {
+        position: sticky;
+        float: right;
+        width: 280px;
+        max-height: calc(100vh - 150px);
+        overflow-y: auto;
+        margin: 0 0 20px 30px;
+        padding: 15px;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 0.9rem;
+        z-index: 10;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .toc-sidebar-title {
+        font-weight: bold;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--secondary-color);
+        font-size: 0.95rem;
+    }
+
+    .toc-sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .toc-sidebar ul ul {
+        margin: 0;
+        padding-left: 16px;
+    }
+
+    .toc-sidebar li {
+        margin: 8px 0;
+    }
+
+    .toc-sidebar a {
+        color: var(--secondary-color);
+        text-decoration: none;
+        transition: color 0.2s;
+        font-weight: 500;
+    }
+
+    .toc-sidebar a:hover {
+        color: var(--accent-color);
+        text-decoration: underline;
+    }
+
+    .toc-sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .toc-sidebar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .toc-sidebar::-webkit-scrollbar-thumb {
+        background: var(--secondary-color);
+        border-radius: 3px;
+    }
+
+    .toc-sidebar::-webkit-scrollbar-thumb:hover {
+        background: var(--accent-color);
+    }
+
+    @media (max-width: 1200px) {
+        .toc-sidebar {
+            display: none !important;
+        }
+    }
+</style>
+
 <article class="post">
     <header class="post-header">
         <h1 class="post-title">java-中的多继承与菱形问题</h1>
@@ -8,6 +84,10 @@
     </header>
     <div class="warning">
         ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+    </div>
+    <div class="toc-sidebar" id="toc-container" style="display: none;">
+        <div class="toc-sidebar-title">目录</div>
+        <div id="toc-content"></div>
     </div>
     <div class="post-content" id="post-content">
         <h1 id="深度剖析java-中的多继承与菱形问题">深度剖析：Java
@@ -55,7 +135,7 @@ class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#c
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> C <span class="op">:</span> <span class="kw">public</span> A <span class="op">{};</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> D <span class="op">:</span> <span class="kw">public</span> B<span class="op">,</span> <span class="kw">public</span> C <span class="op">{};</span></span></code></pre></div>
 <p>继承关系示意图：</p>
-<pre class="mermaid"><code>classDiagram
+<pre class="mermaid">classDiagram
     class A {
         +hello()
     }
@@ -66,7 +146,7 @@ class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#c
     A &lt;|-- B
     A &lt;|-- C
     B &lt;|-- D
-    C &lt;|-- D</code></pre>
+    C &lt;|-- D</pre>
 <p>⚠️ 问题：</p>
 <ul>
 <li><code>D</code> 通过 <code>B</code> 和 <code>C</code> 继承了
@@ -125,7 +205,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="
 <span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>继承关系示意图：</p>
-<pre class="mermaid"><code>classDiagram
+<pre class="mermaid">classDiagram
     class A {
         +hello()
     }
@@ -142,7 +222,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="
     A &lt;|-- B
     A &lt;|-- C
     B &lt;|.. D
-    C &lt;|.. D</code></pre>
+    C &lt;|.. D</pre>
 <p>👉 Java 要求 <code>D</code>
 <strong>显式指定调用哪一个父接口的方法</strong>，从而避免了菱形问题带来的二义性。</p>
 <hr />
@@ -186,7 +266,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb7-1"><a href="
 <li>这就天然形成了 <strong>菱形继承结构</strong>。</li>
 </ul>
 <p>可视化关系图：</p>
-<pre class="mermaid"><code>classDiagram
+<pre class="mermaid">classDiagram
     class BeanFactory
     class ListableBeanFactory
     class HierarchicalBeanFactory
@@ -195,7 +275,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb7-1"><a href="
     BeanFactory &lt;|-- ListableBeanFactory
     BeanFactory &lt;|-- HierarchicalBeanFactory
     ListableBeanFactory &lt;|-- ApplicationContext
-    HierarchicalBeanFactory &lt;|-- ApplicationContext</code></pre>
+    HierarchicalBeanFactory &lt;|-- ApplicationContext</pre>
 <h3 id="为什么不会有菱形问题">⚡ 为什么不会有菱形问题？</h3>
 <p>因为在 <strong>Java 接口继承</strong> 的规则下：</p>
 <ol type="1">
@@ -242,6 +322,86 @@ href="https://en.cppreference.com/w/cpp/language/derived_class">C++
 </article>
 
 <script>
+    // Build table of contents
+    function buildTableOfContents() {
+        const postContent = document.getElementById('post-content');
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+
+        if (!postContent || !tocContainer || !tocContent) {
+            return;
+        }
+
+        const headings = postContent.querySelectorAll('h2, h3, h4');
+        if (headings.length === 0) {
+            return;
+        }
+
+        // Assign IDs to headings
+        headings.forEach((heading, index) => {
+            if (!heading.id) {
+                heading.id = `h-${index}`;
+            }
+        });
+
+        // Build TOC items
+        let tocItems = [];
+        headings.forEach((heading) => {
+            const level = parseInt(heading.tagName[1]);
+            const text = heading.textContent.trim();
+            tocItems.push({
+                level: level,
+                id: heading.id,
+                text: text
+            });
+        });
+
+        // Generate TOC HTML
+        let tocHTML = '<ul>';
+        let lastLevel = 1;
+
+        tocItems.forEach((item) => {
+            if (item.level > lastLevel) {
+                for (let i = lastLevel; i < item.level; i++) {
+                    tocHTML += '<ul>';
+                }
+            } else if (item.level < lastLevel) {
+                for (let i = item.level; i < lastLevel; i++) {
+                    tocHTML += '</li></ul>';
+                }
+                tocHTML += '</li>';
+            } else if (lastLevel > 1) {
+                tocHTML += '</li>';
+            }
+
+            tocHTML += `<li><a href="#${item.id}">${item.text}</a>`;
+            lastLevel = item.level;
+        });
+
+        for (let i = 1; i < lastLevel; i++) {
+            tocHTML += '</li></ul>';
+        }
+        if (lastLevel > 1) {
+            tocHTML += '</li>';
+        }
+        tocHTML += '</ul>';
+
+        tocContent.innerHTML = tocHTML;
+        tocContainer.style.display = 'block';
+
+        // Add click handlers to TOC links
+        tocContent.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    }
+
     // Add copy buttons to code blocks
     function addCopyButtons() {
         const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
@@ -313,8 +473,15 @@ href="https://en.cppreference.com/w/cpp/language/derived_class">C++
         });
     }
 
-    // Initialize copy buttons after content loads
+    // Initialize TOC and copy buttons after content loads
     window.addEventListener('load', function() {
+        buildTableOfContents();
+        addCopyButtons();
+    });
+
+    // Also call buildTableOfContents immediately in case content is already loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        buildTableOfContents();
         addCopyButtons();
     });
 </script>

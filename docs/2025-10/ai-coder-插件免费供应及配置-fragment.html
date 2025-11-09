@@ -1,3 +1,79 @@
+<style>
+    .toc-sidebar {
+        position: sticky;
+        float: right;
+        width: 280px;
+        max-height: calc(100vh - 150px);
+        overflow-y: auto;
+        margin: 0 0 20px 30px;
+        padding: 15px;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 0.9rem;
+        z-index: 10;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .toc-sidebar-title {
+        font-weight: bold;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--secondary-color);
+        font-size: 0.95rem;
+    }
+
+    .toc-sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .toc-sidebar ul ul {
+        margin: 0;
+        padding-left: 16px;
+    }
+
+    .toc-sidebar li {
+        margin: 8px 0;
+    }
+
+    .toc-sidebar a {
+        color: var(--secondary-color);
+        text-decoration: none;
+        transition: color 0.2s;
+        font-weight: 500;
+    }
+
+    .toc-sidebar a:hover {
+        color: var(--accent-color);
+        text-decoration: underline;
+    }
+
+    .toc-sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .toc-sidebar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .toc-sidebar::-webkit-scrollbar-thumb {
+        background: var(--secondary-color);
+        border-radius: 3px;
+    }
+
+    .toc-sidebar::-webkit-scrollbar-thumb:hover {
+        background: var(--accent-color);
+    }
+
+    @media (max-width: 1200px) {
+        .toc-sidebar {
+            display: none !important;
+        }
+    }
+</style>
+
 <article class="post">
     <header class="post-header">
         <h1 class="post-title">AI代码编程插件配置与部署指南：Kilo Code免费接入实践</h1>
@@ -8,6 +84,10 @@
     </header>
     <div class="warning">
         ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+    </div>
+    <div class="toc-sidebar" id="toc-container" style="display: none;">
+        <div class="toc-sidebar-title">目录</div>
+        <div id="toc-content"></div>
     </div>
     <div class="post-content" id="post-content">
         <h1
@@ -285,17 +365,17 @@ Key的双重认证机制，首次启动时会自动引导用户完成配置。</
 └── 计费模式：按实际使用量计费</code></pre>
 <h4 id="token获取流程">4.1.2 Token获取流程</h4>
 <p><strong>完整操作流程</strong></p>
-<pre class="mermaid"><code>graph TD
+<pre class="mermaid">graph TD
     A[访问MiniMax开放平台] --&gt; B[点击注册按钮]
     B --&gt; C[填写邮箱密码]
     C --&gt; D[邮箱验证]
     D --&gt; E[完善个人信息]
     E --&gt; F[进入控制台]
     F --&gt; G[创建API密钥]
-    G --&gt; H[复制保存密钥]</code></pre>
+    G --&gt; H[复制保存密钥]</pre>
 <h4 id="kilo-code集成配置">4.1.3 Kilo Code集成配置</h4>
 <p><strong>配置流程图</strong></p>
-<pre class="mermaid"><code>graph TD
+<pre class="mermaid">graph TD
     A[打开Kilo Code设置] --&gt; B[选择API提供商]
     B --&gt; C[MiniMax]
     C --&gt; D[输入API配置]
@@ -306,7 +386,7 @@ Key的双重认证机制，首次启动时会自动引导用户完成配置。</
     H --&gt; I[连接成功]
     H --&gt; J[连接失败]
     J --&gt; K[检查配置]
-    K --&gt; D</code></pre>
+    K --&gt; D</pre>
 <h3 id="魔搭社区modelscope">4.2 魔搭社区(ModelScope)</h3>
 <h4 id="平台技术特性">4.2.1 平台技术特性</h4>
 <p><strong>服务架构</strong></p>
@@ -369,17 +449,17 @@ Key的双重认证机制，首次启动时会自动引导用户完成配置。</
 </table>
 <h4 id="访问令牌获取">4.2.2 访问令牌获取</h4>
 <p><strong>完整操作流程</strong></p>
-<pre class="mermaid"><code>graph TD
+<pre class="mermaid">graph TD
     A[访问魔搭社区] --&gt; B[用户注册登录]
     B --&gt; C[进入个人中心]
     C --&gt; D[选择令牌管理]
     D --&gt; E[创建新令牌]
     E --&gt; F[设置令牌权限]
     F --&gt; G[保存令牌信息]
-    G --&gt; H[安全存储令牌]</code></pre>
+    G --&gt; H[安全存储令牌]</pre>
 <h4 id="kilo-code集成配置-1">4.2.3 Kilo Code集成配置</h4>
 <p><strong>配置流程图</strong></p>
-<pre class="mermaid"><code>graph TD
+<pre class="mermaid">graph TD
     A[打开Kilo Code设置] --&gt; B[添加新提供商]
     B --&gt; C[选择魔搭社区]
     C --&gt; D[输入基础配置]
@@ -391,7 +471,7 @@ Key的双重认证机制，首次启动时会自动引导用户完成配置。</
     I --&gt; J[连接成功]
     I --&gt; K[连接失败]
     K --&gt; L[检查令牌和模型]
-    L --&gt; D</code></pre>
+    L --&gt; D</pre>
 <h3 id="配置对比与选择建议">4.3 配置对比与选择建议</h3>
 <h4 id="平台特性对比">4.3.1 平台特性对比</h4>
 <table>
@@ -455,7 +535,7 @@ Key的双重认证机制，首次启动时会自动引导用户完成配置。</
 <h3 id="配置相关问题">5.1 配置相关问题</h3>
 <h4 id="q1-api调用返回401错误">Q1: API调用返回401错误</h4>
 <p><strong>问题分析流程</strong></p>
-<pre class="mermaid"><code>graph TD
+<pre class="mermaid">graph TD
     A[收到401错误] --&gt; B{检查API Key格式}
     B --&gt;|格式错误| C[重新生成API Key]
     B --&gt;|格式正确| D{检查API Key有效性}
@@ -463,38 +543,38 @@ Key的双重认证机制，首次启动时会自动引导用户完成配置。</
     D --&gt;|权限不足| F[重新配置权限]
     E --&gt; G{验证网络连接}
     F --&gt; G
-    C --&gt; G</code></pre>
+    C --&gt; G</pre>
 <h4 id="q2-连接超时或响应缓慢">Q2: 连接超时或响应缓慢</h4>
 <p><strong>诊断流程</strong></p>
-<pre class="mermaid"><code>graph TD
+<pre class="mermaid">graph TD
     A[响应缓慢问题] --&gt; B{检查网络连接}
     B --&gt;|网络正常| C{检查API平台状态}
     B --&gt;|网络异常| D[修复网络问题]
     C --&gt;|平台正常| E{检查配置参数}
     C --&gt;|平台异常| F[等待服务恢复]
     E --&gt;|参数正确| G[优化请求设置]
-    E --&gt;|参数错误| H[调整配置参数]</code></pre>
+    E --&gt;|参数错误| H[调整配置参数]</pre>
 <h4 id="q3-模型响应质量问题">Q3: 模型响应质量问题</h4>
 <p><strong>改进策略</strong></p>
-<pre class="mermaid"><code>graph TD
+<pre class="mermaid">graph TD
     A[响应质量问题] --&gt; B{选择合适模型}
     B --&gt;|模型不当| C[更换更优模型]
     B --&gt;|模型合适| D{优化提示词}
     D --&gt;|提示词问题| E[改进提示工程]
     D --&gt;|提示词正确| F{调整生成参数}
     F --&gt;|参数不当| G[优化参数设置]
-    F --&gt;|参数正确| H[检查上下文]</code></pre>
+    F --&gt;|参数正确| H[检查上下文]</pre>
 <h3 id="插件使用问题">5.2 插件使用问题</h3>
 <h4 id="q4-插件无法启动或界面异常">Q4: 插件无法启动或界面异常</h4>
 <p><strong>问题排查步骤</strong></p>
-<pre class="mermaid"><code>graph TD
+<pre class="mermaid">graph TD
     A[插件启动问题] --&gt; B{检查IDE兼容性}
     B --&gt;|版本不兼容| C[更新IDE版本]
     B --&gt;|版本兼容| D{检查插件安装}
     D --&gt;|安装异常| E[重新安装插件]
     D --&gt;|安装正常| F{检查配置冲突}
     F --&gt;|有冲突| G[清理冲突配置]
-    F --&gt;|无冲突| H[重启IDE服务]</code></pre>
+    F --&gt;|无冲突| H[重启IDE服务]</pre>
 <h4 id="q5-代码补全不准确或延迟">Q5: 代码补全不准确或延迟</h4>
 <p><strong>性能优化建议</strong></p>
 <ol type="1">
@@ -514,11 +594,11 @@ Key的双重认证机制，首次启动时会自动引导用户完成配置。</
 <h3 id="成本控制问题">5.3 成本控制问题</h3>
 <h4 id="q6-api调用成本过高">Q6: API调用成本过高</h4>
 <p><strong>成本控制策略</strong></p>
-<pre class="mermaid"><code>graph TD
+<pre class="mermaid">graph TD
     A[成本控制] --&gt; B{分析使用模式}
     B --&gt;|使用过度| C[优化使用习惯]
     B --&gt;|配置不当| D[调整参数设置]
-    B --&gt;|模型选择| E[选择经济模型]</code></pre>
+    B --&gt;|模型选择| E[选择经济模型]</pre>
 <p><strong>优化措施</strong></p>
 <ol type="1">
 <li><strong>使用模式优化</strong>
@@ -565,6 +645,86 @@ Code作为开源项目，将持续集成更多优质API平台，为开发者提�
 </article>
 
 <script>
+    // Build table of contents
+    function buildTableOfContents() {
+        const postContent = document.getElementById('post-content');
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+
+        if (!postContent || !tocContainer || !tocContent) {
+            return;
+        }
+
+        const headings = postContent.querySelectorAll('h2, h3, h4');
+        if (headings.length === 0) {
+            return;
+        }
+
+        // Assign IDs to headings
+        headings.forEach((heading, index) => {
+            if (!heading.id) {
+                heading.id = `h-${index}`;
+            }
+        });
+
+        // Build TOC items
+        let tocItems = [];
+        headings.forEach((heading) => {
+            const level = parseInt(heading.tagName[1]);
+            const text = heading.textContent.trim();
+            tocItems.push({
+                level: level,
+                id: heading.id,
+                text: text
+            });
+        });
+
+        // Generate TOC HTML
+        let tocHTML = '<ul>';
+        let lastLevel = 1;
+
+        tocItems.forEach((item) => {
+            if (item.level > lastLevel) {
+                for (let i = lastLevel; i < item.level; i++) {
+                    tocHTML += '<ul>';
+                }
+            } else if (item.level < lastLevel) {
+                for (let i = item.level; i < lastLevel; i++) {
+                    tocHTML += '</li></ul>';
+                }
+                tocHTML += '</li>';
+            } else if (lastLevel > 1) {
+                tocHTML += '</li>';
+            }
+
+            tocHTML += `<li><a href="#${item.id}">${item.text}</a>`;
+            lastLevel = item.level;
+        });
+
+        for (let i = 1; i < lastLevel; i++) {
+            tocHTML += '</li></ul>';
+        }
+        if (lastLevel > 1) {
+            tocHTML += '</li>';
+        }
+        tocHTML += '</ul>';
+
+        tocContent.innerHTML = tocHTML;
+        tocContainer.style.display = 'block';
+
+        // Add click handlers to TOC links
+        tocContent.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    }
+
     // Add copy buttons to code blocks
     function addCopyButtons() {
         const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
@@ -636,8 +796,15 @@ Code作为开源项目，将持续集成更多优质API平台，为开发者提�
         });
     }
 
-    // Initialize copy buttons after content loads
+    // Initialize TOC and copy buttons after content loads
     window.addEventListener('load', function() {
+        buildTableOfContents();
+        addCopyButtons();
+    });
+
+    // Also call buildTableOfContents immediately in case content is already loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        buildTableOfContents();
         addCopyButtons();
     });
 </script>

@@ -1,3 +1,79 @@
+<style>
+    .toc-sidebar {
+        position: sticky;
+        float: right;
+        width: 280px;
+        max-height: calc(100vh - 150px);
+        overflow-y: auto;
+        margin: 0 0 20px 30px;
+        padding: 15px;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 0.9rem;
+        z-index: 10;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .toc-sidebar-title {
+        font-weight: bold;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--secondary-color);
+        font-size: 0.95rem;
+    }
+
+    .toc-sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .toc-sidebar ul ul {
+        margin: 0;
+        padding-left: 16px;
+    }
+
+    .toc-sidebar li {
+        margin: 8px 0;
+    }
+
+    .toc-sidebar a {
+        color: var(--secondary-color);
+        text-decoration: none;
+        transition: color 0.2s;
+        font-weight: 500;
+    }
+
+    .toc-sidebar a:hover {
+        color: var(--accent-color);
+        text-decoration: underline;
+    }
+
+    .toc-sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .toc-sidebar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .toc-sidebar::-webkit-scrollbar-thumb {
+        background: var(--secondary-color);
+        border-radius: 3px;
+    }
+
+    .toc-sidebar::-webkit-scrollbar-thumb:hover {
+        background: var(--accent-color);
+    }
+
+    @media (max-width: 1200px) {
+        .toc-sidebar {
+            display: none !important;
+        }
+    }
+</style>
+
 <article class="post">
     <header class="post-header">
         <h1 class="post-title">使用Shell脚本和cURL命令通过Telegram机器人发送通知消息</h1>
@@ -8,6 +84,10 @@
     </header>
     <div class="warning">
         ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+    </div>
+    <div class="toc-sidebar" id="toc-container" style="display: none;">
+        <div class="toc-sidebar-title">目录</div>
+        <div id="toc-content"></div>
     </div>
     <div class="post-content" id="post-content">
         <h1
@@ -47,7 +127,7 @@ Token，格式如<code>123456789:ABCDEFGHIJKLMNOPQRSTUVWXYZ</code></p>
 class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 获取updates示例</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-s</span> <span class="st">&quot;https://api.telegram.org/bot&lt;YourBOTToken&gt;/getUpdates&quot;</span> <span class="kw">|</span> <span class="ex">python</span> <span class="at">-m</span> json.tool</span></code></pre></div>
 <p>下面的流程图展示了获取chat_id的完整过程：</p>
-<pre class="mermaid"><code>flowchart TD
+<pre class="mermaid">flowchart TD
     A[开始获取chat_id] --&gt; B{目标类型}
     B --&gt;|个人用户| C[向机器人发消息]
     B --&gt;|群组| D[添加机器人到群组]
@@ -55,7 +135,7 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="
     C --&gt; F[访问getUpdates接口]
     E --&gt; F
     F --&gt; G[解析JSON获取id]
-    G --&gt; H[完成]</code></pre>
+    G --&gt; H[完成]</pre>
 <p><strong>常见误区</strong>： -
 未先向机器人发送消息就直接尝试获取updates，会导致返回空结果 -
 群组chat_id为负数，与个人chat_id格式不同 -
@@ -410,6 +490,86 @@ API的关键工具</li>
 </article>
 
 <script>
+    // Build table of contents
+    function buildTableOfContents() {
+        const postContent = document.getElementById('post-content');
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+
+        if (!postContent || !tocContainer || !tocContent) {
+            return;
+        }
+
+        const headings = postContent.querySelectorAll('h2, h3, h4');
+        if (headings.length === 0) {
+            return;
+        }
+
+        // Assign IDs to headings
+        headings.forEach((heading, index) => {
+            if (!heading.id) {
+                heading.id = `h-${index}`;
+            }
+        });
+
+        // Build TOC items
+        let tocItems = [];
+        headings.forEach((heading) => {
+            const level = parseInt(heading.tagName[1]);
+            const text = heading.textContent.trim();
+            tocItems.push({
+                level: level,
+                id: heading.id,
+                text: text
+            });
+        });
+
+        // Generate TOC HTML
+        let tocHTML = '<ul>';
+        let lastLevel = 1;
+
+        tocItems.forEach((item) => {
+            if (item.level > lastLevel) {
+                for (let i = lastLevel; i < item.level; i++) {
+                    tocHTML += '<ul>';
+                }
+            } else if (item.level < lastLevel) {
+                for (let i = item.level; i < lastLevel; i++) {
+                    tocHTML += '</li></ul>';
+                }
+                tocHTML += '</li>';
+            } else if (lastLevel > 1) {
+                tocHTML += '</li>';
+            }
+
+            tocHTML += `<li><a href="#${item.id}">${item.text}</a>`;
+            lastLevel = item.level;
+        });
+
+        for (let i = 1; i < lastLevel; i++) {
+            tocHTML += '</li></ul>';
+        }
+        if (lastLevel > 1) {
+            tocHTML += '</li>';
+        }
+        tocHTML += '</ul>';
+
+        tocContent.innerHTML = tocHTML;
+        tocContainer.style.display = 'block';
+
+        // Add click handlers to TOC links
+        tocContent.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    }
+
     // Add copy buttons to code blocks
     function addCopyButtons() {
         const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
@@ -481,8 +641,15 @@ API的关键工具</li>
         });
     }
 
-    // Initialize copy buttons after content loads
+    // Initialize TOC and copy buttons after content loads
     window.addEventListener('load', function() {
+        buildTableOfContents();
+        addCopyButtons();
+    });
+
+    // Also call buildTableOfContents immediately in case content is already loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        buildTableOfContents();
         addCopyButtons();
     });
 </script>

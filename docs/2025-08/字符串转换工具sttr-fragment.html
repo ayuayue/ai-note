@@ -1,3 +1,79 @@
+<style>
+    .toc-sidebar {
+        position: sticky;
+        float: right;
+        width: 280px;
+        max-height: calc(100vh - 150px);
+        overflow-y: auto;
+        margin: 0 0 20px 30px;
+        padding: 15px;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 0.9rem;
+        z-index: 10;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .toc-sidebar-title {
+        font-weight: bold;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--secondary-color);
+        font-size: 0.95rem;
+    }
+
+    .toc-sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .toc-sidebar ul ul {
+        margin: 0;
+        padding-left: 16px;
+    }
+
+    .toc-sidebar li {
+        margin: 8px 0;
+    }
+
+    .toc-sidebar a {
+        color: var(--secondary-color);
+        text-decoration: none;
+        transition: color 0.2s;
+        font-weight: 500;
+    }
+
+    .toc-sidebar a:hover {
+        color: var(--accent-color);
+        text-decoration: underline;
+    }
+
+    .toc-sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .toc-sidebar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .toc-sidebar::-webkit-scrollbar-thumb {
+        background: var(--secondary-color);
+        border-radius: 3px;
+    }
+
+    .toc-sidebar::-webkit-scrollbar-thumb:hover {
+        background: var(--accent-color);
+    }
+
+    @media (max-width: 1200px) {
+        .toc-sidebar {
+            display: none !important;
+        }
+    }
+</style>
+
 <article class="post">
     <header class="post-header">
         <h1 class="post-title">字符串转换工具sttr</h1>
@@ -8,6 +84,10 @@
     </header>
     <div class="warning">
         ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+    </div>
+    <div class="toc-sidebar" id="toc-container" style="display: none;">
+        <div class="toc-sidebar-title">目录</div>
+        <div id="toc-content"></div>
     </div>
     <div class="post-content" id="post-content">
         <h1 id="字符串转换工具sttr介绍">字符串转换工具sttr介绍</h1>
@@ -158,7 +238,7 @@ DX。</li>
 </tbody>
 </table>
 <h4 id="工作流演进图"><strong>工作流演进图</strong></h4>
-<pre class="mermaid"><code>graph TD
+<pre class="mermaid">graph TD
     subgraph &quot;传统工作流 (低效且有风险)&quot;
         A[需要计算SHA256哈希] --&gt; B{环境是?};
         B --&gt;|Linux/macOS| C[&quot;打开终端, 输入 `echo -n &amp;quot;data&amp;quot; | sha256sum`&quot;];
@@ -171,7 +251,7 @@ DX。</li>
         G[需要计算SHA256哈希] --&gt; H[&quot;打开终端 (任何平台)&quot;];
         H --&gt; I[&quot;输入 `sttr hash sha256 &amp;quot;data&amp;quot;`&quot;];
         I --&gt; J[&quot;获得结果 (数据从未离开本地)&quot;];
-    end</code></pre>
+    end</pre>
 <h2 id="案例研究-数据支撑">5. 案例研究 / 数据支撑</h2>
 <h4 id="案例一devops-工程师在-cicd-中的应用"><strong>案例一：DevOps
 工程师在 CI/CD 中的应用</strong></h4>
@@ -252,7 +332,7 @@ Blake3），甚至简单的对称加密/解密功能（使用用户提供的密�
 插件、安全工具包（如 a-shell for iOS）或作为其他 CLI 工具的依赖库。</li>
 </ol>
 <h4 id="技术采纳生命周期预测"><strong>技术采纳生命周期预测</strong></h4>
-<pre class="mermaid"><code>gantt
+<pre class="mermaid">gantt
     title sttr 技术采纳生命周期
     dateFormat  YYYY-MM-DD
     axisFormat %Y
@@ -266,7 +346,7 @@ Blake3），甚至简单的对称加密/解密功能（使用用户提供的密�
     被企业作为标准工具推荐 :2025-01-01, 24m
     
     section 晚期大众 &amp; 落后者
-    成为各类&quot;Awesome CLI&quot;列表的标配 :2026-06-01, 36m</code></pre>
+    成为各类&quot;Awesome CLI&quot;列表的标配 :2026-06-01, 36m</pre>
 <h2 id="结论与建议">7. 结论与建议</h2>
 <p><code>sttr</code>
 并非一项颠覆性的技术发明，但它是一项<strong>卓越的工程整合与产品思维的胜利</strong>。它精准地识别了开发者工作流中的一个长期痛点，并提供了一个优雅、安全且高效的解决方案。其价值可以用一个简单的数学公式来概括：
@@ -308,6 +388,86 @@ href="https://golang.org/">https://golang.org/</a></li>
 </article>
 
 <script>
+    // Build table of contents
+    function buildTableOfContents() {
+        const postContent = document.getElementById('post-content');
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+
+        if (!postContent || !tocContainer || !tocContent) {
+            return;
+        }
+
+        const headings = postContent.querySelectorAll('h2, h3, h4');
+        if (headings.length === 0) {
+            return;
+        }
+
+        // Assign IDs to headings
+        headings.forEach((heading, index) => {
+            if (!heading.id) {
+                heading.id = `h-${index}`;
+            }
+        });
+
+        // Build TOC items
+        let tocItems = [];
+        headings.forEach((heading) => {
+            const level = parseInt(heading.tagName[1]);
+            const text = heading.textContent.trim();
+            tocItems.push({
+                level: level,
+                id: heading.id,
+                text: text
+            });
+        });
+
+        // Generate TOC HTML
+        let tocHTML = '<ul>';
+        let lastLevel = 1;
+
+        tocItems.forEach((item) => {
+            if (item.level > lastLevel) {
+                for (let i = lastLevel; i < item.level; i++) {
+                    tocHTML += '<ul>';
+                }
+            } else if (item.level < lastLevel) {
+                for (let i = item.level; i < lastLevel; i++) {
+                    tocHTML += '</li></ul>';
+                }
+                tocHTML += '</li>';
+            } else if (lastLevel > 1) {
+                tocHTML += '</li>';
+            }
+
+            tocHTML += `<li><a href="#${item.id}">${item.text}</a>`;
+            lastLevel = item.level;
+        });
+
+        for (let i = 1; i < lastLevel; i++) {
+            tocHTML += '</li></ul>';
+        }
+        if (lastLevel > 1) {
+            tocHTML += '</li>';
+        }
+        tocHTML += '</ul>';
+
+        tocContent.innerHTML = tocHTML;
+        tocContainer.style.display = 'block';
+
+        // Add click handlers to TOC links
+        tocContent.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    }
+
     // Add copy buttons to code blocks
     function addCopyButtons() {
         const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
@@ -379,8 +539,15 @@ href="https://golang.org/">https://golang.org/</a></li>
         });
     }
 
-    // Initialize copy buttons after content loads
+    // Initialize TOC and copy buttons after content loads
     window.addEventListener('load', function() {
+        buildTableOfContents();
+        addCopyButtons();
+    });
+
+    // Also call buildTableOfContents immediately in case content is already loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        buildTableOfContents();
         addCopyButtons();
     });
 </script>

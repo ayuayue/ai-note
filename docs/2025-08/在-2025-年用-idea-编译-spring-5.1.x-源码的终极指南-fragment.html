@@ -1,3 +1,79 @@
+<style>
+    .toc-sidebar {
+        position: sticky;
+        float: right;
+        width: 280px;
+        max-height: calc(100vh - 150px);
+        overflow-y: auto;
+        margin: 0 0 20px 30px;
+        padding: 15px;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 0.9rem;
+        z-index: 10;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .toc-sidebar-title {
+        font-weight: bold;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--secondary-color);
+        font-size: 0.95rem;
+    }
+
+    .toc-sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .toc-sidebar ul ul {
+        margin: 0;
+        padding-left: 16px;
+    }
+
+    .toc-sidebar li {
+        margin: 8px 0;
+    }
+
+    .toc-sidebar a {
+        color: var(--secondary-color);
+        text-decoration: none;
+        transition: color 0.2s;
+        font-weight: 500;
+    }
+
+    .toc-sidebar a:hover {
+        color: var(--accent-color);
+        text-decoration: underline;
+    }
+
+    .toc-sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .toc-sidebar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .toc-sidebar::-webkit-scrollbar-thumb {
+        background: var(--secondary-color);
+        border-radius: 3px;
+    }
+
+    .toc-sidebar::-webkit-scrollbar-thumb:hover {
+        background: var(--accent-color);
+    }
+
+    @media (max-width: 1200px) {
+        .toc-sidebar {
+            display: none !important;
+        }
+    }
+</style>
+
 <article class="post">
     <header class="post-header">
         <h1 class="post-title">在-2025-年用-idea-编译-spring-5.1.x-源码的终极指南</h1>
@@ -9,12 +85,16 @@
     <div class="warning">
         ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
     </div>
+    <div class="toc-sidebar" id="toc-container" style="display: none;">
+        <div class="toc-sidebar-title">目录</div>
+        <div id="toc-content"></div>
+    </div>
     <div class="post-content" id="post-content">
         <h3
 id="官方正解告别踩坑在-2025-年用-idea-编译-spring-5.1.x-源码"><strong>官方正解：告别踩坑，在
 2025 年用 IDEA 编译 Spring 5.1.x 源码</strong></h3>
 <h4 id="全文流程概览图"><strong>全文流程概览图</strong></h4>
-<pre class="mermaid"><code>graph TB
+<pre class="mermaid">graph TB
     A[开始编译Spring 5.1.x源码] --&gt; B[环境准备]
     B --&gt; C[清理环境&lt;br/&gt;.idea和.gradle文件夹]
     C --&gt; D[修正仓库配置&lt;br/&gt;解决401错误]
@@ -24,7 +104,7 @@ id="官方正解告别踩坑在-2025-年用-idea-编译-spring-5.1.x-源码"><st
     G --&gt; H[创建调试模块&lt;br/&gt;spring-my-playground]
     H --&gt; I[配置IDEA代理&lt;br/&gt;Build and run using: Gradle]
     I --&gt; J[编写测试代码&lt;br/&gt;设置断点开始调试]
-    J --&gt; K[成功调试Spring源码]</code></pre>
+    J --&gt; K[成功调试Spring源码]</pre>
 <h4 id="前言"><strong>前言</strong></h4>
 <p>在尝试编译 Spring Framework 5.1.x
 源码的路上，我曾掉入过无数个陷阱：修改 Kotlin
@@ -209,6 +289,86 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="
 </article>
 
 <script>
+    // Build table of contents
+    function buildTableOfContents() {
+        const postContent = document.getElementById('post-content');
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+
+        if (!postContent || !tocContainer || !tocContent) {
+            return;
+        }
+
+        const headings = postContent.querySelectorAll('h2, h3, h4');
+        if (headings.length === 0) {
+            return;
+        }
+
+        // Assign IDs to headings
+        headings.forEach((heading, index) => {
+            if (!heading.id) {
+                heading.id = `h-${index}`;
+            }
+        });
+
+        // Build TOC items
+        let tocItems = [];
+        headings.forEach((heading) => {
+            const level = parseInt(heading.tagName[1]);
+            const text = heading.textContent.trim();
+            tocItems.push({
+                level: level,
+                id: heading.id,
+                text: text
+            });
+        });
+
+        // Generate TOC HTML
+        let tocHTML = '<ul>';
+        let lastLevel = 1;
+
+        tocItems.forEach((item) => {
+            if (item.level > lastLevel) {
+                for (let i = lastLevel; i < item.level; i++) {
+                    tocHTML += '<ul>';
+                }
+            } else if (item.level < lastLevel) {
+                for (let i = item.level; i < lastLevel; i++) {
+                    tocHTML += '</li></ul>';
+                }
+                tocHTML += '</li>';
+            } else if (lastLevel > 1) {
+                tocHTML += '</li>';
+            }
+
+            tocHTML += `<li><a href="#${item.id}">${item.text}</a>`;
+            lastLevel = item.level;
+        });
+
+        for (let i = 1; i < lastLevel; i++) {
+            tocHTML += '</li></ul>';
+        }
+        if (lastLevel > 1) {
+            tocHTML += '</li>';
+        }
+        tocHTML += '</ul>';
+
+        tocContent.innerHTML = tocHTML;
+        tocContainer.style.display = 'block';
+
+        // Add click handlers to TOC links
+        tocContent.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    }
+
     // Add copy buttons to code blocks
     function addCopyButtons() {
         const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
@@ -280,8 +440,15 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="
         });
     }
 
-    // Initialize copy buttons after content loads
+    // Initialize TOC and copy buttons after content loads
     window.addEventListener('load', function() {
+        buildTableOfContents();
+        addCopyButtons();
+    });
+
+    // Also call buildTableOfContents immediately in case content is already loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        buildTableOfContents();
         addCopyButtons();
     });
 </script>

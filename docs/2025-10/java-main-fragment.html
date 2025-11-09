@@ -1,3 +1,79 @@
+<style>
+    .toc-sidebar {
+        position: sticky;
+        float: right;
+        width: 280px;
+        max-height: calc(100vh - 150px);
+        overflow-y: auto;
+        margin: 0 0 20px 30px;
+        padding: 15px;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 0.9rem;
+        z-index: 10;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .toc-sidebar-title {
+        font-weight: bold;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--secondary-color);
+        font-size: 0.95rem;
+    }
+
+    .toc-sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .toc-sidebar ul ul {
+        margin: 0;
+        padding-left: 16px;
+    }
+
+    .toc-sidebar li {
+        margin: 8px 0;
+    }
+
+    .toc-sidebar a {
+        color: var(--secondary-color);
+        text-decoration: none;
+        transition: color 0.2s;
+        font-weight: 500;
+    }
+
+    .toc-sidebar a:hover {
+        color: var(--accent-color);
+        text-decoration: underline;
+    }
+
+    .toc-sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .toc-sidebar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .toc-sidebar::-webkit-scrollbar-thumb {
+        background: var(--secondary-color);
+        border-radius: 3px;
+    }
+
+    .toc-sidebar::-webkit-scrollbar-thumb:hover {
+        background: var(--accent-color);
+    }
+
+    @media (max-width: 1200px) {
+        .toc-sidebar {
+            display: none !important;
+        }
+    }
+</style>
+
 <article class="post">
     <header class="post-header">
         <h1 class="post-title">Java中的多个Main方法：解构项目入口与依赖共享</h1>
@@ -8,6 +84,10 @@
     </header>
     <div class="warning">
         ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+    </div>
+    <div class="toc-sidebar" id="toc-container" style="display: none;">
+        <div class="toc-sidebar-title">目录</div>
+        <div id="toc-content"></div>
     </div>
     <div class="post-content" id="post-content">
         <h1
@@ -63,7 +143,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="
 <span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h4 id="mermaid-图">Mermaid 图</h4>
 <p>下面的类图清晰地展示了<code>main</code>方法与类的归属关系：</p>
-<pre class="mermaid"><code>classDiagram
+<pre class="mermaid">classDiagram
     class Project {
         +MainApp
         +UtilityClass
@@ -79,7 +159,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="
     }
 
     Project *-- MainApp
-    Project *-- UtilityClass</code></pre>
+    Project *-- UtilityClass</pre>
 <h4 id="问题分析">问题分析</h4>
 <ul>
 <li><strong>常见误解</strong>：新手常常误认为<code>main</code>方法是项目级别的，一个项目只能有一个。这会导致在尝试创建第二个<code>main</code>方法时感到困惑或编译出错。</li>
@@ -115,7 +195,7 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="
 参数指定了类路径，告诉JVM去哪里寻找<code>com.example</code>包下的类。</p>
 <h4 id="mermaid-图-1">Mermaid 图</h4>
 <p>下面的流程图描述了从开发者意图到JVM执行的选择过程：</p>
-<pre class="mermaid"><code>flowchart TD
+<pre class="mermaid">flowchart TD
     A[开发者] --&gt; B{选择运行哪个入口?};
     B -- &quot;Web服务器&quot; --&gt; C[配置运行主类为 com.example.MainApp];
     B -- &quot;工具测试&quot; --&gt; D[配置运行主类为 com.example.UtilityClass];
@@ -124,7 +204,7 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="
     D --&gt; E;
     
     E --&gt; F[JVM加载指定类并执行其main方法];
-    F --&gt; G[程序运行];</code></pre>
+    F --&gt; G[程序运行];</pre>
 <h4 id="问题分析-1">问题分析</h4>
 <ul>
 <li><strong>常见错误</strong>：<code>Error: Could not find or load main class</code>。这是最经典的错误之一，原因通常是：
@@ -196,7 +276,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h4 id="mermaid-图-2">Mermaid 图</h4>
 <p>下图展示了共享类路径的结构（已修复）：</p>
-<pre class="mermaid"><code>graph TD
+<pre class="mermaid">graph TD
     subgraph JVM实例
         CP[类路径 Classpath]
     end
@@ -219,7 +299,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="
 
     style M1 fill:#cde4ff
     style M2 fill:#cde4ff
-    style CP fill:#f9f,stroke:#333,stroke-width:2px</code></pre>
+    style CP fill:#f9f,stroke:#333,stroke-width:2px</pre>
 <h4 id="问题分析-2">问题分析</h4>
 <ul>
 <li><strong>常见误解</strong>：认为每个<code>main</code>方法需要单独配置依赖，或者认为只有“主”<code>main</code>方法才能访问依赖。</li>
@@ -376,7 +456,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb14-1"><a href=
 <span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h4 id="mermaid-图-3">Mermaid 图</h4>
 <p>下面的时序图展示了<code>DataMigrationTool</code>的启动流程：</p>
-<pre class="mermaid"><code>sequenceDiagram
+<pre class="mermaid">sequenceDiagram
     participant Dev as Developer
     participant JVM as Java Virtual Machine
     participant SAB as SpringApplicationBuilder
@@ -392,7 +472,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb14-1"><a href=
     DMT-&gt;&gt;DMT: 执行迁移逻辑
     DMT--&gt;&gt;SAB: 任务完成
     SAB-&gt;&gt;CTX: 关闭上下文
-    JVM--&gt;&gt;Dev: 程序结束</code></pre>
+    JVM--&gt;&gt;Dev: 程序结束</pre>
 <h4 id="应用场景分析">应用场景分析</h4>
 <p>这种模式在企业级开发中非常实用。它允许我们： *
 <strong>复用基础设施</strong>：数据迁移工具可以直接使用<code>UserService</code>、<code>Repository</code>等所有由Spring管理的Bean，而无需重新编写数据库连接、事务管理等代码。
@@ -445,6 +525,86 @@ Boot Reference Documentation - Spring Application</a></li>
 </article>
 
 <script>
+    // Build table of contents
+    function buildTableOfContents() {
+        const postContent = document.getElementById('post-content');
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+
+        if (!postContent || !tocContainer || !tocContent) {
+            return;
+        }
+
+        const headings = postContent.querySelectorAll('h2, h3, h4');
+        if (headings.length === 0) {
+            return;
+        }
+
+        // Assign IDs to headings
+        headings.forEach((heading, index) => {
+            if (!heading.id) {
+                heading.id = `h-${index}`;
+            }
+        });
+
+        // Build TOC items
+        let tocItems = [];
+        headings.forEach((heading) => {
+            const level = parseInt(heading.tagName[1]);
+            const text = heading.textContent.trim();
+            tocItems.push({
+                level: level,
+                id: heading.id,
+                text: text
+            });
+        });
+
+        // Generate TOC HTML
+        let tocHTML = '<ul>';
+        let lastLevel = 1;
+
+        tocItems.forEach((item) => {
+            if (item.level > lastLevel) {
+                for (let i = lastLevel; i < item.level; i++) {
+                    tocHTML += '<ul>';
+                }
+            } else if (item.level < lastLevel) {
+                for (let i = item.level; i < lastLevel; i++) {
+                    tocHTML += '</li></ul>';
+                }
+                tocHTML += '</li>';
+            } else if (lastLevel > 1) {
+                tocHTML += '</li>';
+            }
+
+            tocHTML += `<li><a href="#${item.id}">${item.text}</a>`;
+            lastLevel = item.level;
+        });
+
+        for (let i = 1; i < lastLevel; i++) {
+            tocHTML += '</li></ul>';
+        }
+        if (lastLevel > 1) {
+            tocHTML += '</li>';
+        }
+        tocHTML += '</ul>';
+
+        tocContent.innerHTML = tocHTML;
+        tocContainer.style.display = 'block';
+
+        // Add click handlers to TOC links
+        tocContent.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    }
+
     // Add copy buttons to code blocks
     function addCopyButtons() {
         const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
@@ -516,8 +676,15 @@ Boot Reference Documentation - Spring Application</a></li>
         });
     }
 
-    // Initialize copy buttons after content loads
+    // Initialize TOC and copy buttons after content loads
     window.addEventListener('load', function() {
+        buildTableOfContents();
+        addCopyButtons();
+    });
+
+    // Also call buildTableOfContents immediately in case content is already loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        buildTableOfContents();
         addCopyButtons();
     });
 </script>

@@ -1,3 +1,79 @@
+<style>
+    .toc-sidebar {
+        position: sticky;
+        float: right;
+        width: 280px;
+        max-height: calc(100vh - 150px);
+        overflow-y: auto;
+        margin: 0 0 20px 30px;
+        padding: 15px;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 0.9rem;
+        z-index: 10;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .toc-sidebar-title {
+        font-weight: bold;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--secondary-color);
+        font-size: 0.95rem;
+    }
+
+    .toc-sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .toc-sidebar ul ul {
+        margin: 0;
+        padding-left: 16px;
+    }
+
+    .toc-sidebar li {
+        margin: 8px 0;
+    }
+
+    .toc-sidebar a {
+        color: var(--secondary-color);
+        text-decoration: none;
+        transition: color 0.2s;
+        font-weight: 500;
+    }
+
+    .toc-sidebar a:hover {
+        color: var(--accent-color);
+        text-decoration: underline;
+    }
+
+    .toc-sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .toc-sidebar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .toc-sidebar::-webkit-scrollbar-thumb {
+        background: var(--secondary-color);
+        border-radius: 3px;
+    }
+
+    .toc-sidebar::-webkit-scrollbar-thumb:hover {
+        background: var(--accent-color);
+    }
+
+    @media (max-width: 1200px) {
+        .toc-sidebar {
+            display: none !important;
+        }
+    }
+</style>
+
 <article class="post">
     <header class="post-header">
         <h1 class="post-title">数据库排序中的 NULL 值：深入解析与实战指南</h1>
@@ -8,6 +84,10 @@
     </header>
     <div class="warning">
         ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+    </div>
+    <div class="toc-sidebar" id="toc-container" style="display: none;">
+        <div class="toc-sidebar-title">目录</div>
+        <div id="toc-content"></div>
     </div>
     <div class="post-content" id="post-content">
         <h1 id="数据库排序中的-null-值深入解析与实战指南">数据库排序中的 NULL
@@ -59,12 +139,12 @@ class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#c
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co">-- 默认排序（NULL 行为因数据库而异）</span></span>
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> employees <span class="kw">ORDER</span> <span class="kw">BY</span> salary <span class="kw">ASC</span>;</span></code></pre></div>
 <h3 id="mermaid-图null-排序逻辑">Mermaid 图：NULL 排序逻辑</h3>
-<pre class="mermaid"><code>graph TD
+<pre class="mermaid">graph TD
     A[排序请求] --&gt; B{列是否包含 NULL?}
     B -- 是 --&gt; C[数据库默认行为]
     C --&gt; D[NULL 在前 (ASC)]
     C --&gt; E[NULL 在后 (ASC)]
-    B -- 否 --&gt; F[常规排序]</code></pre>
+    B -- 否 --&gt; F[常规排序]</pre>
 <h3 id="问题分析">问题分析</h3>
 <ul>
 <li><strong>误区</strong>：认为 <code>NULL</code>
@@ -100,12 +180,12 @@ class="sourceCode sql"><code class="sourceCode sql"><span id="cb3-1"><a href="#c
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> employees <span class="kw">ORDER</span> <span class="kw">BY</span> </span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">CASE</span> <span class="cf">WHEN</span> salary <span class="kw">IS</span> <span class="kw">NULL</span> <span class="cf">THEN</span> <span class="dv">0</span> <span class="cf">ELSE</span> <span class="dv">1</span> <span class="cf">END</span>, salary <span class="kw">ASC</span>;</span></code></pre></div>
 <h3 id="mermaid-图跨数据库行为对比">Mermaid 图：跨数据库行为对比</h3>
-<pre class="mermaid"><code>pie
+<pre class="mermaid">pie
     title NULL 排序默认行为 (ASC)
     &quot;PostgreSQL: NULL 在后&quot; : 25
     &quot;MySQL: NULL 在前&quot; : 25
     &quot;Oracle: NULL 在后&quot; : 25
-    &quot;SQL Server: NULL 在前&quot; : 25</code></pre>
+    &quot;SQL Server: NULL 在前&quot; : 25</pre>
 <h3 id="问题分析-1">问题分析</h3>
 <ul>
 <li><strong>陷阱</strong>：跨数据库迁移时未显式指定 <code>NULL</code>
@@ -140,9 +220,9 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a hr
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>sorted_employees <span class="op">=</span> <span class="bu">sorted</span>(employees, key<span class="op">=</span><span class="kw">lambda</span> x: (x.salary <span class="kw">is</span> <span class="va">None</span>, x.salary))</span></code></pre></div>
 <h3 id="mermaid-图java-与-python-的-null-排序逻辑">Mermaid 图：Java 与
 Python 的 NULL 排序逻辑</h3>
-<pre class="mermaid"><code>flowchart LR
+<pre class="mermaid">flowchart LR
     Java --&gt;|NULL 抛出异常| A[需显式指定 nullsFirst/NullsLast]
-    Python --&gt;|NULL 视为最小值| B[需元组排序 (is None, value)]</code></pre>
+    Python --&gt;|NULL 视为最小值| B[需元组排序 (is None, value)]</pre>
 <h3 id="问题分析-2">问题分析</h3>
 <ul>
 <li><strong>误区</strong>：认为数据库和应用层 <code>NULL</code>
@@ -171,11 +251,11 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="at">@Query</span><span class="op">(</span><span class="st">&quot;SELECT e FROM Employee e ORDER BY CASE WHEN e.salary IS NULL THEN 1 ELSE 0 END, e.salary ASC&quot;</span><span class="op">)</span></span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="bu">List</span><span class="op">&lt;</span>Employee<span class="op">&gt;</span> <span class="fu">findAllOrderBySalaryNullsFirst</span><span class="op">();</span></span></code></pre></div>
 <h3 id="mermaid-图jpa-排序执行流程">Mermaid 图：JPA 排序执行流程</h3>
-<pre class="mermaid"><code>sequenceDiagram
+<pre class="mermaid">sequenceDiagram
     应用层-&gt;&gt;JPA: 调用 findAll(Sort)
     JPA-&gt;&gt;数据库: 生成 SQL（含 ORDER BY）
     数据库-&gt;&gt;JPA: 返回结果（NULL 按默认行为排序）
-    JPA-&gt;&gt;应用层: 返回实体列表</code></pre>
+    JPA-&gt;&gt;应用层: 返回实体列表</pre>
 <h3 id="问题分析-3">问题分析</h3>
 <ul>
 <li><strong>陷阱</strong>：未在 <code>@Query</code> 中显式处理
@@ -252,6 +332,86 @@ href="https://dev.mysql.com/doc/refman/8.0/en/working-with-null.html">MySQL
 </article>
 
 <script>
+    // Build table of contents
+    function buildTableOfContents() {
+        const postContent = document.getElementById('post-content');
+        const tocContainer = document.getElementById('toc-container');
+        const tocContent = document.getElementById('toc-content');
+
+        if (!postContent || !tocContainer || !tocContent) {
+            return;
+        }
+
+        const headings = postContent.querySelectorAll('h2, h3, h4');
+        if (headings.length === 0) {
+            return;
+        }
+
+        // Assign IDs to headings
+        headings.forEach((heading, index) => {
+            if (!heading.id) {
+                heading.id = `h-${index}`;
+            }
+        });
+
+        // Build TOC items
+        let tocItems = [];
+        headings.forEach((heading) => {
+            const level = parseInt(heading.tagName[1]);
+            const text = heading.textContent.trim();
+            tocItems.push({
+                level: level,
+                id: heading.id,
+                text: text
+            });
+        });
+
+        // Generate TOC HTML
+        let tocHTML = '<ul>';
+        let lastLevel = 1;
+
+        tocItems.forEach((item) => {
+            if (item.level > lastLevel) {
+                for (let i = lastLevel; i < item.level; i++) {
+                    tocHTML += '<ul>';
+                }
+            } else if (item.level < lastLevel) {
+                for (let i = item.level; i < lastLevel; i++) {
+                    tocHTML += '</li></ul>';
+                }
+                tocHTML += '</li>';
+            } else if (lastLevel > 1) {
+                tocHTML += '</li>';
+            }
+
+            tocHTML += `<li><a href="#${item.id}">${item.text}</a>`;
+            lastLevel = item.level;
+        });
+
+        for (let i = 1; i < lastLevel; i++) {
+            tocHTML += '</li></ul>';
+        }
+        if (lastLevel > 1) {
+            tocHTML += '</li>';
+        }
+        tocHTML += '</ul>';
+
+        tocContent.innerHTML = tocHTML;
+        tocContainer.style.display = 'block';
+
+        // Add click handlers to TOC links
+        tocContent.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('href').substring(1);
+                const targetElement = document.getElementById(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    }
+
     // Add copy buttons to code blocks
     function addCopyButtons() {
         const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
@@ -323,8 +483,15 @@ href="https://dev.mysql.com/doc/refman/8.0/en/working-with-null.html">MySQL
         });
     }
 
-    // Initialize copy buttons after content loads
+    // Initialize TOC and copy buttons after content loads
     window.addEventListener('load', function() {
+        buildTableOfContents();
+        addCopyButtons();
+    });
+
+    // Also call buildTableOfContents immediately in case content is already loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        buildTableOfContents();
         addCopyButtons();
     });
 </script>

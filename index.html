@@ -1104,11 +1104,8 @@
                     attachEventListeners();
                     setupBackToTop();
 
-                    // Build TOC and render Mermaid with a small delay to ensure DOM is fully updated
+                    // Re-render Mermaid diagrams with a small delay to ensure DOM is fully updated
                     setTimeout(() => {
-                        injectTableOfContents();
-
-                        // Re-render Mermaid diagrams if library is loaded
                         if (typeof mermaid !== 'undefined') {
                             try {
                                 // Clear the internal cache of rendered diagrams
@@ -1225,131 +1222,6 @@
                     backToTopButton.classList.remove('visible');
                 }
             });
-        }
-
-        // Inject table of contents into article page
-        function injectTableOfContents() {
-            // Get post-content div if it exists
-            const postContent = contentArea.querySelector('.post-content');
-            if (!postContent) {
-                console.log('TOC: No post-content found');
-                return;
-            }
-
-            // Get all headings (h2, h3, h4) from post-content
-            const headings = postContent.querySelectorAll('h2, h3, h4');
-            if (headings.length === 0) {
-                console.log('TOC: No headings found');
-                return;
-            }
-
-            console.log('TOC: Found', headings.length, 'headings, building TOC');
-
-            // Assign IDs to headings if they don't have one
-            headings.forEach((heading, index) => {
-                if (!heading.id) {
-                    heading.id = `h-${index}`;
-                }
-            });
-
-            // Build simple TOC list
-            let tocItems = [];
-            headings.forEach((heading) => {
-                const level = parseInt(heading.tagName[1]); // h2->2, h3->3, h4->4
-                const text = heading.textContent.trim();
-                tocItems.push({
-                    level: level,
-                    id: heading.id,
-                    text: text
-                });
-            });
-
-            // Generate TOC HTML as a simple list
-            let tocHTML = '<ul style="list-style: none; padding: 0; margin: 0;">\n';
-            let lastLevel = 1;
-
-            tocItems.forEach((item) => {
-                // Handle nesting
-                if (item.level > lastLevel) {
-                    for (let i = lastLevel; i < item.level; i++) {
-                        tocHTML += '<ul style="list-style: none; margin: 0; padding-left: 16px;">\n';
-                    }
-                } else if (item.level < lastLevel) {
-                    for (let i = item.level; i < lastLevel; i++) {
-                        tocHTML += '</li>\n</ul>\n';
-                    }
-                    tocHTML += '</li>\n';
-                } else if (lastLevel > 1) {
-                    tocHTML += '</li>\n';
-                }
-
-                tocHTML += `<li style="margin: 8px 0;"><a href="#${item.id}" style="color: var(--secondary-color); text-decoration: none; transition: color 0.2s;">${item.text}</a>`;
-                lastLevel = item.level;
-            });
-
-            // Close remaining tags
-            for (let i = 1; i < lastLevel; i++) {
-                tocHTML += '</li>\n</ul>\n';
-            }
-            if (lastLevel > 1) {
-                tocHTML += '</li>\n';
-            }
-            tocHTML += '</ul>\n';
-
-            // Create TOC panel and insert into article
-            const article = contentArea.querySelector('article');
-            if (article) {
-                // Remove existing TOC if present
-                const existingToc = article.querySelector('.toc-sidebar');
-                if (existingToc) {
-                    existingToc.remove();
-                }
-
-                const tocPanel = document.createElement('div');
-                tocPanel.className = 'toc-sidebar';
-
-                // Calculate header height dynamically
-                const header = document.querySelector('.header');
-                const headerHeight = header ? header.offsetHeight + 20 : 120; // Add 20px gap after header
-
-                tocPanel.style.cssText = `
-                    position: sticky;
-                    top: ${headerHeight}px;
-                    right: 0;
-                    float: right;
-                    width: 280px;
-                    max-height: calc(100vh - ${headerHeight + 20}px);
-                    overflow-y: auto;
-                    margin: 0 0 20px 20px;
-                    padding: 15px;
-                    background: var(--card-bg);
-                    border: 1px solid var(--border-color);
-                    border-radius: 8px;
-                    font-size: 0.9rem;
-                    z-index: 10;
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                `;
-
-                const tocTitle = document.createElement('div');
-                tocTitle.style.cssText = 'font-weight: bold; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 2px solid var(--secondary-color); font-size: 0.95rem;';
-                tocTitle.textContent = '目录';
-
-                const tocContent = document.createElement('div');
-                tocContent.innerHTML = tocHTML;
-
-                tocPanel.appendChild(tocTitle);
-                tocPanel.appendChild(tocContent);
-
-                // Insert at the beginning of article (after header if exists)
-                const articleHeader = article.querySelector('.post-header');
-                if (articleHeader) {
-                    articleHeader.insertAdjacentElement('afterend', tocPanel);
-                } else {
-                    article.insertBefore(tocPanel, article.firstChild);
-                }
-
-                console.log(`TOC: Injected successfully with sticky positioning (top: ${headerHeight}px)`);
-            }
         }
 
         // ==================== HOME BUTTON ====================
