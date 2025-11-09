@@ -855,7 +855,69 @@
             }
 
         }
+
+        /* TABLE OF CONTENTS STYLES */
+        .toc-container {
+            position: fixed;
+            right: 20px;
+            top: 120px;
+            width: 250px;
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            font-size: 0.9rem;
+            z-index: 100;
+            display: none;
+        }
+
+        .toc-container.visible {
+            display: block;
+        }
+
+        :root.dark-mode .toc-container {
+            background: #2a2a2a;
+            border-color: #444;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .toc { list-style: none; padding: 0; margin: 0; }
+        .toc h2 { font-size: 1rem; margin: 0 0 15px 0; padding-bottom: 10px; border-bottom: 1px solid var(--border-color); }
+        .toc ul { list-style: none; padding: 0; margin: 0; }
+        .toc li { margin: 8px 0; padding-left: 15px; }
+        .toc li li { padding-left: 30px; margin: 5px 0; }
+        .toc li li li { padding-left: 45px; margin: 3px 0; }
+        .toc a { color: var(--secondary-color); text-decoration: none; transition: color 0.2s; }
+        .toc a:hover { color: var(--accent-color); }
+        :root.dark-mode .toc a { color: #4a9eff; }
+        :root.dark-mode .toc a:hover { color: #ff6b6b; }
+
+        @media (max-width: 1200px) { .toc-container { display: none !important; } }
+
+        /* MERMAID DIAGRAM STYLES */
+        .mermaid { display: flex; justify-content: center; margin: 20px 0; }
+        .post-content .mermaid { background: var(--card-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); }
+        :root.dark-mode .post-content .mermaid { background: #2a2a2a; border-color: #444; }
+
+        /* TABLE IMPROVEMENTS */
+        .post-content table { table-layout: fixed; }
+        .post-content table { overflow-x: auto; }
+        .post-content th, .post-content td { word-break: break-word; }
+
+        @media (max-width: 768px) {
+            .post-content table { font-size: 0.85rem; }
+            .post-content th, .post-content td { padding: 8px !important; }
+        }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script>
+        if (typeof mermaid !== 'undefined') {
+            mermaid.initialize({ startOnLoad: true, theme: 'default' });
+        }
+    </script>
 </head>
 <body>
     <div class="page-wrapper">
@@ -940,6 +1002,11 @@
             <!-- Content will be loaded here dynamically -->
         </div>
 
+        <!-- TABLE OF CONTENTS -->
+        <div class="toc-container" id="toc-container">
+            <div id="toc-content" class="toc"></div>
+        </div>
+
         <!-- FOOTER -->
         <footer class="footer">
             <p>AI 个人笔记 &copy; 2025 | 所有内容均由 AI 协助生成</p>
@@ -989,6 +1056,11 @@
         async function loadHomepage(pageNum = 1) {
             try {
                 showLoading();
+                // Hide TOC when on homepage
+                const tocContainer = document.getElementById('toc-container');
+                if (tocContainer) {
+                    tocContainer.classList.remove('visible');
+                }
                 const feedUrl = pageNum === 1 ? 'pages/feed-content.html' : `pages/feed-page${pageNum}.html`;
                 const response = await fetch(feedUrl);
                 if (response.ok) {
@@ -1018,6 +1090,13 @@
                     contentArea.classList.add('fade-in');
                     attachEventListeners();
                     setupBackToTop();
+                    buildTableOfContents();
+
+                    // Re-render Mermaid diagrams if library is loaded
+                    if (typeof mermaid !== 'undefined') {
+                        mermaid.contentLoaded();
+                    }
+
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else {
                     contentArea.innerHTML = '<p>无法加载文章</p>';
@@ -1100,6 +1179,77 @@
                     backToTopButton.classList.remove('visible');
                 }
             });
+        }
+
+        // Build table of contents from article headings
+        function buildTableOfContents() {
+            const tocContainer = document.getElementById('toc-container');
+            const tocContent = document.getElementById('toc-content');
+
+            if (!tocContainer || !tocContent) return;
+
+            // Get all headings from the content area (h2, h3, h4)
+            const headings = contentArea.querySelectorAll('h2, h3, h4');
+
+            if (headings.length === 0) {
+                // Hide TOC if no headings
+                tocContainer.classList.remove('visible');
+                return;
+            }
+
+            // Clear previous TOC
+            tocContent.innerHTML = '';
+
+            // Create TOC list
+            const toc = document.createElement('ul');
+            let currentLevel = 0;
+            let currentList = toc;
+            const listStack = [toc];
+
+            headings.forEach((heading, index) => {
+                // Assign ID if not present
+                if (!heading.id) {
+                    heading.id = `heading-${index}`;
+                }
+
+                const level = parseInt(heading.tagName[1]); // h2->2, h3->3, h4->4
+                const text = heading.textContent;
+
+                // Adjust nesting level
+                while (currentLevel < level - 1 && listStack.length > 0) {
+                    const newList = document.createElement('ul');
+                    if (listStack[listStack.length - 1].lastChild) {
+                        listStack[listStack.length - 1].lastChild.appendChild(newList);
+                    } else {
+                        const li = document.createElement('li');
+                        li.appendChild(newList);
+                        listStack[listStack.length - 1].appendChild(li);
+                    }
+                    listStack.push(newList);
+                    currentLevel++;
+                }
+
+                // Reduce nesting level if needed
+                while (currentLevel > level - 1) {
+                    listStack.pop();
+                    currentLevel--;
+                }
+
+                currentLevel = level - 1;
+
+                // Create list item with link
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = `#${heading.id}`;
+                a.textContent = text;
+                li.appendChild(a);
+                listStack[listStack.length - 1].appendChild(li);
+            });
+
+            tocContent.appendChild(toc);
+
+            // Show TOC container
+            tocContainer.classList.add('visible');
         }
 
         backToTopButton.addEventListener('click', (e) => {
