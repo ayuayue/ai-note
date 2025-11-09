@@ -200,11 +200,9 @@ async function main() {
 
                         // Also generate article fragment for SPA
                         try {
-                            // Extract just the HTML content for the fragment
-                            const contentMatch = htmlContent.match(/<div class="post-content"[^>]*>([\s\S]*?)<\/div>/);
-                            const contentHtml = contentMatch ? contentMatch[1] : htmlContent;
-
-                            const fragmentContent = generateArticleDetailFragment(contentHtml, title, date, monthDir);
+                            // Don't extract content - just use the full pandoc output as the fragment content
+                            // This ensures all content is preserved
+                            const fragmentContent = generateArticleDetailFragment(htmlContent, title, date, monthDir);
                             const fragmentPath = path.join(docsMonthPath, htmlFilename.replace('.html', '-fragment.html'));
                             fs.writeFileSync(fragmentPath, fragmentContent, 'utf8');
                             console.log(`Generated fragment ${monthDir}/${htmlFilename.replace('.html', '-fragment.html')}`);
