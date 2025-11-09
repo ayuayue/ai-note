@@ -928,7 +928,8 @@
                 startOnLoad: false,
                 theme: 'default',
                 securityLevel: 'loose',
-                logLevel: 'debug'
+                logLevel: 'info',
+                maxTextSize: 90000
             });
         }
     </script>
@@ -1130,8 +1131,18 @@
                     if (typeof mermaid !== 'undefined') {
                         // Use setTimeout to ensure DOM is fully updated before Mermaid processes
                         setTimeout(() => {
-                            mermaid.contentLoaded();
-                        }, 100);
+                            try {
+                                // Clear the internal cache of rendered diagrams
+                                if (mermaid.contentLoaded) {
+                                    mermaid.contentLoaded();
+                                } else if (mermaid.run) {
+                                    // Newer versions use mermaid.run()
+                                    mermaid.run();
+                                }
+                            } catch (error) {
+                                console.warn('Mermaid rendering error:', error);
+                            }
+                        }, 300);
                     }
 
                     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1226,7 +1237,13 @@
             if (!tocContainer || !tocContent) return;
 
             // Get all headings from the content area (h2, h3, h4)
-            const headings = contentArea.querySelectorAll('h2, h3, h4');
+            // First try to get them from post-content div if it exists
+            let headings = contentArea.querySelectorAll('#post-content h2, #post-content h3, #post-content h4');
+
+            // If no headings found in post-content, try entire content area
+            if (headings.length === 0) {
+                headings = contentArea.querySelectorAll('h2, h3, h4');
+            }
 
             if (headings.length === 0) {
                 // Hide TOC if no headings
@@ -1234,14 +1251,9 @@
                 return;
             }
 
-            // Clear previous TOC
-            tocContent.innerHTML = '';
-
-            // Create TOC list
-            const toc = document.createElement('ul');
-            let currentLevel = 0;
-            let currentList = toc;
-            const listStack = [toc];
+            // Build TOC using HTML string
+            let tocHTML = '<ul class="toc">';
+            let lastLevel = 0;
 
             headings.forEach((heading, index) => {
                 // Assign ID if not present
@@ -1252,38 +1264,39 @@
                 const level = parseInt(heading.tagName[1]); // h2->2, h3->3, h4->4
                 const text = heading.textContent;
 
-                // Adjust nesting level
-                while (currentLevel < level - 1 && listStack.length > 0) {
-                    const newList = document.createElement('ul');
-                    if (listStack[listStack.length - 1].lastChild) {
-                        listStack[listStack.length - 1].lastChild.appendChild(newList);
-                    } else {
-                        const li = document.createElement('li');
-                        li.appendChild(newList);
-                        listStack[listStack.length - 1].appendChild(li);
+                // Close previous levels if necessary
+                if (level < lastLevel) {
+                    for (let i = lastLevel; i > level; i--) {
+                        tocHTML += '</ul></li>';
                     }
-                    listStack.push(newList);
-                    currentLevel++;
                 }
 
-                // Reduce nesting level if needed
-                while (currentLevel > level - 1) {
-                    listStack.pop();
-                    currentLevel--;
+                // Open new levels if necessary
+                if (level > lastLevel) {
+                    for (let i = lastLevel; i < level; i++) {
+                        tocHTML += '<li><ul class="toc">';
+                    }
+                } else if (lastLevel > 0) {
+                    tocHTML += '</li>';
                 }
 
-                currentLevel = level - 1;
-
-                // Create list item with link
-                const li = document.createElement('li');
-                const a = document.createElement('a');
-                a.href = `#${heading.id}`;
-                a.textContent = text;
-                li.appendChild(a);
-                listStack[listStack.length - 1].appendChild(li);
+                // Add the item
+                tocHTML += `<li><a href="#${heading.id}">${text}</a>`;
+                lastLevel = level;
             });
 
-            tocContent.appendChild(toc);
+            // Close remaining open levels
+            if (lastLevel > 0) {
+                for (let i = lastLevel; i > 0; i--) {
+                    tocHTML += '</li>';
+                    if (i > 1) tocHTML += '</ul></li>';
+                }
+            }
+
+            tocHTML += '</ul>';
+
+            // Set the TOC content
+            tocContent.innerHTML = tocHTML;
 
             // Show TOC container
             tocContainer.classList.add('visible');
