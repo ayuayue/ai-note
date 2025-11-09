@@ -200,9 +200,28 @@ async function main() {
 
                         // Also generate article fragment for SPA
                         try {
-                            // Don't extract content - just use the full pandoc output as the fragment content
-                            // This ensures all content is preserved
-                            const fragmentContent = generateArticleDetailFragment(htmlContent, title, date, monthDir);
+                            // Extract the post-content div content from the full HTML
+                            // This is what will be displayed in the SPA
+                            let contentToUse = htmlContent;
+
+                            // Try to find and extract post-content div
+                            const postContentRegex = /<div[^>]*class="post-content"[^>]*id="post-content"[^>]*>([\s\S]*?)<\/div>\s*<\/article>/;
+                            const postMatch = htmlContent.match(postContentRegex);
+
+                            if (postMatch) {
+                                // Found post-content - use only its content
+                                contentToUse = postMatch[1];
+                                console.log(`Extracted post-content, size: ${contentToUse.length}`);
+                            } else {
+                                // Fallback: try to get everything after body tag
+                                const bodyMatch = htmlContent.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+                                if (bodyMatch) {
+                                    contentToUse = bodyMatch[1];
+                                    console.log(`Using body content, size: ${contentToUse.length}`);
+                                }
+                            }
+
+                            const fragmentContent = generateArticleDetailFragment(contentToUse, title, date, monthDir);
                             const fragmentPath = path.join(docsMonthPath, htmlFilename.replace('.html', '-fragment.html'));
                             fs.writeFileSync(fragmentPath, fragmentContent, 'utf8');
                             console.log(`Generated fragment ${monthDir}/${htmlFilename.replace('.html', '-fragment.html')}`);

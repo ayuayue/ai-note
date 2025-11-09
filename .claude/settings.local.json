@@ -52,7 +52,8 @@
       "mcp__chrome-devtools__get_console_message",
       "mcp__chrome-devtools__press_key",
       "Bash(tail:*)",
-      "Bash(index.html)"
+      "Bash(index.html)",
+      "Bash(npm run convert-md-pandoc:*)"
     ],
     "defaultMode": "acceptEdits"
   }
