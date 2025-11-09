@@ -49,7 +49,9 @@
       "Bash(cat:*)",
       "mcp__chrome-devtools__list_network_requests",
       "Bash(find:*)",
-      "mcp__chrome-devtools__get_console_message"
+      "mcp__chrome-devtools__get_console_message",
+      "mcp__chrome-devtools__press_key",
+      "Bash(tail:*)"
     ],
     "defaultMode": "acceptEdits"
   }
