@@ -1,16 +1,18 @@
-<article class="post">
-    <header class="post-header">
-        <h1 class="post-title">Spring StringUtils工具类完全指南：从基础到高级用法</h1>
-        <div class="post-meta">
-            <div class="post-date">2025/10/19</div>
-            <div class="post-category">2025-10</div>
-        </div>
-    </header>
-    <div class="warning">
-        ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
-    </div>
-    <div class="post-content" id="post-content">
-        <h1 id="spring-stringutils工具类完全指南从基础到高级用法">Spring
+<div class="article-layout">
+    <div class="main-content">
+        <article class="post">
+            <header class="post-header">
+                <h1 class="post-title">Spring StringUtils工具类完全指南：从基础到高级用法</h1>
+                <div class="post-meta">
+                    <div class="post-date">2025/10/28</div>
+                    <div class="post-category">2025-10</div>
+                </div>
+            </header>
+            <div class="warning">
+                ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+            </div>
+            <div class="post-content" id="post-content">
+                <h1 id="spring-stringutils工具类完全指南从基础到高级用法">Spring
 StringUtils工具类完全指南：从基础到高级用法</h1>
 <h2 id="开头摘要">开头摘要</h2>
 <p>Spring框架中的<code>StringUtils</code>工具类是一个功能强大的字符串处理工具，提供了丰富且<strong>null安全</strong>的字符串操作方法。本文基于源码分析，全面介绍该类所有方法的用途、实现原理和实际应用场景，帮助开发者提升字符串处理效率和代码健壮性。</p>
@@ -327,8 +329,18 @@ Commons</li>
 <p>Spring
 StringUtils是一个全面、null安全、高性能的字符串工具集，让字符串处理既简洁又健壮。</p>
 
+            </div>
+        </article>
     </div>
-</article>
+    <aside class="toc-sidebar" id="toc-sidebar">
+        <div class="toc-header">
+            <h3>文章目录</h3>
+        </div>
+        <nav class="toc-nav" id="toc-nav">
+            <!-- 目录内容将通过JavaScript自动生成 -->
+        </nav>
+    </aside>
+</div>
 
 <script>
     // Add copy buttons to code blocks
@@ -402,12 +414,135 @@ StringUtils是一个全面、null安全、高性能的字符串工具集，让�
         });
     }
 
-    // Initialize copy buttons after content loads
+    // 生成文章目录
+    function generateTableOfContents() {
+        const postContent = document.getElementById('post-content');
+        const tocNav = document.getElementById('toc-nav');
+        
+        if (!postContent || !tocNav) return;
+        
+        // 查找所有标题元素
+        const headings = postContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        if (headings.length === 0) {
+            // 如果没有标题，隐藏目录
+            document.getElementById('toc-sidebar').style.display = 'none';
+            return;
+        }
+        
+        // 创建目录结构
+        const tocList = document.createElement('ul');
+        tocList.className = 'toc-list';
+        
+        let currentLevel = 1;
+        let currentList = tocList;
+        let listStack = [tocList];
+        
+        headings.forEach((heading, index) => {
+            // 强制为每个标题设置标准化的ID（始终重写现有ID）
+            const normalizedId = 'heading-' + index;
+            heading.id = normalizedId;
+            
+            const level = parseInt(heading.tagName.charAt(1));
+            const title = heading.textContent.trim();
+            
+            // 创建目录项
+            const tocItem = document.createElement('li');
+            tocItem.className = 'toc-item toc-level-' + level;
+            
+            const tocLink = document.createElement('a');
+            tocLink.href = 'javascript:void(0)'; // 避免触发路由
+            tocLink.setAttribute('data-target', heading.id); // 存储目标ID
+            tocLink.textContent = title;
+            tocLink.className = 'toc-link';
+            
+            tocItem.appendChild(tocLink);
+            
+            // 处理层级关系
+            if (level > currentLevel) {
+                // 创建新的子列表
+                const newList = document.createElement('ul');
+                newList.className = 'toc-sublist';
+                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                listStack.push(newList);
+                currentList = newList;
+            } else if (level < currentLevel) {
+                // 返回到上一级
+                while (listStack.length > level) {
+                    listStack.pop();
+                }
+                currentList = listStack[listStack.length - 1];
+            }
+            
+            currentList.appendChild(tocItem);
+            currentLevel = level;
+        });
+        
+        tocNav.appendChild(tocList);
+        
+        // 高亮当前章节
+        highlightCurrentSection();
+        
+        // 滚动监听
+        window.addEventListener('scroll', highlightCurrentSection);
+        
+        // 为目录链接添加点击事件
+        setTimeout(() => {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('data-target');
+                    if (targetId) {
+                        const targetElement = document.getElementById(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'start',
+                                inline: 'nearest'
+                            });
+                        }
+                    }
+                });
+            });
+        }, 200); // 延迟确保目录已生成
+    }
+    
+    // 高亮当前阅读的章节
+    function highlightCurrentSection() {
+        const headings = document.querySelectorAll('.post-content h1, .post-content h2, .post-content h3, .post-content h4, .post-content h5, .post-content h6');
+        const tocLinks = document.querySelectorAll('.toc-link');
+        
+        let currentHeading = null;
+        const scrollPosition = window.pageYOffset + 100;
+        
+        // 找到当前可见的标题
+        for (let i = headings.length - 1; i >= 0; i--) {
+            if (headings[i].offsetTop <= scrollPosition) {
+                currentHeading = headings[i];
+                break;
+            }
+        }
+        
+        // 清除所有活动状态
+        tocLinks.forEach(link => link.classList.remove('active'));
+        
+        // 高亮当前章节
+        if (currentHeading) {
+            const activeLink = document.querySelector('.toc-link[href="#' + currentHeading.id + '"]');
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+        }
+    }
+
+    // Initialize copy buttons and TOC after content loads
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             addCopyButtons();
+            setTimeout(generateTableOfContents, 100); // 延迟生成以确保内容已加载
         });
     } else {
         addCopyButtons();
+        setTimeout(generateTableOfContents, 100);
     }
 </script>

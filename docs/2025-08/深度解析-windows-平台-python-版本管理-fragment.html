@@ -1,16 +1,18 @@
-<article class="post">
-    <header class="post-header">
-        <h1 class="post-title">深度解析-windows-平台-python-版本管理</h1>
-        <div class="post-meta">
-            <div class="post-date">2025/8/24</div>
-            <div class="post-category">2025-08</div>
-        </div>
-    </header>
-    <div class="warning">
-        ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
-    </div>
-    <div class="post-content" id="post-content">
-        <h1 id="windows-平台-python-版本管理">Windows 平台 Python 版本管理</h1>
+<div class="article-layout">
+    <div class="main-content">
+        <article class="post">
+            <header class="post-header">
+                <h1 class="post-title">深度解析-windows-平台-python-版本管理</h1>
+                <div class="post-meta">
+                    <div class="post-date">2025/8/26</div>
+                    <div class="post-category">2025-08</div>
+                </div>
+            </header>
+            <div class="warning">
+                ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+            </div>
+            <div class="post-content" id="post-content">
+                <h1 id="windows-平台-python-版本管理">Windows 平台 Python 版本管理</h1>
 <h2 id="摘要executive-summary">1. 摘要（Executive Summary）</h2>
 <p>本报告旨在深度剖析在 Windows 操作系统中管理多个 Python
 版本的复杂性，并提出 <code>pyenv-win</code>
@@ -45,18 +47,19 @@ Python 版本无缝切换。我们的结论是，<strong><code>pyenv-win</code>
 <code>pyenv</code> 或 Python 安装。</p>
 </blockquote>
 <ol type="1">
-<li><strong>卸载旧的 <code>pyenv</code> (如果通过 Scoop
-安装过)</strong>：
-<code>powershell     scoop uninstall pyenv</code></li>
-<li><strong>卸载系统级的 Python</strong>：检查 Windows
+<li><p><strong>卸载旧的 <code>pyenv</code> (如果通过 Scoop
+安装过)</strong>：</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>scoop uninstall pyenv</span></code></pre></div></li>
+<li><p><strong>卸载系统级的 Python</strong>：检查 Windows
 的“应用和功能”，卸载所有手动安装的 Python 版本。<code>pyenv-win</code>
-将会全权管理它们。</li>
-<li><strong>检查环境变量</strong>：检查系统的 <code>PATH</code>
+将会全权管理它们。</p></li>
+<li><p><strong>检查环境变量</strong>：检查系统的 <code>PATH</code>
 变量，移除任何手动添加的 Python 路径或旧的 <code>pyenv</code> shims
-路径。</li>
-<li><strong>安装 Git</strong>：<code>pyenv-win</code> 需要 Git
+路径。</p></li>
+<li><p><strong>安装 Git</strong>：<code>pyenv-win</code> 需要 Git
 来拉取和更新 Python 的版本定义。请确保 Git 已安装并在 <code>PATH</code>
-中。</li>
+中。</p></li>
 </ol>
 <h3 id="使用-powershell-脚本进行安装">3.2 使用 PowerShell
 脚本进行安装</h3>
@@ -68,9 +71,10 @@ Python 版本无缝切换。我们的结论是，<strong><code>pyenv-win</code>
 <li>在开始菜单搜索 “PowerShell”，右键点击，选择“以管理员身份运行”。</li>
 </ul></li>
 <li><p><strong>执行安装命令</strong>: 将以下命令粘贴到管理员 PowerShell
-窗口中并执行。
-<code>powershell     Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &amp;"./install-pyenv-win.ps1"</code>
-<strong>该命令做了什么？</strong></p>
+窗口中并执行。</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Invoke-WebRequest</span> <span class="op">-</span>UseBasicParsing <span class="op">-</span>Uri <span class="st">&quot;https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1&quot;</span> <span class="op">-</span>OutFile <span class="st">&quot;./install-pyenv-win.ps1&quot;</span><span class="op">;</span> <span class="op">&amp;</span><span class="st">&quot;./install-pyenv-win.ps1&quot;</span></span></code></pre></div>
+<p><strong>该命令做了什么？</strong></p>
 <ul>
 <li><code>Invoke-WebRequest ... -OutFile ...</code>: 从
 <code>pyenv-win</code> 的官方 GitHub 仓库下载最新的安装脚本
@@ -83,8 +87,10 @@ Python 版本无缝切换。我们的结论是，<strong><code>pyenv-win</code>
 安装脚本修改了您的环境变量，但这些更改只对<strong>新打开的</strong>终端窗口生效。请<strong>务必关闭当前的
 PowerShell 窗口，然后重新打开一个新的</strong>。</p></li>
 <li><p><strong>验证安装</strong>: 在<strong>新的</strong> PowerShell
-窗口中，运行以下命令： <code>powershell     pyenv --version</code>
-如果成功，您将看到 <code>pyenv-win</code> 的版本号。</p></li>
+窗口中，运行以下命令：</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pyenv <span class="op">--</span>version</span></code></pre></div>
+<p>如果成功，您将看到 <code>pyenv-win</code> 的版本号。</p></li>
 </ol>
 <h3 id="核心工作流图解">3.3 核心工作流图解</h3>
 <pre class="mermaid">graph TD
@@ -109,19 +115,28 @@ PowerShell 窗口，然后重新打开一个新的</strong>。</p></li>
 <h3 id="日常使用步骤">3.4 日常使用步骤</h3>
 <p>安装成功后，日常使用流程与之前介绍的完全一致，但基础更稳定。</p>
 <ol type="1">
-<li><p><strong>安装 Python 版本</strong>
-<code>powershell     # 第一次安装版本时，最好也在管理员权限的终端中进行     # 以避免我们之前讨论过的 MSI 权限问题     pyenv install 3.10.5     pyenv install 3.11.5</code></p></li>
-<li><p><strong>设置全局/默认版本</strong>
-<code>powershell     pyenv global 3.11.5</code></p></li>
+<li><p><strong>安装 Python 版本</strong></p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 第一次安装版本时，最好也在管理员权限的终端中进行</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 以避免我们之前讨论过的 MSI 权限问题</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>pyenv install <span class="dv">3.10</span><span class="op">.</span><span class="dv">5</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="dt">pyenv</span> install <span class="dv">3.11</span><span class="op">.</span><span class="dv">5</span></span></code></pre></div></li>
+<li><p><strong>设置全局/默认版本</strong></p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>pyenv global <span class="dv">3.11</span><span class="op">.</span><span class="dv">5</span></span></code></pre></div></li>
 <li><p><strong>设置项目局部版本 (核心功能)</strong></p>
-<div class="sourceCode" id="cb2"><pre
-class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cd</span> D<span class="op">:</span>\path\to\your<span class="op">-</span>project</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>pyenv local 3<span class="op">.</span><span class="fu">10</span><span class="op">.</span><span class="fu">5</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 验证自动切换</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>python <span class="op">--</span>version <span class="co"># 应显示 3.10.5</span></span></code></pre></div></li>
-<li><p><strong>结合 <code>venv</code> (最佳实践)</strong>
-<code>powershell     # 在项目目录下     python -m venv .venv     .\.venv\Scripts\Activate.ps1     pip install -r requirements.txt</code></p></li>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cd</span> D<span class="op">:</span>\path\to\your-project</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>pyenv local <span class="dv">3.10</span><span class="op">.</span><span class="dv">5</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 验证自动切换</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>python <span class="op">--</span>version <span class="co"># 应显示 3.10.5</span></span></code></pre></div></li>
+<li><p><strong>结合 <code>venv</code> (最佳实践)</strong></p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 在项目目录下</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>python <span class="op">-</span>m venv <span class="op">.</span><span class="fu">venv</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\Activate<span class="op">.</span><span class="fu">ps1</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>pip install <span class="op">-</span>r requirements<span class="op">.</span><span class="fu">txt</span></span></code></pre></div></li>
 </ol>
 <h2 id="结论与最终建议">4. 结论与最终建议</h2>
 <p><strong>您的判断是正确的</strong>：对于追求稳定性和希望避免潜在问题的开发者来说，放弃
@@ -141,8 +156,18 @@ Windows 平台上的最佳实践。</p>
 <p>这种方法虽然比 <code>scoop install</code>
 多了一两个步骤，但它带来的<strong>稳定性、透明度和可预测性</strong>，将为后续的开发工作节省大量排查问题的时间，是专业开发者应当做出的明智投资。</p>
 
+            </div>
+        </article>
     </div>
-</article>
+    <aside class="toc-sidebar" id="toc-sidebar">
+        <div class="toc-header">
+            <h3>文章目录</h3>
+        </div>
+        <nav class="toc-nav" id="toc-nav">
+            <!-- 目录内容将通过JavaScript自动生成 -->
+        </nav>
+    </aside>
+</div>
 
 <script>
     // Add copy buttons to code blocks
@@ -216,12 +241,135 @@ Windows 平台上的最佳实践。</p>
         });
     }
 
-    // Initialize copy buttons after content loads
+    // 生成文章目录
+    function generateTableOfContents() {
+        const postContent = document.getElementById('post-content');
+        const tocNav = document.getElementById('toc-nav');
+        
+        if (!postContent || !tocNav) return;
+        
+        // 查找所有标题元素
+        const headings = postContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        if (headings.length === 0) {
+            // 如果没有标题，隐藏目录
+            document.getElementById('toc-sidebar').style.display = 'none';
+            return;
+        }
+        
+        // 创建目录结构
+        const tocList = document.createElement('ul');
+        tocList.className = 'toc-list';
+        
+        let currentLevel = 1;
+        let currentList = tocList;
+        let listStack = [tocList];
+        
+        headings.forEach((heading, index) => {
+            // 强制为每个标题设置标准化的ID（始终重写现有ID）
+            const normalizedId = 'heading-' + index;
+            heading.id = normalizedId;
+            
+            const level = parseInt(heading.tagName.charAt(1));
+            const title = heading.textContent.trim();
+            
+            // 创建目录项
+            const tocItem = document.createElement('li');
+            tocItem.className = 'toc-item toc-level-' + level;
+            
+            const tocLink = document.createElement('a');
+            tocLink.href = 'javascript:void(0)'; // 避免触发路由
+            tocLink.setAttribute('data-target', heading.id); // 存储目标ID
+            tocLink.textContent = title;
+            tocLink.className = 'toc-link';
+            
+            tocItem.appendChild(tocLink);
+            
+            // 处理层级关系
+            if (level > currentLevel) {
+                // 创建新的子列表
+                const newList = document.createElement('ul');
+                newList.className = 'toc-sublist';
+                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                listStack.push(newList);
+                currentList = newList;
+            } else if (level < currentLevel) {
+                // 返回到上一级
+                while (listStack.length > level) {
+                    listStack.pop();
+                }
+                currentList = listStack[listStack.length - 1];
+            }
+            
+            currentList.appendChild(tocItem);
+            currentLevel = level;
+        });
+        
+        tocNav.appendChild(tocList);
+        
+        // 高亮当前章节
+        highlightCurrentSection();
+        
+        // 滚动监听
+        window.addEventListener('scroll', highlightCurrentSection);
+        
+        // 为目录链接添加点击事件
+        setTimeout(() => {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('data-target');
+                    if (targetId) {
+                        const targetElement = document.getElementById(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'start',
+                                inline: 'nearest'
+                            });
+                        }
+                    }
+                });
+            });
+        }, 200); // 延迟确保目录已生成
+    }
+    
+    // 高亮当前阅读的章节
+    function highlightCurrentSection() {
+        const headings = document.querySelectorAll('.post-content h1, .post-content h2, .post-content h3, .post-content h4, .post-content h5, .post-content h6');
+        const tocLinks = document.querySelectorAll('.toc-link');
+        
+        let currentHeading = null;
+        const scrollPosition = window.pageYOffset + 100;
+        
+        // 找到当前可见的标题
+        for (let i = headings.length - 1; i >= 0; i--) {
+            if (headings[i].offsetTop <= scrollPosition) {
+                currentHeading = headings[i];
+                break;
+            }
+        }
+        
+        // 清除所有活动状态
+        tocLinks.forEach(link => link.classList.remove('active'));
+        
+        // 高亮当前章节
+        if (currentHeading) {
+            const activeLink = document.querySelector('.toc-link[href="#' + currentHeading.id + '"]');
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+        }
+    }
+
+    // Initialize copy buttons and TOC after content loads
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             addCopyButtons();
+            setTimeout(generateTableOfContents, 100); // 延迟生成以确保内容已加载
         });
     } else {
         addCopyButtons();
+        setTimeout(generateTableOfContents, 100);
     }
 </script>

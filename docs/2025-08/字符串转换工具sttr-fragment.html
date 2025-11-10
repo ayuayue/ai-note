@@ -1,16 +1,18 @@
-<article class="post">
-    <header class="post-header">
-        <h1 class="post-title">字符串转换工具sttr</h1>
-        <div class="post-meta">
-            <div class="post-date">2025/8/29</div>
-            <div class="post-category">2025-08</div>
-        </div>
-    </header>
-    <div class="warning">
-        ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
-    </div>
-    <div class="post-content" id="post-content">
-        <h1 id="字符串转换工具sttr介绍">字符串转换工具sttr介绍</h1>
+<div class="article-layout">
+    <div class="main-content">
+        <article class="post">
+            <header class="post-header">
+                <h1 class="post-title">字符串转换工具sttr</h1>
+                <div class="post-meta">
+                    <div class="post-date">2025/8/26</div>
+                    <div class="post-category">2025-08</div>
+                </div>
+            </header>
+            <div class="warning">
+                ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+            </div>
+            <div class="post-content" id="post-content">
+                <h1 id="字符串转换工具sttr介绍">字符串转换工具sttr介绍</h1>
 <h2 id="摘要executive-summary">1. 摘要（Executive Summary）</h2>
 <p>本报告对 <code>abhimanyu003/sttr</code>
 这一命令行工具进行了深度分析，该工具旨在整合开发者日常工作中高频的字符串编解码、哈希及转换操作。我们的核心发现是，<code>sttr</code>
@@ -62,37 +64,37 @@ macOS 和 Linux
 <col style="width: 33%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th style="text-align: left;">评估维度</th>
 <th style="text-align: left;">传统工作流</th>
 <th style="text-align: left;"><code>sttr</code> 工作流</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>工具集</strong></td>
 <td style="text-align: left;">分散的、多样的命令 (<code>base64</code>,
 <code>md5sum</code>, etc.)</td>
 <td style="text-align: left;"><strong>单一命令</strong>
 (<code>sttr</code>)</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>跨平台性</strong></td>
 <td style="text-align: left;">差 (Windows 平台原生缺失)</td>
 <td style="text-align: left;"><strong>优秀</strong>
 (单一二进制文件全平台通用)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>安全性</strong></td>
 <td style="text-align: left;">依赖在线工具时为<strong>极低</strong></td>
 <td style="text-align: left;"><strong>极高</strong> (完全离线操作)</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>学习曲线</strong></td>
 <td style="text-align: left;">中等 (需记忆多个不同工具的语法)</td>
 <td style="text-align: left;"><strong>低</strong> (语法模式统一)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>脚本集成</strong></td>
 <td style="text-align: left;">复杂 (需处理不同工具的输出格式)</td>
 <td style="text-align: left;"><strong>简单</strong>
@@ -125,32 +127,32 @@ DX。</li>
 功能象限分析</strong></h4>
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th style="text-align: left;">功能分类</th>
 <th style="text-align: left;">核心操作示例</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>编码/解码 (Encoding)</strong></td>
 <td style="text-align: left;"><code>base64</code>, <code>hex</code>,
 <code>binary</code></td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>哈希计算 (Hashing)</strong></td>
 <td style="text-align: left;"><code>md5</code>, <code>sha1</code>,
 <code>sha256</code>, <code>sha512</code></td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>Web 相关 (Web)</strong></td>
 <td style="text-align: left;"><code>url</code>, <code>html</code></td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>大小写转换 (Case)</strong></td>
 <td style="text-align: left;"><code>upper</code>, <code>lower</code>,
 <code>title</code></td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>字符串工具 (String)</strong></td>
 <td style="text-align: left;"><code>reverse</code>, <code>count</code>,
 <code>trim</code></td>
@@ -191,16 +193,17 @@ id="案例二安全分析师的应急响应"><strong>案例二：安全分析师
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
 ”</p>
 <ul>
-<li><strong>旧方法</strong>：复制该字符串，打开 CyberChef
-或在线解码网站，粘贴，解码。这个过程存在数据泄露风险，并中断了在终端中的分析流程。</li>
-<li><strong>sttr 方法</strong>：直接在终端中高亮并管道处理。
-<code>bash     echo "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" | sttr base64 decode</code>
-分析师<strong>无需离开终端即可完成解码</strong>，保持了工作流的连贯性，并确保了数据的绝对安全。</li>
+<li><p><strong>旧方法</strong>：复制该字符串，打开 CyberChef
+或在线解码网站，粘贴，解码。这个过程存在数据泄露风险，并中断了在终端中的分析流程。</p></li>
+<li><p><strong>sttr 方法</strong>：直接在终端中高亮并管道处理。</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c&quot;</span> <span class="kw">|</span> <span class="ex">sttr</span> base64 decode</span></code></pre></div>
+<p>分析师<strong>无需离开终端即可完成解码</strong>，保持了工作流的连贯性，并确保了数据的绝对安全。</p></li>
 </ul>
 <h4 id="工具对比矩阵"><strong>工具对比矩阵</strong></h4>
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th style="text-align: left;">工具</th>
 <th style="text-align: left;">安全性</th>
 <th style="text-align: left;">易用性</th>
@@ -209,28 +212,28 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>sttr</strong></td>
 <td style="text-align: left;"><strong>极高</strong></td>
 <td style="text-align: left;"><strong>高</strong></td>
 <td style="text-align: left;"><strong>极高</strong></td>
 <td style="text-align: left;"><strong>极高</strong></td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>在线工具</strong></td>
 <td style="text-align: left;">极低</td>
 <td style="text-align: left;">高</td>
 <td style="text-align: left;">极高</td>
 <td style="text-align: left;">差</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>原生CLI工具</strong></td>
 <td style="text-align: left;">极高</td>
 <td style="text-align: left;">中</td>
 <td style="text-align: left;">差</td>
 <td style="text-align: left;">高</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>CyberChef (GUI)</strong></td>
 <td style="text-align: left;">极高</td>
 <td style="text-align: left;">中</td>
@@ -304,8 +307,18 @@ href="https://owasp.org/">https://owasp.org/</a></li>
 href="https://golang.org/">https://golang.org/</a></li>
 </ul>
 
+            </div>
+        </article>
     </div>
-</article>
+    <aside class="toc-sidebar" id="toc-sidebar">
+        <div class="toc-header">
+            <h3>文章目录</h3>
+        </div>
+        <nav class="toc-nav" id="toc-nav">
+            <!-- 目录内容将通过JavaScript自动生成 -->
+        </nav>
+    </aside>
+</div>
 
 <script>
     // Add copy buttons to code blocks
@@ -379,12 +392,135 @@ href="https://golang.org/">https://golang.org/</a></li>
         });
     }
 
-    // Initialize copy buttons after content loads
+    // 生成文章目录
+    function generateTableOfContents() {
+        const postContent = document.getElementById('post-content');
+        const tocNav = document.getElementById('toc-nav');
+        
+        if (!postContent || !tocNav) return;
+        
+        // 查找所有标题元素
+        const headings = postContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        if (headings.length === 0) {
+            // 如果没有标题，隐藏目录
+            document.getElementById('toc-sidebar').style.display = 'none';
+            return;
+        }
+        
+        // 创建目录结构
+        const tocList = document.createElement('ul');
+        tocList.className = 'toc-list';
+        
+        let currentLevel = 1;
+        let currentList = tocList;
+        let listStack = [tocList];
+        
+        headings.forEach((heading, index) => {
+            // 强制为每个标题设置标准化的ID（始终重写现有ID）
+            const normalizedId = 'heading-' + index;
+            heading.id = normalizedId;
+            
+            const level = parseInt(heading.tagName.charAt(1));
+            const title = heading.textContent.trim();
+            
+            // 创建目录项
+            const tocItem = document.createElement('li');
+            tocItem.className = 'toc-item toc-level-' + level;
+            
+            const tocLink = document.createElement('a');
+            tocLink.href = 'javascript:void(0)'; // 避免触发路由
+            tocLink.setAttribute('data-target', heading.id); // 存储目标ID
+            tocLink.textContent = title;
+            tocLink.className = 'toc-link';
+            
+            tocItem.appendChild(tocLink);
+            
+            // 处理层级关系
+            if (level > currentLevel) {
+                // 创建新的子列表
+                const newList = document.createElement('ul');
+                newList.className = 'toc-sublist';
+                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                listStack.push(newList);
+                currentList = newList;
+            } else if (level < currentLevel) {
+                // 返回到上一级
+                while (listStack.length > level) {
+                    listStack.pop();
+                }
+                currentList = listStack[listStack.length - 1];
+            }
+            
+            currentList.appendChild(tocItem);
+            currentLevel = level;
+        });
+        
+        tocNav.appendChild(tocList);
+        
+        // 高亮当前章节
+        highlightCurrentSection();
+        
+        // 滚动监听
+        window.addEventListener('scroll', highlightCurrentSection);
+        
+        // 为目录链接添加点击事件
+        setTimeout(() => {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('data-target');
+                    if (targetId) {
+                        const targetElement = document.getElementById(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'start',
+                                inline: 'nearest'
+                            });
+                        }
+                    }
+                });
+            });
+        }, 200); // 延迟确保目录已生成
+    }
+    
+    // 高亮当前阅读的章节
+    function highlightCurrentSection() {
+        const headings = document.querySelectorAll('.post-content h1, .post-content h2, .post-content h3, .post-content h4, .post-content h5, .post-content h6');
+        const tocLinks = document.querySelectorAll('.toc-link');
+        
+        let currentHeading = null;
+        const scrollPosition = window.pageYOffset + 100;
+        
+        // 找到当前可见的标题
+        for (let i = headings.length - 1; i >= 0; i--) {
+            if (headings[i].offsetTop <= scrollPosition) {
+                currentHeading = headings[i];
+                break;
+            }
+        }
+        
+        // 清除所有活动状态
+        tocLinks.forEach(link => link.classList.remove('active'));
+        
+        // 高亮当前章节
+        if (currentHeading) {
+            const activeLink = document.querySelector('.toc-link[href="#' + currentHeading.id + '"]');
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+        }
+    }
+
+    // Initialize copy buttons and TOC after content loads
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             addCopyButtons();
+            setTimeout(generateTableOfContents, 100); // 延迟生成以确保内容已加载
         });
     } else {
         addCopyButtons();
+        setTimeout(generateTableOfContents, 100);
     }
 </script>

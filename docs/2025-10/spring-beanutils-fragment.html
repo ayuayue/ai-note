@@ -1,16 +1,18 @@
-<article class="post">
-    <header class="post-header">
-        <h1 class="post-title">Spring BeanUtils完全指南：优雅实现JavaBean属性复制与映射</h1>
-        <div class="post-meta">
-            <div class="post-date">2025/10/19</div>
-            <div class="post-category">2025-10</div>
-        </div>
-    </header>
-    <div class="warning">
-        ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
-    </div>
-    <div class="post-content" id="post-content">
-        <h1 id="spring-beanutils完全指南优雅实现javabean属性复制与映射">Spring
+<div class="article-layout">
+    <div class="main-content">
+        <article class="post">
+            <header class="post-header">
+                <h1 class="post-title">Spring BeanUtils完全指南：优雅实现JavaBean属性复制与映射</h1>
+                <div class="post-meta">
+                    <div class="post-date">2025/10/28</div>
+                    <div class="post-category">2025-10</div>
+                </div>
+            </header>
+            <div class="warning">
+                ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+            </div>
+            <div class="post-content" id="post-content">
+                <h1 id="spring-beanutils完全指南优雅实现javabean属性复制与映射">Spring
 BeanUtils完全指南：优雅实现JavaBean属性复制与映射</h1>
 <h2 id="开头摘要">开头摘要</h2>
 <p>在Java企业级开发中，对象之间的属性复制是极其常见的操作。Spring框架提供的<code>BeanUtils</code>工具类通过反射机制简化了这一过程，大幅提升了开发效率。本文将深入解析Spring
@@ -37,29 +39,29 @@ BeanUtils相比，Spring版本具有<strong>更高的性能</strong>和<strong>�
 BeanUtils的对比</h3>
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th>特性</th>
 <th>Spring BeanUtils</th>
 <th>Apache Commons BeanUtils</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>性能</td>
 <td>更优（反射优化）</td>
 <td>相对较低</td>
 </tr>
-<tr class="even">
+<tr>
 <td>依赖</td>
 <td>无额外依赖（Spring核心包含）</td>
 <td>需要单独引入</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>类型安全</td>
 <td>更好的类型检查</td>
 <td>相对宽松</td>
 </tr>
-<tr class="even">
+<tr>
 <td>功能范围</td>
 <td>专注于核心功能</td>
 <td>功能更全面</td>
@@ -369,8 +371,18 @@ BeanUtils是一个功能强大且实用的工具类，通过合理使用可以�
 <p>Spring
 BeanUtils通过反射机制实现对象属性复制，让DTO转换和数据绑定变得简单高效，是Spring开发者必备的工具类之一。</p>
 
+            </div>
+        </article>
     </div>
-</article>
+    <aside class="toc-sidebar" id="toc-sidebar">
+        <div class="toc-header">
+            <h3>文章目录</h3>
+        </div>
+        <nav class="toc-nav" id="toc-nav">
+            <!-- 目录内容将通过JavaScript自动生成 -->
+        </nav>
+    </aside>
+</div>
 
 <script>
     // Add copy buttons to code blocks
@@ -444,12 +456,135 @@ BeanUtils通过反射机制实现对象属性复制，让DTO转换和数据绑�
         });
     }
 
-    // Initialize copy buttons after content loads
+    // 生成文章目录
+    function generateTableOfContents() {
+        const postContent = document.getElementById('post-content');
+        const tocNav = document.getElementById('toc-nav');
+        
+        if (!postContent || !tocNav) return;
+        
+        // 查找所有标题元素
+        const headings = postContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        if (headings.length === 0) {
+            // 如果没有标题，隐藏目录
+            document.getElementById('toc-sidebar').style.display = 'none';
+            return;
+        }
+        
+        // 创建目录结构
+        const tocList = document.createElement('ul');
+        tocList.className = 'toc-list';
+        
+        let currentLevel = 1;
+        let currentList = tocList;
+        let listStack = [tocList];
+        
+        headings.forEach((heading, index) => {
+            // 强制为每个标题设置标准化的ID（始终重写现有ID）
+            const normalizedId = 'heading-' + index;
+            heading.id = normalizedId;
+            
+            const level = parseInt(heading.tagName.charAt(1));
+            const title = heading.textContent.trim();
+            
+            // 创建目录项
+            const tocItem = document.createElement('li');
+            tocItem.className = 'toc-item toc-level-' + level;
+            
+            const tocLink = document.createElement('a');
+            tocLink.href = 'javascript:void(0)'; // 避免触发路由
+            tocLink.setAttribute('data-target', heading.id); // 存储目标ID
+            tocLink.textContent = title;
+            tocLink.className = 'toc-link';
+            
+            tocItem.appendChild(tocLink);
+            
+            // 处理层级关系
+            if (level > currentLevel) {
+                // 创建新的子列表
+                const newList = document.createElement('ul');
+                newList.className = 'toc-sublist';
+                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                listStack.push(newList);
+                currentList = newList;
+            } else if (level < currentLevel) {
+                // 返回到上一级
+                while (listStack.length > level) {
+                    listStack.pop();
+                }
+                currentList = listStack[listStack.length - 1];
+            }
+            
+            currentList.appendChild(tocItem);
+            currentLevel = level;
+        });
+        
+        tocNav.appendChild(tocList);
+        
+        // 高亮当前章节
+        highlightCurrentSection();
+        
+        // 滚动监听
+        window.addEventListener('scroll', highlightCurrentSection);
+        
+        // 为目录链接添加点击事件
+        setTimeout(() => {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('data-target');
+                    if (targetId) {
+                        const targetElement = document.getElementById(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'start',
+                                inline: 'nearest'
+                            });
+                        }
+                    }
+                });
+            });
+        }, 200); // 延迟确保目录已生成
+    }
+    
+    // 高亮当前阅读的章节
+    function highlightCurrentSection() {
+        const headings = document.querySelectorAll('.post-content h1, .post-content h2, .post-content h3, .post-content h4, .post-content h5, .post-content h6');
+        const tocLinks = document.querySelectorAll('.toc-link');
+        
+        let currentHeading = null;
+        const scrollPosition = window.pageYOffset + 100;
+        
+        // 找到当前可见的标题
+        for (let i = headings.length - 1; i >= 0; i--) {
+            if (headings[i].offsetTop <= scrollPosition) {
+                currentHeading = headings[i];
+                break;
+            }
+        }
+        
+        // 清除所有活动状态
+        tocLinks.forEach(link => link.classList.remove('active'));
+        
+        // 高亮当前章节
+        if (currentHeading) {
+            const activeLink = document.querySelector('.toc-link[href="#' + currentHeading.id + '"]');
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+        }
+    }
+
+    // Initialize copy buttons and TOC after content loads
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             addCopyButtons();
+            setTimeout(generateTableOfContents, 100); // 延迟生成以确保内容已加载
         });
     } else {
         addCopyButtons();
+        setTimeout(generateTableOfContents, 100);
     }
 </script>

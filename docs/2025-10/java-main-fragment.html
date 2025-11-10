@@ -1,16 +1,18 @@
-<article class="post">
-    <header class="post-header">
-        <h1 class="post-title">Java中的多个Main方法：解构项目入口与依赖共享</h1>
-        <div class="post-meta">
-            <div class="post-date">2025/10/31</div>
-            <div class="post-category">2025-10</div>
-        </div>
-    </header>
-    <div class="warning">
-        ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
-    </div>
-    <div class="post-content" id="post-content">
-        <h1
+<div class="article-layout">
+    <div class="main-content">
+        <article class="post">
+            <header class="post-header">
+                <h1 class="post-title">Java中的多个Main方法：解构项目入口与依赖共享</h1>
+                <div class="post-meta">
+                    <div class="post-date">2025/10/31</div>
+                    <div class="post-category">2025-10</div>
+                </div>
+            </header>
+            <div class="warning">
+                ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+            </div>
+            <div class="post-content" id="post-content">
+                <h1
 id="java中的多个main方法解构项目入口与依赖共享">Java中的多个Main方法：解构项目入口与依赖共享</h1>
 <h2 id="开头摘要">开头摘要</h2>
 <p>本文深入探讨了Java项目中关于<code>main</code>方法的两个核心问题：一个项目能否拥有多个<code>main</code>方法，以及这些方法如何共享依赖。文章旨在帮助Java初学者和中级开发者彻底理解程序入口的本质、JVM的执行机制以及类路径的共享原理，从而更灵活地组织项目结构、进行代码测试和实现多功能启动模式。</p>
@@ -243,7 +245,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="
 class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout<span class="op"> &lt;&lt;</span> <span class="st">&quot;Hello, World! (唯一的入口)&quot;</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">&quot;Hello, World! (唯一的入口)&quot;</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p><strong>Go</strong></p>
@@ -276,7 +278,7 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a h
 <col style="width: 25%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th style="text-align: left;">语言</th>
 <th style="text-align: left;">入口机制</th>
 <th style="text-align: left;">优点</th>
@@ -284,26 +286,26 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a h
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>Java</strong></td>
 <td style="text-align: left;">类中的静态方法</td>
 <td style="text-align: left;">面向对象，高度灵活，支持多入口</td>
 <td style="text-align: left;">对于简单脚本略显繁琐</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>C/C++</strong></td>
 <td style="text-align: left;">全局函数</td>
 <td style="text-align: left;">简单，性能高</td>
 <td
 style="text-align: left;">不够灵活，难以在一个项目中组织多个可执行程序</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>Go</strong></td>
 <td style="text-align: left;"><code>main</code>包中的函数</td>
 <td style="text-align: left;">与模块化结合良好，编译部署简单</td>
 <td style="text-align: left;">依赖包结构，不如Java类级别灵活</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>Python</strong></td>
 <td style="text-align: left;">脚本约定</td>
 <td style="text-align: left;">极其灵活，代码复用性强</td>
@@ -441,8 +443,18 @@ Boot Reference Documentation - Spring Application</a></li>
 <h3 id="一句话记忆">8. 一句话记忆</h3>
 <p><strong>一个项目多个<code>main</code>，类是归属JVM选；依赖共享类路径，入口灵活用途宽。</strong></p>
 
+            </div>
+        </article>
     </div>
-</article>
+    <aside class="toc-sidebar" id="toc-sidebar">
+        <div class="toc-header">
+            <h3>文章目录</h3>
+        </div>
+        <nav class="toc-nav" id="toc-nav">
+            <!-- 目录内容将通过JavaScript自动生成 -->
+        </nav>
+    </aside>
+</div>
 
 <script>
     // Add copy buttons to code blocks
@@ -516,12 +528,135 @@ Boot Reference Documentation - Spring Application</a></li>
         });
     }
 
-    // Initialize copy buttons after content loads
+    // 生成文章目录
+    function generateTableOfContents() {
+        const postContent = document.getElementById('post-content');
+        const tocNav = document.getElementById('toc-nav');
+        
+        if (!postContent || !tocNav) return;
+        
+        // 查找所有标题元素
+        const headings = postContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        if (headings.length === 0) {
+            // 如果没有标题，隐藏目录
+            document.getElementById('toc-sidebar').style.display = 'none';
+            return;
+        }
+        
+        // 创建目录结构
+        const tocList = document.createElement('ul');
+        tocList.className = 'toc-list';
+        
+        let currentLevel = 1;
+        let currentList = tocList;
+        let listStack = [tocList];
+        
+        headings.forEach((heading, index) => {
+            // 强制为每个标题设置标准化的ID（始终重写现有ID）
+            const normalizedId = 'heading-' + index;
+            heading.id = normalizedId;
+            
+            const level = parseInt(heading.tagName.charAt(1));
+            const title = heading.textContent.trim();
+            
+            // 创建目录项
+            const tocItem = document.createElement('li');
+            tocItem.className = 'toc-item toc-level-' + level;
+            
+            const tocLink = document.createElement('a');
+            tocLink.href = 'javascript:void(0)'; // 避免触发路由
+            tocLink.setAttribute('data-target', heading.id); // 存储目标ID
+            tocLink.textContent = title;
+            tocLink.className = 'toc-link';
+            
+            tocItem.appendChild(tocLink);
+            
+            // 处理层级关系
+            if (level > currentLevel) {
+                // 创建新的子列表
+                const newList = document.createElement('ul');
+                newList.className = 'toc-sublist';
+                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                listStack.push(newList);
+                currentList = newList;
+            } else if (level < currentLevel) {
+                // 返回到上一级
+                while (listStack.length > level) {
+                    listStack.pop();
+                }
+                currentList = listStack[listStack.length - 1];
+            }
+            
+            currentList.appendChild(tocItem);
+            currentLevel = level;
+        });
+        
+        tocNav.appendChild(tocList);
+        
+        // 高亮当前章节
+        highlightCurrentSection();
+        
+        // 滚动监听
+        window.addEventListener('scroll', highlightCurrentSection);
+        
+        // 为目录链接添加点击事件
+        setTimeout(() => {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('data-target');
+                    if (targetId) {
+                        const targetElement = document.getElementById(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'start',
+                                inline: 'nearest'
+                            });
+                        }
+                    }
+                });
+            });
+        }, 200); // 延迟确保目录已生成
+    }
+    
+    // 高亮当前阅读的章节
+    function highlightCurrentSection() {
+        const headings = document.querySelectorAll('.post-content h1, .post-content h2, .post-content h3, .post-content h4, .post-content h5, .post-content h6');
+        const tocLinks = document.querySelectorAll('.toc-link');
+        
+        let currentHeading = null;
+        const scrollPosition = window.pageYOffset + 100;
+        
+        // 找到当前可见的标题
+        for (let i = headings.length - 1; i >= 0; i--) {
+            if (headings[i].offsetTop <= scrollPosition) {
+                currentHeading = headings[i];
+                break;
+            }
+        }
+        
+        // 清除所有活动状态
+        tocLinks.forEach(link => link.classList.remove('active'));
+        
+        // 高亮当前章节
+        if (currentHeading) {
+            const activeLink = document.querySelector('.toc-link[href="#' + currentHeading.id + '"]');
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+        }
+    }
+
+    // Initialize copy buttons and TOC after content loads
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             addCopyButtons();
+            setTimeout(generateTableOfContents, 100); // 延迟生成以确保内容已加载
         });
     } else {
         addCopyButtons();
+        setTimeout(generateTableOfContents, 100);
     }
 </script>

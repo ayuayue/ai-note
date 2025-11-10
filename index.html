@@ -918,18 +918,109 @@
 
         }
 
-        /* TOC SIDEBAR STYLES */
-        .toc-sidebar {
-            /* Styles set via inline CSS in JavaScript */
+        /* ARTICLE LAYOUT WITH TOC */
+        .article-layout {
+            display: flex;
+            gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
         }
 
-        .toc-sidebar a {
+        .main-content {
+            flex: 1;
+            min-width: 0; /* Prevents flex item from growing beyond container */
+        }
+
+        /* TOC SIDEBAR STYLES */
+        .toc-sidebar {
+            width: 280px;
+            flex-shrink: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px 20px;
+            position: sticky;
+            top: 30px;
+            max-height: calc(100vh - 60px);
+            overflow-y: auto;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.06);
+        }
+
+        .toc-header h3 {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            margin: 0 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+            font-weight: 600;
+        }
+
+        .toc-list {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .toc-item {
+            margin: 0;
+            padding: 0;
+        }
+
+        .toc-link {
+            display: block;
+            padding: 8px 12px;
+            color: var(--text-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            border-radius: 6px;
+            transition: all 0.2s ease;
             font-weight: 500;
         }
 
-        .toc-sidebar a:hover {
-            color: var(--accent-color) !important;
-            text-decoration: underline;
+        .toc-link:hover {
+            color: var(--secondary-color);
+            background-color: var(--hover-color);
+            text-decoration: none;
+        }
+
+        .toc-link.active {
+            color: var(--secondary-color);
+            background-color: rgba(52, 152, 219, 0.1);
+            border-left: 3px solid var(--secondary-color);
+            font-weight: 600;
+        }
+
+        .toc-level-1 .toc-link {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .toc-level-2 {
+            margin-left: 0;
+        }
+
+        .toc-level-3 {
+            margin-left: 15px;
+        }
+
+        .toc-level-4 {
+            margin-left: 30px;
+        }
+
+        .toc-level-5 {
+            margin-left: 45px;
+        }
+
+        .toc-level-6 {
+            margin-left: 60px;
+        }
+
+        .toc-sublist {
+            list-style: none;
+            margin: 5px 0 0 0;
+            padding: 0;
         }
 
         /* Dark mode support for scrollbar */
@@ -952,8 +1043,17 @@
 
         /* Hide TOC on mobile and tablet devices */
         @media (max-width: 1200px) {
+            .article-layout {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
             .toc-sidebar {
-                display: none !important;
+                width: 100%;
+                position: relative;
+                top: 0;
+                max-height: none;
+                order: -1; /* Move TOC to top on mobile */
             }
         }
 
