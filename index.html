@@ -1101,6 +1101,14 @@
                         homeBtn.style.display = 'flex';
                     }
 
+                    // Execute scripts from loaded content
+                    const scripts = contentArea.querySelectorAll('script');
+                    scripts.forEach(script => {
+                        const newScript = document.createElement('script');
+                        newScript.textContent = script.textContent;
+                        document.body.appendChild(newScript);
+                    });
+
                     attachEventListeners();
                     setupBackToTop();
 

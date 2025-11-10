@@ -596,13 +596,17 @@ Spring 应用具有重要意义。</p>
         const tocContent = document.getElementById('toc-content');
 
         if (!postContent || !tocContainer || !tocContent) {
+            console.log('TOC: Elements not found');
             return;
         }
 
         const headings = postContent.querySelectorAll('h2, h3, h4');
         if (headings.length === 0) {
+            console.log('TOC: No headings found');
             return;
         }
+
+        console.log('TOC: Building with', headings.length, 'headings');
 
         // Assign IDs to headings
         headings.forEach((heading, index) => {
@@ -655,6 +659,7 @@ Spring 应用具有重要意义。</p>
 
         tocContent.innerHTML = tocHTML;
         tocContainer.style.display = 'block';
+        console.log('TOC: Generated successfully');
 
         // Add click handlers to TOC links
         tocContent.querySelectorAll('a').forEach(link => {
@@ -741,14 +746,14 @@ Spring 应用具有重要意义。</p>
     }
 
     // Initialize TOC and copy buttons after content loads
-    window.addEventListener('load', function() {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            buildTableOfContents();
+            addCopyButtons();
+        });
+    } else {
+        // If script is loaded after DOM is ready (e.g., dynamically loaded)
         buildTableOfContents();
         addCopyButtons();
-    });
-
-    // Also call buildTableOfContents immediately in case content is already loaded
-    document.addEventListener('DOMContentLoaded', function() {
-        buildTableOfContents();
-        addCopyButtons();
-    });
+    }
 </script>

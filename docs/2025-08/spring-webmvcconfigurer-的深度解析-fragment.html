@@ -545,13 +545,17 @@ CORS），如果不同的配置类为<strong>完全相同的路径模式</strong
         const tocContent = document.getElementById('toc-content');
 
         if (!postContent || !tocContainer || !tocContent) {
+            console.log('TOC: Elements not found');
             return;
         }
 
         const headings = postContent.querySelectorAll('h2, h3, h4');
         if (headings.length === 0) {
+            console.log('TOC: No headings found');
             return;
         }
+
+        console.log('TOC: Building with', headings.length, 'headings');
 
         // Assign IDs to headings
         headings.forEach((heading, index) => {
@@ -604,6 +608,7 @@ CORS），如果不同的配置类为<strong>完全相同的路径模式</strong
 
         tocContent.innerHTML = tocHTML;
         tocContainer.style.display = 'block';
+        console.log('TOC: Generated successfully');
 
         // Add click handlers to TOC links
         tocContent.querySelectorAll('a').forEach(link => {
@@ -690,14 +695,14 @@ CORS），如果不同的配置类为<strong>完全相同的路径模式</strong
     }
 
     // Initialize TOC and copy buttons after content loads
-    window.addEventListener('load', function() {
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            buildTableOfContents();
+            addCopyButtons();
+        });
+    } else {
+        // If script is loaded after DOM is ready (e.g., dynamically loaded)
         buildTableOfContents();
         addCopyButtons();
-    });
-
-    // Also call buildTableOfContents immediately in case content is already loaded
-    document.addEventListener('DOMContentLoaded', function() {
-        buildTableOfContents();
-        addCopyButtons();
-    });
+    }
 </script>
