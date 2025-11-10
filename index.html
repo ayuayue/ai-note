@@ -56,7 +56,7 @@
         }
 
         /* HEADER STYLES - Persistent across all pages */
-        .header {
+        header.header {
             text-align: center;
             padding: 40px 20px 30px;
             background: linear-gradient(135deg, #8F94A8 0%, #B74A43 50%, #CE3321 100%);
@@ -67,7 +67,7 @@
             flex-shrink: 0;
         }
 
-        .header::before {
+        header.header::before {
             content: '';
             position: absolute;
             top: -50%;
@@ -78,7 +78,7 @@
             border-radius: 50%;
         }
 
-        .header::after {
+        header.header::after {
             content: '';
             position: absolute;
             bottom: -30%;
@@ -128,7 +128,7 @@
             object-fit: contain;
         }
 
-        .header h1 {
+        header.header h1 {
             color: #ffffff;
             font-size: 2.5rem;
             margin-bottom: 0;
@@ -721,17 +721,36 @@
             border: 1px solid #3a3a3a;
         }
 
-        .post-content th {
-            background-color: #f5f5f5;
-            color: #2c3e50;
+        .post-content th,
+        .post-content thead th,
+        .post table thead th {
+            background-color: #f5f5f5 !important;
+            color: #2c3e50 !important;
             font-weight: 600;
             text-align: left;
             font-size: 0.95rem;
         }
 
-        :root.dark-mode .post-content th {
-            background-color: #1f1f1f;
-            color: #ecf0f1;
+        /* Prevent table tr.header from inheriting page header styles */
+        .post-content table tr.header th,
+        .post-content thead tr.header th,
+        .post table thead tr.header th {
+            background-color: #f5f5f5 !important;
+            color: #2c3e50 !important;
+        }
+
+        :root.dark-mode .post-content th,
+        :root.dark-mode .post-content thead th,
+        :root.dark-mode .post table thead th {
+            background-color: #1f1f1f !important;
+            color: #ecf0f1 !important;
+        }
+
+        :root.dark-mode .post-content table tr.header th,
+        :root.dark-mode .post-content thead tr.header th,
+        :root.dark-mode .post table thead tr.header th {
+            background-color: #1f1f1f !important;
+            color: #ecf0f1 !important;
         }
 
         .post-content tbody tr:nth-child(odd) {
@@ -825,7 +844,7 @@
                 padding: 15px;
             }
 
-            .header {
+            header.header {
                 padding: 30px 15px 25px;
             }
 
@@ -839,7 +858,7 @@
                 height: 50px;
             }
 
-            .header h1 {
+            header.header h1 {
                 font-size: 2rem;
             }
 
@@ -1156,18 +1175,25 @@
                     setupBackToTop();
 
                     // Re-render Mermaid diagrams with a small delay to ensure DOM is fully updated
-                    setTimeout(() => {
+                    setTimeout(async () => {
                         if (typeof mermaid !== 'undefined') {
                             try {
-                                // Clear the internal cache of rendered diagrams
-                                if (mermaid.contentLoaded) {
-                                    mermaid.contentLoaded();
-                                } else if (mermaid.run) {
-                                    // Newer versions use mermaid.run()
-                                    mermaid.run();
+                                // Use the correct mermaid API for rendering
+                                const mermaidElements = contentArea.querySelectorAll('.mermaid');
+                                if (mermaidElements.length > 0) {
+                                    // For mermaid v10+, use run() method
+                                    if (mermaid.run) {
+                                        await mermaid.run({
+                                            querySelector: '.mermaid'
+                                        });
+                                    } else {
+                                        // For older versions, use init()
+                                        mermaid.init(undefined, mermaidElements);
+                                    }
+                                    console.log('Mermaid diagrams rendered successfully');
                                 }
                             } catch (error) {
-                                console.warn('Mermaid rendering error:', error);
+                                console.error('Mermaid rendering error:', error);
                             }
                         }
                     }, 100);
