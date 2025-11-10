@@ -1,11 +1,12 @@
 <style>
     .toc-sidebar {
-        position: fixed;
-        right: 20px;
-        top: 120px;
+        position: sticky;
+        top: 20px;
+        float: right;
         width: 280px;
-        max-height: calc(100vh - 150px);
+        max-height: calc(100vh - 60px);
         overflow-y: auto;
+        margin: 0 0 20px 20px;
         padding: 15px;
         background: var(--card-bg);
         border: 1px solid var(--border-color);
@@ -67,7 +68,7 @@
         background: var(--accent-color);
     }
 
-    @media (max-width: 1200px) {
+    @media (max-width: 1000px) {
         .toc-sidebar {
             display: none !important;
         }
