@@ -641,6 +641,49 @@
             color: inherit;
         }
 
+        .sourceCode {
+            position: relative;
+        }
+
+        .sourceCode pre {
+            position: relative;
+        }
+
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-family: inherit;
+            transition: background-color 0.3s ease;
+        }
+
+        .copy-button:hover {
+            background-color: #2980b9;
+        }
+
+        .copy-button.copied {
+            background-color: #27ae60;
+        }
+
+        :root.dark-mode .copy-button {
+            background-color: #2980b9;
+        }
+
+        :root.dark-mode .copy-button:hover {
+            background-color: #3498db;
+        }
+
+        :root.dark-mode .copy-button.copied {
+            background-color: #27ae60;
+        }
+
         .post-content blockquote {
             background-color: #eaf2f8;
             border-left: 5px solid var(--secondary-color);

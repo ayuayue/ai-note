@@ -54,7 +54,9 @@
       "Bash(tail:*)",
       "Bash(index.html)",
       "Bash(npm run convert-md-pandoc:*)",
-      "mcp__chrome-devtools__select_page"
+      "mcp__chrome-devtools__select_page",
+      "Bash(Remove-Item \"docs\\2025-*\\*-fragment.html\" -Force 2)",
+      "Bash($null)"
     ],
     "defaultMode": "acceptEdits"
   }
