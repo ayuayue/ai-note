@@ -1,84 +1,3 @@
-<style>
-    .toc-sidebar {
-        position: sticky;
-        top: 20px;
-        float: right;
-        width: 280px;
-        max-height: calc(100vh - 60px);
-        overflow-y: auto;
-        margin: 0 0 20px 20px;
-        padding: 15px;
-        background: var(--card-bg);
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        font-size: 0.9rem;
-        z-index: 10;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .toc-sidebar-title {
-        font-weight: bold;
-        margin-bottom: 12px;
-        padding-bottom: 10px;
-        border-bottom: 2px solid var(--secondary-color);
-        font-size: 0.95rem;
-    }
-
-    article.post .post-content {
-        overflow: auto;
-    }
-
-    .toc-sidebar ul {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .toc-sidebar ul ul {
-        margin: 0;
-        padding-left: 16px;
-    }
-
-    .toc-sidebar li {
-        margin: 8px 0;
-    }
-
-    .toc-sidebar a {
-        color: var(--secondary-color);
-        text-decoration: none;
-        transition: color 0.2s;
-        font-weight: 500;
-    }
-
-    .toc-sidebar a:hover {
-        color: var(--accent-color);
-        text-decoration: underline;
-    }
-
-    .toc-sidebar::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    .toc-sidebar::-webkit-scrollbar-track {
-        background: transparent;
-    }
-
-    .toc-sidebar::-webkit-scrollbar-thumb {
-        background: var(--secondary-color);
-        border-radius: 3px;
-    }
-
-    .toc-sidebar::-webkit-scrollbar-thumb:hover {
-        background: var(--accent-color);
-    }
-
-    @media (max-width: 1000px) {
-        .toc-sidebar {
-            display: none !important;
-        }
-    }
-</style>
-
 <article class="post">
     <header class="post-header">
         <h1 class="post-title">AI代码编程插件配置与部署指南：Kilo Code免费接入实践</h1>
@@ -91,10 +10,6 @@
         ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
     </div>
     <div class="post-content" id="post-content">
-        <div class="toc-sidebar" id="toc-container" style="display: none;">
-            <div class="toc-sidebar-title">目录</div>
-            <div id="toc-content"></div>
-        </div>
         <h1
 id="ai代码编程插件配置与部署指南kilo-code免费接入实践">AI代码编程插件配置与部署指南：Kilo
 Code免费接入实践</h1>
@@ -650,91 +565,6 @@ Code作为开源项目，将持续集成更多优质API平台，为开发者提�
 </article>
 
 <script>
-    // Build table of contents
-    function buildTableOfContents() {
-        const postContent = document.getElementById('post-content');
-        const tocContainer = document.getElementById('toc-container');
-        const tocContent = document.getElementById('toc-content');
-
-        if (!postContent || !tocContainer || !tocContent) {
-            console.log('TOC: Elements not found');
-            return;
-        }
-
-        const headings = postContent.querySelectorAll('h2, h3, h4');
-        if (headings.length === 0) {
-            console.log('TOC: No headings found');
-            return;
-        }
-
-        console.log('TOC: Building with', headings.length, 'headings');
-
-        // Assign IDs to headings
-        headings.forEach((heading, index) => {
-            if (!heading.id) {
-                heading.id = `h-${index}`;
-            }
-        });
-
-        // Build TOC items
-        let tocItems = [];
-        headings.forEach((heading) => {
-            const level = parseInt(heading.tagName[1]);
-            const text = heading.textContent.trim();
-            tocItems.push({
-                level: level,
-                id: heading.id,
-                text: text
-            });
-        });
-
-        // Generate TOC HTML
-        let tocHTML = '<ul>';
-        let lastLevel = 1;
-
-        tocItems.forEach((item) => {
-            if (item.level > lastLevel) {
-                for (let i = lastLevel; i < item.level; i++) {
-                    tocHTML += '<ul>';
-                }
-            } else if (item.level < lastLevel) {
-                for (let i = item.level; i < lastLevel; i++) {
-                    tocHTML += '</li></ul>';
-                }
-                tocHTML += '</li>';
-            } else if (lastLevel > 1) {
-                tocHTML += '</li>';
-            }
-
-            tocHTML += `<li><a href="#${item.id}">${item.text}</a>`;
-            lastLevel = item.level;
-        });
-
-        for (let i = 1; i < lastLevel; i++) {
-            tocHTML += '</li></ul>';
-        }
-        if (lastLevel > 1) {
-            tocHTML += '</li>';
-        }
-        tocHTML += '</ul>';
-
-        tocContent.innerHTML = tocHTML;
-        tocContainer.style.display = 'block';
-        console.log('TOC: Generated successfully');
-
-        // Add click handlers to TOC links
-        tocContent.querySelectorAll('a').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const targetId = link.getAttribute('href').substring(1);
-                const targetElement = document.getElementById(targetId);
-                if (targetElement) {
-                    targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
-    }
-
     // Add copy buttons to code blocks
     function addCopyButtons() {
         const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
@@ -806,15 +636,12 @@ Code作为开源项目，将持续集成更多优质API平台，为开发者提�
         });
     }
 
-    // Initialize TOC and copy buttons after content loads
+    // Initialize copy buttons after content loads
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
-            buildTableOfContents();
             addCopyButtons();
         });
     } else {
-        // If script is loaded after DOM is ready (e.g., dynamically loaded)
-        buildTableOfContents();
         addCopyButtons();
     }
 </script>
