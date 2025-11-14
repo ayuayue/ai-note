@@ -12,8 +12,7 @@
                 ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
             </div>
             <div class="post-content" id="post-content">
-                <h1 id="windows-平台-python-版本管理">Windows 平台 Python 版本管理</h1>
-<h2 id="摘要executive-summary">1. 摘要（Executive Summary）</h2>
+                <h2 id="摘要executive-summary">1. 摘要（Executive Summary）</h2>
 <p>本报告旨在深度剖析在 Windows 操作系统中管理多个 Python
 版本的复杂性，并提出 <code>pyenv-win</code>
 作为解决这一核心痛点的战略性工具。报告发现，尽管 Scoop
@@ -289,7 +288,14 @@ Windows 平台上的最佳实践。</p>
                 // 创建新的子列表
                 const newList = document.createElement('ul');
                 newList.className = 'toc-sublist';
-                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
                 listStack.push(newList);
                 currentList = newList;
             } else if (level < currentLevel) {

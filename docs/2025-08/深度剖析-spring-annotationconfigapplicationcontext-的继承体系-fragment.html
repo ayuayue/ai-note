@@ -12,10 +12,7 @@
                 ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
             </div>
             <div class="post-content" id="post-content">
-                <h1
-id="从基石到殿堂深度剖析-spring-annotationconfigapplicationcontext-的继承体系">从基石到殿堂：深度剖析
-Spring AnnotationConfigApplicationContext 的继承体系</h1>
-<p>当我们写下：</p>
+                <p>当我们写下：</p>
 <div class="sourceCode" id="cb1"><pre
 class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">new</span> <span class="fu">AnnotationConfigApplicationContext</span><span class="op">(</span>AppConfig<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span></code></pre></div>
 <p>一个功能完备、灵活自如的 IoC 容器就此诞生。</p>
@@ -372,7 +369,14 @@ BeanDefinition”这一层复杂性完全封装起来，让开发者仅需调用
                 // 创建新的子列表
                 const newList = document.createElement('ul');
                 newList.className = 'toc-sublist';
-                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
                 listStack.push(newList);
                 currentList = newList;
             } else if (level < currentLevel) {

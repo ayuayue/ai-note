@@ -12,10 +12,7 @@
                 ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
             </div>
             <div class="post-content" id="post-content">
-                <h1 id="深度解析-intellij-idea-的-maven-构建命令从-d到-pl">深度解析
-IntelliJ IDEA 的 Maven
-构建命令：从<code>-D</code>到<code>-pl</code></h1>
-<h3 id="开头摘要">开头摘要</h3>
+                <h3 id="开头摘要">开头摘要</h3>
 <p>本文旨在对 IntelliJ IDEA 在多模块项目中生成的一条典型 Maven
 命令进行逐一拆解和深度分析。我们将超越基础的
 <code>clean package</code>，详细阐述 <code>-D</code>
@@ -335,7 +332,14 @@ Parallel Builds</a></li>
                 // 创建新的子列表
                 const newList = document.createElement('ul');
                 newList.className = 'toc-sublist';
-                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
                 listStack.push(newList);
                 currentList = newList;
             } else if (level < currentLevel) {

@@ -12,9 +12,7 @@
                 ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
             </div>
             <div class="post-content" id="post-content">
-                <h1
-id="数据库分页不稳定成因误区与解决方案">数据库分页不稳定：成因、误区与解决方案</h1>
-<h2 id="开头摘要">开头摘要</h2>
+                <h2 id="开头摘要">开头摘要</h2>
 <p>本文深入剖析数据库分页查询中的不稳定现象，揭示其技术根源并提供实用解决方案，帮助开发者构建健壮的分页功能。适合后端开发人员、数据库管理员及对数据一致性有高要求的系统架构师。</p>
 <h2 id="目录">目录</h2>
 <ul>
@@ -612,7 +610,14 @@ Paginator</a></li>
                 // 创建新的子列表
                 const newList = document.createElement('ul');
                 newList.className = 'toc-sublist';
-                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
                 listStack.push(newList);
                 currentList = newList;
             } else if (level < currentLevel) {

@@ -12,8 +12,7 @@
                 ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
             </div>
             <div class="post-content" id="post-content">
-                <h1 id="javascript-异步编程指南">JavaScript 异步编程指南</h1>
-<p>JavaScript 异步编程是现代 Web
+                <p>JavaScript 异步编程是现代 Web
 开发中的核心概念。随着应用复杂度的增加，理解并正确使用异步编程模式变得至关重要。</p>
 <h2 id="异步编程的历史">异步编程的历史</h2>
 <p>JavaScript 异步编程经历了几个重要的发展阶段： 1. 回调函数 (Callbacks)
@@ -183,7 +182,14 @@ class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb2-
                 // 创建新的子列表
                 const newList = document.createElement('ul');
                 newList.className = 'toc-sublist';
-                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
                 listStack.push(newList);
                 currentList = newList;
             } else if (level < currentLevel) {

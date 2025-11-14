@@ -12,10 +12,7 @@
                 ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
             </div>
             <div class="post-content" id="post-content">
-                <h1
-id="告别版本混乱windows-上使用-nvm-高效管理-node.js-环境">告别版本混乱：Windows
-上使用 NVM 高效管理 Node.js 环境</h1>
-<p>作为一名前端或 Node.js 开发者，你是否遇到过这样的场景：项目 A
+                <p>作为一名前端或 Node.js 开发者，你是否遇到过这样的场景：项目 A
 需要最新的 Node.js 20 LTS 版本，而一个旧项目 B 却必须在 Node.js 16
 的环境下才能运行？手动卸载、重装不同版本的 Node.js
 不仅效率低下，还容易因环境变量混乱而导致各种奇怪的错误。</p>
@@ -314,7 +311,14 @@ Windows
                 // 创建新的子列表
                 const newList = document.createElement('ul');
                 newList.className = 'toc-sublist';
-                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
                 listStack.push(newList);
                 currentList = newList;
             } else if (level < currentLevel) {

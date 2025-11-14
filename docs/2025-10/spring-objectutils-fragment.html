@@ -12,9 +12,7 @@
                 ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
             </div>
             <div class="post-content" id="post-content">
-                <h1 id="spring-objectutils工具类完全指南优雅处理java对象操作">Spring
-ObjectUtils工具类完全指南：优雅处理Java对象操作</h1>
-<h2 id="开头摘要">开头摘要</h2>
+                <h2 id="开头摘要">开头摘要</h2>
 <p>在Spring应用开发中，对象判空、安全比较和默认值处理是日常编程中最常见且繁琐的任务。<code>org.springframework.util.ObjectUtils</code>作为Spring框架核心工具类，提供了一系列<strong>空值安全</strong>的静态方法，能显著简化代码并提高健壮性。本文将深入解析ObjectUtils的设计理念、核心方法和使用场景，帮助你编写更优雅的Java代码。</p>
 <h2 id="目录">目录</h2>
 <ul>
@@ -451,7 +449,14 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb13-1"><a href=
                 // 创建新的子列表
                 const newList = document.createElement('ul');
                 newList.className = 'toc-sublist';
-                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
                 listStack.push(newList);
                 currentList = newList;
             } else if (level < currentLevel) {

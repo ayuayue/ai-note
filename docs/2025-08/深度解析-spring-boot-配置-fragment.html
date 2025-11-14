@@ -12,10 +12,7 @@
                 ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
             </div>
             <div class="post-content" id="post-content">
-                <h1
-id="深度解析-spring-boot-配置从-application.properties-到-nacos-的优先级法则">深度解析
-Spring Boot 配置：从 application.properties 到 Nacos 的优先级法则</h1>
-<h2 id="摘要">摘要</h2>
+                <h2 id="摘要">摘要</h2>
 <p>Spring Boot
 的配置管理是其“约定优于配置”理念的核心体现。它提供了一套强大而灵活的配置加载机制，允许开发者通过属性文件、YAML
 文件、环境变量、命令行参数以及外部配置中心等多种方式来管理应用行为。然而，当配置源众多时，理解哪个配置最终生效就变得至关重要。本报告旨在彻底揭开
@@ -467,7 +464,14 @@ Spring Boot 应用。</p>
                 // 创建新的子列表
                 const newList = document.createElement('ul');
                 newList.className = 'toc-sublist';
-                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
                 listStack.push(newList);
                 currentList = newList;
             } else if (level < currentLevel) {

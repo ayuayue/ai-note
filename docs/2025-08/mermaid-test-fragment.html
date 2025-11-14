@@ -12,8 +12,7 @@
                 ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
             </div>
             <div class="post-content" id="post-content">
-                <h1 id="mermaid-图表测试">Mermaid 图表测试</h1>
-<p>这是一个测试 Mermaid 图表功能的示例文档。</p>
+                <p>这是一个测试 Mermaid 图表功能的示例文档。</p>
 <h2 id="流程图示例">流程图示例</h2>
 <pre class="mermaid">graph TD
     A[开始] --&gt; B[初始化]
@@ -298,7 +297,14 @@
                 // 创建新的子列表
                 const newList = document.createElement('ul');
                 newList.className = 'toc-sublist';
-                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
                 listStack.push(newList);
                 currentList = newList;
             } else if (level < currentLevel) {

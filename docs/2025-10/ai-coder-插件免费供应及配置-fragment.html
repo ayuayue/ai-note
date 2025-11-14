@@ -12,10 +12,7 @@
                 ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
             </div>
             <div class="post-content" id="post-content">
-                <h1
-id="ai代码编程插件配置与部署指南kilo-code免费接入实践">AI代码编程插件配置与部署指南：Kilo
-Code免费接入实践</h1>
-<blockquote>
+                <blockquote>
 <p><strong>技术指南</strong> | <em>版本：v1.0</em> |
 <em>更新时间：2025-10-31</em></p>
 </blockquote>
@@ -696,7 +693,14 @@ Code作为开源项目，将持续集成更多优质API平台，为开发者提�
                 // 创建新的子列表
                 const newList = document.createElement('ul');
                 newList.className = 'toc-sublist';
-                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
                 listStack.push(newList);
                 currentList = newList;
             } else if (level < currentLevel) {

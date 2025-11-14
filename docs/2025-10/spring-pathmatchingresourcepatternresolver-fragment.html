@@ -12,11 +12,7 @@
                 ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
             </div>
             <div class="post-content" id="post-content">
-                <h1
-id="spring-pathmatchingresourcepatternresolver-完全指南掌握资源模式匹配的艺术">Spring
-PathMatchingResourcePatternResolver
-完全指南：掌握资源模式匹配的艺术</h1>
-<h2 id="开头摘要">开头摘要</h2>
+                <h2 id="开头摘要">开头摘要</h2>
 <p>在 Spring
 应用开发中，高效地定位和加载资源文件是一个常见且关键的需求。<code>PathMatchingResourcePatternResolver</code>
 作为 Spring 框架核心的资源模式匹配解析器，通过强大的 Ant
@@ -640,7 +636,14 @@ Spring 应用具有重要意义。</p>
                 // 创建新的子列表
                 const newList = document.createElement('ul');
                 newList.className = 'toc-sublist';
-                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
                 listStack.push(newList);
                 currentList = newList;
             } else if (level < currentLevel) {

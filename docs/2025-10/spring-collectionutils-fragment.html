@@ -12,9 +12,7 @@
                 ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
             </div>
             <div class="post-content" id="post-content">
-                <h1 id="spring-collectionutils-工具类完全指南告别繁琐集合操作">Spring
-CollectionUtils 工具类完全指南：告别繁琐集合操作</h1>
-<h2 id="开头摘要">开头摘要</h2>
+                <h2 id="开头摘要">开头摘要</h2>
 <p>在实际的 Java
 开发中，集合操作是我们每天都要面对的基本任务。传统的集合处理往往需要编写大量的空值检查、循环遍历和条件判断代码，不仅繁琐而且容易出错。Spring
 框架提供的 <code>CollectionUtils</code>
@@ -494,7 +492,14 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb12-1"><a href=
                 // 创建新的子列表
                 const newList = document.createElement('ul');
                 newList.className = 'toc-sublist';
-                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
                 listStack.push(newList);
                 currentList = newList;
             } else if (level < currentLevel) {

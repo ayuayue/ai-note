@@ -12,10 +12,7 @@
                 ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
             </div>
             <div class="post-content" id="post-content">
-                <h1
-id="自动化代码质量守护利用-git-pre-push-hook-提升效率">自动化代码质量守护：利用
-Git pre-push Hook 提升效率</h1>
-<h3 id="开头摘要">开头摘要</h3>
+                <h3 id="开头摘要">开头摘要</h3>
 <p>本文深入探讨了如何利用 Git 的 <code>pre-push</code>
 hook，在代码被推送到远程仓库前自动执行命令（如代码检查、单元测试）。文章将从基本概念、底层原理到结合
 <code>Husky</code>
@@ -510,7 +507,14 @@ Hooks 教程</a></li>
                 // 创建新的子列表
                 const newList = document.createElement('ul');
                 newList.className = 'toc-sublist';
-                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
                 listStack.push(newList);
                 currentList = newList;
             } else if (level < currentLevel) {

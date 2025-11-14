@@ -12,9 +12,7 @@
                 ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
             </div>
             <div class="post-content" id="post-content">
-                <h1
-id="使用shell脚本和curl命令通过telegram机器人发送通知消息">使用Shell脚本和cURL命令通过Telegram机器人发送通知消息</h1>
-<h2 id="摘要">摘要</h2>
+                <h2 id="摘要">摘要</h2>
 <p>本文详细介绍如何使用Shell脚本和cURL命令通过Telegram机器人发送通知消息，涵盖机器人创建、chat_id获取、消息发送及实战应用。适合需要实现服务器监控、自动化通知的开发和运维人员。</p>
 <h2 id="目录">目录</h2>
 <ol type="1">
@@ -541,7 +539,14 @@ API的关键工具</li>
                 // 创建新的子列表
                 const newList = document.createElement('ul');
                 newList.className = 'toc-sublist';
-                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
                 listStack.push(newList);
                 currentList = newList;
             } else if (level < currentLevel) {

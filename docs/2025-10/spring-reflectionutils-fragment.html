@@ -12,9 +12,7 @@
                 ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
             </div>
             <div class="post-content" id="post-content">
-                <h1 id="spring-reflectionutils-完全指南掌握-java-反射的优雅之道">Spring
-ReflectionUtils 完全指南：掌握 Java 反射的优雅之道</h1>
-<h2 id="开头摘要">开头摘要</h2>
+                <h2 id="开头摘要">开头摘要</h2>
 <p>在 Java 开发中，反射机制虽然强大但使用繁琐。Spring 框架提供的
 <code>ReflectionUtils</code>
 工具类通过封装复杂的反射操作，让开发者能够以简洁、安全的方式利用反射能力。本文将深入解析
@@ -611,7 +609,14 @@ try-catch 块</li>
                 // 创建新的子列表
                 const newList = document.createElement('ul');
                 newList.className = 'toc-sublist';
-                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
                 listStack.push(newList);
                 currentList = newList;
             } else if (level < currentLevel) {

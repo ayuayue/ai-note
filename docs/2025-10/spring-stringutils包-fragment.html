@@ -12,9 +12,7 @@
                 ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
             </div>
             <div class="post-content" id="post-content">
-                <h1 id="spring-stringutils工具类完全指南从基础到高级用法">Spring
-StringUtils工具类完全指南：从基础到高级用法</h1>
-<h2 id="开头摘要">开头摘要</h2>
+                <h2 id="开头摘要">开头摘要</h2>
 <p>Spring框架中的<code>StringUtils</code>工具类是一个功能强大的字符串处理工具，提供了丰富且<strong>null安全</strong>的字符串操作方法。本文基于源码分析，全面介绍该类所有方法的用途、实现原理和实际应用场景，帮助开发者提升字符串处理效率和代码健壮性。</p>
 <h2 id="目录">目录</h2>
 <ul>
@@ -462,7 +460,14 @@ StringUtils是一个全面、null安全、高性能的字符串工具集，让�
                 // 创建新的子列表
                 const newList = document.createElement('ul');
                 newList.className = 'toc-sublist';
-                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
                 listStack.push(newList);
                 currentList = newList;
             } else if (level < currentLevel) {

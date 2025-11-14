@@ -12,8 +12,7 @@
                 ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
             </div>
             <div class="post-content" id="post-content">
-                <h1 id="测试文档">测试文档</h1>
-<p>这是一个测试文档，用于验证 Markdown 到 HTML 的转换功能。</p>
+                <p>这是一个测试文档，用于验证 Markdown 到 HTML 的转换功能。</p>
 <h2 id="功能特性">功能特性</h2>
 <ul>
 <li>支持标题转换</li>
@@ -249,7 +248,14 @@ YoungGeneration --&gt; Survivor1</code></pre>
                 // 创建新的子列表
                 const newList = document.createElement('ul');
                 newList.className = 'toc-sublist';
-                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
                 listStack.push(newList);
                 currentList = newList;
             } else if (level < currentLevel) {

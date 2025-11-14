@@ -1,0 +1,575 @@
+<div class="article-layout">
+    <div class="main-content">
+        <article class="post">
+            <header class="post-header">
+                <h1 class="post-title">Java Collections.disjoint()方法详解：高效判断集合交集的利器</h1>
+                <div class="post-meta">
+                    <div class="post-date">2025/11/14</div>
+                    <div class="post-category">2025-11</div>
+                </div>
+            </header>
+            <div class="warning">
+                ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+            </div>
+            <div class="post-content" id="post-content">
+                <h2 id="开头摘要">开头摘要</h2>
+<p>Collections.disjoint()是Java集合框架中用于高效判断两个集合是否不存在共同元素的实用工具方法。本文深入解析其实现原理、性能优化技巧和实际应用场景，适合需要处理集合关系判断的Java开发者阅读，帮助读者避免手动循环判断的陷阱，编写更优雅高效的代码。</p>
+<h2 id="目录">目录</h2>
+<ul>
+<li>#collections-disjoint方法概述</li>
+<li>#方法语法与核心原理</li>
+<li>#源码分析与性能优化</li>
+<li>#使用示例与最佳实践</li>
+<li>#常见问题与注意事项</li>
+<li>#实际应用场景</li>
+<li>#与其他方法的对比</li>
+<li>#总结</li>
+</ul>
+<h2
+id="collections.disjoint方法概述">Collections.disjoint()方法概述</h2>
+<p>Collections.disjoint()是Java
+Collections工具类中的一个静态方法，用于判断两个集合是否没有共同的元素（即数学上的”不相交”集合）。如果两个集合没有任何交集，方法返回true；如果存在至少一个共同元素，则返回false。</p>
+<p>这一方法的设计哲学在于将常见的集合关系判断操作封装成易于使用的API，提高了代码的可读性和健壮性。相比手动编写循环判断，使用disjoint()方法可以让代码意图更加清晰，同时享受Java标准库带来的性能优化。</p>
+<h2 id="方法语法与核心原理">方法语法与核心原理</h2>
+<h3 id="方法签名">方法签名</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">static</span> <span class="dt">boolean</span> <span class="fu">disjoint</span><span class="op">(</span><span class="bu">Collection</span><span class="op">&lt;?&gt;</span> c1<span class="op">,</span> <span class="bu">Collection</span><span class="op">&lt;?&gt;</span> c2<span class="op">)</span></span></code></pre></div>
+<p>方法接受两个Collection对象作为参数，返回一个boolean值。需要注意的是，这两个集合可以是不同类型的集合实现（如List和Set），只要它们都实现了Collection接口即可。</p>
+<h3 id="核心原理">核心原理</h3>
+<p>disjoint()方法的核心原理是遍历其中一个集合的元素，检查每个元素是否存在于另一个集合中。一旦发现任何共同元素，方法立即返回false；只有当遍历完所有元素都没有发现共同元素时，才返回true。</p>
+<p>为了提高性能，方法内部会智能选择遍历策略：</p>
+<ol type="1">
+<li>优先遍历较小的集合，减少contains()方法的调用次数</li>
+<li>如果其中一个集合是Set类型，则利用Set的高效查找特性</li>
+<li>处理空集合的边缘情况，提高效率</li>
+</ol>
+<pre class="mermaid">graph TD
+    A[调用disjointc1, c2] --&gt; B{c1是Set?}
+    B --&gt;|是| C[遍历c2, 用c1.contains检查]
+    B --&gt;|否| D{c2是Set?}
+    D --&gt;|是| E[遍历c1, 用c2.contains检查]
+    D --&gt;|否| F[比较c1和c2大小]
+    F --&gt; G[遍历较小集合, 用较大集合.contains检查]
+    C --&gt; H[发现共同元素?]
+    E --&gt; H
+    G --&gt; H
+    H --&gt;|是| I[返回false]
+    H --&gt;|否| J[返回true]</pre>
+<h2 id="源码分析与性能优化">源码分析与性能优化</h2>
+<h3 id="源码实现策略">源码实现策略</h3>
+<p>从源码角度分析，disjoint()方法采用了智能的遍历策略优化：</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">static</span> <span class="dt">boolean</span> <span class="fu">disjoint</span><span class="op">(</span><span class="bu">Collection</span><span class="op">&lt;?&gt;</span> c1<span class="op">,</span> <span class="bu">Collection</span><span class="op">&lt;?&gt;</span> c2<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 性能优化：如果c1是Set，则遍历c2（因为Set的contains更高效）</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>c1 <span class="kw">instanceof</span> <span class="bu">Set</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 使用c1进行contains操作，因为Set的contains()性能更好</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        iterate <span class="op">=</span> c2<span class="op">;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        contains <span class="op">=</span> c1<span class="op">;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">else</span> <span class="cf">if</span> <span class="op">(!(</span>c2 <span class="kw">instanceof</span> <span class="bu">Set</span><span class="op">))</span> <span class="op">{</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 两者都是普通Collection，遍历较小的集合</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> c1size <span class="op">=</span> c1<span class="op">.</span><span class="fu">size</span><span class="op">();</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> c2size <span class="op">=</span> c2<span class="op">.</span><span class="fu">size</span><span class="op">();</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>c1size <span class="op">==</span> <span class="dv">0</span> <span class="op">||</span> c2size <span class="op">==</span> <span class="dv">0</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>            <span class="co">// 至少一个集合为空，肯定没有共同元素</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>c1size <span class="op">&gt;</span> c2size<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>            iterate <span class="op">=</span> c2<span class="op">;</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>            contains <span class="op">=</span> c1<span class="op">;</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="bu">Object</span> e <span class="op">:</span> iterate<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>contains<span class="op">.</span><span class="fu">contains</span><span class="op">(</span>e<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="kw">false</span><span class="op">;</span> <span class="co">// 发现共同元素</span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="kw">true</span><span class="op">;</span> <span class="co">// 没有共同元素</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="性能考量">性能考量</h3>
+<p>disjoint()方法的性能很大程度上取决于传入集合的类型及其contains()方法的实现复杂度：</p>
+<ul>
+<li><strong>最坏情况</strong>：两个ArrayList，时间复杂度为O(m×n)</li>
+<li><strong>最优情况</strong>：一个HashSet和一个任意集合，时间复杂度接近O(n)</li>
+</ul>
+<p>下面的表格对比了不同集合组合的性能特征：</p>
+<table>
+<thead>
+<tr>
+<th>集合1类型</th>
+<th>集合2类型</th>
+<th>contains()复杂度</th>
+<th>总体复杂度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ArrayList</td>
+<td>ArrayList</td>
+<td>O(n)</td>
+<td>O(m×n)</td>
+</tr>
+<tr>
+<td>HashSet</td>
+<td>ArrayList</td>
+<td>O(1)</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td>ArrayList</td>
+<td>HashSet</td>
+<td>O(1)</td>
+<td>O(m)</td>
+</tr>
+<tr>
+<td>HashSet</td>
+<td>HashSet</td>
+<td>O(1)</td>
+<td>O(min(m,n))</td>
+</tr>
+</tbody>
+</table>
+<p>在实际使用中，如果需要频繁调用disjoint()方法，应尽量保证至少一个参数是HashSet等具有高效查找性能的集合实现。</p>
+<h2 id="使用示例与最佳实践">使用示例与最佳实践</h2>
+<h3 id="基础用法示例">基础用法示例</h3>
+<p>以下是disjoint()方法的基本使用示例，展示了不同场景下的应用：</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">util</span><span class="op">.*;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> DisjointExample <span class="op">{</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 示例1：水果集合与热带水果集合</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">List</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> fruits <span class="op">=</span> <span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;Apple&quot;</span><span class="op">,</span> <span class="st">&quot;Banana&quot;</span><span class="op">,</span> <span class="st">&quot;Cherry&quot;</span><span class="op">,</span> <span class="st">&quot;Date&quot;</span><span class="op">);</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Set</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> tropicalFruits <span class="op">=</span> <span class="kw">new</span> <span class="bu">HashSet</span><span class="op">&lt;&gt;(</span><span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;Mango&quot;</span><span class="op">,</span> <span class="st">&quot;Pineapple&quot;</span><span class="op">,</span> <span class="st">&quot;Banana&quot;</span><span class="op">));</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 有共同元素&quot;Banana&quot;，返回false</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">boolean</span> result1 <span class="op">=</span> <span class="bu">Collections</span><span class="op">.</span><span class="fu">disjoint</span><span class="op">(</span>fruits<span class="op">,</span> tropicalFruits<span class="op">);</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Fruits and tropical fruits disjoint: &quot;</span> <span class="op">+</span> result1<span class="op">);</span> <span class="co">// 输出: false</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 示例2：水果集合与浆果集合</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Set</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> berries <span class="op">=</span> <span class="kw">new</span> <span class="bu">HashSet</span><span class="op">&lt;&gt;(</span><span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;Strawberry&quot;</span><span class="op">,</span> <span class="st">&quot;Blueberry&quot;</span><span class="op">,</span> <span class="st">&quot;Raspberry&quot;</span><span class="op">));</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 没有共同元素，返回true</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        <span class="dt">boolean</span> result2 <span class="op">=</span> <span class="bu">Collections</span><span class="op">.</span><span class="fu">disjoint</span><span class="op">(</span>fruits<span class="op">,</span> berries<span class="op">);</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Fruits and berries disjoint: &quot;</span> <span class="op">+</span> result2<span class="op">);</span> <span class="co">// 输出: true</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 示例3：数字集合</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        <span class="bu">List</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">&gt;</span> numbers1 <span class="op">=</span> <span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="dv">1</span><span class="op">,</span> <span class="dv">2</span><span class="op">,</span> <span class="dv">3</span><span class="op">);</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>        <span class="bu">List</span><span class="op">&lt;</span><span class="bu">Integer</span><span class="op">&gt;</span> numbers2 <span class="op">=</span> <span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="dv">4</span><span class="op">,</span> <span class="dv">5</span><span class="op">,</span> <span class="dv">6</span><span class="op">);</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 没有共同元素，返回true</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>        <span class="dt">boolean</span> result3 <span class="op">=</span> <span class="bu">Collections</span><span class="op">.</span><span class="fu">disjoint</span><span class="op">(</span>numbers1<span class="op">,</span> numbers2<span class="op">);</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Numbers1 and Numbers2 disjoint: &quot;</span> <span class="op">+</span> result3<span class="op">);</span> <span class="co">// 输出: true</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="最佳实践">最佳实践</h3>
+<ol type="1">
+<li><strong>集合类型选择</strong>：对于需要频繁判断交集的场景，至少使用一个HashSet作为参数</li>
+<li><strong>空集合处理</strong>：disjoint()方法能够正确处理空集合，任意一个集合为空时都会返回true</li>
+<li><strong>自定义对象</strong>：如果集合包含自定义对象，必须正确重写equals()和hashCode()方法</li>
+<li><strong>并发修改</strong>：避免在方法执行期间修改集合，可能引发ConcurrentModificationException</li>
+</ol>
+<h2 id="常见问题与注意事项">常见问题与注意事项</h2>
+<h3 id="空指针异常">空指针异常</h3>
+<p>当任一参数为null时，disjoint()方法会抛出NullPointerException：</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">Set</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> set1 <span class="op">=</span> <span class="kw">new</span> <span class="bu">HashSet</span><span class="op">&lt;&gt;(</span><span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;A&quot;</span><span class="op">,</span> <span class="st">&quot;B&quot;</span><span class="op">));</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">Set</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> set2 <span class="op">=</span> <span class="kw">null</span><span class="op">;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">// 抛出NullPointerException</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="dt">boolean</span> result <span class="op">=</span> <span class="bu">Collections</span><span class="op">.</span><span class="fu">disjoint</span><span class="op">(</span>set1<span class="op">,</span> set2<span class="op">);</span></span></code></pre></div>
+<p>在实际使用中，应对可能为null的参数进行校验：</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">static</span> <span class="dt">boolean</span> <span class="fu">safeDisjoint</span><span class="op">(</span><span class="bu">Collection</span><span class="op">&lt;?&gt;</span> c1<span class="op">,</span> <span class="bu">Collection</span><span class="op">&lt;?&gt;</span> c2<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>c1 <span class="op">==</span> <span class="kw">null</span> <span class="op">||</span> c2 <span class="op">==</span> <span class="kw">null</span><span class="op">)</span> <span class="op">{</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="kw">true</span><span class="op">;</span> <span class="co">// 根据业务需求定义null处理逻辑</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="bu">Collections</span><span class="op">.</span><span class="fu">disjoint</span><span class="op">(</span>c1<span class="op">,</span> c2<span class="op">);</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="自定义对象的相等性判断">自定义对象的相等性判断</h3>
+<p>disjoint()方法依赖元素的equals()方法判断相等性。对于自定义类，必须正确重写equals()和hashCode()方法：</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> User <span class="op">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">String</span> id<span class="op">;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="bu">String</span> name<span class="op">;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 必须正确重写equals和hashCode</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">boolean</span> <span class="fu">equals</span><span class="op">(</span><span class="bu">Object</span> o<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span><span class="kw">this</span> <span class="op">==</span> o<span class="op">)</span> <span class="cf">return</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>o <span class="op">==</span> <span class="kw">null</span> <span class="op">||</span> <span class="fu">getClass</span><span class="op">()</span> <span class="op">!=</span> o<span class="op">.</span><span class="fu">getClass</span><span class="op">())</span> <span class="cf">return</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>        User user <span class="op">=</span> <span class="op">(</span>User<span class="op">)</span> o<span class="op">;</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> Objects<span class="op">.</span><span class="fu">equals</span><span class="op">(</span>id<span class="op">,</span> user<span class="op">.</span><span class="fu">id</span><span class="op">);</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">int</span> <span class="fu">hashCode</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> Objects<span class="op">.</span><span class="fu">hash</span><span class="op">(</span>id<span class="op">);</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co">// 使用示例</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="bu">Set</span><span class="op">&lt;</span>User<span class="op">&gt;</span> users1 <span class="op">=</span> <span class="kw">new</span> <span class="bu">HashSet</span><span class="op">&lt;&gt;(</span><span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="kw">new</span> <span class="fu">User</span><span class="op">(</span><span class="st">&quot;1&quot;</span><span class="op">,</span> <span class="st">&quot;Alice&quot;</span><span class="op">)));</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="bu">Set</span><span class="op">&lt;</span>User<span class="op">&gt;</span> users2 <span class="op">=</span> <span class="kw">new</span> <span class="bu">HashSet</span><span class="op">&lt;&gt;(</span><span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="kw">new</span> <span class="fu">User</span><span class="op">(</span><span class="st">&quot;1&quot;</span><span class="op">,</span> <span class="st">&quot;Alice&quot;</span><span class="op">)));</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co">// 结果取决于User类是否正确重写了equals和hashCode</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="dt">boolean</span> disjoint <span class="op">=</span> <span class="bu">Collections</span><span class="op">.</span><span class="fu">disjoint</span><span class="op">(</span>users1<span class="op">,</span> users2<span class="op">);</span></span></code></pre></div>
+<h2 id="实际应用场景">实际应用场景</h2>
+<h3 id="权限管理与角色校验">权限管理与角色校验</h3>
+<p>在权限系统中，经常需要检查用户角色是否与禁止角色有重叠：</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 用户拥有的角色</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="bu">List</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> userRoles <span class="op">=</span> <span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;ADMIN&quot;</span><span class="op">,</span> <span class="st">&quot;EDITOR&quot;</span><span class="op">,</span> <span class="st">&quot;VIEWER&quot;</span><span class="op">);</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">// 被禁止的角色</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="bu">Set</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> forbiddenRoles <span class="op">=</span> <span class="kw">new</span> <span class="bu">HashSet</span><span class="op">&lt;&gt;(</span><span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;GUEST&quot;</span><span class="op">,</span> <span class="st">&quot;DEACTIVATED&quot;</span><span class="op">,</span> <span class="st">&quot;BANNED&quot;</span><span class="op">));</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">// 检查用户是否拥有任何禁止角色</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="dt">boolean</span> hasForbiddenRole <span class="op">=</span> <span class="op">!</span><span class="bu">Collections</span><span class="op">.</span><span class="fu">disjoint</span><span class="op">(</span>userRoles<span class="op">,</span> forbiddenRoles<span class="op">);</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>hasForbiddenRole<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 拒绝访问</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;用户拥有禁止角色，拒绝访问&quot;</span><span class="op">);</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="数据冲突检测">数据冲突检测</h3>
+<p>在数据导入或用户注册场景中，检查新数据与现有数据是否冲突：</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 从数据库获取已存在的用户名</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">Set</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> existingUsernames <span class="op">=</span> <span class="fu">getUsernamesFromDatabase</span><span class="op">();</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">// 新批量注册的用户名</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="bu">List</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> newUsernames <span class="op">=</span> <span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;john_doe&quot;</span><span class="op">,</span> <span class="st">&quot;jane_doe&quot;</span><span class="op">,</span> <span class="st">&quot;test_user&quot;</span><span class="op">);</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">// 检查用户名是否已存在</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(!</span><span class="bu">Collections</span><span class="op">.</span><span class="fu">disjoint</span><span class="op">(</span>existingUsernames<span class="op">,</span> newUsernames<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">throw</span> <span class="kw">new</span> <span class="bu">IllegalArgumentException</span><span class="op">(</span><span class="st">&quot;部分用户名已存在&quot;</span><span class="op">);</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="资源分配与调度">资源分配与调度</h3>
+<p>在会议室预订、课程安排等场景中，检查资源是否冲突：</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 现有会议的参与人员</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">Set</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> existingAttendees <span class="op">=</span> <span class="kw">new</span> <span class="bu">HashSet</span><span class="op">&lt;&gt;(</span><span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;Alice&quot;</span><span class="op">,</span> <span class="st">&quot;Bob&quot;</span><span class="op">,</span> <span class="st">&quot;Charlie&quot;</span><span class="op">));</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">// 新会议的参与人员</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="bu">Set</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> newAttendees <span class="op">=</span> <span class="kw">new</span> <span class="bu">HashSet</span><span class="op">&lt;&gt;(</span><span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;Bob&quot;</span><span class="op">,</span> <span class="st">&quot;David&quot;</span><span class="op">,</span> <span class="st">&quot;Eve&quot;</span><span class="op">));</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">// 检查参会人员是否冲突</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(!</span><span class="bu">Collections</span><span class="op">.</span><span class="fu">disjoint</span><span class="op">(</span>existingAttendees<span class="op">,</span> newAttendees<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;存在人员时间冲突，无法安排会议&quot;</span><span class="op">);</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="游戏开发中的物品检查">游戏开发中的物品检查</h3>
+<p>在游戏开发中，检查玩家物品与限制物品的交集：</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 玩家背包物品</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">Set</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> playerInventory <span class="op">=</span> <span class="kw">new</span> <span class="bu">HashSet</span><span class="op">&lt;&gt;(</span><span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;Sword&quot;</span><span class="op">,</span> <span class="st">&quot;Shield&quot;</span><span class="op">,</span> <span class="st">&quot;Potion&quot;</span><span class="op">));</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">// 地下城中禁止携带的物品</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="bu">Set</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> forbiddenItems <span class="op">=</span> <span class="kw">new</span> <span class="bu">HashSet</span><span class="op">&lt;&gt;(</span><span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;Magic Orb&quot;</span><span class="op">,</span> <span class="st">&quot;Shield&quot;</span><span class="op">,</span> <span class="st">&quot;Explosive&quot;</span><span class="op">));</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">// 检查是否携带违禁物品</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(!</span><span class="bu">Collections</span><span class="op">.</span><span class="fu">disjoint</span><span class="op">(</span>playerInventory<span class="op">,</span> forbiddenItems<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;警告：你携带了禁止进入地下城的物品！&quot;</span><span class="op">);</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h2 id="与其他方法的对比">与其他方法的对比</h2>
+<h3 id="与手动遍历对比">与手动遍历对比</h3>
+<p>与手动遍历相比，disjoint()方法具有明显优势：</p>
+<p><strong>手动遍历实现：</strong></p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 手动判断交集</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="dt">boolean</span> hasCommon <span class="op">=</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> <span class="op">(</span><span class="bu">Object</span> item <span class="op">:</span> collectionA<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>collectionB<span class="op">.</span><span class="fu">contains</span><span class="op">(</span>item<span class="op">))</span> <span class="op">{</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        hasCommon <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="dt">boolean</span> disjoint <span class="op">=</span> <span class="op">!</span>hasCommon<span class="op">;</span></span></code></pre></div>
+<p><strong>disjoint()方法优势：</strong> -
+<strong>代码简洁性</strong>：一行代码代替多行循环 -
+<strong>可读性</strong>：方法名清晰表达意图 -
+<strong>性能优化</strong>：自动选择最优遍历策略 -
+<strong>健壮性</strong>：经过充分测试，处理各种边界情况</p>
+<h3 id="与retainall方法对比">与retainAll()方法对比</h3>
+<p>retainAll()方法用于修改集合，只保留与指定集合共有的元素，可用于判断交集，但会改变原集合：</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 使用retainAll()判断交集（会修改原集合）</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">List</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> list1 <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;&gt;(</span><span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;A&quot;</span><span class="op">,</span> <span class="st">&quot;B&quot;</span><span class="op">,</span> <span class="st">&quot;C&quot;</span><span class="op">));</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="bu">List</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> list2 <span class="op">=</span> <span class="bu">Arrays</span><span class="op">.</span><span class="fu">asList</span><span class="op">(</span><span class="st">&quot;B&quot;</span><span class="op">,</span> <span class="st">&quot;D&quot;</span><span class="op">,</span> <span class="st">&quot;E&quot;</span><span class="op">);</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co">// 创建副本以避免修改原集合</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="bu">List</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">&gt;</span> copy <span class="op">=</span> <span class="kw">new</span> <span class="bu">ArrayList</span><span class="op">&lt;&gt;(</span>list1<span class="op">);</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>copy<span class="op">.</span><span class="fu">retainAll</span><span class="op">(</span>list2<span class="op">);</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="dt">boolean</span> hasIntersection <span class="op">=</span> <span class="op">!</span>copy<span class="op">.</span><span class="fu">isEmpty</span><span class="op">();</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">// 使用disjoint()更简洁且不修改原集合</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="dt">boolean</span> disjoint <span class="op">=</span> <span class="bu">Collections</span><span class="op">.</span><span class="fu">disjoint</span><span class="op">(</span>list1<span class="op">,</span> list2<span class="op">);</span></span></code></pre></div>
+<h3 id="与apache-commons-collectionutils.containsany对比">与Apache
+Commons CollectionUtils.containsAny()对比</h3>
+<p>Apache Commons
+Lang库提供类似的containsAny()方法，但逻辑相反（有交集返回true）：</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 使用Apache Commons</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="dt">boolean</span> hasCommon <span class="op">=</span> CollectionUtils<span class="op">.</span><span class="fu">containsAny</span><span class="op">(</span>collectionA<span class="op">,</span> collectionB<span class="op">);</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">// 使用Collections.disjoint()</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="dt">boolean</span> hasCommon <span class="op">=</span> <span class="op">!</span><span class="bu">Collections</span><span class="op">.</span><span class="fu">disjoint</span><span class="op">(</span>collectionA<span class="op">,</span> collectionB<span class="op">);</span></span></code></pre></div>
+<h3 id="java-8-stream-api实现">Java 8 Stream API实现</h3>
+<p>Java 8及以上版本可以使用Stream
+API实现类似功能，但通常性能不如优化的disjoint()方法：</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 使用Stream API判断是否有交集</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="dt">boolean</span> hasCommon <span class="op">=</span> list1<span class="op">.</span><span class="fu">stream</span><span class="op">().</span><span class="fu">anyMatch</span><span class="op">(</span>list2<span class="op">::</span>contains<span class="op">);</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co">// 对于大型集合，可并行处理（但未必更快）</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="dt">boolean</span> hasCommonParallel <span class="op">=</span> list1<span class="op">.</span><span class="fu">parallelStream</span><span class="op">().</span><span class="fu">anyMatch</span><span class="op">(</span>list2<span class="op">::</span>contains<span class="op">);</span></span></code></pre></div>
+<h2 id="总结">总结</h2>
+<p>Collections.disjoint()方法是Java集合框架中一个实用且高效的工具方法，具有以下核心特点：</p>
+<ul>
+<li><strong>功能明确</strong>：专门用于判断两个集合是否不存在共同元素，返回boolean结果</li>
+<li><strong>性能优化</strong>：内部智能选择遍历策略，优先遍历小集合或利用Set的高效查找</li>
+<li><strong>使用简便</strong>：一行代码替代复杂的手动循环判断</li>
+<li><strong>健壮性强</strong>：作为标准库方法，经过充分测试，正确处理各种边界情况</li>
+</ul>
+<h3 id="选择使用场景">选择使用场景</h3>
+<ul>
+<li><strong>推荐使用disjoint()</strong>：当只需要知道两个集合是否存在交集，而不关心具体交集内容时</li>
+<li><strong>考虑其他方案</strong>：当需要获取具体交集元素，或需要对交集元素进行进一步处理时</li>
+</ul>
+<h3 id="性能要点">性能要点</h3>
+<ul>
+<li>至少使用一个HashSet作为参数可以显著提升性能</li>
+<li>避免对两个ArrayList使用disjoint()处理大数据集</li>
+<li>确保自定义对象的equals()和hashCode()正确实现</li>
+</ul>
+<h2 id="延伸阅读">延伸阅读</h2>
+<ol type="1">
+<li>https://docs.oracle.com/javase/8/docs/technotes/guides/collections/</li>
+<li>https://github.com/openjdk/jdk/tree/master/src/java.base/share/classes/java/util</li>
+<li>https://www.oreilly.com/library/view/effective-java-3rd/9780134686097/
+- 第3版包含集合使用的最佳实践</li>
+</ol>
+<h2 id="一句话记忆">一句话记忆</h2>
+<p>Collections.disjoint()是判断集合无交集的利器，内部自动优化遍历策略，让代码更简洁高效。</p>
+
+            </div>
+        </article>
+    </div>
+    <aside class="toc-sidebar" id="toc-sidebar">
+        <div class="toc-header">
+            <h3>文章目录</h3>
+        </div>
+        <nav class="toc-nav" id="toc-nav">
+            <!-- 目录内容将通过JavaScript自动生成 -->
+        </nav>
+    </aside>
+</div>
+
+<script>
+    // Add copy buttons to code blocks
+    function addCopyButtons() {
+        const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
+        sourceCodeBlocks.forEach(function(block) {
+            if (block.querySelector('.copy-button')) return;
+            const preElement = block.querySelector('pre');
+            if (!preElement) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = preElement.querySelector('code');
+                const text = code ? code.innerText : preElement.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+
+        const allPreBlocks = document.querySelectorAll('pre:not(.mermaid)');
+        allPreBlocks.forEach(function(block) {
+            if (block.closest('.sourceCode') || block.querySelector('.copy-button')) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = block.querySelector('code');
+                const text = code ? code.innerText : block.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+    }
+
+    // 生成文章目录
+    function generateTableOfContents() {
+        const postContent = document.getElementById('post-content');
+        const tocNav = document.getElementById('toc-nav');
+        
+        if (!postContent || !tocNav) return;
+        
+        // 查找所有标题元素
+        const headings = postContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        if (headings.length === 0) {
+            // 如果没有标题，隐藏目录
+            document.getElementById('toc-sidebar').style.display = 'none';
+            return;
+        }
+        
+        // 创建目录结构
+        const tocList = document.createElement('ul');
+        tocList.className = 'toc-list';
+        
+        let currentLevel = 1;
+        let currentList = tocList;
+        let listStack = [tocList];
+        
+        headings.forEach((heading, index) => {
+            // 强制为每个标题设置标准化的ID（始终重写现有ID）
+            const normalizedId = 'heading-' + index;
+            heading.id = normalizedId;
+            
+            const level = parseInt(heading.tagName.charAt(1));
+            const title = heading.textContent.trim();
+            
+            // 创建目录项
+            const tocItem = document.createElement('li');
+            tocItem.className = 'toc-item toc-level-' + level;
+            
+            const tocLink = document.createElement('a');
+            tocLink.href = 'javascript:void(0)'; // 避免触发路由
+            tocLink.setAttribute('data-target', heading.id); // 存储目标ID
+            tocLink.textContent = title;
+            tocLink.className = 'toc-link';
+            
+            tocItem.appendChild(tocLink);
+            
+            // 处理层级关系
+            if (level > currentLevel) {
+                // 创建新的子列表
+                const newList = document.createElement('ul');
+                newList.className = 'toc-sublist';
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
+                listStack.push(newList);
+                currentList = newList;
+            } else if (level < currentLevel) {
+                // 返回到上一级
+                while (listStack.length > level) {
+                    listStack.pop();
+                }
+                currentList = listStack[listStack.length - 1];
+            }
+            
+            currentList.appendChild(tocItem);
+            currentLevel = level;
+        });
+        
+        tocNav.appendChild(tocList);
+        
+        // 高亮当前章节
+        highlightCurrentSection();
+        
+        // 滚动监听
+        window.addEventListener('scroll', highlightCurrentSection);
+        
+        // 为目录链接添加点击事件
+        setTimeout(() => {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('data-target');
+                    if (targetId) {
+                        const targetElement = document.getElementById(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ 
+                                behavior: 'smooth', 
+                                block: 'start',
+                                inline: 'nearest'
+                            });
+                        }
+                    }
+                });
+            });
+        }, 200); // 延迟确保目录已生成
+    }
+    
+    // 高亮当前阅读的章节
+    function highlightCurrentSection() {
+        const headings = document.querySelectorAll('.post-content h1, .post-content h2, .post-content h3, .post-content h4, .post-content h5, .post-content h6');
+        const tocLinks = document.querySelectorAll('.toc-link');
+        
+        let currentHeading = null;
+        const scrollPosition = window.pageYOffset + 100;
+        
+        // 找到当前可见的标题
+        for (let i = headings.length - 1; i >= 0; i--) {
+            if (headings[i].offsetTop <= scrollPosition) {
+                currentHeading = headings[i];
+                break;
+            }
+        }
+        
+        // 清除所有活动状态
+        tocLinks.forEach(link => link.classList.remove('active'));
+        
+        // 高亮当前章节
+        if (currentHeading) {
+            const activeLink = document.querySelector('.toc-link[href="#' + currentHeading.id + '"]');
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+        }
+    }
+
+    // Initialize copy buttons and TOC after content loads
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            addCopyButtons();
+            setTimeout(generateTableOfContents, 100); // 延迟生成以确保内容已加载
+        });
+    } else {
+        addCopyButtons();
+        setTimeout(generateTableOfContents, 100);
+    }
+</script>

@@ -12,9 +12,7 @@
                 ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
             </div>
             <div class="post-content" id="post-content">
-                <h1 id="深度解析-spring-webmvcconfigurerweb-定制化的核心枢纽">深度解析
-Spring <code>WebMvcConfigurer</code>：Web 定制化的核心枢纽</h1>
-<h2 id="摘要">摘要</h2>
+                <h2 id="摘要">摘要</h2>
 <p><code>WebMvcConfigurer</code> 是 Spring MVC
 框架中一个至关重要的配置接口。它为开发者提供了一系列回调方法，允许我们在<strong>不破坏
 Spring Boot 自动配置</strong>的前提下，对 Spring MVC
@@ -589,7 +587,14 @@ CORS），如果不同的配置类为<strong>完全相同的路径模式</strong
                 // 创建新的子列表
                 const newList = document.createElement('ul');
                 newList.className = 'toc-sublist';
-                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
                 listStack.push(newList);
                 currentList = newList;
             } else if (level < currentLevel) {

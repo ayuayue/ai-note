@@ -12,9 +12,7 @@
                 ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
             </div>
             <div class="post-content" id="post-content">
-                <h1 id="高质量技术博客提示词准确-深入版">🎯 高质量技术博客提示词（准确 +
-深入版）</h1>
-<p><strong>提示词（Prompt）：</strong></p>
+                <p><strong>提示词（Prompt）：</strong></p>
 <pre><code>我想写一篇关于 **{主题}** 的技术博客，请你严格按照以下要求生成内容：
 
 ### 输出要求
@@ -202,7 +200,14 @@
                 // 创建新的子列表
                 const newList = document.createElement('ul');
                 newList.className = 'toc-sublist';
-                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
                 listStack.push(newList);
                 currentList = newList;
             } else if (level < currentLevel) {

@@ -17,8 +17,6 @@
 <code>Placeholder</code> 类内部的属性定义方式不规范。</p>
 <p>我已经修正了这个问题，并提供一个语法正确且逻辑更清晰的图。以下是包含正确图表的完整文章。</p>
 <hr />
-<h1 id="深入-maven-核心全面解析资源处理resource-handling机制">深入 Maven
-核心：全面解析资源处理（Resource Handling）机制</h1>
 <h2 id="开头摘要">开头摘要</h2>
 <p>本文深入剖析了 Apache Maven 的核心功能之一——资源处理。我们将探讨
 Maven
@@ -532,7 +530,14 @@ Boot 官方文档 - Maven Plugin</a></li>
                 // 创建新的子列表
                 const newList = document.createElement('ul');
                 newList.className = 'toc-sublist';
-                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
                 listStack.push(newList);
                 currentList = newList;
             } else if (level < currentLevel) {

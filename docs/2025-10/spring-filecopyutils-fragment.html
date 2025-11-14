@@ -12,9 +12,7 @@
                 ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
             </div>
             <div class="post-content" id="post-content">
-                <h1 id="spring-filecopyutils-完全指南文件操作的终极利器">Spring
-FileCopyUtils 完全指南：文件操作的终极利器</h1>
-<h2 id="开头摘要">开头摘要</h2>
+                <h2 id="开头摘要">开头摘要</h2>
 <p>在 Java 开发中，文件操作是每个程序员都会遇到的常见任务，但传统的 I/O
 流操作代码繁琐且容易出错。Spring 框架提供的 <code>FileCopyUtils</code>
 工具类通过封装复杂的流操作逻辑，让文件复制、流转换等操作变得简单高效。本文将全面解析
@@ -571,7 +569,14 @@ IOException，构建健壮的应用逻辑</li>
                 // 创建新的子列表
                 const newList = document.createElement('ul');
                 newList.className = 'toc-sublist';
-                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
                 listStack.push(newList);
                 currentList = newList;
             } else if (level < currentLevel) {

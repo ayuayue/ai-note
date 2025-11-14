@@ -92,6 +92,11 @@ function generateArticleDetailFragment(htmlContent, title, date, monthDir) {
             '<pre class="mermaid">$1</pre>'
         );
 
+        // Remove the first h1 heading from content to avoid duplication
+        // The title is already shown in the post-header
+        // Use dotAll flag (s) to match across newlines
+        fixedContent = fixedContent.replace(/<h1[^>]*>.*?<\/h1>\s*/s, '');
+
         // Read article detail template
         const fragmentPath = path.join(__dirname, '..', 'pages', 'article-detail.html');
         let fragment = fs.readFileSync(fragmentPath, 'utf8');

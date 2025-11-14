@@ -12,9 +12,7 @@
                 ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
             </div>
             <div class="post-content" id="post-content">
-                <h1
-id="linux服务器时间同步全攻略联网与离线环境详解">Linux服务器时间同步全攻略：联网与离线环境详解</h1>
-<blockquote>
+                <blockquote>
 <p>在分布式系统和集群环境中，时间同步是确保系统一致性和可靠性的基石，本文将全面介绍Linux环境下各种时间同步方案。</p>
 </blockquote>
 <h2 id="引言">引言</h2>
@@ -502,7 +500,14 @@ VPS</strong>：通常不能修改时间，需联系服务商</p>
                 // 创建新的子列表
                 const newList = document.createElement('ul');
                 newList.className = 'toc-sublist';
-                listStack[listStack.length - 1].lastElementChild.appendChild(newList);
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
                 listStack.push(newList);
                 currentList = newList;
             } else if (level < currentLevel) {
