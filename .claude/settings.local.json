@@ -3,7 +3,17 @@
     "allow": [
       "Bash(node src/convert_md_to_html_pandoc.js)",
       "Bash(del:*)",
-      "mcp__filesystem__directory_tree"
+      "mcp__filesystem__directory_tree",
+      "mcp__filesystem__list_directory",
+      "mcp__filesystem__read_text_file",
+      "mcp__filesystem__edit_file",
+      "Bash(npm run build)",
+      "Bash(git restore:*)",
+      "Bash(git checkout:*)",
+      "mcp__filesystem__write_file",
+      "Bash(npm run convert-md-pandoc)",
+      "Bash(find:*)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": [],

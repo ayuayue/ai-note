@@ -56,7 +56,7 @@
         }
 
         /* HEADER STYLES - Persistent across all pages */
-        header.header {
+        .header {
             text-align: center;
             padding: 40px 20px 30px;
             background: linear-gradient(135deg, #8F94A8 0%, #B74A43 50%, #CE3321 100%);
@@ -67,7 +67,7 @@
             flex-shrink: 0;
         }
 
-        header.header::before {
+        .header::before {
             content: '';
             position: absolute;
             top: -50%;
@@ -78,7 +78,7 @@
             border-radius: 50%;
         }
 
-        header.header::after {
+        .header::after {
             content: '';
             position: absolute;
             bottom: -30%;
@@ -103,18 +103,17 @@
         }
 
         .logo {
-            width: 60px;
-            height: 60px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 12px;
+            width: 80px;
+            height: 80px;
+            background: transparent;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
             transition: transform 0.3s ease;
             overflow: hidden;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(10px);
+            border: none;
         }
 
         .logo:hover {
@@ -123,12 +122,13 @@
         }
 
         .logo img {
-            width: 90%;
-            height: 90%;
-            object-fit: contain;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
         }
 
-        header.header h1 {
+        .header h1 {
             color: #ffffff;
             font-size: 2.5rem;
             margin-bottom: 0;
@@ -524,11 +524,6 @@
             border-bottom: 1px solid var(--border-color);
         }
 
-        /* GitHub button in header */
-        .github-button svg {
-            fill: currentColor !important;
-        }
-
         .post-title {
             color: var(--primary-color);
             font-size: 2rem;
@@ -646,49 +641,6 @@
             color: inherit;
         }
 
-        .sourceCode {
-            position: relative;
-        }
-
-        .sourceCode pre {
-            position: relative;
-        }
-
-        .copy-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85em;
-            font-family: inherit;
-            transition: background-color 0.3s ease;
-        }
-
-        .copy-button:hover {
-            background-color: #2980b9;
-        }
-
-        .copy-button.copied {
-            background-color: #27ae60;
-        }
-
-        :root.dark-mode .copy-button {
-            background-color: #2980b9;
-        }
-
-        :root.dark-mode .copy-button:hover {
-            background-color: #3498db;
-        }
-
-        :root.dark-mode .copy-button.copied {
-            background-color: #27ae60;
-        }
-
         .post-content blockquote {
             background-color: #eaf2f8;
             border-left: 5px solid var(--secondary-color);
@@ -726,36 +678,17 @@
             border: 1px solid #3a3a3a;
         }
 
-        .post-content th,
-        .post-content thead th,
-        .post table thead th {
-            background-color: #f5f5f5 !important;
-            color: #2c3e50 !important;
+        .post-content th {
+            background-color: #f5f5f5;
+            color: #2c3e50;
             font-weight: 600;
             text-align: left;
             font-size: 0.95rem;
         }
 
-        /* Prevent table tr.header from inheriting page header styles */
-        .post-content table tr.header th,
-        .post-content thead tr.header th,
-        .post table thead tr.header th {
-            background-color: #f5f5f5 !important;
-            color: #2c3e50 !important;
-        }
-
-        :root.dark-mode .post-content th,
-        :root.dark-mode .post-content thead th,
-        :root.dark-mode .post table thead th {
-            background-color: #1f1f1f !important;
-            color: #ecf0f1 !important;
-        }
-
-        :root.dark-mode .post-content table tr.header th,
-        :root.dark-mode .post-content thead tr.header th,
-        :root.dark-mode .post table thead tr.header th {
-            background-color: #1f1f1f !important;
-            color: #ecf0f1 !important;
+        :root.dark-mode .post-content th {
+            background-color: #1f1f1f;
+            color: #ecf0f1;
         }
 
         .post-content tbody tr:nth-child(odd) {
@@ -849,7 +782,7 @@
                 padding: 15px;
             }
 
-            header.header {
+            .header {
                 padding: 30px 15px 25px;
             }
 
@@ -863,7 +796,7 @@
                 height: 50px;
             }
 
-            header.header h1 {
+            .header h1 {
                 font-size: 2rem;
             }
 
@@ -923,172 +856,218 @@
 
         }
 
-        /* ARTICLE LAYOUT WITH TOC */
+        /* TOC Styles for Articles */
         .article-layout {
             display: flex;
-            gap: 40px;
             max-width: 1400px;
             margin: 0 auto;
-            width: 100%;
+            gap: 30px;
+            padding: 0 20px;
         }
 
         .main-content {
             flex: 1;
-            min-width: 0; /* Prevents flex item from growing beyond container */
+            min-width: 0;
         }
 
-        /* TOC SIDEBAR STYLES */
         .toc-sidebar {
             width: 280px;
             flex-shrink: 0;
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 25px 20px;
-            position: sticky;
-            top: 30px;
-            max-height: calc(100vh - 60px);
-            overflow-y: auto;
-            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.06);
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
 
         .toc-header h3 {
-            color: var(--primary-color);
+            margin: 0 0 15px 0;
             font-size: 1.1rem;
-            margin: 0 0 20px 0;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--secondary-color);
             padding-bottom: 10px;
-            border-bottom: 2px solid var(--border-color);
-            font-weight: 600;
         }
 
         .toc-list {
             list-style: none;
-            margin: 0;
             padding: 0;
+            margin: 0;
         }
 
         .toc-item {
-            margin: 0;
-            padding: 0;
+            margin-bottom: 8px;
         }
 
         .toc-link {
             display: block;
-            padding: 8px 12px;
+            padding: 6px 10px;
             color: var(--text-color);
             text-decoration: none;
-            font-size: 0.9rem;
-            line-height: 1.4;
-            border-radius: 6px;
+            border-radius: 4px;
             transition: all 0.2s ease;
-            font-weight: 500;
+            font-size: 0.95rem;
         }
 
         .toc-link:hover {
-            color: var(--secondary-color);
-            background-color: var(--hover-color);
-            text-decoration: none;
-        }
-
-        .toc-link.active {
-            color: var(--secondary-color);
-            background-color: rgba(52, 152, 219, 0.1);
-            border-left: 3px solid var(--secondary-color);
-            font-weight: 600;
-        }
-
-        .toc-level-1 .toc-link {
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-
-        .toc-level-2 {
-            margin-left: 0;
-        }
-
-        .toc-level-3 {
-            margin-left: 15px;
-        }
-
-        .toc-level-4 {
-            margin-left: 30px;
-        }
-
-        .toc-level-5 {
-            margin-left: 45px;
-        }
-
-        .toc-level-6 {
-            margin-left: 60px;
+            background: var(--secondary-color);
+            color: white;
+            padding-left: 15px;
         }
 
         .toc-sublist {
             list-style: none;
-            margin: 5px 0 0 0;
+            padding-left: 20px;
+            margin-top: 5px;
+        }
+
+        .toc-sublist .toc-link {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .post {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+        }
+
+        .post-header {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .post-title {
+            color: var(--primary-color);
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .post-meta {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            font-size: 0.95rem;
+            color: #6c757d;
+        }
+
+        .post-date {
+            background-color: #e3f2fd;
+            color: var(--secondary-color);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .post-category {
+            background-color: #e8f5e9;
+            color: #4caf50;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        .warning {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .post-content {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            color: var(--text-color);
+        }
+
+        .post-content h1, .post-content h2, .post-content h3,
+        .post-content h4, .post-content h5, .post-content h6 {
+            color: var(--primary-color);
+            margin-top: 35px;
+            margin-bottom: 20px;
+            scroll-margin-top: 20px;
+        }
+
+        .post-content h2 {
+            font-size: 1.5rem;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .post-content h3 {
+            font-size: 1.3rem;
+            color: #2980b9;
+        }
+
+        .post-content p {
+            margin-bottom: 18px;
+        }
+
+        .post-content code {
+            background-color: #e8eaed;
+            padding: 3px 7px;
+            border-radius: 4px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+            color: #c0392b;
+            font-size: 0.9em;
+        }
+
+        .post-content pre {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 25px 0;
+            font-size: 0.9em;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        .post-content pre code {
+            background-color: transparent;
             padding: 0;
+            color: inherit;
         }
 
-        /* Dark mode support for scrollbar */
-        .toc-sidebar::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .toc-sidebar::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .toc-sidebar::-webkit-scrollbar-thumb {
-            background: var(--secondary-color);
-            border-radius: 3px;
-        }
-
-        .toc-sidebar::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-color);
-        }
-
-        /* Hide TOC on mobile and tablet devices */
-        @media (max-width: 1200px) {
+        @media (max-width: 1024px) {
             .article-layout {
                 flex-direction: column;
-                gap: 20px;
             }
-            
+
             .toc-sidebar {
                 width: 100%;
-                position: relative;
-                top: 0;
+                position: static;
                 max-height: none;
-                order: -1; /* Move TOC to top on mobile */
             }
         }
 
-        /* MERMAID DIAGRAM STYLES */
-        .mermaid { display: flex; justify-content: center; margin: 20px 0; }
-        .post-content .mermaid { background: var(--card-bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border-color); }
-        :root.dark-mode .post-content .mermaid { background: #2a2a2a; border-color: #444; }
-
-        /* TABLE IMPROVEMENTS */
-        .post-content table { table-layout: fixed; }
-        .post-content table { overflow-x: auto; }
-        .post-content th, .post-content td { word-break: break-word; }
-
         @media (max-width: 768px) {
-            .post-content table { font-size: 0.85rem; }
-            .post-content th, .post-content td { padding: 8px !important; }
+            .post {
+                padding: 20px;
+            }
+
+            .post-title {
+                font-size: 1.6rem;
+            }
+
+            .article-layout {
+                padding: 0 15px;
+            }
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
-    <script>
-        if (typeof mermaid !== 'undefined') {
-            mermaid.initialize({
-                startOnLoad: false,
-                theme: 'default',
-                securityLevel: 'loose',
-                logLevel: 'info',
-                maxTextSize: 90000
-            });
-        }
-    </script>
 </head>
 <body>
     <div class="page-wrapper">
@@ -1151,19 +1130,6 @@
                 </p>
 
                 <div class="header-actions">
-                    <button id="homeButton" class="tools-button" title="返回首页" style="display: none;">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                            <polyline points="9 22 9 12 15 12 15 22"/>
-                        </svg>
-                        首页
-                    </button>
-                    <a href="https://github.com/ayuayue/ai-note" target="_blank" rel="noopener noreferrer" class="tools-button github-button" title="View on GitHub">
-                        <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor">
-                            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
-                        </svg>
-                        GitHub
-                    </a>
                     <a href="tools.html" class="tools-button">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
@@ -1235,11 +1201,6 @@
         async function loadHomepage(pageNum = 1) {
             try {
                 showLoading();
-                // Hide home button on homepage
-                const homeBtn = document.getElementById('homeButton');
-                if (homeBtn) {
-                    homeBtn.style.display = 'none';
-                }
                 const feedUrl = pageNum === 1 ? 'pages/index.html' : `pages/index${pageNum}.html`;
                 const response = await fetch(feedUrl);
                 if (response.ok) {
@@ -1258,6 +1219,103 @@
             }
         }
 
+        // Generate TOC for article content
+        function generateTOCForArticle() {
+            const postContent = contentArea.querySelector('#post-content');
+            const tocNav = contentArea.querySelector('#toc-nav');
+            const tocSidebar = contentArea.querySelector('#toc-sidebar');
+
+            if (!postContent || !tocNav) {
+                console.log('Post content or TOC nav not found');
+                return;
+            }
+
+            // Find all headings
+            const headings = postContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
+            console.log('Found headings for TOC:', headings.length);
+
+            if (headings.length === 0) {
+                if (tocSidebar) tocSidebar.style.display = 'none';
+                return;
+            }
+
+            // Clear TOC nav
+            tocNav.innerHTML = '';
+
+            // Create TOC list
+            const tocList = document.createElement('ul');
+            tocList.className = 'toc-list';
+
+            let currentLevel = 1;
+            let currentList = tocList;
+            let listStack = [tocList];
+
+            headings.forEach((heading, index) => {
+                const normalizedId = 'heading-' + index;
+                heading.id = normalizedId;
+
+                const level = parseInt(heading.tagName.charAt(1));
+                const title = heading.textContent.trim();
+
+                const tocItem = document.createElement('li');
+                tocItem.className = 'toc-item toc-level-' + level;
+
+                const tocLink = document.createElement('a');
+                tocLink.href = 'javascript:void(0)';
+                tocLink.setAttribute('data-target', heading.id);
+                tocLink.textContent = title;
+                tocLink.className = 'toc-link';
+
+                tocItem.appendChild(tocLink);
+
+                // Handle hierarchy
+                if (level > currentLevel) {
+                    const newList = document.createElement('ul');
+                    newList.className = 'toc-sublist';
+                    const parentList = listStack[listStack.length - 1];
+                    if (parentList.lastElementChild) {
+                        parentList.lastElementChild.appendChild(newList);
+                    } else {
+                        parentList.appendChild(newList);
+                    }
+                    listStack.push(newList);
+                    currentList = newList;
+                } else if (level < currentLevel) {
+                    while (listStack.length > level) {
+                        listStack.pop();
+                    }
+                    currentList = listStack[listStack.length - 1];
+                }
+
+                currentList.appendChild(tocItem);
+                currentLevel = level;
+            });
+
+            tocNav.appendChild(tocList);
+            console.log('TOC generated successfully');
+
+            // Add click handlers
+            setTimeout(() => {
+                const tocLinks = tocNav.querySelectorAll('.toc-link');
+                tocLinks.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const targetId = link.getAttribute('data-target');
+                        if (targetId) {
+                            const targetElement = contentArea.querySelector('#' + targetId);
+                            if (targetElement) {
+                                targetElement.scrollIntoView({
+                                    behavior: 'smooth',
+                                    block: 'start',
+                                    inline: 'nearest'
+                                });
+                            }
+                        }
+                    });
+                });
+            }, 100);
+        }
+
         // Load article by path
         async function loadArticle(path) {
             try {
@@ -1267,49 +1325,10 @@
                     const html = await response.text();
                     contentArea.innerHTML = html;
                     contentArea.classList.add('fade-in');
-
-                    // Show home button when on article page
-                    const homeBtn = document.getElementById('homeButton');
-                    if (homeBtn) {
-                        homeBtn.style.display = 'flex';
-                    }
-
-                    // Execute scripts from loaded content
-                    const scripts = contentArea.querySelectorAll('script');
-                    scripts.forEach(script => {
-                        const newScript = document.createElement('script');
-                        newScript.textContent = script.textContent;
-                        document.body.appendChild(newScript);
-                    });
-
                     attachEventListeners();
                     setupBackToTop();
-
-                    // Re-render Mermaid diagrams with a small delay to ensure DOM is fully updated
-                    setTimeout(async () => {
-                        if (typeof mermaid !== 'undefined') {
-                            try {
-                                // Use the correct mermaid API for rendering
-                                const mermaidElements = contentArea.querySelectorAll('.mermaid');
-                                if (mermaidElements.length > 0) {
-                                    // For mermaid v10+, use run() method
-                                    if (mermaid.run) {
-                                        await mermaid.run({
-                                            querySelector: '.mermaid'
-                                        });
-                                    } else {
-                                        // For older versions, use init()
-                                        mermaid.init(undefined, mermaidElements);
-                                    }
-                                    console.log('Mermaid diagrams rendered successfully');
-                                }
-                            } catch (error) {
-                                console.error('Mermaid rendering error:', error);
-                            }
-                        }
-                    }, 100);
-
-
+                    // Generate TOC after content is loaded
+                    setTimeout(generateTOCForArticle, 200);
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else {
                     contentArea.innerHTML = '<p>无法加载文章</p>';
@@ -1353,23 +1372,6 @@
                 });
             });
 
-            // TOC links - handle anchor links without page navigation
-            const tocLinks = contentArea.querySelectorAll('.toc-sidebar a');
-            tocLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const href = link.getAttribute('href');
-                    if (href && href.startsWith('#')) {
-                        // Scroll to the target heading smoothly
-                        const targetId = href.substring(1);
-                        const targetElement = document.getElementById(targetId);
-                        if (targetElement) {
-                            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        }
-                    }
-                });
-            });
-
             // Pagination links
             const paginationLinks = contentArea.querySelectorAll('.pagination a');
             paginationLinks.forEach(link => {
@@ -1377,15 +1379,13 @@
                     e.preventDefault();
                     const href = link.getAttribute('href');
                     if (href && href !== '#') {
-                        // Check if this is a feed page or article
-                        if (href.includes('pages/index') || (href.includes('index') && href.includes('.html'))) {
-                            // Load pagination page
+                        // Check if this is a feed page (pages/index{N}.html) or article
+                        if (href.startsWith('pages/index')) {
+                            // Load feed page
                             let pageNum = 1;
-                            const match = href.match(/index(\d+)\.html|index\.html/);
-                            if (match && match[0] === 'index.html') {
-                                pageNum = 1;
-                            } else if (match) {
-                                pageNum = parseInt(match[1]);
+                            if (href.includes('index')) {
+                                const match = href.match(/index(\d+)\.html/);
+                                if (match) pageNum = parseInt(match[1]);
                             }
                             loadHomepage(pageNum);
                             window.history.pushState({page: 'feed', pageNum}, '', '#');
@@ -1411,15 +1411,6 @@
                 }
             });
         }
-
-        // ==================== HOME BUTTON ====================
-        const homeButton = document.getElementById('homeButton');
-
-        homeButton.addEventListener('click', () => {
-            // Clear the hash and load homepage
-            window.location.hash = '';
-            loadHomepage();
-        });
 
         backToTopButton.addEventListener('click', (e) => {
             e.preventDefault();

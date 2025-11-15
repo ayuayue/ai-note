@@ -1,3 +1,264 @@
+<style>
+    /* CSS Variables for fragment */
+    :root {
+        --primary-color: #2c3e50;
+        --secondary-color: #3498db;
+        --bg-color: #f8f9fa;
+        --text-color: #34495e;
+        --border-color: #e9ecef;
+        --card-bg: #ffffff;
+    }
+
+    /* TOC Sidebar Styles */
+    .article-layout {
+        display: flex;
+        max-width: 1400px;
+        margin: 0 auto;
+        gap: 30px;
+        padding: 0 20px;
+    }
+
+    .main-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .toc-sidebar {
+        width: 280px;
+        flex-shrink: 0;
+        position: sticky;
+        top: 20px;
+        height: fit-content;
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .toc-header h3 {
+        margin: 0 0 15px 0;
+        font-size: 1.1rem;
+        color: var(--primary-color);
+        border-bottom: 2px solid var(--secondary-color);
+        padding-bottom: 10px;
+    }
+
+    .toc-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .toc-item {
+        margin-bottom: 8px;
+    }
+
+    .toc-link {
+        display: block;
+        padding: 6px 10px;
+        color: var(--text-color);
+        text-decoration: none;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        font-size: 0.95rem;
+    }
+
+    .toc-link:hover {
+        background: var(--secondary-color);
+        color: white;
+        padding-left: 15px;
+    }
+
+    .toc-link.active {
+        background: var(--secondary-color);
+        color: white;
+        font-weight: 500;
+    }
+
+    .toc-sublist {
+        list-style: none;
+        padding-left: 20px;
+        margin-top: 5px;
+    }
+
+    .toc-sublist .toc-link {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    /* Post Styles */
+    .post {
+        background: var(--card-bg);
+        border-radius: 8px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--border-color);
+    }
+
+    .post-header {
+        margin-bottom: 25px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .post-title {
+        color: var(--primary-color);
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+
+    .post-meta {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        font-size: 0.95rem;
+        color: #6c757d;
+    }
+
+    .post-date {
+        background-color: #e3f2fd;
+        color: var(--secondary-color);
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+
+    .post-category {
+        background-color: #e8f5e9;
+        color: #4caf50;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+
+    .warning {
+        background-color: #fff3cd;
+        border: 1px solid #ffeaa7;
+        color: #856404;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 30px;
+        text-align: center;
+        font-size: 0.9rem;
+    }
+
+    .post-content {
+        font-size: 1.05rem;
+        line-height: 1.7;
+        color: var(--text-color);
+    }
+
+    .post-content h1, .post-content h2, .post-content h3,
+    .post-content h4, .post-content h5, .post-content h6 {
+        color: var(--primary-color);
+        margin-top: 35px;
+        margin-bottom: 20px;
+        scroll-margin-top: 20px;
+    }
+
+    .post-content h2 {
+        font-size: 1.5rem;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .post-content h3 {
+        font-size: 1.3rem;
+        color: #2980b9;
+    }
+
+    .post-content p {
+        margin-bottom: 18px;
+    }
+
+    .post-content code {
+        background-color: #e8eaed;
+        padding: 3px 7px;
+        border-radius: 4px;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+        color: #c0392b;
+        font-size: 0.9em;
+    }
+
+    .post-content pre {
+        background-color: #2d2d2d;
+        color: #f8f8f2;
+        padding: 20px;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 25px 0;
+        font-size: 0.9em;
+        line-height: 1.5;
+        position: relative;
+    }
+
+    .post-content pre code {
+        background-color: transparent;
+        padding: 0;
+        color: inherit;
+    }
+
+    .copy-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(5px);
+    }
+
+    .copy-button:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .copy-button.copied {
+        background: #4caf50;
+        border-color: #4caf50;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .article-layout {
+            flex-direction: column;
+        }
+
+        .toc-sidebar {
+            width: 100%;
+            position: static;
+            max-height: none;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .post {
+            padding: 20px;
+        }
+
+        .post-title {
+            font-size: 1.6rem;
+        }
+
+        .post-content {
+            font-size: 1rem;
+        }
+
+        .article-layout {
+            padding: 0 15px;
+        }
+    }
+</style>
+
 <div class="article-layout">
     <div class="main-content">
         <article class="post">
@@ -416,45 +677,55 @@ StringUtils是一个全面、null安全、高性能的字符串工具集，让�
     function generateTableOfContents() {
         const postContent = document.getElementById('post-content');
         const tocNav = document.getElementById('toc-nav');
-        
-        if (!postContent || !tocNav) return;
-        
-        // 查找所有标题元素
-        const headings = postContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
-        if (headings.length === 0) {
-            // 如果没有标题，隐藏目录
-            document.getElementById('toc-sidebar').style.display = 'none';
+
+        if (!postContent || !tocNav) {
+            console.log('Missing postContent or tocNav element');
             return;
         }
-        
+
+        // 查找所有标题元素
+        const headings = postContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        console.log('Found headings:', headings.length);
+
+        if (headings.length === 0) {
+            // 如果没有标题，隐藏目录
+            console.log('No headings found, hiding TOC');
+            const tocSidebar = document.getElementById('toc-sidebar');
+            if (tocSidebar) tocSidebar.style.display = 'none';
+            return;
+        }
+
+        // 清空目录容器
+        tocNav.innerHTML = '';
+
         // 创建目录结构
         const tocList = document.createElement('ul');
         tocList.className = 'toc-list';
-        
+
         let currentLevel = 1;
         let currentList = tocList;
         let listStack = [tocList];
-        
+
         headings.forEach((heading, index) => {
             // 强制为每个标题设置标准化的ID（始终重写现有ID）
             const normalizedId = 'heading-' + index;
             heading.id = normalizedId;
-            
+
             const level = parseInt(heading.tagName.charAt(1));
             const title = heading.textContent.trim();
-            
+
             // 创建目录项
             const tocItem = document.createElement('li');
             tocItem.className = 'toc-item toc-level-' + level;
-            
+
             const tocLink = document.createElement('a');
             tocLink.href = 'javascript:void(0)'; // 避免触发路由
             tocLink.setAttribute('data-target', heading.id); // 存储目标ID
             tocLink.textContent = title;
             tocLink.className = 'toc-link';
-            
+
             tocItem.appendChild(tocLink);
-            
+
             // 处理层级关系
             if (level > currentLevel) {
                 // 创建新的子列表
@@ -477,19 +748,20 @@ StringUtils是一个全面、null安全、高性能的字符串工具集，让�
                 }
                 currentList = listStack[listStack.length - 1];
             }
-            
+
             currentList.appendChild(tocItem);
             currentLevel = level;
         });
-        
+
         tocNav.appendChild(tocList);
-        
+        console.log('TOC generated successfully');
+
         // 高亮当前章节
         highlightCurrentSection();
-        
+
         // 滚动监听
         window.addEventListener('scroll', highlightCurrentSection);
-        
+
         // 为目录链接添加点击事件
         setTimeout(() => {
             const tocLinks = document.querySelectorAll('.toc-link');
@@ -500,8 +772,8 @@ StringUtils是一个全面、null安全、高性能的字符串工具集，让�
                     if (targetId) {
                         const targetElement = document.getElementById(targetId);
                         if (targetElement) {
-                            targetElement.scrollIntoView({ 
-                                behavior: 'smooth', 
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth',
                                 block: 'start',
                                 inline: 'nearest'
                             });
@@ -511,15 +783,15 @@ StringUtils是一个全面、null安全、高性能的字符串工具集，让�
             });
         }, 200); // 延迟确保目录已生成
     }
-    
+
     // 高亮当前阅读的章节
     function highlightCurrentSection() {
         const headings = document.querySelectorAll('.post-content h1, .post-content h2, .post-content h3, .post-content h4, .post-content h5, .post-content h6');
         const tocLinks = document.querySelectorAll('.toc-link');
-        
+
         let currentHeading = null;
         const scrollPosition = window.pageYOffset + 100;
-        
+
         // 找到当前可见的标题
         for (let i = headings.length - 1; i >= 0; i--) {
             if (headings[i].offsetTop <= scrollPosition) {
@@ -527,13 +799,13 @@ StringUtils是一个全面、null安全、高性能的字符串工具集，让�
                 break;
             }
         }
-        
+
         // 清除所有活动状态
         tocLinks.forEach(link => link.classList.remove('active'));
-        
+
         // 高亮当前章节
         if (currentHeading) {
-            const activeLink = document.querySelector('.toc-link[href="#' + currentHeading.id + '"]');
+            const activeLink = document.querySelector('.toc-link[data-target="' + currentHeading.id + '"]');
             if (activeLink) {
                 activeLink.classList.add('active');
             }
@@ -543,10 +815,12 @@ StringUtils是一个全面、null安全、高性能的字符串工具集，让�
     // Initialize copy buttons and TOC after content loads
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loading, initializing...');
             addCopyButtons();
             setTimeout(generateTableOfContents, 100); // 延迟生成以确保内容已加载
         });
     } else {
+        console.log('DOM already loaded, initializing...');
         addCopyButtons();
         setTimeout(generateTableOfContents, 100);
     }
