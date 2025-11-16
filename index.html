@@ -1112,6 +1112,18 @@
             color: inherit;
         }
 
+        /* Mermaid diagram styles */
+        .post-content .mermaid {
+            background-color: transparent;
+            text-align: center;
+            margin: 25px 0;
+            padding: 20px;
+        }
+
+        :root.dark-mode .post-content .mermaid {
+            background-color: transparent;
+        }
+
         @media (max-width: 1024px) {
             .article-layout {
                 flex-direction: column;
@@ -1138,6 +1150,8 @@
             }
         }
     </style>
+    <!-- Mermaid Library -->
+    <script src="js/mermaid.min.js"></script>
 </head>
 <body>
     <div class="page-wrapper">
@@ -1269,6 +1283,30 @@
             const isDarkMode = html.classList.contains('dark-mode');
             localStorage.setItem('theme-mode', isDarkMode ? 'dark' : 'light');
             console.log('主题切换为:', isDarkMode ? '暗色模式' : '亮色模式');
+
+            // Re-render Mermaid diagrams with new theme
+            if (typeof mermaid !== 'undefined') {
+                const mermaidElements = contentArea.querySelectorAll('div.mermaid[data-mermaid-code]');
+                if (mermaidElements.length > 0) {
+                    console.log('重新渲染', mermaidElements.length, '个Mermaid图表以适应新主题');
+                    mermaidElements.forEach((element, index) => {
+                        const graphDefinition = element.getAttribute('data-mermaid-code');
+                        element.removeAttribute('data-processed');
+                        element.textContent = graphDefinition;
+                        // Remove any existing SVG
+                        const svg = element.querySelector('svg');
+                        if (svg) svg.remove();
+                    });
+
+                    mermaid.initialize({
+                        startOnLoad: false,
+                        theme: isDarkMode ? 'dark' : 'default'
+                    });
+                    mermaid.run({
+                        querySelector: '.mermaid'
+                    });
+                }
+            }
         });
 
         // ==================== SPA ROUTING ====================
@@ -1406,6 +1444,33 @@
                     setupBackToTop();
                     // Generate TOC after content is loaded
                     setTimeout(generateTOCForArticle, 200);
+                    // Initialize Mermaid diagrams if present
+                    setTimeout(() => {
+                        if (typeof mermaid !== 'undefined') {
+                            mermaid.initialize({
+                                startOnLoad: false,
+                                theme: document.documentElement.classList.contains('dark-mode') ? 'dark' : 'default'
+                            });
+                            const mermaidElements = contentArea.querySelectorAll('pre.mermaid');
+                            if (mermaidElements.length > 0) {
+                                console.log('Found', mermaidElements.length, 'Mermaid diagrams, rendering...');
+                                mermaidElements.forEach((element, index) => {
+                                    const graphDefinition = element.textContent.trim();
+                                    // Store original code in data attribute for theme switching
+                                    element.setAttribute('data-mermaid-code', graphDefinition);
+                                    // Replace pre with div for Mermaid rendering
+                                    const div = document.createElement('div');
+                                    div.className = 'mermaid';
+                                    div.textContent = graphDefinition;
+                                    div.setAttribute('data-mermaid-code', graphDefinition);
+                                    element.parentNode.replaceChild(div, element);
+                                });
+                                mermaid.run({
+                                    querySelector: '.mermaid'
+                                });
+                            }
+                        }
+                    }, 300);
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 } else {
                     contentArea.innerHTML = '<p>无法加载文章</p>';

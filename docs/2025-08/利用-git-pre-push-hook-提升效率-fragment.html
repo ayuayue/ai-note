@@ -265,7 +265,7 @@
             <header class="post-header">
                 <h1 class="post-title">利用-git-pre-push-hook-提升效率</h1>
                 <div class="post-meta">
-                    <div class="post-date">2025/8/28</div>
+                    <div class="post-date">2025/8/29</div>
                     <div class="post-category">2025-08</div>
                 </div>
             </header>
@@ -500,7 +500,7 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a hr
 <col style="width: 25%" />
 </colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th style="text-align: left;">特性 / 工具</th>
 <th style="text-align: left;">原生方式 (<code>.git/hooks</code>)</th>
 <th style="text-align: left;">Husky (Node.js 生态)</th>
@@ -508,7 +508,7 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a hr
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td style="text-align: left;"><strong>团队共享</strong></td>
 <td style="text-align: left;">否，需手动分发和设置</td>
 <td style="text-align: left;">是，通过 <code>package.json</code> 和
@@ -516,14 +516,14 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a hr
 <td style="text-align: left;">是，通过
 <code>.pre-commit-config.yaml</code> 共享配置</td>
 </tr>
-<tr>
+<tr class="even">
 <td style="text-align: left;"><strong>安装</strong></td>
 <td style="text-align: left;">无需安装</td>
 <td
 style="text-align: left;"><code>npm install husky --save-dev</code></td>
 <td style="text-align: left;"><code>pip install pre-commit</code></td>
 </tr>
-<tr>
+<tr class="odd">
 <td style="text-align: left;"><strong>配置</strong></td>
 <td style="text-align: left;">直接编写 Shell/Python 等脚本</td>
 <td style="text-align: left;">在 <code>package.json</code> 或
@@ -531,14 +531,14 @@ style="text-align: left;"><code>npm install husky --save-dev</code></td>
 <td style="text-align: left;">在 <code>.pre-commit-config.yaml</code>
 中声明钩子和仓库</td>
 </tr>
-<tr>
+<tr class="even">
 <td style="text-align: left;"><strong>跨平台</strong></td>
 <td style="text-align: left;">依赖于脚本语言和环境 (Shell 在 Windows
 上可能需要额外配置)</td>
 <td style="text-align: left;">良好，利用 Node.js 环境</td>
 <td style="text-align: left;">优秀，Python 本身跨平台</td>
 </tr>
-<tr>
+<tr class="odd">
 <td style="text-align: left;"><strong>生态系统</strong></td>
 <td style="text-align: left;">无</td>
 <td style="text-align: left;">非常适合 JavaScript/TypeScript 项目，与
@@ -546,13 +546,13 @@ npm/yarn 深度集成</td>
 <td style="text-align: left;">语言无关，支持多种语言的 linter 和
 formatter</td>
 </tr>
-<tr>
+<tr class="even">
 <td style="text-align: left;"><strong>优点</strong></td>
 <td style="text-align: left;">零依赖，简单直接</td>
 <td style="text-align: left;">自动化安装，对前端开发者极其友好</td>
 <td style="text-align: left;">强大的多语言支持和插件化管理</td>
 </tr>
-<tr>
+<tr class="odd">
 <td style="text-align: left;"><strong>缺点</strong></td>
 <td style="text-align: left;">难以团队协作和管理</td>
 <td style="text-align: left;">强依赖 Node.js 工具链</td>

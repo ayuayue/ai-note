@@ -263,9 +263,9 @@
     <div class="main-content">
         <article class="post">
             <header class="post-header">
-                <h1 class="post-title">Spring CollectionUtils 工具类完全指南：告别繁琐集合操作</h1>
+                <h1 class="post-title">Spring CollectionUtils 工具类完全指南：告别繁琐集合操作</h1>
                 <div class="post-meta">
-                    <div class="post-date">2025/10/28</div>
+                    <div class="post-date">2025/10/19</div>
                     <div class="post-category">2025-10</div>
                 </div>
             </header>
@@ -506,8 +506,8 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="
 <span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">processLargeDataset</span><span class="op">(</span><span class="bu">List</span><span class="op">&lt;</span>DataRecord<span class="op">&gt;</span> records<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 使用流式处理与 CollectionUtils 结合</span></span>
 <span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>        <span class="bu">List</span><span class="op">&lt;</span>DataRecord<span class="op">&gt;</span> validRecords <span class="op">=</span> records<span class="op">.</span><span class="fu">stream</span><span class="op">()</span></span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">filter</span><span class="op">(</span><span class="kw">record</span> <span class="op">-&gt;</span> CollectionUtils<span class="op">.</span><span class="fu">isNotEmpty</span><span class="op">(</span><span class="kw">record</span><span class="op">.</span><span class="fu">getValues</span><span class="op">()))</span></span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">filter</span><span class="op">(</span><span class="kw">record</span> <span class="op">-&gt;</span> <span class="kw">record</span><span class="op">.</span><span class="fu">isValid</span><span class="op">())</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">filter</span><span class="op">(</span>record <span class="op">-&gt;</span> CollectionUtils<span class="op">.</span><span class="fu">isNotEmpty</span><span class="op">(</span>record<span class="op">.</span><span class="fu">getValues</span><span class="op">()))</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">filter</span><span class="op">(</span>record <span class="op">-&gt;</span> record<span class="op">.</span><span class="fu">isValid</span><span class="op">())</span></span>
 <span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">collect</span><span class="op">(</span>Collectors<span class="op">.</span><span class="fu">toList</span><span class="op">());</span></span>
 <span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 分批处理有效数据</span></span>

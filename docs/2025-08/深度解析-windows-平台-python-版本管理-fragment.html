@@ -265,7 +265,7 @@
             <header class="post-header">
                 <h1 class="post-title">深度解析-windows-平台-python-版本管理</h1>
                 <div class="post-meta">
-                    <div class="post-date">2025/8/26</div>
+                    <div class="post-date">2025/8/24</div>
                     <div class="post-category">2025-08</div>
                 </div>
             </header>
@@ -307,19 +307,18 @@ Python 版本无缝切换。我们的结论是，<strong><code>pyenv-win</code>
 <code>pyenv</code> 或 Python 安装。</p>
 </blockquote>
 <ol type="1">
-<li><p><strong>卸载旧的 <code>pyenv</code> (如果通过 Scoop
-安装过)</strong>：</p>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>scoop uninstall pyenv</span></code></pre></div></li>
-<li><p><strong>卸载系统级的 Python</strong>：检查 Windows
+<li><strong>卸载旧的 <code>pyenv</code> (如果通过 Scoop
+安装过)</strong>：
+<code>powershell     scoop uninstall pyenv</code></li>
+<li><strong>卸载系统级的 Python</strong>：检查 Windows
 的“应用和功能”，卸载所有手动安装的 Python 版本。<code>pyenv-win</code>
-将会全权管理它们。</p></li>
-<li><p><strong>检查环境变量</strong>：检查系统的 <code>PATH</code>
+将会全权管理它们。</li>
+<li><strong>检查环境变量</strong>：检查系统的 <code>PATH</code>
 变量，移除任何手动添加的 Python 路径或旧的 <code>pyenv</code> shims
-路径。</p></li>
-<li><p><strong>安装 Git</strong>：<code>pyenv-win</code> 需要 Git
+路径。</li>
+<li><strong>安装 Git</strong>：<code>pyenv-win</code> 需要 Git
 来拉取和更新 Python 的版本定义。请确保 Git 已安装并在 <code>PATH</code>
-中。</p></li>
+中。</li>
 </ol>
 <h3 id="使用-powershell-脚本进行安装">3.2 使用 PowerShell
 脚本进行安装</h3>
@@ -331,10 +330,9 @@ class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb1-
 <li>在开始菜单搜索 “PowerShell”，右键点击，选择“以管理员身份运行”。</li>
 </ul></li>
 <li><p><strong>执行安装命令</strong>: 将以下命令粘贴到管理员 PowerShell
-窗口中并执行。</p>
-<div class="sourceCode" id="cb2"><pre
-class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Invoke-WebRequest</span> <span class="op">-</span>UseBasicParsing <span class="op">-</span>Uri <span class="st">&quot;https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1&quot;</span> <span class="op">-</span>OutFile <span class="st">&quot;./install-pyenv-win.ps1&quot;</span><span class="op">;</span> <span class="op">&amp;</span><span class="st">&quot;./install-pyenv-win.ps1&quot;</span></span></code></pre></div>
-<p><strong>该命令做了什么？</strong></p>
+窗口中并执行。
+<code>powershell     Invoke-WebRequest -UseBasicParsing -Uri "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1" -OutFile "./install-pyenv-win.ps1"; &amp;"./install-pyenv-win.ps1"</code>
+<strong>该命令做了什么？</strong></p>
 <ul>
 <li><code>Invoke-WebRequest ... -OutFile ...</code>: 从
 <code>pyenv-win</code> 的官方 GitHub 仓库下载最新的安装脚本
@@ -347,10 +345,8 @@ class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb2-
 安装脚本修改了您的环境变量，但这些更改只对<strong>新打开的</strong>终端窗口生效。请<strong>务必关闭当前的
 PowerShell 窗口，然后重新打开一个新的</strong>。</p></li>
 <li><p><strong>验证安装</strong>: 在<strong>新的</strong> PowerShell
-窗口中，运行以下命令：</p>
-<div class="sourceCode" id="cb3"><pre
-class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>pyenv <span class="op">--</span>version</span></code></pre></div>
-<p>如果成功，您将看到 <code>pyenv-win</code> 的版本号。</p></li>
+窗口中，运行以下命令： <code>powershell     pyenv --version</code>
+如果成功，您将看到 <code>pyenv-win</code> 的版本号。</p></li>
 </ol>
 <h3 id="核心工作流图解">3.3 核心工作流图解</h3>
 <pre class="mermaid">graph TD
@@ -375,28 +371,19 @@ class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb3-
 <h3 id="日常使用步骤">3.4 日常使用步骤</h3>
 <p>安装成功后，日常使用流程与之前介绍的完全一致，但基础更稳定。</p>
 <ol type="1">
-<li><p><strong>安装 Python 版本</strong></p>
-<div class="sourceCode" id="cb5"><pre
-class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 第一次安装版本时，最好也在管理员权限的终端中进行</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 以避免我们之前讨论过的 MSI 权限问题</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>pyenv install <span class="dv">3.10</span><span class="op">.</span><span class="dv">5</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="dt">pyenv</span> install <span class="dv">3.11</span><span class="op">.</span><span class="dv">5</span></span></code></pre></div></li>
-<li><p><strong>设置全局/默认版本</strong></p>
-<div class="sourceCode" id="cb6"><pre
-class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>pyenv global <span class="dv">3.11</span><span class="op">.</span><span class="dv">5</span></span></code></pre></div></li>
+<li><p><strong>安装 Python 版本</strong>
+<code>powershell     # 第一次安装版本时，最好也在管理员权限的终端中进行     # 以避免我们之前讨论过的 MSI 权限问题     pyenv install 3.10.5     pyenv install 3.11.5</code></p></li>
+<li><p><strong>设置全局/默认版本</strong>
+<code>powershell     pyenv global 3.11.5</code></p></li>
 <li><p><strong>设置项目局部版本 (核心功能)</strong></p>
-<div class="sourceCode" id="cb7"><pre
-class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cd</span> D<span class="op">:</span>\path\to\your-project</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>pyenv local <span class="dv">3.10</span><span class="op">.</span><span class="dv">5</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 验证自动切换</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>python <span class="op">--</span>version <span class="co"># 应显示 3.10.5</span></span></code></pre></div></li>
-<li><p><strong>结合 <code>venv</code> (最佳实践)</strong></p>
-<div class="sourceCode" id="cb8"><pre
-class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 在项目目录下</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>python <span class="op">-</span>m venv <span class="op">.</span><span class="fu">venv</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="op">.</span>\<span class="op">.</span><span class="fu">venv</span>\Scripts\Activate<span class="op">.</span><span class="fu">ps1</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>pip install <span class="op">-</span>r requirements<span class="op">.</span><span class="fu">txt</span></span></code></pre></div></li>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cd</span> D<span class="op">:</span>\path\to\your<span class="op">-</span>project</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>pyenv local 3<span class="op">.</span><span class="fu">10</span><span class="op">.</span><span class="fu">5</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 验证自动切换</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>python <span class="op">--</span>version <span class="co"># 应显示 3.10.5</span></span></code></pre></div></li>
+<li><p><strong>结合 <code>venv</code> (最佳实践)</strong>
+<code>powershell     # 在项目目录下     python -m venv .venv     .\.venv\Scripts\Activate.ps1     pip install -r requirements.txt</code></p></li>
 </ol>
 <h2 id="结论与最终建议">4. 结论与最终建议</h2>
 <p><strong>您的判断是正确的</strong>：对于追求稳定性和希望避免潜在问题的开发者来说，放弃
