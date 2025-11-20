@@ -227,6 +227,43 @@
         border-color: #4caf50;
     }
 
+    /* Back to Home Button */
+    .back-to-home {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--secondary-color);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+    }
+
+    .back-to-home:hover {
+        background: #2980b9;
+        transform: translateX(-5px);
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+    }
+
+    .back-to-home::before {
+        content: '←';
+        font-size: 1.2em;
+    }
+
+    /* Mermaid diagram styles */
+    .mermaid {
+        background-color: #f8f9fa;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 20px;
+        margin: 25px 0;
+        text-align: center;
+    }
+
     /* Responsive */
     @media (max-width: 1024px) {
         .article-layout {
@@ -259,11 +296,15 @@
     }
 </style>
 
+<!-- 引入本地 Mermaid 库 -->
+<script src="../../js/mermaid.min.js"></script>
+
 <div class="article-layout">
     <div class="main-content">
+        <a href="../../index.html" class="back-to-home">返回主页</a>
         <article class="post">
             <header class="post-header">
-                <h1 class="post-title">Java中的多个Main方法：解构项目入口与依赖共享</h1>
+                <h1 class="post-title">Java中的多个Main方法：解构项目入口与依赖共享</h1>
                 <div class="post-meta">
                     <div class="post-date">2025/10/31</div>
                     <div class="post-category">2025-10</div>
@@ -504,7 +545,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="
 class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout<span class="op"> &lt;&lt;</span> <span class="st">&quot;Hello, World! (唯一的入口)&quot;</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">&quot;Hello, World! (唯一的入口)&quot;</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p><strong>Go</strong></p>
@@ -537,7 +578,7 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a h
 <col style="width: 25%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th style="text-align: left;">语言</th>
 <th style="text-align: left;">入口机制</th>
 <th style="text-align: left;">优点</th>
@@ -545,26 +586,26 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a h
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>Java</strong></td>
 <td style="text-align: left;">类中的静态方法</td>
 <td style="text-align: left;">面向对象，高度灵活，支持多入口</td>
 <td style="text-align: left;">对于简单脚本略显繁琐</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>C/C++</strong></td>
 <td style="text-align: left;">全局函数</td>
 <td style="text-align: left;">简单，性能高</td>
 <td
 style="text-align: left;">不够灵活，难以在一个项目中组织多个可执行程序</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>Go</strong></td>
 <td style="text-align: left;"><code>main</code>包中的函数</td>
 <td style="text-align: left;">与模块化结合良好，编译部署简单</td>
 <td style="text-align: left;">依赖包结构，不如Java类级别灵活</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>Python</strong></td>
 <td style="text-align: left;">脚本约定</td>
 <td style="text-align: left;">极其灵活，代码复用性强</td>
@@ -926,16 +967,58 @@ Boot Reference Documentation - Spring Application</a></li>
         }
     }
 
+    // Initialize mermaid diagrams
+    function initMermaid() {
+        if (typeof mermaid === 'undefined') {
+            console.log('Mermaid library not loaded');
+            return;
+        }
+
+        const mermaidElements = document.querySelectorAll('pre.mermaid');
+        if (mermaidElements.length === 0) {
+            console.log('No mermaid diagrams found');
+            return;
+        }
+
+        console.log('Found', mermaidElements.length, 'mermaid diagrams, initializing...');
+
+        // 重新初始化 mermaid
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'default',
+            securityLevel: 'loose'
+        });
+
+        // 处理每个 mermaid 代码块
+        mermaidElements.forEach((element, index) => {
+            const graphDefinition = element.textContent.trim();
+            // 替换 pre 为 div 以便 mermaid 渲染
+            const div = document.createElement('div');
+            div.className = 'mermaid';
+            div.textContent = graphDefinition;
+            element.parentNode.replaceChild(div, element);
+        });
+
+        // 运行 mermaid 渲染
+        mermaid.run({
+            querySelector: '.mermaid'
+        }).catch(err => {
+            console.error('Mermaid rendering error:', err);
+        });
+    }
+
     // Initialize copy buttons and TOC after content loads
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loading, initializing...');
             addCopyButtons();
             setTimeout(generateTableOfContents, 100); // 延迟生成以确保内容已加载
+            setTimeout(initMermaid, 200); // 延迟初始化 mermaid
         });
     } else {
         console.log('DOM already loaded, initializing...');
         addCopyButtons();
         setTimeout(generateTableOfContents, 100);
+        setTimeout(initMermaid, 200);
     }
 </script>

@@ -227,6 +227,43 @@
         border-color: #4caf50;
     }
 
+    /* Back to Home Button */
+    .back-to-home {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--secondary-color);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+    }
+
+    .back-to-home:hover {
+        background: #2980b9;
+        transform: translateX(-5px);
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+    }
+
+    .back-to-home::before {
+        content: '←';
+        font-size: 1.2em;
+    }
+
+    /* Mermaid diagram styles */
+    .mermaid {
+        background-color: #f8f9fa;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 20px;
+        margin: 25px 0;
+        text-align: center;
+    }
+
     /* Responsive */
     @media (max-width: 1024px) {
         .article-layout {
@@ -259,13 +296,17 @@
     }
 </style>
 
+<!-- 引入本地 Mermaid 库 -->
+<script src="../../js/mermaid.min.js"></script>
+
 <div class="article-layout">
     <div class="main-content">
+        <a href="../../index.html" class="back-to-home">返回主页</a>
         <article class="post">
             <header class="post-header">
                 <h1 class="post-title">数据库分页不稳定</h1>
                 <div class="post-meta">
-                    <div class="post-date">2025/10/19</div>
+                    <div class="post-date">2025/9/15</div>
                     <div class="post-category">2025-09</div>
                 </div>
             </header>
@@ -411,7 +452,7 @@ BY只保证单次查询的顺序，无法阻止数据变动导致的分页错位
 <h3 id="解决方案选择">解决方案选择</h3>
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th>场景</th>
 <th>传统分页</th>
 <th>游标分页</th>
@@ -420,35 +461,35 @@ BY只保证单次查询的顺序，无法阻止数据变动导致的分页错位
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>静态数据</td>
 <td>✓</td>
 <td>✓</td>
 <td>✓</td>
 <td>✓</td>
 </tr>
-<tr class="even">
+<tr>
 <td>低频变动</td>
 <td>⚠️</td>
 <td>✓</td>
 <td>✓</td>
 <td>✓</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>高频变动</td>
 <td>✗</td>
 <td>✓</td>
 <td>⚠️</td>
 <td>✓</td>
 </tr>
-<tr class="even">
+<tr>
 <td>随机访问</td>
 <td>✓</td>
 <td>✗</td>
 <td>✓</td>
 <td>✓</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>深度分页</td>
 <td>✗</td>
 <td>✓</td>
@@ -536,7 +577,7 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a hr
 <h3 id="对比总结">对比总结</h3>
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th>特性</th>
 <th>Java生态</th>
 <th>Python生态</th>
@@ -544,31 +585,31 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a hr
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>传统分页支持</td>
 <td>完善</td>
 <td>完善</td>
 <td>完善</td>
 </tr>
-<tr class="even">
+<tr>
 <td>游标分页支持</td>
 <td>需自定义</td>
 <td>需自定义</td>
 <td>需自定义</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>框架集成度</td>
 <td>高（Spring Data）</td>
 <td>中（Django）</td>
 <td>中（GORM）</td>
 </tr>
-<tr class="even">
+<tr>
 <td>性能优化</td>
 <td>覆盖索引支持</td>
 <td>覆盖索引支持</td>
 <td>覆盖索引支持</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>学习曲线</td>
 <td>中等</td>
 <td>低</td>
@@ -962,16 +1003,58 @@ Paginator</a></li>
         }
     }
 
+    // Initialize mermaid diagrams
+    function initMermaid() {
+        if (typeof mermaid === 'undefined') {
+            console.log('Mermaid library not loaded');
+            return;
+        }
+
+        const mermaidElements = document.querySelectorAll('pre.mermaid');
+        if (mermaidElements.length === 0) {
+            console.log('No mermaid diagrams found');
+            return;
+        }
+
+        console.log('Found', mermaidElements.length, 'mermaid diagrams, initializing...');
+
+        // 重新初始化 mermaid
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'default',
+            securityLevel: 'loose'
+        });
+
+        // 处理每个 mermaid 代码块
+        mermaidElements.forEach((element, index) => {
+            const graphDefinition = element.textContent.trim();
+            // 替换 pre 为 div 以便 mermaid 渲染
+            const div = document.createElement('div');
+            div.className = 'mermaid';
+            div.textContent = graphDefinition;
+            element.parentNode.replaceChild(div, element);
+        });
+
+        // 运行 mermaid 渲染
+        mermaid.run({
+            querySelector: '.mermaid'
+        }).catch(err => {
+            console.error('Mermaid rendering error:', err);
+        });
+    }
+
     // Initialize copy buttons and TOC after content loads
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loading, initializing...');
             addCopyButtons();
             setTimeout(generateTableOfContents, 100); // 延迟生成以确保内容已加载
+            setTimeout(initMermaid, 200); // 延迟初始化 mermaid
         });
     } else {
         console.log('DOM already loaded, initializing...');
         addCopyButtons();
         setTimeout(generateTableOfContents, 100);
+        setTimeout(initMermaid, 200);
     }
 </script>

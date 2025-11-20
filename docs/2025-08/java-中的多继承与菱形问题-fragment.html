@@ -227,6 +227,43 @@
         border-color: #4caf50;
     }
 
+    /* Back to Home Button */
+    .back-to-home {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--secondary-color);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+    }
+
+    .back-to-home:hover {
+        background: #2980b9;
+        transform: translateX(-5px);
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+    }
+
+    .back-to-home::before {
+        content: '←';
+        font-size: 1.2em;
+    }
+
+    /* Mermaid diagram styles */
+    .mermaid {
+        background-color: #f8f9fa;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 20px;
+        margin: 25px 0;
+        text-align: center;
+    }
+
     /* Responsive */
     @media (max-width: 1024px) {
         .article-layout {
@@ -259,13 +296,17 @@
     }
 </style>
 
+<!-- 引入本地 Mermaid 库 -->
+<script src="../../js/mermaid.min.js"></script>
+
 <div class="article-layout">
     <div class="main-content">
+        <a href="../../index.html" class="back-to-home">返回主页</a>
         <article class="post">
             <header class="post-header">
                 <h1 class="post-title">java-中的多继承与菱形问题</h1>
                 <div class="post-meta">
-                    <div class="post-date">2025/8/29</div>
+                    <div class="post-date">2025/8/27</div>
                     <div class="post-category">2025-08</div>
                 </div>
             </header>
@@ -723,16 +764,58 @@ href="https://en.cppreference.com/w/cpp/language/derived_class">C++
         }
     }
 
+    // Initialize mermaid diagrams
+    function initMermaid() {
+        if (typeof mermaid === 'undefined') {
+            console.log('Mermaid library not loaded');
+            return;
+        }
+
+        const mermaidElements = document.querySelectorAll('pre.mermaid');
+        if (mermaidElements.length === 0) {
+            console.log('No mermaid diagrams found');
+            return;
+        }
+
+        console.log('Found', mermaidElements.length, 'mermaid diagrams, initializing...');
+
+        // 重新初始化 mermaid
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'default',
+            securityLevel: 'loose'
+        });
+
+        // 处理每个 mermaid 代码块
+        mermaidElements.forEach((element, index) => {
+            const graphDefinition = element.textContent.trim();
+            // 替换 pre 为 div 以便 mermaid 渲染
+            const div = document.createElement('div');
+            div.className = 'mermaid';
+            div.textContent = graphDefinition;
+            element.parentNode.replaceChild(div, element);
+        });
+
+        // 运行 mermaid 渲染
+        mermaid.run({
+            querySelector: '.mermaid'
+        }).catch(err => {
+            console.error('Mermaid rendering error:', err);
+        });
+    }
+
     // Initialize copy buttons and TOC after content loads
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loading, initializing...');
             addCopyButtons();
             setTimeout(generateTableOfContents, 100); // 延迟生成以确保内容已加载
+            setTimeout(initMermaid, 200); // 延迟初始化 mermaid
         });
     } else {
         console.log('DOM already loaded, initializing...');
         addCopyButtons();
         setTimeout(generateTableOfContents, 100);
+        setTimeout(initMermaid, 200);
     }
 </script>

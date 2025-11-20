@@ -227,6 +227,43 @@
         border-color: #4caf50;
     }
 
+    /* Back to Home Button */
+    .back-to-home {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--secondary-color);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+    }
+
+    .back-to-home:hover {
+        background: #2980b9;
+        transform: translateX(-5px);
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+    }
+
+    .back-to-home::before {
+        content: '←';
+        font-size: 1.2em;
+    }
+
+    /* Mermaid diagram styles */
+    .mermaid {
+        background-color: #f8f9fa;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 20px;
+        margin: 25px 0;
+        text-align: center;
+    }
+
     /* Responsive */
     @media (max-width: 1024px) {
         .article-layout {
@@ -259,13 +296,17 @@
     }
 </style>
 
+<!-- 引入本地 Mermaid 库 -->
+<script src="../../js/mermaid.min.js"></script>
+
 <div class="article-layout">
     <div class="main-content">
+        <a href="../../index.html" class="back-to-home">返回主页</a>
         <article class="post">
             <header class="post-header">
                 <h1 class="post-title">字符串转换工具sttr</h1>
                 <div class="post-meta">
-                    <div class="post-date">2025/8/29</div>
+                    <div class="post-date">2025/8/26</div>
                     <div class="post-category">2025-08</div>
                 </div>
             </header>
@@ -324,37 +365,37 @@ macOS 和 Linux
 <col style="width: 33%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th style="text-align: left;">评估维度</th>
 <th style="text-align: left;">传统工作流</th>
 <th style="text-align: left;"><code>sttr</code> 工作流</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>工具集</strong></td>
 <td style="text-align: left;">分散的、多样的命令 (<code>base64</code>,
 <code>md5sum</code>, etc.)</td>
 <td style="text-align: left;"><strong>单一命令</strong>
 (<code>sttr</code>)</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>跨平台性</strong></td>
 <td style="text-align: left;">差 (Windows 平台原生缺失)</td>
 <td style="text-align: left;"><strong>优秀</strong>
 (单一二进制文件全平台通用)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>安全性</strong></td>
 <td style="text-align: left;">依赖在线工具时为<strong>极低</strong></td>
 <td style="text-align: left;"><strong>极高</strong> (完全离线操作)</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>学习曲线</strong></td>
 <td style="text-align: left;">中等 (需记忆多个不同工具的语法)</td>
 <td style="text-align: left;"><strong>低</strong> (语法模式统一)</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>脚本集成</strong></td>
 <td style="text-align: left;">复杂 (需处理不同工具的输出格式)</td>
 <td style="text-align: left;"><strong>简单</strong>
@@ -387,32 +428,32 @@ DX。</li>
 功能象限分析</strong></h4>
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th style="text-align: left;">功能分类</th>
 <th style="text-align: left;">核心操作示例</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>编码/解码 (Encoding)</strong></td>
 <td style="text-align: left;"><code>base64</code>, <code>hex</code>,
 <code>binary</code></td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>哈希计算 (Hashing)</strong></td>
 <td style="text-align: left;"><code>md5</code>, <code>sha1</code>,
 <code>sha256</code>, <code>sha512</code></td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>Web 相关 (Web)</strong></td>
 <td style="text-align: left;"><code>url</code>, <code>html</code></td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>大小写转换 (Case)</strong></td>
 <td style="text-align: left;"><code>upper</code>, <code>lower</code>,
 <code>title</code></td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>字符串工具 (String)</strong></td>
 <td style="text-align: left;"><code>reverse</code>, <code>count</code>,
 <code>trim</code></td>
@@ -453,16 +494,17 @@ id="案例二安全分析师的应急响应"><strong>案例二：安全分析师
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
 ”</p>
 <ul>
-<li><strong>旧方法</strong>：复制该字符串，打开 CyberChef
-或在线解码网站，粘贴，解码。这个过程存在数据泄露风险，并中断了在终端中的分析流程。</li>
-<li><strong>sttr 方法</strong>：直接在终端中高亮并管道处理。
-<code>bash     echo "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c" | sttr base64 decode</code>
-分析师<strong>无需离开终端即可完成解码</strong>，保持了工作流的连贯性，并确保了数据的绝对安全。</li>
+<li><p><strong>旧方法</strong>：复制该字符串，打开 CyberChef
+或在线解码网站，粘贴，解码。这个过程存在数据泄露风险，并中断了在终端中的分析流程。</p></li>
+<li><p><strong>sttr 方法</strong>：直接在终端中高亮并管道处理。</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c&quot;</span> <span class="kw">|</span> <span class="ex">sttr</span> base64 decode</span></code></pre></div>
+<p>分析师<strong>无需离开终端即可完成解码</strong>，保持了工作流的连贯性，并确保了数据的绝对安全。</p></li>
 </ul>
 <h4 id="工具对比矩阵"><strong>工具对比矩阵</strong></h4>
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th style="text-align: left;">工具</th>
 <th style="text-align: left;">安全性</th>
 <th style="text-align: left;">易用性</th>
@@ -471,28 +513,28 @@ eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>sttr</strong></td>
 <td style="text-align: left;"><strong>极高</strong></td>
 <td style="text-align: left;"><strong>高</strong></td>
 <td style="text-align: left;"><strong>极高</strong></td>
 <td style="text-align: left;"><strong>极高</strong></td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>在线工具</strong></td>
 <td style="text-align: left;">极低</td>
 <td style="text-align: left;">高</td>
 <td style="text-align: left;">极高</td>
 <td style="text-align: left;">差</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>原生CLI工具</strong></td>
 <td style="text-align: left;">极高</td>
 <td style="text-align: left;">中</td>
 <td style="text-align: left;">差</td>
 <td style="text-align: left;">高</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>CyberChef (GUI)</strong></td>
 <td style="text-align: left;">极高</td>
 <td style="text-align: left;">中</td>
@@ -790,16 +832,58 @@ href="https://golang.org/">https://golang.org/</a></li>
         }
     }
 
+    // Initialize mermaid diagrams
+    function initMermaid() {
+        if (typeof mermaid === 'undefined') {
+            console.log('Mermaid library not loaded');
+            return;
+        }
+
+        const mermaidElements = document.querySelectorAll('pre.mermaid');
+        if (mermaidElements.length === 0) {
+            console.log('No mermaid diagrams found');
+            return;
+        }
+
+        console.log('Found', mermaidElements.length, 'mermaid diagrams, initializing...');
+
+        // 重新初始化 mermaid
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'default',
+            securityLevel: 'loose'
+        });
+
+        // 处理每个 mermaid 代码块
+        mermaidElements.forEach((element, index) => {
+            const graphDefinition = element.textContent.trim();
+            // 替换 pre 为 div 以便 mermaid 渲染
+            const div = document.createElement('div');
+            div.className = 'mermaid';
+            div.textContent = graphDefinition;
+            element.parentNode.replaceChild(div, element);
+        });
+
+        // 运行 mermaid 渲染
+        mermaid.run({
+            querySelector: '.mermaid'
+        }).catch(err => {
+            console.error('Mermaid rendering error:', err);
+        });
+    }
+
     // Initialize copy buttons and TOC after content loads
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loading, initializing...');
             addCopyButtons();
             setTimeout(generateTableOfContents, 100); // 延迟生成以确保内容已加载
+            setTimeout(initMermaid, 200); // 延迟初始化 mermaid
         });
     } else {
         console.log('DOM already loaded, initializing...');
         addCopyButtons();
         setTimeout(generateTableOfContents, 100);
+        setTimeout(initMermaid, 200);
     }
 </script>

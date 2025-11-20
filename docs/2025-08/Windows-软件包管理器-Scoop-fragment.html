@@ -227,6 +227,43 @@
         border-color: #4caf50;
     }
 
+    /* Back to Home Button */
+    .back-to-home {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--secondary-color);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+    }
+
+    .back-to-home:hover {
+        background: #2980b9;
+        transform: translateX(-5px);
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+    }
+
+    .back-to-home::before {
+        content: '←';
+        font-size: 1.2em;
+    }
+
+    /* Mermaid diagram styles */
+    .mermaid {
+        background-color: #f8f9fa;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 20px;
+        margin: 25px 0;
+        text-align: center;
+    }
+
     /* Responsive */
     @media (max-width: 1024px) {
         .article-layout {
@@ -259,13 +296,17 @@
     }
 </style>
 
+<!-- 引入本地 Mermaid 库 -->
+<script src="../../js/mermaid.min.js"></script>
+
 <div class="article-layout">
     <div class="main-content">
+        <a href="../../index.html" class="back-to-home">返回主页</a>
         <article class="post">
             <header class="post-header">
                 <h1 class="post-title">Windows-软件包管理器-Scoop</h1>
                 <div class="post-meta">
-                    <div class="post-date">2025/8/24</div>
+                    <div class="post-date">2025/8/26</div>
                     <div class="post-category">2025-08</div>
                 </div>
             </header>
@@ -310,17 +351,18 @@ Scoop，或者想在一个纯净的系统上进行安装，请遵循以下步骤
 环境</strong></h4>
 <p>Scoop 是通过 PowerShell 来进行安装和管理的。</p>
 <ol type="1">
-<li><strong>打开 PowerShell</strong>：通过在开始菜单搜索 “PowerShell”
-并选择“以管理员身份运行”来启动它。</li>
-<li><strong>设置执行策略</strong>：为了能够运行安装脚本，你需要更改
-PowerShell 的执行策略。在 PowerShell 窗口中输入以下命令并按回车：
-<code>powershell     Set-ExecutionPolicy RemoteSigned -Scope CurrentUser</code>
-当系统提示时，输入 <code>Y</code> 并按回车确认。</li>
+<li><p><strong>打开 PowerShell</strong>：通过在开始菜单搜索 “PowerShell”
+并选择“以管理员身份运行”来启动它。</p></li>
+<li><p><strong>设置执行策略</strong>：为了能够运行安装脚本，你需要更改
+PowerShell 的执行策略。在 PowerShell 窗口中输入以下命令并按回车：</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Set-ExecutionPolicy</span> RemoteSigned <span class="op">-</span>Scope CurrentUser</span></code></pre></div>
+<p>当系统提示时，输入 <code>Y</code> 并按回车确认。</p></li>
 </ol>
 <h4 id="第二步执行安装命令"><strong>第二步：执行安装命令</strong></h4>
 <p>环境准备就绪后，只需一行命令即可完成安装：</p>
-<div class="sourceCode" id="cb2"><pre
-class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Invoke-RestMethod</span> <span class="op">-</span>Uri https<span class="op">://</span>get<span class="op">.</span><span class="fu">scoop</span><span class="op">.</span><span class="fu">sh</span> <span class="op">|</span> <span class="fu">Invoke-Expression</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Invoke-RestMethod</span> <span class="op">-</span>Uri https<span class="op">://</span>get<span class="op">.</span><span class="fu">scoop</span><span class="op">.</span><span class="fu">sh</span> <span class="op">|</span> <span class="fu">Invoke-Expression</span></span></code></pre></div>
 <p>当命令执行完毕且没有报错时，Scoop
 就已经成功安装到你的系统中了。你可以输入 <code>scoop help</code>
 来验证安装是否成功并查看所有可用命令。</p>
@@ -356,22 +398,24 @@ Scoop 安装在了 <code>D:\Program\Scoop</code> 目录。现在你重装了 C
 Scoop</strong></h4>
 <p>现在，按照与全新安装完全相同的步骤来安装 Scoop 本体。</p>
 <ol type="1">
-<li><strong>以管理员身份打开 PowerShell</strong>。</li>
-<li>如果需要，请再次确保执行策略已设置：
-<code>powershell     Set-ExecutionPolicy RemoteSigned -Scope CurrentUser</code></li>
-<li>运行安装命令：
-<code>powershell     Invoke-RestMethod -Uri https://get.scoop.sh | Invoke-Expression</code>
-由于你已经提前设置了 <code>SCOOP</code>
+<li><p><strong>以管理员身份打开 PowerShell</strong>。</p></li>
+<li><p>如果需要，请再次确保执行策略已设置：</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Set-ExecutionPolicy</span> RemoteSigned <span class="op">-</span>Scope CurrentUser</span></code></pre></div></li>
+<li><p>运行安装命令：</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Invoke-RestMethod</span> <span class="op">-</span>Uri https<span class="op">://</span>get<span class="op">.</span><span class="fu">scoop</span><span class="op">.</span><span class="fu">sh</span> <span class="op">|</span> <span class="fu">Invoke-Expression</span></span></code></pre></div>
+<p>由于你已经提前设置了 <code>SCOOP</code>
 环境变量，安装脚本会自动检测到并把 Scoop 安装到你指定的
-<code>D:\Program\Scoop</code> 目录，而不是默认的用户文件夹。</li>
+<code>D:\Program\Scoop</code> 目录，而不是默认的用户文件夹。</p></li>
 </ol>
 <h4 id="第三步恢复所有应用"><strong>第三步：恢复所有应用</strong></h4>
 <p>安装完成后，Scoop
 本体已经就绪，但它还需要重新认识并链接所有之前安装在 <code>apps</code>
 目录下的软件。这需要使用 <code>reset</code> 命令。</p>
 <p>在 PowerShell 中，运行以下命令：</p>
-<div class="sourceCode" id="cb3"><pre
-class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>scoop reset <span class="op">*</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>scoop reset <span class="op">*</span></span></code></pre></div>
 <p>这个命令会遍历 <code>apps</code> 目录下的每一个应用，并为它们重新在
 <code>shims</code>
 目录中创建命令行“垫片”（可执行的别名）和在开始菜单中创建快捷方式。执行完毕后，你之前安装的所有软件，无论是命令行工具还是图形界面程序，都将恢复如初，可以直接从终端或开始菜单中启动。</p>
@@ -606,16 +650,58 @@ Scoop
         }
     }
 
+    // Initialize mermaid diagrams
+    function initMermaid() {
+        if (typeof mermaid === 'undefined') {
+            console.log('Mermaid library not loaded');
+            return;
+        }
+
+        const mermaidElements = document.querySelectorAll('pre.mermaid');
+        if (mermaidElements.length === 0) {
+            console.log('No mermaid diagrams found');
+            return;
+        }
+
+        console.log('Found', mermaidElements.length, 'mermaid diagrams, initializing...');
+
+        // 重新初始化 mermaid
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'default',
+            securityLevel: 'loose'
+        });
+
+        // 处理每个 mermaid 代码块
+        mermaidElements.forEach((element, index) => {
+            const graphDefinition = element.textContent.trim();
+            // 替换 pre 为 div 以便 mermaid 渲染
+            const div = document.createElement('div');
+            div.className = 'mermaid';
+            div.textContent = graphDefinition;
+            element.parentNode.replaceChild(div, element);
+        });
+
+        // 运行 mermaid 渲染
+        mermaid.run({
+            querySelector: '.mermaid'
+        }).catch(err => {
+            console.error('Mermaid rendering error:', err);
+        });
+    }
+
     // Initialize copy buttons and TOC after content loads
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loading, initializing...');
             addCopyButtons();
             setTimeout(generateTableOfContents, 100); // 延迟生成以确保内容已加载
+            setTimeout(initMermaid, 200); // 延迟初始化 mermaid
         });
     } else {
         console.log('DOM already loaded, initializing...');
         addCopyButtons();
         setTimeout(generateTableOfContents, 100);
+        setTimeout(initMermaid, 200);
     }
 </script>

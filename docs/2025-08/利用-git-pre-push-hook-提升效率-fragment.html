@@ -227,6 +227,43 @@
         border-color: #4caf50;
     }
 
+    /* Back to Home Button */
+    .back-to-home {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--secondary-color);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+    }
+
+    .back-to-home:hover {
+        background: #2980b9;
+        transform: translateX(-5px);
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+    }
+
+    .back-to-home::before {
+        content: '←';
+        font-size: 1.2em;
+    }
+
+    /* Mermaid diagram styles */
+    .mermaid {
+        background-color: #f8f9fa;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 20px;
+        margin: 25px 0;
+        text-align: center;
+    }
+
     /* Responsive */
     @media (max-width: 1024px) {
         .article-layout {
@@ -259,13 +296,17 @@
     }
 </style>
 
+<!-- 引入本地 Mermaid 库 -->
+<script src="../../js/mermaid.min.js"></script>
+
 <div class="article-layout">
     <div class="main-content">
+        <a href="../../index.html" class="back-to-home">返回主页</a>
         <article class="post">
             <header class="post-header">
                 <h1 class="post-title">利用-git-pre-push-hook-提升效率</h1>
                 <div class="post-meta">
-                    <div class="post-date">2025/8/29</div>
+                    <div class="post-date">2025/8/28</div>
                     <div class="post-category">2025-08</div>
                 </div>
             </header>
@@ -500,7 +541,7 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a hr
 <col style="width: 25%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th style="text-align: left;">特性 / 工具</th>
 <th style="text-align: left;">原生方式 (<code>.git/hooks</code>)</th>
 <th style="text-align: left;">Husky (Node.js 生态)</th>
@@ -508,7 +549,7 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a hr
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>团队共享</strong></td>
 <td style="text-align: left;">否，需手动分发和设置</td>
 <td style="text-align: left;">是，通过 <code>package.json</code> 和
@@ -516,14 +557,14 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a hr
 <td style="text-align: left;">是，通过
 <code>.pre-commit-config.yaml</code> 共享配置</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>安装</strong></td>
 <td style="text-align: left;">无需安装</td>
 <td
 style="text-align: left;"><code>npm install husky --save-dev</code></td>
 <td style="text-align: left;"><code>pip install pre-commit</code></td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>配置</strong></td>
 <td style="text-align: left;">直接编写 Shell/Python 等脚本</td>
 <td style="text-align: left;">在 <code>package.json</code> 或
@@ -531,14 +572,14 @@ style="text-align: left;"><code>npm install husky --save-dev</code></td>
 <td style="text-align: left;">在 <code>.pre-commit-config.yaml</code>
 中声明钩子和仓库</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>跨平台</strong></td>
 <td style="text-align: left;">依赖于脚本语言和环境 (Shell 在 Windows
 上可能需要额外配置)</td>
 <td style="text-align: left;">良好，利用 Node.js 环境</td>
 <td style="text-align: left;">优秀，Python 本身跨平台</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>生态系统</strong></td>
 <td style="text-align: left;">无</td>
 <td style="text-align: left;">非常适合 JavaScript/TypeScript 项目，与
@@ -546,13 +587,13 @@ npm/yarn 深度集成</td>
 <td style="text-align: left;">语言无关，支持多种语言的 linter 和
 formatter</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>优点</strong></td>
 <td style="text-align: left;">零依赖，简单直接</td>
 <td style="text-align: left;">自动化安装，对前端开发者极其友好</td>
 <td style="text-align: left;">强大的多语言支持和插件化管理</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>缺点</strong></td>
 <td style="text-align: left;">难以团队协作和管理</td>
 <td style="text-align: left;">强依赖 Node.js 工具链</td>
@@ -859,16 +900,58 @@ Hooks 教程</a></li>
         }
     }
 
+    // Initialize mermaid diagrams
+    function initMermaid() {
+        if (typeof mermaid === 'undefined') {
+            console.log('Mermaid library not loaded');
+            return;
+        }
+
+        const mermaidElements = document.querySelectorAll('pre.mermaid');
+        if (mermaidElements.length === 0) {
+            console.log('No mermaid diagrams found');
+            return;
+        }
+
+        console.log('Found', mermaidElements.length, 'mermaid diagrams, initializing...');
+
+        // 重新初始化 mermaid
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'default',
+            securityLevel: 'loose'
+        });
+
+        // 处理每个 mermaid 代码块
+        mermaidElements.forEach((element, index) => {
+            const graphDefinition = element.textContent.trim();
+            // 替换 pre 为 div 以便 mermaid 渲染
+            const div = document.createElement('div');
+            div.className = 'mermaid';
+            div.textContent = graphDefinition;
+            element.parentNode.replaceChild(div, element);
+        });
+
+        // 运行 mermaid 渲染
+        mermaid.run({
+            querySelector: '.mermaid'
+        }).catch(err => {
+            console.error('Mermaid rendering error:', err);
+        });
+    }
+
     // Initialize copy buttons and TOC after content loads
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loading, initializing...');
             addCopyButtons();
             setTimeout(generateTableOfContents, 100); // 延迟生成以确保内容已加载
+            setTimeout(initMermaid, 200); // 延迟初始化 mermaid
         });
     } else {
         console.log('DOM already loaded, initializing...');
         addCopyButtons();
         setTimeout(generateTableOfContents, 100);
+        setTimeout(initMermaid, 200);
     }
 </script>

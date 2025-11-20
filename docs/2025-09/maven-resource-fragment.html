@@ -227,6 +227,43 @@
         border-color: #4caf50;
     }
 
+    /* Back to Home Button */
+    .back-to-home {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--secondary-color);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+    }
+
+    .back-to-home:hover {
+        background: #2980b9;
+        transform: translateX(-5px);
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+    }
+
+    .back-to-home::before {
+        content: '←';
+        font-size: 1.2em;
+    }
+
+    /* Mermaid diagram styles */
+    .mermaid {
+        background-color: #f8f9fa;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 20px;
+        margin: 25px 0;
+        text-align: center;
+    }
+
     /* Responsive */
     @media (max-width: 1024px) {
         .article-layout {
@@ -259,13 +296,17 @@
     }
 </style>
 
+<!-- 引入本地 Mermaid 库 -->
+<script src="../../js/mermaid.min.js"></script>
+
 <div class="article-layout">
     <div class="main-content">
+        <a href="../../index.html" class="back-to-home">返回主页</a>
         <article class="post">
             <header class="post-header">
                 <h1 class="post-title">maven-resource</h1>
                 <div class="post-meta">
-                    <div class="post-date">2025/10/19</div>
+                    <div class="post-date">2025/9/16</div>
                     <div class="post-category">2025-09</div>
                 </div>
             </header>
@@ -525,34 +566,37 @@ Properties）和当前激活的 <code>Profile</code>
 <ol type="1">
 <li><p><strong>文件编码问题</strong>：如果资源文件包含非 ASCII
 字符，错误的编码可能导致乱码。务必在 <code>pom.xml</code> 的
-<code>&lt;properties&gt;</code> 中统一指定项目编码。
-<code>xml     &lt;properties&gt;         &lt;project.build.sourceEncoding&gt;UTF-8&lt;/project.build.sourceEncoding&gt;     &lt;/properties&gt;</code></p></li>
+<code>&lt;properties&gt;</code> 中统一指定项目编码。</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">properties</span>&gt;</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">project.build.sourceEncoding</span>&gt;UTF-8&lt;/<span class="kw">project.build.sourceEncoding</span>&gt;</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">properties</span>&gt;</span></code></pre></div></li>
 <li><p><strong>意外过滤二进制文件</strong>：当一个二进制文件（如
 <code>docx</code>）恰好包含了 <code>${...}</code>
 格式的字节序列时，错误的过滤配置可能损坏该文件。最佳实践是明确指定哪些文件需要过滤，而其他文件直接复制。</p>
-<div class="sourceCode" id="cb8"><pre
-class="sourceCode xml"><code class="sourceCode xml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">build</span>&gt;</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">resources</span>&gt;</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        <span class="co">&lt;!-- 只过滤 properties 和 xml 文件 --&gt;</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">resource</span>&gt;</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>            &lt;<span class="kw">directory</span>&gt;src/main/resources&lt;/<span class="kw">directory</span>&gt;</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>            &lt;<span class="kw">filtering</span>&gt;true&lt;/<span class="kw">filtering</span>&gt;</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>            &lt;<span class="kw">includes</span>&gt;</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>                &lt;<span class="kw">include</span>&gt;**/*.properties&lt;/<span class="kw">include</span>&gt;</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>                &lt;<span class="kw">include</span>&gt;**/*.xml&lt;/<span class="kw">include</span>&gt;</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>            &lt;/<span class="kw">includes</span>&gt;</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        &lt;/<span class="kw">resource</span>&gt;</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">&lt;!-- 复制其他所有文件，不过滤 --&gt;</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">resource</span>&gt;</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>            &lt;<span class="kw">directory</span>&gt;src/main/resources&lt;/<span class="kw">directory</span>&gt;</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>            &lt;<span class="kw">filtering</span>&gt;false&lt;/<span class="kw">filtering</span>&gt;</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>            &lt;<span class="kw">excludes</span>&gt;</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>                &lt;<span class="kw">exclude</span>&gt;**/*.properties&lt;/<span class="kw">exclude</span>&gt;</span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>                &lt;<span class="kw">exclude</span>&gt;**/*.xml&lt;/<span class="kw">exclude</span>&gt;</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>            &lt;/<span class="kw">excludes</span>&gt;</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>        &lt;/<span class="kw">resource</span>&gt;</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">resources</span>&gt;</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">build</span>&gt;</span></code></pre></div></li>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">build</span>&gt;</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">resources</span>&gt;</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        <span class="co">&lt;!-- 只过滤 properties 和 xml 文件 --&gt;</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">resource</span>&gt;</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>            &lt;<span class="kw">directory</span>&gt;src/main/resources&lt;/<span class="kw">directory</span>&gt;</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>            &lt;<span class="kw">filtering</span>&gt;true&lt;/<span class="kw">filtering</span>&gt;</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>            &lt;<span class="kw">includes</span>&gt;</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>                &lt;<span class="kw">include</span>&gt;**/*.properties&lt;/<span class="kw">include</span>&gt;</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>                &lt;<span class="kw">include</span>&gt;**/*.xml&lt;/<span class="kw">include</span>&gt;</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>            &lt;/<span class="kw">includes</span>&gt;</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        &lt;/<span class="kw">resource</span>&gt;</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        <span class="co">&lt;!-- 复制其他所有文件，不过滤 --&gt;</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">resource</span>&gt;</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>            &lt;<span class="kw">directory</span>&gt;src/main/resources&lt;/<span class="kw">directory</span>&gt;</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>            &lt;<span class="kw">filtering</span>&gt;false&lt;/<span class="kw">filtering</span>&gt;</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>            &lt;<span class="kw">excludes</span>&gt;</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>                &lt;<span class="kw">exclude</span>&gt;**/*.properties&lt;/<span class="kw">exclude</span>&gt;</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>                &lt;<span class="kw">exclude</span>&gt;**/*.xml&lt;/<span class="kw">exclude</span>&gt;</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>            &lt;/<span class="kw">excludes</span>&gt;</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>        &lt;/<span class="kw">resource</span>&gt;</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">resources</span>&gt;</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">build</span>&gt;</span></code></pre></div></li>
 <li><p><strong>IDE 与 Maven 构建不一致</strong>：有时在 IDE（如 IntelliJ
 IDEA, Eclipse）中运行正常，但通过 <code>mvn</code>
 命令构建却失败。这通常是由于 IDE 的构建机制与 Maven
@@ -582,22 +626,22 @@ Profile</strong>：在运行时（Runtime）决定应用程序的哪些 Bean
 <p>一个常见的实践是：使用 Maven Profile 来设置 Spring 的激活
 Profile。</p>
 <p><strong>示例 <code>pom.xml</code></strong></p>
-<div class="sourceCode" id="cb9"><pre
-class="sourceCode xml"><code class="sourceCode xml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">profiles</span>&gt;</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">profile</span>&gt;</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">id</span>&gt;dev&lt;/<span class="kw">id</span>&gt;</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">activation</span>&gt;&lt;<span class="kw">activeByDefault</span>&gt;true&lt;/<span class="kw">activeByDefault</span>&gt;&lt;/<span class="kw">activation</span>&gt;</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">properties</span>&gt;</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>            &lt;<span class="kw">spring.profiles.active</span>&gt;dev&lt;/<span class="kw">spring.profiles.active</span>&gt;</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        &lt;/<span class="kw">properties</span>&gt;</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">profile</span>&gt;</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">profile</span>&gt;</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">id</span>&gt;prod&lt;/<span class="kw">id</span>&gt;</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">properties</span>&gt;</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>            &lt;<span class="kw">spring.profiles.active</span>&gt;prod&lt;/<span class="kw">spring.profiles.active</span>&gt;</span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>        &lt;/<span class="kw">properties</span>&gt;</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">profile</span>&gt;</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">profiles</span>&gt;</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">profiles</span>&gt;</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">profile</span>&gt;</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">id</span>&gt;dev&lt;/<span class="kw">id</span>&gt;</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">activation</span>&gt;&lt;<span class="kw">activeByDefault</span>&gt;true&lt;/<span class="kw">activeByDefault</span>&gt;&lt;/<span class="kw">activation</span>&gt;</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">properties</span>&gt;</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>            &lt;<span class="kw">spring.profiles.active</span>&gt;dev&lt;/<span class="kw">spring.profiles.active</span>&gt;</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        &lt;/<span class="kw">properties</span>&gt;</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">profile</span>&gt;</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">profile</span>&gt;</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">id</span>&gt;prod&lt;/<span class="kw">id</span>&gt;</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">properties</span>&gt;</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>            &lt;<span class="kw">spring.profiles.active</span>&gt;prod&lt;/<span class="kw">spring.profiles.active</span>&gt;</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        &lt;/<span class="kw">properties</span>&gt;</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">profile</span>&gt;</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">profiles</span>&gt;</span></code></pre></div>
 <p><strong><code>application.properties</code></strong></p>
 <pre class="properties"><code>spring.profiles.active=@spring.profiles.active@</code></pre>
 <p><em>注意：Spring Boot 推荐使用 <code>@...@</code>
@@ -879,16 +923,58 @@ Boot 官方文档 - Maven Plugin</a></li>
         }
     }
 
+    // Initialize mermaid diagrams
+    function initMermaid() {
+        if (typeof mermaid === 'undefined') {
+            console.log('Mermaid library not loaded');
+            return;
+        }
+
+        const mermaidElements = document.querySelectorAll('pre.mermaid');
+        if (mermaidElements.length === 0) {
+            console.log('No mermaid diagrams found');
+            return;
+        }
+
+        console.log('Found', mermaidElements.length, 'mermaid diagrams, initializing...');
+
+        // 重新初始化 mermaid
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'default',
+            securityLevel: 'loose'
+        });
+
+        // 处理每个 mermaid 代码块
+        mermaidElements.forEach((element, index) => {
+            const graphDefinition = element.textContent.trim();
+            // 替换 pre 为 div 以便 mermaid 渲染
+            const div = document.createElement('div');
+            div.className = 'mermaid';
+            div.textContent = graphDefinition;
+            element.parentNode.replaceChild(div, element);
+        });
+
+        // 运行 mermaid 渲染
+        mermaid.run({
+            querySelector: '.mermaid'
+        }).catch(err => {
+            console.error('Mermaid rendering error:', err);
+        });
+    }
+
     // Initialize copy buttons and TOC after content loads
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loading, initializing...');
             addCopyButtons();
             setTimeout(generateTableOfContents, 100); // 延迟生成以确保内容已加载
+            setTimeout(initMermaid, 200); // 延迟初始化 mermaid
         });
     } else {
         console.log('DOM already loaded, initializing...');
         addCopyButtons();
         setTimeout(generateTableOfContents, 100);
+        setTimeout(initMermaid, 200);
     }
 </script>

@@ -227,6 +227,43 @@
         border-color: #4caf50;
     }
 
+    /* Back to Home Button */
+    .back-to-home {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--secondary-color);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+    }
+
+    .back-to-home:hover {
+        background: #2980b9;
+        transform: translateX(-5px);
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+    }
+
+    .back-to-home::before {
+        content: '←';
+        font-size: 1.2em;
+    }
+
+    /* Mermaid diagram styles */
+    .mermaid {
+        background-color: #f8f9fa;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 20px;
+        margin: 25px 0;
+        text-align: center;
+    }
+
     /* Responsive */
     @media (max-width: 1024px) {
         .article-layout {
@@ -259,8 +296,12 @@
     }
 </style>
 
+<!-- 引入本地 Mermaid 库 -->
+<script src="../../js/mermaid.min.js"></script>
+
 <div class="article-layout">
     <div class="main-content">
+        <a href="../../index.html" class="back-to-home">返回主页</a>
         <article class="post">
             <header class="post-header">
                 <h1 class="post-title">深度解析-spring-中的-filter-与-interceptor</h1>
@@ -480,58 +521,58 @@ vs. Interceptor</h2>
 <col style="width: 33%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th style="text-align: left;">特性</th>
 <th style="text-align: left;">Filter (过滤器)</th>
 <th style="text-align: left;">Interceptor (拦截器)</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>来源</strong></td>
 <td style="text-align: left;">Servlet API (Java EE 标准)</td>
 <td style="text-align: left;">Spring MVC 框架</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>依赖关系</strong></td>
 <td style="text-align: left;">独立于 Spring，可用于任何 Servlet
 应用</td>
 <td style="text-align: left;">强依赖于 Spring MVC</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>执行时机</strong></td>
 <td style="text-align: left;">在 Servlet
 (<code>DispatcherServlet</code>) 之前和之后</td>
 <td style="text-align: left;">在 <code>DispatcherServlet</code>
 内部，Controller 方法之前、之后、完成时</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>控制粒度</strong></td>
 <td style="text-align: left;">粗粒度。基于 URL 模式进行拦截</td>
 <td style="text-align: left;">细粒度。可以获取到具体的
 HandlerMethod，进行更精细的控制</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>访问能力</strong></td>
 <td style="text-align: left;">可访问原始的
 <code>HttpServletRequest</code> 和 <code>HttpServletResponse</code></td>
 <td style="text-align: left;">可访问 <code>HandlerMethod</code>,
 <code>ModelAndView</code> 等 Spring MVC 核心对象</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>核心功能</strong></td>
 <td style="text-align: left;">修改
 Request/Response、字符编码、数据压缩、跨域(CORS)</td>
 <td style="text-align: left;">权限校验、日志记录、性能监控、向
 <code>Model</code> 添加通用数据</td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>依赖注入</strong></td>
 <td style="text-align: left;">默认不支持，但在 Spring Boot 中可通过
 <code>@Component</code> 实现</td>
 <td style="text-align: left;">天然支持，本身就是 Spring Bean</td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>异常处理</strong></td>
 <td style="text-align: left;">无法直接捕获 Controller 层的异常</td>
 <td style="text-align: left;"><code>afterCompletion</code>
@@ -812,16 +853,58 @@ Controller 方法。</li>
         }
     }
 
+    // Initialize mermaid diagrams
+    function initMermaid() {
+        if (typeof mermaid === 'undefined') {
+            console.log('Mermaid library not loaded');
+            return;
+        }
+
+        const mermaidElements = document.querySelectorAll('pre.mermaid');
+        if (mermaidElements.length === 0) {
+            console.log('No mermaid diagrams found');
+            return;
+        }
+
+        console.log('Found', mermaidElements.length, 'mermaid diagrams, initializing...');
+
+        // 重新初始化 mermaid
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'default',
+            securityLevel: 'loose'
+        });
+
+        // 处理每个 mermaid 代码块
+        mermaidElements.forEach((element, index) => {
+            const graphDefinition = element.textContent.trim();
+            // 替换 pre 为 div 以便 mermaid 渲染
+            const div = document.createElement('div');
+            div.className = 'mermaid';
+            div.textContent = graphDefinition;
+            element.parentNode.replaceChild(div, element);
+        });
+
+        // 运行 mermaid 渲染
+        mermaid.run({
+            querySelector: '.mermaid'
+        }).catch(err => {
+            console.error('Mermaid rendering error:', err);
+        });
+    }
+
     // Initialize copy buttons and TOC after content loads
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loading, initializing...');
             addCopyButtons();
             setTimeout(generateTableOfContents, 100); // 延迟生成以确保内容已加载
+            setTimeout(initMermaid, 200); // 延迟初始化 mermaid
         });
     } else {
         console.log('DOM already loaded, initializing...');
         addCopyButtons();
         setTimeout(generateTableOfContents, 100);
+        setTimeout(initMermaid, 200);
     }
 </script>

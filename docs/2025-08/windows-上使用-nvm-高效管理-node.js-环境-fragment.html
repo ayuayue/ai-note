@@ -227,6 +227,43 @@
         border-color: #4caf50;
     }
 
+    /* Back to Home Button */
+    .back-to-home {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--secondary-color);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+    }
+
+    .back-to-home:hover {
+        background: #2980b9;
+        transform: translateX(-5px);
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+    }
+
+    .back-to-home::before {
+        content: '←';
+        font-size: 1.2em;
+    }
+
+    /* Mermaid diagram styles */
+    .mermaid {
+        background-color: #f8f9fa;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 20px;
+        margin: 25px 0;
+        text-align: center;
+    }
+
     /* Responsive */
     @media (max-width: 1024px) {
         .article-layout {
@@ -259,13 +296,17 @@
     }
 </style>
 
+<!-- 引入本地 Mermaid 库 -->
+<script src="../../js/mermaid.min.js"></script>
+
 <div class="article-layout">
     <div class="main-content">
+        <a href="../../index.html" class="back-to-home">返回主页</a>
         <article class="post">
             <header class="post-header">
                 <h1 class="post-title">windows-上使用-nvm-高效管理-node.js-环境</h1>
                 <div class="post-meta">
-                    <div class="post-date">2025/8/24</div>
+                    <div class="post-date">2025/8/26</div>
                     <div class="post-category">2025-08</div>
                 </div>
             </header>
@@ -388,44 +429,44 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="
 <h3 id="常用命令速查表">常用命令速查表</h3>
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th style="text-align: left;">功能</th>
 <th style="text-align: left;">命令</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>显示 nvm 版本</strong></td>
 <td style="text-align: left;"><code>nvm version</code></td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>列出所有可安装版本</strong></td>
 <td style="text-align: left;"><code>nvm list available</code></td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>安装最新 LTS 版本</strong></td>
 <td style="text-align: left;"><code>nvm install lts</code></td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>安装指定版本</strong></td>
 <td
 style="text-align: left;"><code>nvm install &lt;version&gt;</code></td>
 </tr>
-<tr class="odd">
+<tr>
 <td
 style="text-align: left;"><strong>列出所有本地已安装版本</strong></td>
 <td style="text-align: left;"><code>nvm list</code></td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>切换当前窗口的版本</strong></td>
 <td style="text-align: left;"><code>nvm use &lt;version&gt;</code></td>
 </tr>
-<tr class="odd">
+<tr>
 <td style="text-align: left;"><strong>设置全局默认版本</strong></td>
 <td style="text-align: left;">(以管理员身份运行)
 <code>nvm use &lt;version&gt;</code></td>
 </tr>
-<tr class="even">
+<tr>
 <td style="text-align: left;"><strong>卸载一个已安装版本</strong></td>
 <td
 style="text-align: left;"><code>nvm uninstall &lt;version&gt;</code></td>
@@ -663,16 +704,58 @@ Windows
         }
     }
 
+    // Initialize mermaid diagrams
+    function initMermaid() {
+        if (typeof mermaid === 'undefined') {
+            console.log('Mermaid library not loaded');
+            return;
+        }
+
+        const mermaidElements = document.querySelectorAll('pre.mermaid');
+        if (mermaidElements.length === 0) {
+            console.log('No mermaid diagrams found');
+            return;
+        }
+
+        console.log('Found', mermaidElements.length, 'mermaid diagrams, initializing...');
+
+        // 重新初始化 mermaid
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'default',
+            securityLevel: 'loose'
+        });
+
+        // 处理每个 mermaid 代码块
+        mermaidElements.forEach((element, index) => {
+            const graphDefinition = element.textContent.trim();
+            // 替换 pre 为 div 以便 mermaid 渲染
+            const div = document.createElement('div');
+            div.className = 'mermaid';
+            div.textContent = graphDefinition;
+            element.parentNode.replaceChild(div, element);
+        });
+
+        // 运行 mermaid 渲染
+        mermaid.run({
+            querySelector: '.mermaid'
+        }).catch(err => {
+            console.error('Mermaid rendering error:', err);
+        });
+    }
+
     // Initialize copy buttons and TOC after content loads
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loading, initializing...');
             addCopyButtons();
             setTimeout(generateTableOfContents, 100); // 延迟生成以确保内容已加载
+            setTimeout(initMermaid, 200); // 延迟初始化 mermaid
         });
     } else {
         console.log('DOM already loaded, initializing...');
         addCopyButtons();
         setTimeout(generateTableOfContents, 100);
+        setTimeout(initMermaid, 200);
     }
 </script>

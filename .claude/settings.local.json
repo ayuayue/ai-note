@@ -13,7 +13,9 @@
       "mcp__filesystem__write_file",
       "Bash(npm run convert-md-pandoc)",
       "Bash(find:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: 为详情页添加返回主页按钮和修复 mermaid 图表直接刷新失败问题\n\n- 在 article-detail.html 模板中添加返回主页按钮样式和链接\n- 添加 mermaid.js 库引用，支持直接访问详情页时渲染图表\n- 新增 initMermaid 函数，处理 pre.mermaid 元素转换为 div.mermaid\n- 修复从主页进入正常但直接刷新详情页 mermaid 图解析失败的问题\n- 重新生成所有 43 个 fragment 文件应用更新\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": [],

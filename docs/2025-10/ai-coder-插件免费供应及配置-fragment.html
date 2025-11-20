@@ -227,6 +227,43 @@
         border-color: #4caf50;
     }
 
+    /* Back to Home Button */
+    .back-to-home {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--secondary-color);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
+    }
+
+    .back-to-home:hover {
+        background: #2980b9;
+        transform: translateX(-5px);
+        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+    }
+
+    .back-to-home::before {
+        content: '←';
+        font-size: 1.2em;
+    }
+
+    /* Mermaid diagram styles */
+    .mermaid {
+        background-color: #f8f9fa;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 20px;
+        margin: 25px 0;
+        text-align: center;
+    }
+
     /* Responsive */
     @media (max-width: 1024px) {
         .article-layout {
@@ -259,13 +296,17 @@
     }
 </style>
 
+<!-- 引入本地 Mermaid 库 -->
+<script src="../../js/mermaid.min.js"></script>
+
 <div class="article-layout">
     <div class="main-content">
+        <a href="../../index.html" class="back-to-home">返回主页</a>
         <article class="post">
             <header class="post-header">
-                <h1 class="post-title">AI代码编程插件配置与部署指南：Kilo Code免费接入实践</h1>
+                <h1 class="post-title">AI代码编程插件配置与部署指南：Kilo Code免费接入实践</h1>
                 <div class="post-meta">
-                    <div class="post-date">2025/11/1</div>
+                    <div class="post-date">2025/11/4</div>
                     <div class="post-category">2025-10</div>
                 </div>
             </header>
@@ -286,34 +327,34 @@
 <col style="width: 27%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th>章节</th>
 <th>内容概述</th>
 <th>页码</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><a href="#1-执行摘要">1. 执行摘要</a></td>
 <td>技术背景与价值分析</td>
 <td>1</td>
 </tr>
-<tr class="even">
+<tr>
 <td><a href="#2-平台生态概述">2. 平台生态概述</a></td>
 <td>AI编程工具发展现状</td>
 <td>2</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><a href="#3-kilo-code插件技术架构">3. Kilo Code插件技术架构</a></td>
 <td>核心功能与技术特性</td>
 <td>3</td>
 </tr>
-<tr class="even">
+<tr>
 <td><a href="#4-免费api平台集成方案">4. 免费API平台集成方案</a></td>
 <td>MiniMax与魔搭平台接入</td>
 <td>4</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><a href="#5-常见问题解决">5. 常见问题解决</a></td>
 <td>问题诊断与解决方案</td>
 <td>5</td>
@@ -357,7 +398,7 @@ Code插件的配置部署方法，以及MiniMax、魔搭等主流免费API平台
 <col style="width: 25%" />
 </colgroup>
 <thead>
-<tr class="header">
+<tr>
 <th>平台类型</th>
 <th>代表产品</th>
 <th>技术特点</th>
@@ -365,19 +406,19 @@ Code插件的配置部署方法，以及MiniMax、魔搭等主流免费API平台
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><strong>闭源商业</strong></td>
 <td>GitHub Copilot, Cursor</td>
 <td>性能优秀，生态完善</td>
 <td>企业级开发</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>开源免费</strong></td>
 <td>Kilo Code, Continue</td>
 <td>开源透明，成本可控</td>
 <td>个人开发者</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>云端API</strong></td>
 <td>MiniMax, 魔搭</td>
 <td>按需付费，扩展性强</td>
@@ -394,29 +435,29 @@ IDEA等）。该插件采用插件化架构设计，具有高度的可配置性�
 <h4 id="核心特性">3.1.1 核心特性</h4>
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th>功能模块</th>
 <th>技术实现</th>
 <th>性能指标</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><strong>智能代码生成</strong></td>
 <td>上下文感知 + 模式匹配</td>
 <td>准确率 &gt;85%</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>实时错误诊断</strong></td>
 <td>AST解析 + 规则引擎</td>
 <td>延迟 &lt;200ms</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>代码重构建议</strong></td>
 <td>静态分析 + ML推理</td>
 <td>建议质量 &gt;90%</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>多模型支持</strong></td>
 <td>统一接口层 + 适配器模式</td>
 <td>支持20+模型</td>
@@ -442,29 +483,29 @@ IDEA等）。该插件采用插件化架构设计，具有高度的可配置性�
 <h4 id="环境要求">3.3.1 环境要求</h4>
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th>组件</th>
 <th>最低版本</th>
 <th>推荐版本</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><strong>VSCode</strong></td>
 <td>1.80.0+</td>
 <td>1.85.0+</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>IntelliJ IDEA</strong></td>
 <td>2023.1+</td>
 <td>2024.1+</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>Node.js</strong></td>
 <td>16.0+</td>
 <td>20.0+</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>系统内存</strong></td>
 <td>4GB</td>
 <td>8GB+</td>
@@ -503,34 +544,34 @@ Key的双重认证机制，首次启动时会自动引导用户完成配置。</
 <p><strong>基础信息</strong></p>
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th>指标</th>
 <th>数值</th>
 <th>备注</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><strong>模型版本</strong></td>
 <td>MiniMax-M2</td>
 <td>最新发布版本</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>上下文长度</strong></td>
 <td>128K tokens</td>
 <td>支持长文本处理</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>响应速度</strong></td>
 <td>&lt;3s</td>
 <td>平均响应时间</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>并发支持</strong></td>
 <td>100 req/min</td>
 <td>免费额度限制</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>SLA保证</strong></td>
 <td>99.5%</td>
 <td>服务可用性</td>
@@ -587,7 +628,7 @@ Key的双重认证机制，首次启动时会自动引导用户完成配置。</
 <p><strong>模型资源统计</strong></p>
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th>类别</th>
 <th>数量</th>
 <th>热门模型</th>
@@ -595,31 +636,31 @@ Key的双重认证机制，首次启动时会自动引导用户完成配置。</
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><strong>文本生成</strong></td>
 <td>500+</td>
 <td>Qwen, GLM, ChatGLM</td>
 <td>对话系统</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>代码生成</strong></td>
 <td>50+</td>
 <td>CodeLlama, CodeT5</td>
 <td>编程助手</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>图像生成</strong></td>
 <td>200+</td>
 <td>Stable Diffusion</td>
 <td>创意设计</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>语音处理</strong></td>
 <td>100+</td>
 <td>Whisper, VALL-E</td>
 <td>语音交互</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>视频生成</strong></td>
 <td>30+</td>
 <td>VideoCrafter</td>
@@ -656,39 +697,39 @@ Key的双重认证机制，首次启动时会自动引导用户完成配置。</
 <h4 id="平台特性对比">4.3.1 平台特性对比</h4>
 <table>
 <thead>
-<tr class="header">
+<tr>
 <th>对比项目</th>
 <th>MiniMax</th>
 <th>魔搭社区</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td><strong>免费额度</strong></td>
 <td>新用户100万tokens</td>
 <td>个人用户每日2000次调用</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>模型质量</strong></td>
 <td>MiniMax-M2 (优秀)</td>
 <td>多种开源模型</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>响应速度</strong></td>
 <td>&lt;3秒</td>
 <td>3-8秒</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>稳定性</strong></td>
 <td>99.5% SLA</td>
 <td>基础稳定</td>
 </tr>
-<tr class="odd">
+<tr>
 <td><strong>易用性</strong></td>
 <td>简单配置</td>
 <td>需要模型选择</td>
 </tr>
-<tr class="even">
+<tr>
 <td><strong>支持语言</strong></td>
 <td>中文优化</td>
 <td>多语言支持</td>
@@ -1045,16 +1086,58 @@ Code作为开源项目，将持续集成更多优质API平台，为开发者提�
         }
     }
 
+    // Initialize mermaid diagrams
+    function initMermaid() {
+        if (typeof mermaid === 'undefined') {
+            console.log('Mermaid library not loaded');
+            return;
+        }
+
+        const mermaidElements = document.querySelectorAll('pre.mermaid');
+        if (mermaidElements.length === 0) {
+            console.log('No mermaid diagrams found');
+            return;
+        }
+
+        console.log('Found', mermaidElements.length, 'mermaid diagrams, initializing...');
+
+        // 重新初始化 mermaid
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'default',
+            securityLevel: 'loose'
+        });
+
+        // 处理每个 mermaid 代码块
+        mermaidElements.forEach((element, index) => {
+            const graphDefinition = element.textContent.trim();
+            // 替换 pre 为 div 以便 mermaid 渲染
+            const div = document.createElement('div');
+            div.className = 'mermaid';
+            div.textContent = graphDefinition;
+            element.parentNode.replaceChild(div, element);
+        });
+
+        // 运行 mermaid 渲染
+        mermaid.run({
+            querySelector: '.mermaid'
+        }).catch(err => {
+            console.error('Mermaid rendering error:', err);
+        });
+    }
+
     // Initialize copy buttons and TOC after content loads
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loading, initializing...');
             addCopyButtons();
             setTimeout(generateTableOfContents, 100); // 延迟生成以确保内容已加载
+            setTimeout(initMermaid, 200); // 延迟初始化 mermaid
         });
     } else {
         console.log('DOM already loaded, initializing...');
         addCopyButtons();
         setTimeout(generateTableOfContents, 100);
+        setTimeout(initMermaid, 200);
     }
 </script>
