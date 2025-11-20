@@ -227,33 +227,6 @@
         border-color: #4caf50;
     }
 
-    /* Back to Home Button */
-    .back-to-home {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: var(--secondary-color);
-        color: white;
-        padding: 10px 20px;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: 500;
-        transition: all 0.3s ease;
-        margin-bottom: 20px;
-        box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
-    }
-
-    .back-to-home:hover {
-        background: #2980b9;
-        transform: translateX(-5px);
-        box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
-    }
-
-    .back-to-home::before {
-        content: '←';
-        font-size: 1.2em;
-    }
-
     /* Mermaid diagram styles */
     .mermaid {
         background-color: #f8f9fa;
@@ -298,10 +271,19 @@
 
 <!-- 引入本地 Mermaid 库 -->
 <script src="../../js/mermaid.min.js"></script>
+<script>
+    // 关键修复：初始化时立即禁止自动渲染
+    if (typeof mermaid !== 'undefined') {
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'default',
+            securityLevel: 'loose'
+        });
+    }
+</script>
 
 <div class="article-layout">
     <div class="main-content">
-        <a href="../../index.html" class="back-to-home">返回主页</a>
         <article class="post">
             <header class="post-header">
                 <h1 class="post-title">飞书机器人发送消息完全指南：从curl命令到自动化脚本</h1>
@@ -829,44 +811,59 @@ URL，构造合法的JSON消息体，并根据需要配置好安全设置。</p>
         }
     }
 
-    // Initialize mermaid diagrams
-    function initMermaid() {
+    // Initialize mermaid diagrams - 只在直接访问 fragment 时运行
+    async function initMermaid() {
+        // 检查是否在 SPA 环境中
+        if (window.IN_SPA_MODE === true) {
+            console.log('[Mermaid Fragment] In SPA mode, skipping fragment initialization');
+            return;
+        }
+
         if (typeof mermaid === 'undefined') {
-            console.log('Mermaid library not loaded');
+            console.log('[Mermaid Fragment] Library not loaded');
             return;
         }
 
-        const mermaidElements = document.querySelectorAll('pre.mermaid');
-        if (mermaidElements.length === 0) {
-            console.log('No mermaid diagrams found');
+        const mermaidPreElements = document.querySelectorAll('pre.mermaid, div.mermaid');
+        if (mermaidPreElements.length === 0) {
+            console.log('[Mermaid Fragment] No diagrams found');
             return;
         }
 
-        console.log('Found', mermaidElements.length, 'mermaid diagrams, initializing...');
+        console.log('[Mermaid Fragment] 找到', mermaidPreElements.length, '个 Mermaid 图表，准备渲染...');
 
-        // 重新初始化 mermaid
-        mermaid.initialize({
-            startOnLoad: false,
-            theme: 'default',
-            securityLevel: 'loose'
-        });
+        // 处理 DOM 结构
+        const elementsToRun = [];
 
-        // 处理每个 mermaid 代码块
-        mermaidElements.forEach((element, index) => {
+        mermaidPreElements.forEach((element) => {
+            // 获取原始图表代码
             const graphDefinition = element.textContent.trim();
-            // 替换 pre 为 div 以便 mermaid 渲染
-            const div = document.createElement('div');
-            div.className = 'mermaid';
-            div.textContent = graphDefinition;
-            element.parentNode.replaceChild(div, element);
+            console.log('[Mermaid Fragment] First 100 chars:', graphDefinition.substring(0, 100));
+
+            // 创建一个新的 div 来替换旧的 pre/div，确保它是"干净"的
+            const newDiv = document.createElement('div');
+            newDiv.className = 'mermaid';
+            newDiv.textContent = graphDefinition;
+            newDiv.setAttribute('data-mermaid-code', graphDefinition);
+
+            element.parentNode.replaceChild(newDiv, element);
+            elementsToRun.push(newDiv);
         });
 
-        // 运行 mermaid 渲染
-        mermaid.run({
-            querySelector: '.mermaid'
-        }).catch(err => {
-            console.error('Mermaid rendering error:', err);
-        });
+        // 手动触发渲染
+        try {
+            await mermaid.run({
+                nodes: elementsToRun
+            });
+            console.log('[Mermaid Fragment] 渲染完成');
+        } catch (err) {
+            console.error('[Mermaid Fragment] 渲染失败:', err);
+            // 出错时显示原始代码，避免白屏
+            elementsToRun.forEach(el => {
+                el.style.whiteSpace = 'pre';
+                el.style.border = '1px solid red';
+            });
+        }
     }
 
     // Initialize copy buttons and TOC after content loads
@@ -874,8 +871,8 @@ URL，构造合法的JSON消息体，并根据需要配置好安全设置。</p>
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loading, initializing...');
             addCopyButtons();
-            setTimeout(generateTableOfContents, 100); // 延迟生成以确保内容已加载
-            setTimeout(initMermaid, 200); // 延迟初始化 mermaid
+            setTimeout(generateTableOfContents, 100);
+            setTimeout(initMermaid, 200);
         });
     } else {
         console.log('DOM already loaded, initializing...');
