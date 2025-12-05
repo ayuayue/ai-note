@@ -4,7 +4,7 @@
 echo "Running build before commit..."
 
 # 执行构建
-npm run build
+npm run rebuild
 
 
 # 如果构建失败，退出并显示错误
