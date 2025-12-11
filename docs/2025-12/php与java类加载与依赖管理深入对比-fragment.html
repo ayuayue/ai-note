@@ -1,0 +1,912 @@
+<style>
+    /* CSS Variables for fragment */
+    :root {
+        --primary-color: #2c3e50;
+        --secondary-color: #3498db;
+        --bg-color: #f8f9fa;
+        --text-color: #34495e;
+        --border-color: #e9ecef;
+        --card-bg: #ffffff;
+    }
+
+    /* TOC Sidebar Styles */
+    .article-layout {
+        display: flex;
+        max-width: 1400px;
+        margin: 0 auto;
+        gap: 30px;
+        padding: 0 20px;
+    }
+
+    .main-content {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .toc-sidebar {
+        width: 280px;
+        flex-shrink: 0;
+        position: sticky;
+        top: 20px;
+        height: fit-content;
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .toc-header h3 {
+        margin: 0 0 15px 0;
+        font-size: 1.1rem;
+        color: var(--primary-color);
+        border-bottom: 2px solid var(--secondary-color);
+        padding-bottom: 10px;
+    }
+
+    .toc-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .toc-item {
+        margin-bottom: 8px;
+    }
+
+    .toc-link {
+        display: block;
+        padding: 6px 10px;
+        color: var(--text-color);
+        text-decoration: none;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+        font-size: 0.95rem;
+    }
+
+    .toc-link:hover {
+        background: var(--secondary-color);
+        color: white;
+        padding-left: 15px;
+    }
+
+    .toc-link.active {
+        background: var(--secondary-color);
+        color: white;
+        font-weight: 500;
+    }
+
+    .toc-sublist {
+        list-style: none;
+        padding-left: 20px;
+        margin-top: 5px;
+    }
+
+    .toc-sublist .toc-link {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+
+    /* Post Styles */
+    .post {
+        background: var(--card-bg);
+        border-radius: 8px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        border: 1px solid var(--border-color);
+    }
+
+    .post-header {
+        margin-bottom: 25px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .post-title {
+        color: var(--primary-color);
+        font-size: 2rem;
+        margin-bottom: 15px;
+    }
+
+    .post-meta {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        font-size: 0.95rem;
+        color: #6c757d;
+    }
+
+    .post-date {
+        background-color: #e3f2fd;
+        color: var(--secondary-color);
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+
+    .post-category {
+        background-color: #e8f5e9;
+        color: #4caf50;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: 500;
+    }
+
+    .warning {
+        background-color: #fff3cd;
+        border: 1px solid #ffeaa7;
+        color: #856404;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 30px;
+        text-align: center;
+        font-size: 0.9rem;
+    }
+
+    .post-content {
+        font-size: 1.05rem;
+        line-height: 1.7;
+        color: var(--text-color);
+    }
+
+    .post-content h1, .post-content h2, .post-content h3,
+    .post-content h4, .post-content h5, .post-content h6 {
+        color: var(--primary-color);
+        margin-top: 35px;
+        margin-bottom: 20px;
+        scroll-margin-top: 20px;
+    }
+
+    .post-content h2 {
+        font-size: 1.5rem;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .post-content h3 {
+        font-size: 1.3rem;
+        color: #2980b9;
+    }
+
+    .post-content p {
+        margin-bottom: 18px;
+    }
+
+    .post-content code {
+        background-color: #e8eaed;
+        padding: 3px 7px;
+        border-radius: 4px;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+        color: #c0392b;
+        font-size: 0.9em;
+    }
+
+    .post-content pre {
+        background-color: #2d2d2d;
+        color: #f8f8f2;
+        padding: 20px;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 25px 0;
+        font-size: 0.9em;
+        line-height: 1.5;
+        position: relative;
+    }
+
+    .post-content pre code {
+        background-color: transparent;
+        padding: 0;
+        color: inherit;
+    }
+
+    .copy-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(5px);
+    }
+
+    .copy-button:hover {
+        background: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .copy-button.copied {
+        background: #4caf50;
+        border-color: #4caf50;
+    }
+
+    /* Mermaid diagram styles */
+    .mermaid {
+        background-color: #f8f9fa;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 20px;
+        margin: 25px 0;
+        text-align: center;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+        .article-layout {
+            flex-direction: column;
+        }
+
+        .toc-sidebar {
+            width: 100%;
+            position: static;
+            max-height: none;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .post {
+            padding: 20px;
+        }
+
+        .post-title {
+            font-size: 1.6rem;
+        }
+
+        .post-content {
+            font-size: 1rem;
+        }
+
+        .article-layout {
+            padding: 0 15px;
+        }
+    }
+</style>
+
+<!-- 引入本地 Mermaid 库 -->
+<script src="../../js/mermaid.min.js"></script>
+<script>
+    // 关键修复：初始化时立即禁止自动渲染
+    if (typeof mermaid !== 'undefined') {
+        mermaid.initialize({
+            startOnLoad: false,
+            theme: 'default',
+            securityLevel: 'loose'
+        });
+    }
+</script>
+
+<div class="article-layout">
+    <div class="main-content">
+        <article class="post">
+            <header class="post-header">
+                <h1 class="post-title">PHP与Java类加载与依赖管理深入对比</h1>
+                <div class="post-meta">
+                    <div class="post-date">2025/12/11</div>
+                    <div class="post-category">2025-12</div>
+                </div>
+            </header>
+            <div class="warning">
+                ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+            </div>
+            <div class="post-content" id="post-content">
+                <h2 id="开头摘要">开头摘要</h2>
+<p>本文深入对比PHP和Java在类加载、依赖管理和运行时处理的核心机制，帮助PHP开发者理解Java的类加载体系。通过剖析两者设计哲学、实现差异及实际应用，使PHP开发者能快速适应Java开发环境，理解JVM生态下的编程模式。适合有PHP开发经验，正在或计划学习Java的读者。</p>
+<h2 id="目录">目录</h2>
+<ul>
+<li>#类加载机制设计哲学与实现差异</li>
+<li>#命名空间与包代码组织方式的对比</li>
+<li>#依赖管理composer与maven gradle机制剖析</li>
+<li>#运行时依赖处理反射与依赖注入</li>
+<li>#实战案例laravel与spring框架对比</li>
+<li>#总结</li>
+<li>#延伸阅读</li>
+<li>#一句话记忆</li>
+</ul>
+<h2
+id="类加载机制设计哲学与实现差异">类加载机制：设计哲学与实现差异</h2>
+<h3 id="概念解释">概念解释</h3>
+<p>类加载是面向对象语言中将类定义加载到内存并初始化的过程。Java采用<strong>编译时链接</strong>机制，代码先编译为字节码，由JVM在运行时按需加载类。PHP作为脚本语言，采用<strong>运行时解释</strong>机制，代码在每次请求时被解析执行。</p>
+<p>Java的类加载器遵循<strong>双亲委派模型</strong>，防止核心类被篡改，确保安全。PHP则依赖<strong>自动加载函数</strong>（如<code>spl_autoload_register</code>），在类被首次使用时动态包含文件。根本差异在于：Java的类路径（classpath）在启动时确定，而PHP的文件路径在运行时解析。</p>
+<h3 id="示例代码">示例代码</h3>
+<p><strong>Java类加载示例：</strong></p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 类路径需与文件系统路径对应：com/example/MyClass.java</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span><span class="im"> com</span><span class="op">.</span><span class="im">example</span><span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> MyClass <span class="op">{</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">greet</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Hello from Java!&quot;</span><span class="op">);</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co">// 主程序中使用类</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">com</span><span class="op">.</span><span class="im">example</span><span class="op">.</span><span class="im">MyClass</span><span class="op">;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Main <span class="op">{</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        MyClass obj <span class="op">=</span> <span class="kw">new</span> <span class="fu">MyClass</span><span class="op">();</span> <span class="co">// JVM通过类加载器查找并初始化MyClass</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>        obj<span class="op">.</span><span class="fu">greet</span><span class="op">();</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>PHP自动加载示例：</strong></p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode php"><code class="sourceCode php"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;?php</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">// 注册自动加载函数（模拟Composer机制）</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">spl_autoload_register</span>(<span class="kw">function</span> (<span class="va">$className</span>) {</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">$filePath</span> <span class="op">=</span> <span class="fu">str_replace</span>(<span class="st">&#39;</span><span class="sc">\\</span><span class="st">&#39;</span><span class="ot">,</span> <span class="cn">DIRECTORY_SEPARATOR</span><span class="ot">,</span> <span class="va">$className</span>) <span class="op">.</span> <span class="st">&#39;.php&#39;</span><span class="ot">;</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">file_exists</span>(<span class="va">$filePath</span>)) {</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">require_once</span> <span class="va">$filePath</span><span class="ot">;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>})<span class="ot">;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">// 使用类（文件位于Project/Utils/Logger.php）</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> Project\Utils\Logger<span class="ot">;</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="va">$logger</span> <span class="op">=</span> <span class="kw">new</span> Logger()<span class="ot">;</span> <span class="co">// 触发自动加载函数动态加载文件</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="va">$logger</span>-&gt;<span class="fu">log</span>(<span class="st">&quot;PHP autoload demo&quot;</span>)<span class="ot">;</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="kw">?&gt;</span></span></code></pre></div>
+<h3 id="mermaid图类加载流程对比">Mermaid图：类加载流程对比</h3>
+<pre class="mermaid">flowchart TD
+    subgraph Java编译时链接
+        A1[Java源码编译] --&gt; A2[生成.class字节码]
+        A2 --&gt; A3[JVM启动时加载核心类]
+        A3 --&gt; A4[运行时按需加载用户类]
+    end
+
+    subgraph PHP运行时解释
+        B1[PHP脚本请求] --&gt; B2[Zend引擎解析脚本]
+        B2 --&gt; B3{类是否已定义?}
+        B3 -- 否 --&gt; B4[触发自动加载函数]
+        B4 --&gt; B5[包含类文件并解释执行]
+        B3 -- 是 --&gt; B6[直接执行]
+    end</pre>
+<h3 id="问题分析">问题分析</h3>
+<ul>
+<li><strong>Java类路径陷阱</strong>：Java类必须位于classpath中，且包名需与目录结构严格匹配。常见错误如缺省包（无名包）导致类冲突。</li>
+<li><strong>PHP文件路径敏感性</strong>：自动加载需手动处理文件路径映射。若路径错误，PHP报<code>Class not found</code>，而Java在编译时即报错。</li>
+<li><strong>性能影响</strong>：Java类加载需JVM启动成本，但借助JIT缓存热点代码；PHP无启动成本，但每次请求需重新解释脚本（可通OPcache缓解）。</li>
+</ul>
+<h3 id="应用场景">应用场景</h3>
+<ul>
+<li><strong>Java适合大型系统</strong>：类加载机制确保类型安全，便于模块化部署（如OSGi）。例如Spring
+Boot应用打包为JAR，内嵌Tomcat，类加载隔离依赖。</li>
+<li><strong>PHP适合快速迭代</strong>：脚本语言特性支持热部署，上传文件即生效。虚拟主机环境中PHP占优势。</li>
+</ul>
+<h2
+id="命名空间与包代码组织方式的对比">命名空间与包：代码组织方式的对比</h2>
+<h3 id="概念解释-1">概念解释</h3>
+<p>命名空间和包均用于解决命名冲突，但实现不同。Java的<strong>包（package）</strong>
+既是命名空间，也是物理路径映射。一个.java文件只能属于一个包，且目录结构必须匹配包名。PHP的<strong>命名空间（namespace）</strong>
+纯为逻辑划分，与文件路径无关，一个文件可定义多个命名空间。</p>
+<p>设计动机上，Java包与JVM安全机制绑定，支持包级访问控制（如<code>protected</code>）。PHP命名空间更灵活，仅避免符号冲突。例如，Java中不同包的同名类需用全限定名，PHP中通过<code>use</code>别名简化。</p>
+<h3 id="示例代码-1">示例代码</h3>
+<p><strong>Java包的使用：</strong></p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 文件：com/utils/StringHelper.java</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span><span class="im"> com</span><span class="op">.</span><span class="im">utils</span><span class="op">;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> StringHelper <span class="op">{</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="bu">String</span> <span class="fu">reverse</span><span class="op">(</span><span class="bu">String</span> str<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="kw">new</span> <span class="bu">StringBuilder</span><span class="op">(</span>str<span class="op">).</span><span class="fu">reverse</span><span class="op">().</span><span class="fu">toString</span><span class="op">();</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">// 主文件：Main.java</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">com</span><span class="op">.</span><span class="im">utils</span><span class="op">.</span><span class="im">StringHelper</span><span class="op">;</span> <span class="co">// 导入包</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Main <span class="op">{</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        <span class="bu">String</span> result <span class="op">=</span> StringHelper<span class="op">.</span><span class="fu">reverse</span><span class="op">(</span><span class="st">&quot;Hello&quot;</span><span class="op">);</span> <span class="co">// 使用类</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>PHP命名空间的使用：</strong></p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode php"><code class="sourceCode php"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;?php</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">// 文件：Project/Helpers/StringHelper.php</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> Project\Helpers<span class="ot">;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> StringHelper {</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">function</span> reverse(<span class="va">$str</span>) {</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fu">strrev</span>(<span class="va">$str</span>)<span class="ot">;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">// 同一文件可定义多个命名空间（不推荐）</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> Project\Utils<span class="ot">;</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Logger { <span class="co">/* ... */</span> }</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">// 主文件：index.php</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> Project\Helpers\StringHelper<span class="ot">;</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="va">$result</span> <span class="op">=</span> StringHelper::reverse(<span class="st">&quot;Hello&quot;</span>)<span class="ot">;</span> <span class="co">// 通过use别名调用</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="kw">?&gt;</span></span></code></pre></div>
+<h3 id="mermaid图包命名空间结构">Mermaid图：包/命名空间结构</h3>
+<pre class="mermaid">classDiagram
+    direction LR
+    class Java包结构 {
+        +com/
+        ++utils/
+        +++StringHelper.java
+        +++MathHelper.java
+        -- 包名必须匹配路径
+    }
+    class PHP命名空间结构 {
+        +Project/
+        ++Helpers/
+        +++StringHelper.php
+        +++MathHelper.php
+        -- 路径可任意映射
+    }</pre>
+<h3 id="问题分析-1">问题分析</h3>
+<ul>
+<li><strong>Java包的严格性</strong>：包名需用逆域名规范（如<code>com.example</code>），路径错误导致<code>ClassNotFoundException</code>。PHP无此约束，但需自动加载器正确映射。</li>
+<li><strong>PHP多重命名空间陷阱</strong>：一个文件多命名空间易导致维护困难，违反PSR标准。建议每文件单一命名空间。</li>
+</ul>
+<h3 id="应用场景-1">应用场景</h3>
+<ul>
+<li><strong>Java企业开发</strong>：包用于模块化安全控制，如JDK核心类<code>java.lang</code>禁止用户重写。</li>
+<li><strong>PHP框架开发</strong>：命名空间通过Composer实现自动加载，如Laravel的<code>Illuminate</code>系列类。</li>
+</ul>
+<h2
+id="依赖管理composer与mavengradle机制剖析">依赖管理：Composer与Maven/Gradle机制剖析</h2>
+<h3 id="概念解释-2">概念解释</h3>
+<p>依赖管理解决库的版本控制和自动下载。PHP的<strong>Composer</strong>基于PSR标准，使用<code>composer.json</code>声明依赖，生成自动加载器。Java的<strong>Maven</strong>（或Gradle）通过<code>pom.xml</code>管理依赖，从中央仓库下载JAR至本地仓库。</p>
+<p>核心差异：Composer依赖安装到项目<code>vendor</code>目录，而Maven依赖缓存于用户家目录的<code>.m2</code>文件夹，支持多项目共享。Composer的自动加载动态包含PHP文件，Maven依赖在编译时被加入classpath。</p>
+<h3 id="示例代码-2">示例代码</h3>
+<p><strong>Composer配置（composer.json）：</strong></p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;require&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;monolog/monolog&quot;</span><span class="fu">:</span> <span class="st">&quot;^2.0&quot;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;autoload&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;psr-4&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;Project</span><span class="ch">\\</span><span class="dt">&quot;</span><span class="fu">:</span> <span class="st">&quot;src/&quot;</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>执行<code>composer install</code>后，通过<code>require 'vendor/autoload.php'</code>加载依赖。</p>
+<p><strong>Maven配置（pom.xml）：</strong></p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">dependencies</span>&gt;</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">dependency</span>&gt;</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">groupId</span>&gt;log4j&lt;/<span class="kw">groupId</span>&gt;</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">artifactId</span>&gt;log4j&lt;/<span class="kw">artifactId</span>&gt;</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">version</span>&gt;1.2.17&lt;/<span class="kw">version</span>&gt;</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">dependency</span>&gt;</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">dependencies</span>&gt;</span></code></pre></div>
+<p>Maven编译时自动下载log4j.jar并加入类路径。</p>
+<h3 id="问题分析-2">问题分析</h3>
+<ul>
+<li><strong>版本冲突处理</strong>：Composer支持语义化版本（如<code>^1.2.3</code>），Maven依赖调解采用最近定义优先。PHP开发者需注意Java依赖传递性更复杂。</li>
+<li><strong>网络依赖</strong>：两者均需中央仓库（Packagist vs Maven
+Central），内网环境需搭建私有仓库。</li>
+</ul>
+<h3 id="应用场景-2">应用场景</h3>
+<ul>
+<li><strong>Composer在PHP项目</strong>：Laravel、Symfony等框架通过Composer管理组件依赖。</li>
+<li><strong>Maven在Java项目</strong>：Spring
+Boot项目的<code>pom.xml</code>定义Starter依赖，简化配置。</li>
+</ul>
+<h2
+id="运行时依赖处理反射与依赖注入">运行时依赖处理：反射与依赖注入</h2>
+<h3 id="概念解释-3">概念解释</h3>
+<p>反射允许运行时检查类结构，依赖注入（DI）实现解耦。Java反射API（如<code>java.lang.reflect</code>）功能全面，但使用繁琐；PHP反射更简洁，但功能较弱。</p>
+<p>DI容器是框架核心。Java的Spring容器通过注解（如<code>@Autowired</code>）注入依赖，编译时验证类型。PHP的Laravel容器通过服务提供者绑定接口与实现，运行时解析。关键区别：Java强类型确保注入安全，PHP动态类型需开发者手动保证。</p>
+<h3 id="示例代码-3">示例代码</h3>
+<p><strong>Java反射与Spring DI：</strong></p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 反射示例</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">Class</span><span class="op">&lt;?&gt;</span> clazz <span class="op">=</span> <span class="bu">Class</span><span class="op">.</span><span class="fu">forName</span><span class="op">(</span><span class="st">&quot;com.example.UserService&quot;</span><span class="op">);</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="bu">Method</span> method <span class="op">=</span> clazz<span class="op">.</span><span class="fu">getMethod</span><span class="op">(</span><span class="st">&quot;findUser&quot;</span><span class="op">,</span> <span class="bu">String</span><span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="bu">Object</span> result <span class="op">=</span> method<span class="op">.</span><span class="fu">invoke</span><span class="op">(</span>clazz<span class="op">.</span><span class="fu">newInstance</span><span class="op">(),</span> <span class="st">&quot;admin&quot;</span><span class="op">);</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">// Spring DI：通过注解注入</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="at">@Service</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> UserService <span class="op">{</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Autowired</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> UserRepository userRepo<span class="op">;</span> <span class="co">// 容器自动注入实现</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>PHP反射与Laravel DI：</strong></p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode php"><code class="sourceCode php"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;?php</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">// 反射示例</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="va">$class</span> <span class="op">=</span> <span class="kw">new</span> <span class="bu">ReflectionClass</span>(<span class="st">&#39;UserService&#39;</span>)<span class="ot">;</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="va">$methods</span> <span class="op">=</span> <span class="va">$class</span>-&gt;getMethods()<span class="ot">;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="cf">foreach</span> (<span class="va">$methods</span> <span class="kw">as</span> <span class="va">$method</span>) {</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">echo</span> <span class="va">$method</span>-&gt;getName()<span class="ot">;</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">// Laravel DI：绑定接口与实现</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>app()-&gt;bind(UserRepositoryInterface::<span class="kw">class</span><span class="ot">,</span> MySqlUserRepository::<span class="kw">class</span>)<span class="ot">;</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="va">$userService</span> <span class="op">=</span> app()-&gt;make(UserService::<span class="kw">class</span>)<span class="ot">;</span> <span class="co">// 自动解析依赖</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="kw">?&gt;</span></span></code></pre></div>
+<h3 id="mermaid图依赖注入流程">Mermaid图：依赖注入流程</h3>
+<pre class="mermaid">sequenceDiagram
+    participant C as DI容器
+    participant S as 服务类
+    participant I as 依赖实现
+
+    Note over C: 1. 注册绑定（启动时）
+    C-&gt;&gt;C: bind(Interface, Implementation)
+
+    Note over C: 2. 解析依赖（运行时）
+    S-&gt;&gt;C: 请求Interface实例
+    C-&gt;&gt;I: 创建Implementation实例
+    I--&gt;&gt;C: 返回对象
+    C--&gt;&gt;S: 注入依赖</pre>
+<h3 id="问题分析-3">问题分析</h3>
+<ul>
+<li><strong>Java类型安全</strong>：编译时检查依赖是否可满足，避免运行时错误。PHP需通过测试保障。</li>
+<li><strong>循环依赖</strong>：两者均需避免。Spring抛出<code>BeanCurrentlyInCreationException</code>，Laravel通过上下文绑定解决。</li>
+</ul>
+<h3 id="应用场景-3">应用场景</h3>
+<ul>
+<li><strong>Java
+Spring生态</strong>：反射用于AOP代理，DI管理Bean生命周期。</li>
+<li><strong>PHP框架</strong>：反射用于路由注解解析，DI实现服务容器。</li>
+</ul>
+<h2
+id="实战案例laravel与spring框架对比">实战案例：Laravel与Spring框架对比</h2>
+<h3 id="案例背景">案例背景</h3>
+<p>以用户注册功能为例，对比Laravel（PHP）和Spring
+Boot（Java）的类加载与依赖处理。</p>
+<p><strong>Laravel实现（简化）：</strong> -
+依赖管理：<code>composer.json</code>定义<code>illuminate/database</code>依赖。
+-
+自动加载：通过<code>vendor/autoload.php</code>加载Composer生成的加载器。
+- DI容器：<code>UserController</code>的依赖通过服务提供者自动注入。</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode php"><code class="sourceCode php"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 控制器</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> UserController <span class="kw">extends</span> Controller {</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="kw">function</span> <span class="bu">__construct</span>(<span class="kw">private</span> UserService <span class="va">$userService</span>) {} <span class="co">// 自动注入</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="kw">function</span> store(Request <span class="va">$request</span>) {</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">$this</span>-&gt;userService-&gt;create(<span class="va">$request</span>-&gt;all())<span class="ot">;</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong>Spring Boot实现（简化）：</strong> -
+依赖管理：<code>pom.xml</code>引入<code>spring-boot-starter-web</code>。
+-
+类加载：启动时扫描<code>@Component</code>注解的类，加载至ApplicationContext。
+- DI容器：<code>@Service</code>类被注入到Controller。</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="at">@RestController</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> UserController <span class="op">{</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Autowired</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> UserService userService<span class="op">;</span> <span class="co">// 容器注入</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">@PostMapping</span><span class="op">(</span><span class="st">&quot;/users&quot;</span><span class="op">)</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">createUser</span><span class="op">(</span><span class="at">@RequestBody</span> User user<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        userService<span class="op">.</span><span class="fu">create</span><span class="op">(</span>user<span class="op">);</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="关键差异分析">关键差异分析</h3>
+<ul>
+<li><strong>启动方式</strong>：Spring
+Boot需编译为JAR，通过<code>java -jar</code>启动；Laravel直接通过Web服务器访问。</li>
+<li><strong>配置方式</strong>：Java依赖注解和编译时检查；PHP多用配置文件和运行时绑定。</li>
+</ul>
+<h2 id="总结">总结</h2>
+<ul>
+<li><strong>类加载本质</strong>：Java是编译时链接的静态语言，PHP是运行时解释的动态语言。JVM类加载器确保安全，PHP自动加载提供灵活度。</li>
+<li><strong>代码组织</strong>：Java包强制路径映射，支持访问控制；PHP命名空间仅逻辑划分，需借助Composer实现自动加载。</li>
+<li><strong>依赖管理</strong>：Composer和Maven均解决依赖下载，但Java编译时加入classpath，PHP运行时动态包含。</li>
+<li><strong>运行时处理</strong>：Java反射和DI容器类型安全，PHP更灵活但需测试保障。</li>
+<li><strong>适用场景</strong>：Java适合长期维护的大型系统，PHP适合快速迭代的Web项目。</li>
+</ul>
+<h2 id="延伸阅读">延伸阅读</h2>
+<ol type="1">
+<li><strong>官方文档</strong>：
+<ul>
+<li>https://docs.oracle.com/javase/specs/jvms/se17/html/jvms-5.html</li>
+<li>https://www.php.net/manual/zh/language.namespaces.php</li>
+<li>https://getcomposer.org/doc/</li>
+</ul></li>
+<li><strong>经典书籍</strong>：
+<ul>
+<li>《深入理解Java虚拟机》（周志明）</li>
+<li>《Modern PHP》（Josh Lockhart）</li>
+</ul></li>
+<li><strong>源码参考</strong>：
+<ul>
+<li>https://github.com/openjdk/jdk</li>
+<li>https://github.com/composer/composer</li>
+</ul></li>
+</ol>
+<h2 id="一句话记忆">一句话记忆</h2>
+<p>Java的类加载是“先编译后执行”的严格体系，而PHP是“即写即用”的灵活模式，理解JVM的路径绑定和类型安全是PHP开发者转型的关键。</p>
+
+            </div>
+        </article>
+    </div>
+    <aside class="toc-sidebar" id="toc-sidebar">
+        <div class="toc-header">
+            <h3>文章目录</h3>
+        </div>
+        <nav class="toc-nav" id="toc-nav">
+            <!-- 目录内容将通过JavaScript自动生成 -->
+        </nav>
+    </aside>
+</div>
+
+<script>
+    // Add copy buttons to code blocks
+    function addCopyButtons() {
+        const sourceCodeBlocks = document.querySelectorAll('.sourceCode');
+        sourceCodeBlocks.forEach(function(block) {
+            if (block.querySelector('.copy-button')) return;
+            const preElement = block.querySelector('pre');
+            if (!preElement) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = preElement.querySelector('code');
+                const text = code ? code.innerText : preElement.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+
+        const allPreBlocks = document.querySelectorAll('pre:not(.mermaid)');
+        allPreBlocks.forEach(function(block) {
+            if (block.closest('.sourceCode') || block.querySelector('.copy-button')) return;
+
+            const button = document.createElement('button');
+            button.className = 'copy-button';
+            button.textContent = '复制';
+            button.setAttribute('aria-label', '复制代码');
+
+            button.addEventListener('click', function() {
+                const code = block.querySelector('code');
+                const text = code ? code.innerText : block.innerText;
+
+                navigator.clipboard.writeText(text).then(function() {
+                    button.textContent = '已复制';
+                    button.classList.add('copied');
+
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                        button.classList.remove('copied');
+                    }, 3000);
+                }).catch(function(err) {
+                    console.error('复制失败: ', err);
+                    button.textContent = '失败';
+                    setTimeout(function() {
+                        button.textContent = '复制';
+                    }, 3000);
+                });
+            });
+
+            block.appendChild(button);
+        });
+    }
+
+    // 生成文章目录
+    function generateTableOfContents() {
+        const postContent = document.getElementById('post-content');
+        const tocNav = document.getElementById('toc-nav');
+
+        if (!postContent || !tocNav) {
+            console.log('Missing postContent or tocNav element');
+            return;
+        }
+
+        // 查找所有标题元素
+        const headings = postContent.querySelectorAll('h1, h2, h3, h4, h5, h6');
+        console.log('Found headings:', headings.length);
+
+        if (headings.length === 0) {
+            // 如果没有标题，隐藏目录
+            console.log('No headings found, hiding TOC');
+            const tocSidebar = document.getElementById('toc-sidebar');
+            if (tocSidebar) tocSidebar.style.display = 'none';
+            return;
+        }
+
+        // 清空目录容器
+        tocNav.innerHTML = '';
+
+        // 创建目录结构
+        const tocList = document.createElement('ul');
+        tocList.className = 'toc-list';
+
+        let currentLevel = 1;
+        let currentList = tocList;
+        let listStack = [tocList];
+
+        headings.forEach((heading, index) => {
+            // 强制为每个标题设置标准化的ID（始终重写现有ID）
+            const normalizedId = 'heading-' + index;
+            heading.id = normalizedId;
+
+            const level = parseInt(heading.tagName.charAt(1));
+            const title = heading.textContent.trim();
+
+            // 创建目录项
+            const tocItem = document.createElement('li');
+            tocItem.className = 'toc-item toc-level-' + level;
+
+            const tocLink = document.createElement('a');
+            tocLink.href = 'javascript:void(0)'; // 避免触发路由
+            tocLink.setAttribute('data-target', heading.id); // 存储目标ID
+            tocLink.textContent = title;
+            tocLink.className = 'toc-link';
+
+            tocItem.appendChild(tocLink);
+
+            // 处理层级关系
+            if (level > currentLevel) {
+                // 创建新的子列表
+                const newList = document.createElement('ul');
+                newList.className = 'toc-sublist';
+                // 检查是否有父元素
+                const parentList = listStack[listStack.length - 1];
+                if (parentList.lastElementChild) {
+                    parentList.lastElementChild.appendChild(newList);
+                } else {
+                    // 如果没有父元素，直接添加到当前列表
+                    parentList.appendChild(newList);
+                }
+                listStack.push(newList);
+                currentList = newList;
+            } else if (level < currentLevel) {
+                // 返回到上一级
+                while (listStack.length > level) {
+                    listStack.pop();
+                }
+                currentList = listStack[listStack.length - 1];
+            }
+
+            currentList.appendChild(tocItem);
+            currentLevel = level;
+        });
+
+        tocNav.appendChild(tocList);
+        console.log('TOC generated successfully');
+
+        // 高亮当前章节
+        highlightCurrentSection();
+
+        // 滚动监听
+        window.addEventListener('scroll', highlightCurrentSection);
+
+        // 为目录链接添加点击事件
+        setTimeout(() => {
+            const tocLinks = document.querySelectorAll('.toc-link');
+            tocLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('data-target');
+                    if (targetId) {
+                        const targetElement = document.getElementById(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'start',
+                                inline: 'nearest'
+                            });
+                        }
+                    }
+                });
+            });
+        }, 200); // 延迟确保目录已生成
+    }
+
+    // 高亮当前阅读的章节
+    function highlightCurrentSection() {
+        const headings = document.querySelectorAll('.post-content h1, .post-content h2, .post-content h3, .post-content h4, .post-content h5, .post-content h6');
+        const tocLinks = document.querySelectorAll('.toc-link');
+
+        let currentHeading = null;
+        const scrollPosition = window.pageYOffset + 100;
+
+        // 找到当前可见的标题
+        for (let i = headings.length - 1; i >= 0; i--) {
+            if (headings[i].offsetTop <= scrollPosition) {
+                currentHeading = headings[i];
+                break;
+            }
+        }
+
+        // 清除所有活动状态
+        tocLinks.forEach(link => link.classList.remove('active'));
+
+        // 高亮当前章节
+        if (currentHeading) {
+            const activeLink = document.querySelector('.toc-link[data-target="' + currentHeading.id + '"]');
+            if (activeLink) {
+                activeLink.classList.add('active');
+            }
+        }
+    }
+
+    // Initialize mermaid diagrams - 只在直接访问 fragment 时运行
+    async function initMermaid() {
+        // 检查是否在 SPA 环境中
+        if (window.IN_SPA_MODE === true) {
+            console.log('[Mermaid Fragment] In SPA mode, skipping fragment initialization');
+            return;
+        }
+
+        if (typeof mermaid === 'undefined') {
+            console.log('[Mermaid Fragment] Library not loaded');
+            return;
+        }
+
+        const mermaidPreElements = document.querySelectorAll('pre.mermaid, div.mermaid');
+        if (mermaidPreElements.length === 0) {
+            console.log('[Mermaid Fragment] No diagrams found');
+            return;
+        }
+
+        console.log('[Mermaid Fragment] 找到', mermaidPreElements.length, '个 Mermaid 图表，准备渲染...');
+
+        // 处理 DOM 结构
+        const elementsToRun = [];
+
+        mermaidPreElements.forEach((element) => {
+            // 获取原始图表代码
+            const graphDefinition = element.textContent.trim();
+            console.log('[Mermaid Fragment] First 100 chars:', graphDefinition.substring(0, 100));
+
+            // 创建一个新的 div 来替换旧的 pre/div，确保它是"干净"的
+            const newDiv = document.createElement('div');
+            newDiv.className = 'mermaid';
+            newDiv.textContent = graphDefinition;
+            newDiv.setAttribute('data-mermaid-code', graphDefinition);
+
+            element.parentNode.replaceChild(newDiv, element);
+            elementsToRun.push(newDiv);
+        });
+
+        // 手动触发渲染
+        try {
+            await mermaid.run({
+                nodes: elementsToRun
+            });
+            console.log('[Mermaid Fragment] 渲染完成');
+        } catch (err) {
+            console.error('[Mermaid Fragment] 渲染失败:', err);
+            // 出错时显示原始代码，避免白屏
+            elementsToRun.forEach(el => {
+                el.style.whiteSpace = 'pre';
+                el.style.border = '1px solid red';
+            });
+        }
+    }
+
+    // Initialize copy buttons and TOC after content loads
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loading, initializing...');
+            addCopyButtons();
+            setTimeout(generateTableOfContents, 100);
+            setTimeout(initMermaid, 200);
+        });
+    } else {
+        console.log('DOM already loaded, initializing...');
+        addCopyButtons();
+        setTimeout(generateTableOfContents, 100);
+        setTimeout(initMermaid, 200);
+    }
+</script>
