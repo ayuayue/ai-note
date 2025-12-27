@@ -288,7 +288,7 @@
             <header class="post-header">
                 <h1 class="post-title">linux-xargs命令详解：从入门到精通的高效用法指南</h1>
                 <div class="post-meta">
-                    <div class="post-date">2025/12/23</div>
+                    <div class="post-date">2025/12/27</div>
                     <div class="post-category">2025-12</div>
                 </div>
             </header>
@@ -488,29 +488,29 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href=
 <col style="width: 48%" />
 </colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th>特性</th>
 <th>xargs</th>
 <th>find -exec</th>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td><strong>处理效率</strong></td>
 <td>单进程分批处理，高效</td>
 <td>每个文件启动一个进程，较慢</td>
 </tr>
-<tr>
+<tr class="even">
 <td><strong>安全性</strong></td>
 <td>需配合<code>-print0</code>和<code>-0</code>保证安全</td>
 <td>原生安全，直接处理每个文件</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><strong>灵活性</strong></td>
 <td>可与任何命令组合，非常灵活</td>
 <td>只能与find找到的文件配合使用</td>
 </tr>
-<tr>
+<tr class="even">
 <td><strong>复杂度</strong></td>
 <td>需要理解参数分割和引用</td>
 <td>语法相对简单直接</td>
@@ -641,35 +641,35 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href=
 <col style="width: 34%" />
 </colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th>场景</th>
 <th>推荐命令模式</th>
 <th>注意事项</th>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>批量删除文件</td>
 <td><code>find ... -print0 | xargs -0 rm</code></td>
 <td>务必先测试</td>
 </tr>
-<tr>
+<tr class="even">
 <td>批量文件内容处理</td>
 <td><code>find ... | xargs -I {} sed -i 's/old/new/g' {}</code></td>
 <td>备份原文件</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>并行处理</td>
 <td><code>find ... | xargs -P 4 -I {} process_file {}</code></td>
 <td>根据CPU核心数调整</td>
 </tr>
-<tr>
+<tr class="even">
 <td>安全预览</td>
 <td><code>find ... | xargs -p cmd</code> 或
 <code>find ... | xargs echo cmd</code></td>
 <td>防止误操作</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>复杂命令</td>
 <td><code>find ... | xargs -I {} sh -c 'cmd1 {} | cmd2 &gt; {}.out'</code></td>
 <td>处理复杂管道</td>

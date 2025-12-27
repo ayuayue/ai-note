@@ -286,9 +286,9 @@
     <div class="main-content">
         <article class="post">
             <header class="post-header">
-                <h1 class="post-title">Linux服务器时间同步全攻略：联网与离线环境详解</h1>
+                <h1 class="post-title">Linux服务器时间同步全攻略：联网与离线环境详解</h1>
                 <div class="post-meta">
-                    <div class="post-date">2025/11/11</div>
+                    <div class="post-date">2025/11/12</div>
                     <div class="post-category">2025-11</div>
                 </div>
             </header>
@@ -436,29 +436,29 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href=
 <p><strong>Chrony vs NTPD对比</strong>：</p>
 <table>
 <thead>
-<tr>
+<tr class="header">
 <th>特性</th>
 <th>Chrony</th>
 <th>ntpd</th>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>同步速度</td>
 <td>快速收敛</td>
 <td>较慢</td>
 </tr>
-<tr>
+<tr class="even">
 <td>离线支持</td>
 <td>支持硬件时钟校准</td>
 <td>依赖网络</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>资源占用</td>
 <td>轻量级</td>
 <td>相对较高</td>
 </tr>
-<tr>
+<tr class="even">
 <td>时间偏差容忍度</td>
 <td>可配置大偏差</td>
 <td>容忍度低</td>
@@ -605,19 +605,12 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href=
 <h2 id="常见问题与解决方案">常见问题与解决方案</h2>
 <h3 id="时间同步失败排查">时间同步失败排查</h3>
 <ol type="1">
-<li><p><strong>检查网络连通性</strong>：</p>
-<div class="sourceCode" id="cb23"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ping</span> ntp.aliyun.com</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="ex">telnet</span> ntp.aliyun.com 123</span></code></pre></div></li>
-<li><p><strong>检查防火墙设置</strong>：</p>
-<div class="sourceCode" id="cb24"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 开放NTP端口（123/UDP）</span></span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="ex">firewall-cmd</span> <span class="at">--add-service</span><span class="op">=</span>ntp <span class="at">--permanent</span></span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="ex">firewall-cmd</span> <span class="at">--reload</span></span></code></pre></div></li>
-<li><p><strong>查看NTP服务状态</strong>：</p>
-<div class="sourceCode" id="cb25"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="ex">systemctl</span> status ntpd</span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ntpq</span> <span class="at">-p</span>  <span class="co"># 查看NTP对等体状态</span></span></code></pre></div></li>
+<li><p><strong>检查网络连通性</strong>：
+<code>bash     ping ntp.aliyun.com     telnet ntp.aliyun.com 123</code></p></li>
+<li><p><strong>检查防火墙设置</strong>：
+<code>bash     # 开放NTP端口（123/UDP）     firewall-cmd --add-service=ntp --permanent     firewall-cmd --reload</code></p></li>
+<li><p><strong>查看NTP服务状态</strong>：
+<code>bash     systemctl status ntpd     ntpq -p  # 查看NTP对等体状态</code></p></li>
 </ol>
 <h3 id="特殊环境配置">特殊环境配置</h3>
 <p><strong>虚拟化环境</strong>： - <strong>XEN

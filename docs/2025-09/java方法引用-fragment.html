@@ -286,9 +286,9 @@
     <div class="main-content">
         <article class="post">
             <header class="post-header">
-                <h1 class="post-title">Java 方法引用深度解析：从原理到实战</h1>
+                <h1 class="post-title">Java 方法引用深度解析：从原理到实战</h1>
                 <div class="post-meta">
-                    <div class="post-date">2025/9/17</div>
+                    <div class="post-date">2025/10/31</div>
                     <div class="post-category">2025-09</div>
                 </div>
             </header>
@@ -615,29 +615,29 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb16-1"><a href=
 <col style="width: 52%" />
 </colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th>特性</th>
 <th>Java 方法引用</th>
 <th>C++函数指针/成员函数指针</th>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>语法</td>
 <td><code>Object::method</code></td>
 <td><code>&amp;Class::method</code> 或 <code>std::mem_fn</code></td>
 </tr>
-<tr>
+<tr class="even">
 <td>类型安全</td>
 <td>强类型，编译时检查</td>
 <td>弱类型，容易出错</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>内存管理</td>
 <td>自动垃圾回收</td>
 <td>手动管理，需注意生命周期</td>
 </tr>
-<tr>
+<tr class="even">
 <td>使用场景</td>
 <td>函数式接口、Stream API</td>
 <td>回调、事件处理、STL 算法</td>
@@ -652,7 +652,7 @@ class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb17-1"><a href="#
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Printer <span class="op">{</span></span>
 <span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> print<span class="op">(</span><span class="dt">int</span> i<span class="op">)</span> <span class="op">{</span> <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> i <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> print<span class="op">(</span><span class="dt">int</span> i<span class="op">)</span> <span class="op">{</span> <span class="bu">std::</span>cout<span class="op"> &lt;&lt;</span> i <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span> <span class="op">}</span></span>
 <span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
 <span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
@@ -665,36 +665,36 @@ class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb17-1"><a href="#
 <span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 使用std::mem_fn</span></span>
 <span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">auto</span> printFunc <span class="op">=</span> <span class="bu">std::</span>mem_fn<span class="op">(&amp;</span>Printer<span class="op">::</span>print<span class="op">);</span></span>
-<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>for_each<span class="op">(</span>nums<span class="op">.</span>begin<span class="op">(),</span> nums<span class="op">.</span>end<span class="op">(),</span> <span class="bu">std::</span>bind<span class="op">(</span>printFunc<span class="op">,</span> <span class="op">&amp;</span>p<span class="op">,</span> <span class="bu">std::</span>placeholders::_1<span class="op">));</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>for_each<span class="op">(</span>nums<span class="op">.</span>begin<span class="op">(),</span> nums<span class="op">.</span>end<span class="op">(),</span> <span class="bu">std::</span>bind<span class="op">(</span>printFunc<span class="op">,</span> <span class="op">&amp;</span>p<span class="op">,</span> <span class="bu">std::</span>placeholders<span class="bu">::</span>_1<span class="op">));</span></span>
 <span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
 <span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h3 id="java-vs-python">6.2 Java vs Python</h3>
 <table>
 <thead>
-<tr>
+<tr class="header">
 <th>特性</th>
 <th>Java 方法引用</th>
 <th>Python 函数引用</th>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>语法</td>
 <td><code>Object::method</code></td>
 <td><code>obj.method</code> 或 <code>ClassName.method</code></td>
 </tr>
-<tr>
+<tr class="even">
 <td>一等函数</td>
 <td>通过函数式接口支持</td>
 <td>函数是一等公民</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>装饰器</td>
 <td>需要额外实现</td>
 <td>内置装饰器支持</td>
 </tr>
-<tr>
+<tr class="even">
 <td>使用场景</td>
 <td>强类型函数式编程</td>
 <td>动态编程、回调、高阶函数</td>
@@ -726,29 +726,29 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb18-1"><a h
 <h3 id="java-vs-go">6.3 Java vs Go</h3>
 <table>
 <thead>
-<tr>
+<tr class="header">
 <th>特性</th>
 <th>Java 方法引用</th>
 <th>Go 函数值</th>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td>语法</td>
 <td><code>Object::method</code></td>
 <td><code>obj.method</code> 或 <code>package.function</code></td>
 </tr>
-<tr>
+<tr class="even">
 <td>方法集</td>
 <td>接口隐式实现</td>
 <td>显式接口实现</td>
 </tr>
-<tr>
+<tr class="odd">
 <td>并发</td>
 <td>内置并发支持</td>
 <td>Goroutine 和 Channel</td>
 </tr>
-<tr>
+<tr class="even">
 <td>使用场景</td>
 <td>企业级应用、框架</td>
 <td>系统编程、微服务</td>

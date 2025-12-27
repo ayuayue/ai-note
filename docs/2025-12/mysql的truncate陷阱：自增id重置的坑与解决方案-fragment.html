@@ -286,9 +286,9 @@
     <div class="main-content">
         <article class="post">
             <header class="post-header">
-                <h1 class="post-title">MySQL的TRUNCATE陷阱：自增ID重置的坑与解决方案</h1>
+                <h1 class="post-title">MySQL的TRUNCATE陷阱：自增ID重置的坑与解决方案</h1>
                 <div class="post-meta">
-                    <div class="post-date">2025/12/3</div>
+                    <div class="post-date">2025/12/8</div>
                     <div class="post-category">2025-12</div>
                 </div>
             </header>
@@ -339,44 +339,44 @@ class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#c
 <h3 id="两种操作的区别对比表">两种操作的区别对比表</h3>
 <table>
 <thead>
-<tr>
+<tr class="header">
 <th>特性</th>
 <th>TRUNCATE TABLE</th>
 <th>DELETE FROM</th>
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td><strong>操作类型</strong></td>
 <td>DDL（数据定义语言）</td>
 <td>DML（数据操作语言）</td>
 </tr>
-<tr>
+<tr class="even">
 <td><strong>执行速度</strong></td>
 <td>非常快</td>
 <td>相对较慢（尤其是大表）</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><strong>事务安全性</strong></td>
 <td>无法回滚（隐式提交）</td>
 <td>可以回滚（在事务内）</td>
 </tr>
-<tr>
+<tr class="even">
 <td><strong>触发器</strong></td>
 <td>不触发</td>
 <td>触发</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><strong>自增ID</strong></td>
 <td>重置为初始值</td>
 <td>不重置</td>
 </tr>
-<tr>
+<tr class="even">
 <td><strong>磁盘空间</strong></td>
 <td>释放空间</td>
 <td>不立即释放（标记为可覆盖）</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><strong>WHERE条件</strong></td>
 <td>不支持</td>
 <td>支持</td>
@@ -507,7 +507,7 @@ id="不同数据库中truncate的实现差异">不同数据库中TRUNCATE的实�
 <col style="width: 22%" />
 </colgroup>
 <thead>
-<tr>
+<tr class="header">
 <th>数据库</th>
 <th>TRUNCATE行为</th>
 <th>自增ID处理</th>
@@ -515,25 +515,25 @@ id="不同数据库中truncate的实现差异">不同数据库中TRUNCATE的实�
 </tr>
 </thead>
 <tbody>
-<tr>
+<tr class="odd">
 <td><strong>MySQL</strong></td>
 <td>重置自增ID，快速清空</td>
 <td>重置为初始值</td>
 <td>隐式提交，不可回滚</td>
 </tr>
-<tr>
+<tr class="even">
 <td><strong>PostgreSQL</strong></td>
 <td>类似DELETE，但更快</td>
 <td>不重置序列</td>
 <td>可回滚（在事务中）</td>
 </tr>
-<tr>
+<tr class="odd">
 <td><strong>SQL Server</strong></td>
 <td>重置自增ID，快速清空</td>
 <td>重置为初始值</td>
 <td>可回滚（在事务中）</td>
 </tr>
-<tr>
+<tr class="even">
 <td><strong>Oracle</strong></td>
 <td>快速清空，不写日志</td>
 <td>不影响序列</td>

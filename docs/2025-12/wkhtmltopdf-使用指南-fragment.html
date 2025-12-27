@@ -286,9 +286,9 @@
     <div class="main-content">
         <article class="post">
             <header class="post-header">
-                <h1 class="post-title">wkhtmltopdf 完整使用指南：从基础到高级技巧</h1>
+                <h1 class="post-title">wkhtmltopdf 完整使用指南：从基础到高级技巧</h1>
                 <div class="post-meta">
-                    <div class="post-date">2025/12/5</div>
+                    <div class="post-date">2025/12/8</div>
                     <div class="post-category">2025-12</div>
                 </div>
             </header>
@@ -363,7 +363,7 @@ Linux 系统中，可能需要额外安装中文字体包。对于中文内容�
 class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> fc-cache <span class="at">-fv</span></span></code></pre></div>
 <p>在 HTML 文档中，也应确保指定正确的字符编码：</p>
 <div class="sourceCode" id="cb6"><pre
-class="sourceCode html"><code class="sourceCode html"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> http-equiv</span><span class="op">=</span><span class="st">&quot;content-type&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;text/html;charset=utf-8&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span></code></pre></div>
+class="sourceCode html"><code class="sourceCode html"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;meta</span> <span class="er">http-equiv</span><span class="ot">=</span><span class="st">&quot;content-type&quot;</span> <span class="er">content</span><span class="ot">=</span><span class="st">&quot;text/html;charset=utf-8&quot;</span> <span class="kw">/&gt;</span></span></code></pre></div>
 <p>这样可以避免因编码问题导致的乱码情况。</p>
 <h2 id="基础使用与核心功能">3 基础使用与核心功能</h2>
 <h3 id="基本命令格式">3.1 基本命令格式</h3>
@@ -464,23 +464,23 @@ PDF
 <p><strong>强制分页</strong>：在需要分页的 HTML
 元素上添加<code>page-break-before: always;</code>或<code>page-break-after: always;</code>样式，可以在该元素前或后强制分页：</p>
 <div class="sourceCode" id="cb14"><pre
-class="sourceCode html"><code class="sourceCode html"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> style</span><span class="op">=</span><span class="st">&quot;page-break-after: always;&quot;</span><span class="dt">&gt;&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+class="sourceCode html"><code class="sourceCode html"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span> <span class="er">style</span><span class="ot">=</span><span class="st">&quot;page-break-after: always;&quot;</span><span class="kw">&gt;&lt;/div&gt;</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- 在此元素后分页 --&gt;</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">h2</span><span class="ot"> style</span><span class="op">=</span><span class="st">&quot;page-break-before: always;&quot;</span><span class="dt">&gt;</span>新章节<span class="dt">&lt;/</span><span class="kw">h2</span><span class="dt">&gt;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;h2</span> <span class="er">style</span><span class="ot">=</span><span class="st">&quot;page-break-before: always;&quot;</span><span class="kw">&gt;</span>新章节<span class="kw">&lt;/h2&gt;</span></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- 在此元素前分页 --&gt;</span></span></code></pre></div>
 <p><strong>避免内容被分割</strong>：使用<code>page-break-inside: avoid;</code>可以防止元素内容被分割到两页：</p>
 <div class="sourceCode" id="cb15"><pre
 class="sourceCode css"><code class="sourceCode css"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.chapter</span> {</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">page-break-inside</span><span class="ch">:</span> <span class="dv">avoid</span><span class="op">;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">page-break-inside</span>: <span class="dv">avoid</span><span class="op">;</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p><strong>表格分页处理</strong>：对于跨页的长表格，可以通过 CSS
 确保表头在每页重复显示：</p>
 <div class="sourceCode" id="cb16"><pre
 class="sourceCode css"><code class="sourceCode css"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>thead {</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">display</span><span class="ch">:</span> <span class="dv">table-header-group</span><span class="op">;</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">display</span>: <span class="dv">table-header-group</span><span class="op">;</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>tbody tr {</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">page-break-inside</span><span class="ch">:</span> <span class="dv">avoid</span><span class="op">;</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">page-break-inside</span>: <span class="dv">avoid</span><span class="op">;</span></span>
 <span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <p>需要注意的是，在某些情况下，表格中使用<code>thead</code>标签可能导致分页时出现重复表头的问题。此时，可以考虑使用<code>display: table-header-group;</code>样式来替代。</p>
 <h3 id="水印添加技术">4.2 水印添加技术</h3>
@@ -489,27 +489,27 @@ class="sourceCode css"><code class="sourceCode css"><span id="cb16-1"><a href="#
 <p><strong>转换前添加水印</strong>：通过在 HTML 中添加水印层，利用 CSS
 实现水印效果：</p>
 <div class="sourceCode" id="cb17"><pre
-class="sourceCode html"><code class="sourceCode html"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;!DOCTYPE</span> html<span class="dt">&gt;</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">html</span><span class="dt">&gt;</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">head</span><span class="dt">&gt;</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">style</span><span class="dt">&gt;</span></span>
+class="sourceCode html"><code class="sourceCode html"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;!DOCTYPE </span>html<span class="dt">&gt;</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;html&gt;</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;head&gt;</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;style&gt;</span></span>
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">.watermark</span> {</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">position</span><span class="ch">:</span> <span class="dv">fixed</span><span class="op">;</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">top</span><span class="ch">:</span> <span class="dv">50</span><span class="dt">%</span><span class="op">;</span></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">left</span><span class="ch">:</span> <span class="dv">50</span><span class="dt">%</span><span class="op">;</span></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">transform</span><span class="ch">:</span> <span class="fu">translate(</span><span class="dv">-50</span><span class="dt">%</span><span class="op">,</span> <span class="dv">-50</span><span class="dt">%</span><span class="fu">)</span> <span class="fu">rotate(</span><span class="dv">-45</span><span class="dt">deg</span><span class="fu">)</span><span class="op">;</span></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">font-size</span><span class="ch">:</span> <span class="dv">60</span><span class="dt">px</span><span class="op">;</span></span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">color</span><span class="ch">:</span> <span class="fu">rgba(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0.1</span><span class="fu">)</span><span class="op">;</span></span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>        <span class="kw">z-index</span><span class="ch">:</span> <span class="dv">9999</span><span class="op">;</span></span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>        <span class="kw">pointer-events</span><span class="ch">:</span> <span class="dv">none</span><span class="op">;</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">position</span>: <span class="dv">fixed</span><span class="op">;</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">top</span>: <span class="dv">50</span><span class="dt">%</span><span class="op">;</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">left</span>: <span class="dv">50</span><span class="dt">%</span><span class="op">;</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">transform</span>: <span class="fu">translate(</span><span class="dv">-50</span><span class="dt">%</span><span class="op">,</span> <span class="dv">-50</span><span class="dt">%</span><span class="fu">)</span> <span class="fu">rotate(</span><span class="dv">-45</span><span class="dt">deg</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>        <span class="kw">font-size</span>: <span class="dv">60</span><span class="dt">px</span><span class="op">;</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">color</span>: <span class="fu">rgba(</span><span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0.1</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>        <span class="kw">z-index</span>: <span class="dv">9999</span><span class="op">;</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>        <span class="kw">pointer-events</span>: <span class="dv">none</span><span class="op">;</span></span>
 <span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;/</span><span class="kw">style</span><span class="dt">&gt;</span></span>
-<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">head</span><span class="dt">&gt;</span></span>
-<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">body</span><span class="dt">&gt;</span></span>
-<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;watermark&quot;</span><span class="dt">&gt;</span>机密文件<span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/style&gt;</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;/head&gt;</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;body&gt;</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;div</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;watermark&quot;</span><span class="kw">&gt;</span>机密文件<span class="kw">&lt;/div&gt;</span></span>
 <span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">&lt;!-- 页面主要内容 --&gt;</span></span>
-<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;/</span><span class="kw">body</span><span class="dt">&gt;</span></span>
-<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">html</span><span class="dt">&gt;</span></span></code></pre></div>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;/body&gt;</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/html&gt;</span></span></code></pre></div>
 <p><strong>转换后添加水印（使用
 Java+iText）</strong>：通过编程方式为已生成的 PDF
 添加水印，这种方法更灵活可靠：</p>
@@ -575,7 +575,7 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href=
 <p><strong>Windows PowerShell 脚本示例</strong>：</p>
 <div class="sourceCode" id="cb21"><pre
 class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">Get-ChildItem</span> <span class="op">*.</span><span class="fu">html</span> <span class="op">|</span> <span class="fu">ForEach-Object</span> <span class="op">-</span>Process <span class="op">{</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="va">$newname</span> <span class="op">=</span> <span class="op">(</span><span class="va">$_</span><span class="op">.</span><span class="fu">name</span><span class="op">.</span><span class="fu">Split</span><span class="op">(</span><span class="st">&quot;.&quot;</span><span class="op">)[</span><span class="dv">0</span><span class="op">]</span> <span class="op">+</span> <span class="st">&#39;.pdf&#39;</span><span class="op">)</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    <span class="va">$newname</span> <span class="op">=</span> <span class="op">(</span><span class="va">$_</span><span class="op">.</span><span class="fu">name</span><span class="op">.</span><span class="fu">Split</span><span class="op">(</span><span class="st">&quot;.&quot;</span><span class="op">)[</span>0<span class="op">]</span> <span class="op">+</span> <span class="st">&#39;.pdf&#39;</span><span class="op">)</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    wkhtmltopdf <span class="op">--</span>encoding utf8 <span class="va">$_</span><span class="op">.</span><span class="fu">name</span> <span class="va">$newname</span></span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p>对于更复杂的合并需求，如需要动态调整页面顺序或添加分隔页，可以先用
@@ -590,9 +590,9 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb22-1"><a href=
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">/**</span></span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>     <span class="co">*</span> HTML<span class="co">转</span>PDF</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co">     * </span><span class="an">@param</span><span class="co"> </span><span class="an">srcPath</span><span class="co"> 输入</span>HTML<span class="co">路径（</span>URL<span class="co">或文件路径）</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>     <span class="co">*</span> <span class="an">@param</span><span class="co"> </span><span class="an">destPath</span><span class="co"> 输出</span>PDF<span class="co">路径</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>     <span class="co">*</span> <span class="an">@return</span> <span class="co">转换是否成功</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co">     * @</span>param srcPath <span class="co">输入</span>HTML<span class="co">路径（</span>URL<span class="co">或文件路径）</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>     <span class="co">*</span> <span class="co">@</span>param destPath <span class="co">输出</span>PDF<span class="co">路径</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>     <span class="co">*</span> <span class="co">@</span>return <span class="co">转换是否成功</span></span>
 <span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>     <span class="co">*/</span></span>
 <span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">boolean</span> <span class="fu">convert</span><span class="op">(</span><span class="bu">String</span> srcPath<span class="op">,</span> <span class="bu">String</span> destPath<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>        <span class="bu">StringBuilder</span> cmd <span class="op">=</span> <span class="kw">new</span> <span class="bu">StringBuilder</span><span class="op">();</span></span>
@@ -785,7 +785,7 @@ class="sourceCode csharp"><code class="sourceCode cs"><span id="cb25-1"><a href=
 <li><strong>确保 HTML 文档指定正确的编码</strong>：</li>
 </ol>
 <div class="sourceCode" id="cb26"><pre
-class="sourceCode html"><code class="sourceCode html"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">meta</span><span class="ot"> http-equiv</span><span class="op">=</span><span class="st">&quot;Content-Type&quot;</span><span class="ot"> content</span><span class="op">=</span><span class="st">&quot;text/html; charset=utf-8&quot;</span><span class="ot"> </span><span class="dt">/&gt;</span></span></code></pre></div>
+class="sourceCode html"><code class="sourceCode html"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;meta</span> <span class="er">http-equiv</span><span class="ot">=</span><span class="st">&quot;Content-Type&quot;</span> <span class="er">content</span><span class="ot">=</span><span class="st">&quot;text/html; charset=utf-8&quot;</span> <span class="kw">/&gt;</span></span></code></pre></div>
 <ol start="2" type="1">
 <li><strong>在命令行中明确指定编码</strong>：</li>
 </ol>
@@ -804,7 +804,7 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb28-1"><a href=
 </ol>
 <div class="sourceCode" id="cb29"><pre
 class="sourceCode css"><code class="sourceCode css"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>body {</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-family</span><span class="ch">:</span> <span class="st">&quot;SimSun&quot;</span><span class="op">,</span> <span class="st">&quot;Microsoft YaHei&quot;</span><span class="op">,</span> <span class="dv">sans-serif</span><span class="op">;</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">font-family</span>: <span class="st">&quot;SimSun&quot;</span><span class="op">,</span> <span class="st">&quot;Microsoft YaHei&quot;</span><span class="op">,</span> <span class="dv">sans-serif</span><span class="op">;</span></span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 <h3 id="样式和脚本支持限制">6.2 样式和脚本支持限制</h3>
 <p>wkhtmltopdf 基于较旧的 WebKit 引擎，对现代 CSS3 和

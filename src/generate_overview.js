@@ -91,17 +91,17 @@ function main() {
         return;
       }
 
-      // Collect document info
+        // Collect document info
       markdownFiles.forEach((filename) => {
         const filePath = path.join(monthPath, filename);
-        const htmlFilename = filename.replace(".md", ".html");
+        const htmlFilename = filename.replace(".md", "-fragment.html");
         const title = extractTitleFromMarkdown(filePath);
         const date = getFileDate(filePath);
         const formattedDate = formatDate(date);
 
         allDocuments.push({
           type: "markdown",
-          url: `/index.html#docs/${monthDir}/${htmlFilename}`,
+          url: `./index.html#/docs/${monthDir}/${htmlFilename}`,
           title: title,
           date: formattedDate,
           category: "Markdown 文档",
