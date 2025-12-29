@@ -1,0 +1,978 @@
+<style>
+  /* CSS Variables for fragment */
+  :root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --bg-color: #f8f9fa;
+    --text-color: #34495e;
+    --border-color: #e9ecef;
+    --card-bg: #ffffff;
+  }
+
+  /* TOC Sidebar Styles */
+  .article-layout {
+    display: flex;
+    max-width: 1400px;
+    margin: 0 auto;
+    gap: 30px;
+    padding: 0 20px;
+  }
+
+  .main-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .toc-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 20px;
+    height: fit-content;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .toc-header h3 {
+    margin: 0 0 15px 0;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--secondary-color);
+    padding-bottom: 10px;
+  }
+
+  .toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toc-item {
+    margin-bottom: 8px;
+  }
+
+  .toc-link {
+    display: block;
+    padding: 6px 10px;
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+  }
+
+  .toc-link:hover {
+    background: var(--secondary-color);
+    color: white;
+    padding-left: 15px;
+  }
+
+  .toc-link.active {
+    background: var(--secondary-color);
+    color: white;
+    font-weight: 500;
+  }
+
+  .toc-sublist {
+    list-style: none;
+    padding-left: 20px;
+    margin-top: 5px;
+  }
+
+  .toc-sublist .toc-link {
+    font-size: 0.9rem;
+    opacity: 0.9;
+  }
+
+  /* Post Styles */
+  .post {
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+  }
+
+  .post-header {
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .post-title {
+    color: var(--primary-color);
+    font-size: 2rem;
+    margin-bottom: 15px;
+  }
+
+  .post-meta {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    font-size: 0.95rem;
+    color: #6c757d;
+  }
+
+  .post-date {
+    background-color: #e3f2fd;
+    color: var(--secondary-color);
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  .post-category {
+    background-color: #e8f5e9;
+    color: #4caf50;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  .warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    color: #856404;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+
+  .post-content {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--text-color);
+  }
+
+  .post-content h1,
+  .post-content h2,
+  .post-content h3,
+  .post-content h4,
+  .post-content h5,
+  .post-content h6 {
+    color: var(--primary-color);
+    margin-top: 35px;
+    margin-bottom: 20px;
+    scroll-margin-top: 20px;
+  }
+
+  .post-content h2 {
+    font-size: 1.5rem;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .post-content h3 {
+    font-size: 1.3rem;
+    color: #2980b9;
+  }
+
+  .post-content p {
+    margin-bottom: 18px;
+  }
+
+  .post-content code {
+    background-color: #e8eaed;
+    padding: 3px 7px;
+    border-radius: 4px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier,
+      monospace;
+    color: #c0392b;
+    font-size: 0.9em;
+  }
+
+  .post-content pre {
+    background-color: #2d2d2d;
+    color: #f8f8f2;
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 25px 0;
+    font-size: 0.9em;
+    line-height: 1.5;
+    position: relative;
+  }
+
+  .post-content pre code {
+    background-color: transparent;
+    padding: 0;
+    color: inherit;
+  }
+
+  .copy-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #3498db;
+    border: 1px solid #2980b9;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+  }
+
+  .copy-button:hover {
+    background: #2980b9;
+    border-color: #2471a3;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .copy-button.copied {
+    background: #4caf50;
+    border-color: #4caf50;
+  }
+
+  /* Mermaid diagram styles */
+  .mermaid {
+    background-color: #f8f9fa;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 25px 0;
+    text-align: center;
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .article-layout {
+      flex-direction: column;
+    }
+
+    .toc-sidebar {
+      width: 100%;
+      position: static;
+      max-height: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .post {
+      padding: 20px;
+    }
+
+    .post-title {
+      font-size: 1.6rem;
+    }
+
+    .post-content {
+      font-size: 1rem;
+    }
+
+    .article-layout {
+      padding: 0 15px;
+    }
+  }
+</style>
+
+<!-- 引入本地 Mermaid 库 -->
+<script src="../../js/mermaid.min.js"></script>
+<script>
+  // 关键修复：初始化时立即禁止自动渲染
+  if (typeof mermaid !== "undefined") {
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: "default",
+      securityLevel: "loose",
+    });
+  }
+</script>
+
+<div class="article-layout">
+  <div class="main-content">
+    <article class="post">
+      <header class="post-header">
+        <h1 class="post-title">Java Instrumentation 接口深入解析：JVM 级别的 AOP 强大工具</h1>
+        <div class="post-meta">
+          <div class="post-date">2025/12/29</div>
+          <div class="post-category">2025-12</div>
+        </div>
+      </header>
+      <div class="warning">
+        ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+      </div>
+      <div class="post-content" id="post-content"><h2 id="开头摘要">开头摘要</h2>
+<p>Java Instrumentation 是 <code>java.lang.instrument</code>
+包提供的核心 API，允许开发者在 JVM
+加载类时修改字节码或在运行时重新定义已加载的类。这项技术为 JVM
+级别的监控、调试和性能分析提供了基础支撑，广泛应用于
+APM、热部署、代码覆盖率等工具开发。本文适合熟悉 Java 基础并希望深入了解
+JVM 底层机制和字节码增强技术的开发者。</p>
+<h2 id="目录">目录</h2>
+<ul>
+<li>#instrumentation-概述</li>
+<li>#核心概念与 api 解析</li>
+<li>#两种使用方式</li>
+<li>#字节码修改实战</li>
+<li>#底层原理与 jvmti</li>
+<li>#应用场景与典型案例</li>
+<li>#注意事项与最佳实践</li>
+<li>#总结</li>
+</ul>
+<h2 id="instrumentation-概述">Instrumentation 概述</h2>
+<p>Java Instrumentation 是 JDK 1.5
+引入的关键特性，它提供了一种<strong>虚拟机级别的 AOP
+机制</strong>，无需修改源代码即可实现对 Java
+程序的监控和增强。Instrumentation
+的核心价值在于能够在类加载前后动态修改字节码，这一机制为许多高级应用提供了基础。</p>
+<p>从历史发展来看，JDK 1.5 引入了基本的静态 Instrumentation 功能，而 JDK
+1.6 进一步增强了其能力，增加了动态 Attach 机制、本地代码 instrumentation
+等功能。这些演进使得 Java 语言具有了更强大的动态控制和解释能力。</p>
+<p>与传统的 AOP 框架（如 Spring AOP）相比，Instrumentation
+工作在更底层，它直接操作字节码，而不是通过代理对象和反射机制。这种底层实现使得它具有更高的执行效率和更广泛的应用范围，能够拦截和增强包括系统类在内的几乎所有类。</p>
+<h2 id="核心概念与-api-解析">核心概念与 API 解析</h2>
+<h3 id="java-agent-机制">Java Agent 机制</h3>
+<p>Java Agent 是 Instrumentation 的载体，它是一种特殊的 JAR 包，通过 JVM
+参数<code>-javaagent</code>加载。Agent
+包必须在<code>MANIFEST.MF</code>文件中指定入口类，该类需要实现<code>premain</code>或<code>agentmain</code>方法。</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// MANIFEST.MF 文件内容示例</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>Premain<span class="op">-</span><span class="bu">Class</span><span class="op">:</span> com<span class="op">.</span><span class="fu">example</span><span class="op">.</span><span class="fu">MyAgent</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>Can<span class="op">-</span>Redefine<span class="op">-</span>Classes<span class="op">:</span> <span class="kw">true</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>Can<span class="op">-</span>Retransform<span class="op">-</span>Classes<span class="op">:</span> <span class="kw">true</span></span></code></pre></div>
+<h3 id="instrumentation-接口详解">Instrumentation 接口详解</h3>
+<p>Instrumentation 接口是整个包的核心，它提供了一系列关键方法：</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">interface</span> <span class="bu">Instrumentation</span> <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 添加ClassFileTransformer</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> <span class="fu">addTransformer</span><span class="op">(</span><span class="bu">ClassFileTransformer</span> transformer<span class="op">,</span> <span class="dt">boolean</span> canRetransform<span class="op">);</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> <span class="fu">addTransformer</span><span class="op">(</span><span class="bu">ClassFileTransformer</span> transformer<span class="op">);</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 移除ClassFileTransformer</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">boolean</span> <span class="fu">removeTransformer</span><span class="op">(</span><span class="bu">ClassFileTransformer</span> transformer<span class="op">);</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 类重定义和重转换</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> <span class="fu">redefineClasses</span><span class="op">(</span><span class="bu">ClassDefinition</span><span class="kw">...</span> definitions<span class="op">)</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">throws</span> <span class="bu">ClassNotFoundException</span><span class="op">,</span> <span class="bu">UnmodifiableClassException</span><span class="op">;</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> <span class="fu">retransformClasses</span><span class="op">(</span><span class="bu">Class</span><span class="op">&lt;?&gt;</span><span class="kw">...</span> classes<span class="op">)</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        <span class="kw">throws</span> <span class="bu">UnmodifiableClassException</span><span class="op">;</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 查询功能</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="dt">boolean</span> <span class="fu">isRetransformClassesSupported</span><span class="op">();</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">boolean</span> <span class="fu">isModifiableClass</span><span class="op">(</span><span class="bu">Class</span><span class="op">&lt;?&gt;</span> theClass<span class="op">);</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="bu">Class</span><span class="op">[]</span> <span class="fu">getAllLoadedClasses</span><span class="op">();</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="bu">Class</span><span class="op">[]</span> <span class="fu">getInitiatedClasses</span><span class="op">(</span><span class="bu">ClassLoader</span> loader<span class="op">);</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 获取对象大小</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="dt">long</span> <span class="fu">getObjectSize</span><span class="op">(</span><span class="bu">Object</span> objectToSize<span class="op">);</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 类路径管理</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> <span class="fu">appendToBootstrapClassLoaderSearch</span><span class="op">(</span><span class="bu">JarFile</span> jarfile<span class="op">);</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> <span class="fu">appendToSystemClassLoaderSearch</span><span class="op">(</span><span class="bu">JarFile</span> jarfile<span class="op">);</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="classfiletransformer-接口">ClassFileTransformer 接口</h3>
+<p>ClassFileTransformer 是实际进行字节码修改的接口，它只有一个 transform
+方法，在类加载时被 JVM 调用：</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">interface</span> <span class="bu">ClassFileTransformer</span> <span class="op">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">byte</span><span class="op">[]</span> <span class="fu">transform</span><span class="op">(</span><span class="bu">ClassLoader</span> loader<span class="op">,</span> <span class="bu">String</span> className<span class="op">,</span> <span class="bu">Class</span><span class="op">&lt;?&gt;</span> classBeingRedefined<span class="op">,</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>                    <span class="bu">ProtectionDomain</span> protectionDomain<span class="op">,</span> <span class="dt">byte</span><span class="op">[]</span> classfileBuffer<span class="op">)</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>                    <span class="kw">throws</span> <span class="bu">IllegalClassFormatException</span><span class="op">;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>值得注意的是，className 参数使用 JVM
+内部格式（如<code>java/lang/String</code>而不是<code>java.lang.String</code>），且对由
+Bootstrap ClassLoader 加载的类，loader 参数为 null。</p>
+<h2 id="两种使用方式">两种使用方式</h2>
+<h3 id="启动时加载premain-方式">1. 启动时加载（Premain 方式）</h3>
+<p>这是最基本的使用方式，在 JVM
+启动时通过<code>-javaagent</code>参数加载 Agent：</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">java</span> <span class="at">-javaagent:myagent.jar</span> <span class="at">-jar</span> myapp.jar</span></code></pre></div>
+<p>对应的 Agent 类需要实现 premain 方法：</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> MyAgent <span class="op">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">premain</span><span class="op">(</span><span class="bu">String</span> agentArgs<span class="op">,</span> <span class="bu">Instrumentation</span> inst<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Agent loaded!&quot;</span><span class="op">);</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        inst<span class="op">.</span><span class="fu">addTransformer</span><span class="op">(</span><span class="kw">new</span> <span class="fu">MyTransformer</span><span class="op">());</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>JVM 会优先加载带 Instrumentation 参数的 premain
+方法，如果不存在则尝试加载不带该参数的方法。</p>
+<h3 id="运行时动态加载agentmain-方式">2. 运行时动态加载（Agentmain
+方式）</h3>
+<p>JDK 1.6 引入了动态 Attach 机制，允许向运行中的 JVM 进程加载
+Agent：</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 获取目标JVM的进程ID</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>VirtualMachine vm <span class="op">=</span> VirtualMachine<span class="op">.</span><span class="fu">attach</span><span class="op">(</span><span class="st">&quot;pid&quot;</span><span class="op">);</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co">// 加载Agent</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>vm<span class="op">.</span><span class="fu">loadAgent</span><span class="op">(</span><span class="st">&quot;myagent.jar&quot;</span><span class="op">);</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">// 断开连接</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>vm<span class="op">.</span><span class="fu">detach</span><span class="op">();</span></span></code></pre></div>
+<p>对应的 Agent 类需要实现 agentmain 方法：</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> MyAgent <span class="op">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">agentmain</span><span class="op">(</span><span class="bu">String</span> agentArgs<span class="op">,</span> <span class="bu">Instrumentation</span> inst<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Agent dynamically loaded!&quot;</span><span class="op">);</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        inst<span class="op">.</span><span class="fu">addTransformer</span><span class="op">(</span><span class="kw">new</span> <span class="fu">MyTransformer</span><span class="op">());</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>动态 Attach 机制使得我们可以在不重启 JVM
+的情况下对程序进行监控和调试，这一机制被 jstack、jmap 等 JDK
+工具广泛使用。</p>
+<p>以下是两种加载方式的时序对比：</p>
+<pre class="mermaid">sequenceDiagram
+    participant A as 启动时加载
+    participant B as 运行时加载
+    participant JVM as JVM
+    participant Agent as Agent
+
+    A-&gt;&gt;JVM: java -javaagent:agent.jar
+    JVM-&gt;&gt;Agent: 调用premain方法
+    Agent-&gt;&gt;JVM: 注册ClassFileTransformer
+    JVM-&gt;&gt;JVM: 类加载时进行字节码转换
+    JVM-&gt;&gt;JVM: 执行main方法
+
+    B-&gt;&gt;JVM: VirtualMachine.attach(pid)
+    B-&gt;&gt;JVM: loadAgent(&quot;agent.jar&quot;)
+    JVM-&gt;&gt;Agent: 调用agentmain方法
+    Agent-&gt;&gt;JVM: 注册ClassFileTransformer
+    JVM-&gt;&gt;JVM: 对已加载类进行retransform</pre>
+<h2 id="字节码修改实战">字节码修改实战</h2>
+<h3 id="使用-javassist-进行字节码增强">使用 Javassist
+进行字节码增强</h3>
+<p>Javassist 是一个强大的字节码操作库，它提供了源码级别的
+API，使得字节码修改更加简单：</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">javassist</span><span class="op">.*;</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> MethodTimer <span class="op">{</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">byte</span><span class="op">[]</span> <span class="fu">injectTimer</span><span class="op">(</span><span class="dt">byte</span><span class="op">[]</span> classfileBuffer<span class="op">)</span> <span class="kw">throws</span> <span class="bu">Exception</span> <span class="op">{</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        ClassPool pool <span class="op">=</span> ClassPool<span class="op">.</span><span class="fu">getDefault</span><span class="op">();</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        CtClass ctClass <span class="op">=</span> pool<span class="op">.</span><span class="fu">makeClass</span><span class="op">(</span><span class="kw">new</span> java<span class="op">.</span><span class="fu">io</span><span class="op">.</span><span class="fu">ByteArrayInputStream</span><span class="op">(</span>classfileBuffer<span class="op">));</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span>CtMethod method <span class="op">:</span> ctClass<span class="op">.</span><span class="fu">getDeclaredMethods</span><span class="op">())</span> <span class="op">{</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(!</span>method<span class="op">.</span><span class="fu">isEmpty</span><span class="op">()</span> <span class="op">&amp;&amp;</span> <span class="op">!</span>method<span class="op">.</span><span class="fu">getName</span><span class="op">().</span><span class="fu">equals</span><span class="op">(</span><span class="st">&quot;&lt;init&gt;&quot;</span><span class="op">))</span> <span class="op">{</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>                <span class="co">// 添加局部变量记录开始时间</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>                method<span class="op">.</span><span class="fu">addLocalVariable</span><span class="op">(</span><span class="st">&quot;_startTime&quot;</span><span class="op">,</span> CtClass<span class="op">.</span><span class="fu">longType</span><span class="op">);</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>                <span class="co">// 在方法开始处插入代码</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>                method<span class="op">.</span><span class="fu">insertBefore</span><span class="op">(</span><span class="st">&quot;_startTime = System.nanoTime();&quot;</span><span class="op">);</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>                <span class="co">// 在方法返回处插入代码</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>                method<span class="op">.</span><span class="fu">insertAfter</span><span class="op">(</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot;System.out.println(</span><span class="sc">\&quot;</span><span class="st">[Performance] Method &quot;</span> <span class="op">+</span> method<span class="op">.</span><span class="fu">getName</span><span class="op">()</span> <span class="op">+</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>                    <span class="st">&quot; executed in </span><span class="sc">\&quot;</span><span class="st"> + (System.nanoTime() - _startTime) + </span><span class="sc">\&quot;</span><span class="st"> ns.</span><span class="sc">\&quot;</span><span class="st">);&quot;</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>                <span class="op">);</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>        <span class="dt">byte</span><span class="op">[]</span> byteCode <span class="op">=</span> ctClass<span class="op">.</span><span class="fu">toBytecode</span><span class="op">();</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>        ctClass<span class="op">.</span><span class="fu">detach</span><span class="op">();</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> byteCode<span class="op">;</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="使用-asm-进行字节码增强">使用 ASM 进行字节码增强</h3>
+<p>ASM 是另一个流行的字节码操作框架，它更接近底层但性能更高：</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> MyClassFileTransformer <span class="kw">implements</span> <span class="bu">ClassFileTransformer</span> <span class="op">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">byte</span><span class="op">[]</span> <span class="fu">transform</span><span class="op">(</span><span class="bu">ClassLoader</span> loader<span class="op">,</span> <span class="bu">String</span> className<span class="op">,</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>                           <span class="bu">Class</span><span class="op">&lt;?&gt;</span> classBeingRedefined<span class="op">,</span> <span class="bu">ProtectionDomain</span> protectionDomain<span class="op">,</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>                           <span class="dt">byte</span><span class="op">[]</span> classfileBuffer<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(!</span>className<span class="op">.</span><span class="fu">equals</span><span class="op">(</span><span class="st">&quot;com/example/TargetClass&quot;</span><span class="op">))</span> <span class="op">{</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> classfileBuffer<span class="op">;</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        ClassReader cr <span class="op">=</span> <span class="kw">new</span> <span class="fu">ClassReader</span><span class="op">(</span>classfileBuffer<span class="op">);</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        ClassWriter cw <span class="op">=</span> <span class="kw">new</span> <span class="fu">ClassWriter</span><span class="op">(</span>cr<span class="op">,</span> ClassWriter<span class="op">.</span><span class="fu">COMPUTE_FRAMES</span><span class="op">);</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        ClassVisitor cv <span class="op">=</span> <span class="kw">new</span> <span class="fu">MyClassVisitor</span><span class="op">(</span>cw<span class="op">);</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        cr<span class="op">.</span><span class="fu">accept</span><span class="op">(</span>cv<span class="op">,</span> ClassReader<span class="op">.</span><span class="fu">SKIP_FRAMES</span> <span class="op">|</span> ClassReader<span class="op">.</span><span class="fu">SKIP_DEBUG</span><span class="op">);</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> cw<span class="op">.</span><span class="fu">toByteArray</span><span class="op">();</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="性能监控实战案例">性能监控实战案例</h3>
+<p>下面是一个完整的性能监控 Agent 实现：</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 1. 创建Agent主类</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> PerformanceMonitorAgent <span class="op">{</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">premain</span><span class="op">(</span><span class="bu">String</span> agentArgs<span class="op">,</span> <span class="bu">Instrumentation</span> inst<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;PerformanceMonitorAgent loaded.&quot;</span><span class="op">);</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>        inst<span class="op">.</span><span class="fu">addTransformer</span><span class="op">(</span><span class="kw">new</span> <span class="fu">PerformanceTransformer</span><span class="op">());</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="co">// 2. 实现ClassFileTransformer</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> PerformanceTransformer <span class="kw">implements</span> <span class="bu">ClassFileTransformer</span> <span class="op">{</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">byte</span><span class="op">[]</span> <span class="fu">transform</span><span class="op">(</span><span class="bu">ClassLoader</span> loader<span class="op">,</span> <span class="bu">String</span> className<span class="op">,</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>                           <span class="bu">Class</span><span class="op">&lt;?&gt;</span> classBeingRedefined<span class="op">,</span> <span class="bu">ProtectionDomain</span> protectionDomain<span class="op">,</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>                           <span class="dt">byte</span><span class="op">[]</span> classfileBuffer<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>className <span class="op">!=</span> <span class="kw">null</span> <span class="op">&amp;&amp;</span> className<span class="op">.</span><span class="fu">startsWith</span><span class="op">(</span><span class="st">&quot;com/example/&quot;</span><span class="op">))</span> <span class="op">{</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>            <span class="cf">try</span> <span class="op">{</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> MethodTimer<span class="op">.</span><span class="fu">injectTimer</span><span class="op">(</span>classfileBuffer<span class="op">);</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span> <span class="cf">catch</span> <span class="op">(</span><span class="bu">Exception</span> e<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>                e<span class="op">.</span><span class="fu">printStackTrace</span><span class="op">();</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> classfileBuffer<span class="op">;</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a><span class="co">// 3. 目标测试类</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span><span class="im"> com</span><span class="op">.</span><span class="im">example</span><span class="op">;</span></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> Demo <span class="op">{</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">test</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span> <span class="op">{</span> <span class="bu">Thread</span><span class="op">.</span><span class="fu">sleep</span><span class="op">(</span><span class="dv">100</span><span class="op">);</span> <span class="op">}</span> <span class="cf">catch</span> <span class="op">(</span><span class="bu">Exception</span> e<span class="op">)</span> <span class="op">{}</span></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>        <span class="kw">new</span> <span class="fu">Demo</span><span class="op">().</span><span class="fu">test</span><span class="op">();</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>运行结果将显示每个方法的执行时间，帮助开发者识别性能瓶颈。</p>
+<h2 id="底层原理与-jvmti">底层原理与 JVMTI</h2>
+<p>Instrumentation 的底层实现依赖于<strong>JVMTI（JVM Tool
+Interface）</strong>，这是 JVM 暴露给用户的一组扩展接口集合。</p>
+<p>JVMTI 基于事件驱动机制，JVM 在执行过程中会在特定点触发回调函数。对于
+Instrumentation
+来说，最关键的事件是<strong>ClassFileLoadHook</strong>，这个事件在类加载时触发，允许修改类的字节码。</p>
+<p>JVMTIAgent 有三种生命周期方法：</p>
+<ul>
+<li><code>Agent_OnLoad</code>：Agent 启动时加载（对应 premain
+方式）</li>
+<li><code>Agent_OnAttach</code>：Agent 动态 attach 时加载（对应
+agentmain 方式）</li>
+<li><code>Agent_OnUnload</code>：Agent 卸载时调用</li>
+</ul>
+<p>Instrumentation 就是一种特殊的 JVMTIAgent，称为 JPLISAgent（Java
+Programming Language Instrumentation Services Agent）。</p>
+<p>类重定义（redefineClasses）的过程涉及复杂的 JVM
+内部操作，大致步骤如下：</p>
+<ol type="1">
+<li>创建 VM_RedefineClasses 操作，触发 stop-the-world</li>
+<li>遍历所有需要重定义的类</li>
+<li>验证新字节码的合法性</li>
+<li>合并新旧类的常量池</li>
+<li>更新方法的 jmethodID</li>
+<li>交换新旧类的属性（常量池、方法等）</li>
+<li>重新初始化 vtable 和 itable</li>
+</ol>
+<p>这个过程保证了类重定义不会影响已有的类实例，避免了大规模对象遍历的开销。</p>
+<h2 id="应用场景与典型案例">应用场景与典型案例</h2>
+<h3 id="应用性能监控apm">1. 应用性能监控（APM）</h3>
+<p>知名的 APM 工具如 Pinpoint、SkyWalking、NewRelic 等都基于
+Instrumentation
+实现。它们通过在方法入口和出口插入监控代码，收集方法执行时间、调用链路等信息。</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 简化的方法监控插桩示例</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="dt">void</span> <span class="fu">monitorMethod</span><span class="op">(</span><span class="bu">Method</span> method<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">long</span> start <span class="op">=</span> <span class="bu">System</span><span class="op">.</span><span class="fu">nanoTime</span><span class="op">();</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span> <span class="op">{</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        method<span class="op">.</span><span class="fu">invoke</span><span class="op">(</span>target<span class="op">,</span> args<span class="op">);</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span> <span class="cf">finally</span> <span class="op">{</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">long</span> duration <span class="op">=</span> <span class="bu">System</span><span class="op">.</span><span class="fu">nanoTime</span><span class="op">()</span> <span class="op">-</span> start<span class="op">;</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 上报监控数据</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">reportMetrics</span><span class="op">(</span>method<span class="op">.</span><span class="fu">getName</span><span class="op">(),</span> duration<span class="op">);</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="热部署工具">2. 热部署工具</h3>
+<p>IntelliJ IDEA 的 HotSwap、JRebel 等工具利用 Instrumentation 的
+redefineClasses 方法实现类级别的热部署，提高开发效率。</p>
+<h3 id="代码覆盖率分析">3. 代码覆盖率分析</h3>
+<p>JaCoCo、Cobertura
+等工具通过在代码分支点插入标记位，记录测试过程中哪些代码被执行过。</p>
+<h3 id="java-诊断工具">4. Java 诊断工具</h3>
+<p>Arthas、Btrace 等诊断工具利用 Instrumentation
+动态增强类，实现方法调用追踪、参数查看等功能，而无需修改源码或重启应用。</p>
+<h3 id="安全防护">5. 安全防护</h3>
+<p>RASP（运行时应用自我保护）产品通过 Instrumentation 在敏感
+API（如文件操作、网络请求、反射调用）前插入安全检查逻辑，实现运行时安全防护。</p>
+<h2 id="注意事项与最佳实践">注意事项与最佳实践</h2>
+<h3 id="类修改限制">类修改限制</h3>
+<p>并非所有类都能被成功修改，以下情况需要特别注意：</p>
+<ul>
+<li>JVM 内部类（如<code>java.lang.*</code>包下的核心类）</li>
+<li>已被 native 方法锁定的类</li>
+<li>修改后的类必须保持兼容性：不能新增/删除方法、不能修改方法签名、不能更改父类</li>
+</ul>
+<h3 id="性能考虑">性能考虑</h3>
+<p>字节码修改会增加类加载时间和内存占用，应遵循以下最佳实践：</p>
+<ul>
+<li>精确匹配目标类，避免不必要的字节码转换</li>
+<li>使用高效的字节码操作库（如 ASM）</li>
+<li>避免在 transform 方法中执行耗时操作</li>
+<li>合理使用 Can-Redefine-Classes 和 Can-Retransform-Classes 特性</li>
+</ul>
+<h3 id="稳定性保障">稳定性保障</h3>
+<p>字节码修改容易引发稳定性问题，建议：</p>
+<ul>
+<li>充分测试修改后的字节码，确保符合 JVM 验证规则</li>
+<li>处理可能的<code>IllegalClassFormatException</code>和<code>VerifyError</code></li>
+<li>确保插入的代码在目标 ClassLoader
+中可访问，避免<code>ClassNotFoundException</code></li>
+</ul>
+<h3 id="调试技巧">调试技巧</h3>
+<p>开发 Instrumentation Agent 时可以使用以下调试技巧：</p>
+<ul>
+<li>使用<code>System.out</code>或日志框架记录转换过程</li>
+<li>将修改后的字节码写入文件进行分析：<code>ctClass.writeFile()</code></li>
+<li>使用<code>-XX:+TraceClassLoading</code> JVM 参数跟踪类加载过程</li>
+</ul>
+<h2 id="总结">总结</h2>
+<p>Java Instrumentation 接口是 JVM
+提供的强大工具，具有以下核心价值：</p>
+<ol type="1">
+<li><p><strong>虚拟机级别的 AOP
+能力</strong>：无需修改源代码即可实现字节码级别的增强，比应用级 AOP
+框架更底层、更强大。</p></li>
+<li><p><strong>两种加载机制</strong>：支持启动时静态加载和运行时动态加载，满足不同场景需求。</p></li>
+<li><p><strong>丰富的字节码操作支持</strong>：结合 ASM、Javassist
+等字节码库，可以实现复杂的类转换逻辑。</p></li>
+<li><p><strong>广泛的应用场景</strong>：为
+APM、热部署、代码覆盖率、诊断工具等提供了基础支持。</p></li>
+<li><p><strong>基于标准的 JVMTI 实现</strong>：作为 JVMTI
+的高级封装，既提供了强大功能，又保持了与 JVM 的兼容性。</p></li>
+</ol>
+<p>Instrumentation 技术的核心价值在于它<strong>极大扩展了 Java
+语言的动态性能</strong>，使得许多原本需要修改 JVM
+本身才能实现的功能，现在通过标准 API
+即可完成。随着云原生和可观测性需求的增长，Instrumentation 在现代 Java
+生态中的地位将愈发重要。</p>
+<h2 id="延伸阅读">延伸阅读</h2>
+<ol type="1">
+<li><p><strong>官方文档</strong></p>
+<ul>
+<li>https://docs.oracle.com/javase/8/docs/api/java/lang/instrument/package-summary.html</li>
+</ul></li>
+<li><p><strong>字节码操作库</strong></p>
+<ul>
+<li>https://asm.ow2.io/</li>
+<li>http://www.javassist.org/tutorial/tutorial.html</li>
+</ul></li>
+<li><p><strong>开源项目参考</strong></p>
+<ul>
+<li>https://github.com/apache/skywalking</li>
+<li>https://github.com/alibaba/arthas</li>
+</ul></li>
+</ol>
+<h2 id="一句话记忆">一句话记忆</h2>
+<p>Java Instrumentation 是通过 JVMTI 实现的 JVM 级别 AOP
+机制，允许在类加载时或运行后动态修改字节码，是实现
+APM、热部署等高级工具的基础设施。</p>
+</div>
+    </article>
+  </div>
+  <aside class="toc-sidebar" id="toc-sidebar">
+    <div class="toc-header">
+      <h3>文章目录</h3>
+    </div>
+    <nav class="toc-nav" id="toc-nav">
+      <!-- 目录内容将通过JavaScript自动生成 -->
+    </nav>
+  </aside>
+</div>
+
+<script>
+  // Add copy buttons to code blocks
+  function addCopyButtons() {
+    const sourceCodeBlocks = document.querySelectorAll(".sourceCode");
+    sourceCodeBlocks.forEach(function (block) {
+      if (block.querySelector(".copy-button")) return;
+      const preElement = block.querySelector("pre");
+      if (!preElement) return;
+
+      const button = document.createElement("button");
+      button.className = "copy-button";
+      button.textContent = "复制";
+      button.setAttribute("aria-label", "复制代码");
+
+      button.addEventListener("click", function () {
+        const code = preElement.querySelector("code");
+        const text = code ? code.innerText : preElement.innerText;
+
+        navigator.clipboard
+          .writeText(text)
+          .then(function () {
+            button.textContent = "已复制";
+            button.classList.add("copied");
+
+            setTimeout(function () {
+              button.textContent = "复制";
+              button.classList.remove("copied");
+            }, 3000);
+          })
+          .catch(function (err) {
+            console.error("复制失败: ", err);
+            button.textContent = "失败";
+            setTimeout(function () {
+              button.textContent = "复制";
+            }, 3000);
+          });
+      });
+
+      block.appendChild(button);
+    });
+
+    const allPreBlocks = document.querySelectorAll("pre:not(.mermaid)");
+    allPreBlocks.forEach(function (block) {
+      if (block.closest(".sourceCode") || block.querySelector(".copy-button"))
+        return;
+
+      const button = document.createElement("button");
+      button.className = "copy-button";
+      button.textContent = "复制";
+      button.setAttribute("aria-label", "复制代码");
+
+      button.addEventListener("click", function () {
+        const code = block.querySelector("code");
+        const text = code ? code.innerText : block.innerText;
+
+        navigator.clipboard
+          .writeText(text)
+          .then(function () {
+            button.textContent = "已复制";
+            button.classList.add("copied");
+
+            setTimeout(function () {
+              button.textContent = "复制";
+              button.classList.remove("copied");
+            }, 3000);
+          })
+          .catch(function (err) {
+            console.error("复制失败: ", err);
+            button.textContent = "失败";
+            setTimeout(function () {
+              button.textContent = "复制";
+            }, 3000);
+          });
+      });
+
+      block.appendChild(button);
+    });
+  }
+
+  // 生成文章目录
+  function generateTableOfContents() {
+    const postContent = document.getElementById("post-content");
+    const tocNav = document.getElementById("toc-nav");
+
+    if (!postContent || !tocNav) {
+      console.log("Missing postContent or tocNav element");
+      return;
+    }
+
+    // 查找所有标题元素
+    const headings = postContent.querySelectorAll("h1, h2, h3, h4, h5, h6");
+    console.log("Found headings:", headings.length);
+
+    if (headings.length === 0) {
+      // 如果没有标题，隐藏目录
+      console.log("No headings found, hiding TOC");
+      const tocSidebar = document.getElementById("toc-sidebar");
+      if (tocSidebar) tocSidebar.style.display = "none";
+      return;
+    }
+
+    // 清空目录容器
+    tocNav.innerHTML = "";
+
+    // 创建目录结构
+    const tocList = document.createElement("ul");
+    tocList.className = "toc-list";
+
+    let currentLevel = 1;
+    let currentList = tocList;
+    let listStack = [tocList];
+
+    headings.forEach((heading, index) => {
+      // 强制为每个标题设置标准化的ID（始终重写现有ID）
+      const normalizedId = "heading-" + index;
+      heading.id = normalizedId;
+
+      const level = parseInt(heading.tagName.charAt(1));
+      const title = heading.textContent.trim();
+
+      // 创建目录项
+      const tocItem = document.createElement("li");
+      tocItem.className = "toc-item toc-level-" + level;
+
+      const tocLink = document.createElement("a");
+      tocLink.href = "javascript:void(0)"; // 避免触发路由
+      tocLink.setAttribute("data-target", heading.id); // 存储目标ID
+      tocLink.textContent = title;
+      tocLink.className = "toc-link";
+
+      tocItem.appendChild(tocLink);
+
+      // 处理层级关系
+      if (level > currentLevel) {
+        // 创建新的子列表
+        const newList = document.createElement("ul");
+        newList.className = "toc-sublist";
+        // 检查是否有父元素
+        const parentList = listStack[listStack.length - 1];
+        if (parentList.lastElementChild) {
+          parentList.lastElementChild.appendChild(newList);
+        } else {
+          // 如果没有父元素，直接添加到当前列表
+          parentList.appendChild(newList);
+        }
+        listStack.push(newList);
+        currentList = newList;
+      } else if (level < currentLevel) {
+        // 返回到上一级
+        while (listStack.length > level) {
+          listStack.pop();
+        }
+        currentList = listStack[listStack.length - 1];
+      }
+
+      currentList.appendChild(tocItem);
+      currentLevel = level;
+    });
+
+    tocNav.appendChild(tocList);
+    console.log("TOC generated successfully");
+
+    // 高亮当前章节
+    highlightCurrentSection();
+
+    // 滚动监听
+    window.addEventListener("scroll", highlightCurrentSection);
+
+    // 为目录链接添加点击事件
+    setTimeout(() => {
+      const tocLinks = document.querySelectorAll(".toc-link");
+      tocLinks.forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute("data-target");
+          if (targetId) {
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+              targetElement.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+                inline: "nearest",
+              });
+            }
+          }
+        });
+      });
+    }, 200); // 延迟确保目录已生成
+  }
+
+  // 高亮当前阅读的章节
+  function highlightCurrentSection() {
+    const headings = document.querySelectorAll(
+      ".post-content h1, .post-content h2, .post-content h3, .post-content h4, .post-content h5, .post-content h6"
+    );
+    const tocLinks = document.querySelectorAll(".toc-link");
+
+    let currentHeading = null;
+    const scrollPosition = window.pageYOffset + 100;
+
+    // 找到当前可见的标题
+    for (let i = headings.length - 1; i >= 0; i--) {
+      if (headings[i].offsetTop <= scrollPosition) {
+        currentHeading = headings[i];
+        break;
+      }
+    }
+
+    // 清除所有活动状态
+    tocLinks.forEach((link) => link.classList.remove("active"));
+
+    // 高亮当前章节
+    if (currentHeading) {
+      const activeLink = document.querySelector(
+        '.toc-link[data-target="' + currentHeading.id + '"]'
+      );
+      if (activeLink) {
+        activeLink.classList.add("active");
+      }
+    }
+  }
+
+  // Initialize mermaid diagrams - 只在直接访问 fragment 时运行
+  async function initMermaid() {
+    // 检查是否在 SPA 环境中
+    if (window.IN_SPA_MODE === true) {
+      console.log(
+        "[Mermaid Fragment] In SPA mode, skipping fragment initialization"
+      );
+      return;
+    }
+
+    if (typeof mermaid === "undefined") {
+      console.log("[Mermaid Fragment] Library not loaded");
+      return;
+    }
+
+    const mermaidPreElements = document.querySelectorAll(
+      "pre.mermaid, div.mermaid"
+    );
+    if (mermaidPreElements.length === 0) {
+      console.log("[Mermaid Fragment] No diagrams found");
+      return;
+    }
+
+    console.log(
+      "[Mermaid Fragment] 找到",
+      mermaidPreElements.length,
+      "个 Mermaid 图表，准备渲染..."
+    );
+
+    // 处理 DOM 结构
+    const elementsToRun = [];
+
+    mermaidPreElements.forEach((element) => {
+      // 获取原始图表代码
+      const graphDefinition = element.textContent.trim();
+      console.log(
+        "[Mermaid Fragment] First 100 chars:",
+        graphDefinition.substring(0, 100)
+      );
+
+      // 创建一个新的 div 来替换旧的 pre/div，确保它是"干净"的
+      const newDiv = document.createElement("div");
+      newDiv.className = "mermaid";
+      newDiv.textContent = graphDefinition;
+      newDiv.setAttribute("data-mermaid-code", graphDefinition);
+
+      element.parentNode.replaceChild(newDiv, element);
+      elementsToRun.push(newDiv);
+    });
+
+    // 手动触发渲染
+    try {
+      await mermaid.run({
+        nodes: elementsToRun,
+      });
+      console.log("[Mermaid Fragment] 渲染完成");
+    } catch (err) {
+      console.error("[Mermaid Fragment] 渲染失败:", err);
+      // 出错时显示原始代码，避免白屏
+      elementsToRun.forEach((el) => {
+        el.style.whiteSpace = "pre";
+        el.style.border = "1px solid red";
+      });
+    }
+  }
+
+  // Initialize copy buttons and TOC after content loads
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () {
+      console.log("DOM loading, initializing...");
+      addCopyButtons();
+      setTimeout(generateTableOfContents, 100);
+      setTimeout(initMermaid, 200);
+    });
+  } else {
+    console.log("DOM already loaded, initializing...");
+    addCopyButtons();
+    setTimeout(generateTableOfContents, 100);
+    setTimeout(initMermaid, 200);
+  }
+</script>
