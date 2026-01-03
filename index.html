@@ -702,7 +702,7 @@
 
       :root.dark-mode .post-content code {
         background-color: rgba(255, 255, 255, 0.1);
-        color: #ff7043;
+        color: #f8f8f2;
       }
 
       .post-content pre {
@@ -807,6 +807,54 @@
 
       .post-content a:hover {
         text-decoration: underline;
+      }
+
+      /* Table styles */
+      .post-content table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 25px 0;
+        font-size: 0.95em;
+        border-radius: 6px;
+        overflow: hidden;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .post-content table thead {
+        background: linear-gradient(
+          135deg,
+          var(--secondary-color) 0%,
+          #2980b9 100%
+        );
+        color: white;
+        text-align: left;
+        font-weight: bold;
+      }
+
+      .post-content table th,
+      .post-content table td {
+        padding: 12px 15px;
+        border: 1px solid var(--border-color);
+      }
+
+      .post-content table tbody tr {
+        border-bottom: 1px solid var(--border-color);
+        background-color: var(--card-bg);
+      }
+
+      .post-content table tbody tr:nth-of-type(even) {
+        background-color: rgba(52, 152, 219, 0.05);
+      }
+
+      .post-content table tbody tr:last-of-type {
+        border-bottom: 2px solid var(--secondary-color);
+      }
+
+      .post-content table tbody tr:hover {
+        background-color: rgba(52, 152, 219, 0.1);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
       }
 
       /* FOOTER */
@@ -1142,8 +1190,8 @@
         position: absolute;
         top: 10px;
         right: 10px;
-        background: #3498db;
-        border: 1px solid #2980b9;
+        background: #1F2020;
+        border: 1px solid #1F2020;
         color: white;
         padding: 8px 16px;
         border-radius: 6px;
@@ -1156,8 +1204,8 @@
       }
 
       .copy-button:hover {
-        background: #2980b9;
-        border-color: #2471a3;
+        background: #4caf50;
+        border-color: #4caf50;
         transform: translateY(-1px);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
       }
@@ -1168,8 +1216,8 @@
       }
 
       .post-content pre {
-        background-color: #2d2d2d;
-        color: #f8f8f2;
+        background-color: #f6f8fa;
+        color: #24292e;
         padding: 20px;
         border-radius: 8px;
         overflow-x: auto;
@@ -1178,8 +1226,21 @@
         line-height: 1.5;
         position: relative !important; /* 强制relative定位 */
         overflow: visible !important; /* 确保内容不截断 */
+        border: 1px solid #e1e4e8;
       }
 
+      :root.dark-mode .post-content pre {
+        background-color: #1d2d3d;
+        color: #f8f8f2;
+        border-color: #333333;
+      }
+
+    :root.dark-mode .post-content pre code {
+      color: #f8f8f2;
+      background-color: transparent;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+      font-size: 0.9em;
+    }
       .post-content pre code {
         background-color: transparent;
         padding: 0;
