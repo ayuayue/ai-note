@@ -346,9 +346,9 @@
   <div class="main-content">
     <article class="post">
       <header class="post-header">
-        <h1 class="post-title">PHP与Java类加载与依赖管理深入对比</h1>
+        <h1 class="post-title">PHP与Java类加载与依赖管理深入对比</h1>
         <div class="post-meta">
-          <div class="post-date">2025/12/27</div>
+          <div class="post-date">2025/12/11</div>
           <div class="post-category">2025-12</div>
         </div>
       </header>
@@ -404,8 +404,8 @@ class="sourceCode php"><code class="sourceCode php"><span id="cb2-1"><a href="#c
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>})<span class="ot">;</span></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">// 使用类（文件位于Project/Utils/Logger.php）</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="cn">P</span>roject\<span class="cn">U</span>tils\<span class="cn">L</span>ogger<span class="ot">;</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="va">$logger</span> <span class="op">=</span> <span class="kw">new</span> <span class="cn">L</span>ogger()<span class="ot">;</span> <span class="co">// 触发自动加载函数动态加载文件</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> Project\Utils\Logger<span class="ot">;</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="va">$logger</span> <span class="op">=</span> <span class="kw">new</span> Logger()<span class="ot">;</span> <span class="co">// 触发自动加载函数动态加载文件</span></span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="va">$logger</span>-&gt;<span class="fu">log</span>(<span class="st">&quot;PHP autoload demo&quot;</span>)<span class="ot">;</span></span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="kw">?&gt;</span></span></code></pre></div>
 <h3 id="mermaid图类加载流程对比">Mermaid图：类加载流程对比</h3>
@@ -464,20 +464,20 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="
 <div class="sourceCode" id="cb5"><pre
 class="sourceCode php"><code class="sourceCode php"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;?php</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">// 文件：Project/Helpers/StringHelper.php</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> <span class="cn">P</span>roject\<span class="cn">H</span>elpers<span class="ot">;</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="cn">S</span>tringHelper {</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> Project\Helpers<span class="ot">;</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> StringHelper {</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="kw">static</span> <span class="kw">function</span> reverse(<span class="va">$str</span>) {</span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fu">strrev</span>(<span class="va">$str</span>)<span class="ot">;</span></span>
 <span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">// 同一文件可定义多个命名空间（不推荐）</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> <span class="cn">P</span>roject\<span class="cn">U</span>tils<span class="ot">;</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="cn">L</span>ogger { <span class="co">/* ... */</span> }</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="kw">namespace</span> Project\Utils<span class="ot">;</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Logger { <span class="co">/* ... */</span> }</span>
 <span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">// 主文件：index.php</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> <span class="cn">P</span>roject\<span class="cn">H</span>elpers\<span class="cn">S</span>tringHelper<span class="ot">;</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="va">$result</span> <span class="op">=</span> <span class="cn">S</span>tringHelper::reverse(<span class="st">&quot;Hello&quot;</span>)<span class="ot">;</span> <span class="co">// 通过use别名调用</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="kw">use</span> Project\Helpers\StringHelper<span class="ot">;</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="va">$result</span> <span class="op">=</span> StringHelper::reverse(<span class="st">&quot;Hello&quot;</span>)<span class="ot">;</span> <span class="co">// 通过use别名调用</span></span>
 <span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="kw">?&gt;</span></span></code></pre></div>
 <h3 id="mermaid图包命名空间结构">Mermaid图：包/命名空间结构</h3>
 <pre class="mermaid">classDiagram
@@ -577,8 +577,8 @@ class="sourceCode php"><code class="sourceCode php"><span id="cb10-1"><a href="#
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">// Laravel DI：绑定接口与实现</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>app()-&gt;bind(<span class="cn">U</span>serRepositoryInterface::<span class="kw">class</span><span class="ot">,</span> <span class="cn">M</span>ySqlUserRepository::<span class="kw">class</span>)<span class="ot">;</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="va">$userService</span> <span class="op">=</span> app()-&gt;make(<span class="cn">U</span>serService::<span class="kw">class</span>)<span class="ot">;</span> <span class="co">// 自动解析依赖</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>app()-&gt;bind(UserRepositoryInterface::<span class="kw">class</span><span class="ot">,</span> MySqlUserRepository::<span class="kw">class</span>)<span class="ot">;</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="va">$userService</span> <span class="op">=</span> app()-&gt;make(UserService::<span class="kw">class</span>)<span class="ot">;</span> <span class="co">// 自动解析依赖</span></span>
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="kw">?&gt;</span></span></code></pre></div>
 <h3 id="mermaid图依赖注入流程">Mermaid图：依赖注入流程</h3>
 <pre class="mermaid">sequenceDiagram
@@ -617,9 +617,9 @@ Boot（Java）的类加载与依赖处理。</p>
 - DI容器：<code>UserController</code>的依赖通过服务提供者自动注入。</p>
 <div class="sourceCode" id="cb12"><pre
 class="sourceCode php"><code class="sourceCode php"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 控制器</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="cn">U</span>serController <span class="kw">extends</span> <span class="cn">C</span>ontroller {</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="kw">function</span> <span class="bu">__construct</span>(<span class="kw">private</span> <span class="cn">U</span>serService <span class="va">$userService</span>) {} <span class="co">// 自动注入</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="kw">function</span> store(<span class="cn">R</span>equest <span class="va">$request</span>) {</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> UserController <span class="kw">extends</span> Controller {</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="kw">function</span> <span class="bu">__construct</span>(<span class="kw">private</span> UserService <span class="va">$userService</span>) {} <span class="co">// 自动注入</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="kw">function</span> store(Request <span class="va">$request</span>) {</span>
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">$this</span>-&gt;userService-&gt;create(<span class="va">$request</span>-&gt;all())<span class="ot">;</span></span>
 <span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    }</span>
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>

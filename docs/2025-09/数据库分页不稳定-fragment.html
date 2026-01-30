@@ -348,7 +348,7 @@
       <header class="post-header">
         <h1 class="post-title">数据库分页不稳定</h1>
         <div class="post-meta">
-          <div class="post-date">2025/10/19</div>
+          <div class="post-date">2025/9/15</div>
           <div class="post-category">2025-09</div>
         </div>
       </header>
@@ -502,35 +502,35 @@ BY只保证单次查询的顺序，无法阻止数据变动导致的分页错位
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>静态数据</td>
 <td>✓</td>
 <td>✓</td>
 <td>✓</td>
 <td>✓</td>
 </tr>
-<tr class="even">
+<tr>
 <td>低频变动</td>
 <td>⚠️</td>
 <td>✓</td>
 <td>✓</td>
 <td>✓</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>高频变动</td>
 <td>✗</td>
 <td>✓</td>
 <td>⚠️</td>
 <td>✓</td>
 </tr>
-<tr class="even">
+<tr>
 <td>随机访问</td>
 <td>✓</td>
 <td>✗</td>
 <td>✓</td>
 <td>✓</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>深度分页</td>
 <td>✗</td>
 <td>✓</td>
@@ -626,31 +626,31 @@ class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a hr
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
+<tr>
 <td>传统分页支持</td>
 <td>完善</td>
 <td>完善</td>
 <td>完善</td>
 </tr>
-<tr class="even">
+<tr>
 <td>游标分页支持</td>
 <td>需自定义</td>
 <td>需自定义</td>
 <td>需自定义</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>框架集成度</td>
 <td>高（Spring Data）</td>
 <td>中（Django）</td>
 <td>中（GORM）</td>
 </tr>
-<tr class="even">
+<tr>
 <td>性能优化</td>
 <td>覆盖索引支持</td>
 <td>覆盖索引支持</td>
 <td>覆盖索引支持</td>
 </tr>
-<tr class="odd">
+<tr>
 <td>学习曲线</td>
 <td>中等</td>
 <td>低</td>
