@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
+const SITE_BASE_URL = process.env.SITE_BASE_URL || 'https://www.caoayu.top';
 
 // Function to convert a single Markdown file to HTML using Pandoc
 function convertSingleFileWithPandoc(markdownFilePath) {
@@ -59,10 +60,10 @@ function convertSingleFileWithPandoc(markdownFilePath) {
         const keywords = title.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, ' ').split(/\s+/).filter(word => word.length > 1).join(', ');
         
         // Generate URL
-        const url = `https://your-domain.com/docs/${monthDir}/${path.basename(filename, '.md')}.html`;
+        const url = `${SITE_BASE_URL}/docs/${monthDir}/${path.basename(filename, '.md')}.html`;
         
         // Generate OG image URL (placeholder)
-        const ogImage = 'https://your-domain.com/images/og-image.png';
+        const ogImage = `${SITE_BASE_URL}/images/og-image.png`;
         
         // Replace placeholders in template
         const finalHtmlContent = template

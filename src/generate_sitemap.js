@@ -1,158 +1,163 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
-// Function to get file modification date
+const SITE_BASE_URL = process.env.SITE_BASE_URL || "https://www.caoayu.top";
+
 function getFileDate(filePath) {
-    try {
-        const stats = fs.statSync(filePath);
-        return stats.mtime;
-    } catch (error) {
-        return new Date();
-    }
+  try {
+    const stats = fs.statSync(filePath);
+    return stats.mtime;
+  } catch (error) {
+    return new Date();
+  }
 }
 
-// Function to format date as ISO string for sitemap
 function formatSitemapDate(date) {
-    return date.toISOString();
+  return date.toISOString();
 }
 
-// Function to extract title from Markdown file
-function extractTitleFromMarkdown(filePath) {
-    try {
-        const content = fs.readFileSync(filePath, 'utf8');
-        // Look for first # heading
-        const titleMatch = content.match(/^#\s+(.*?)$/m);
-        if (titleMatch) {
-            return titleMatch[1];
-        }
-        
-        // If no # heading, use filename
-        return path.basename(filePath, '.md');
-    } catch (error) {
-        console.error(`Error reading ${filePath}: ${error.message}`);
-        return path.basename(filePath, '.md');
-    }
+function joinSiteUrl(relativePath) {
+  const normalized = relativePath.replace(/\\/g, "/").replace(/^\/+/, "");
+  return `${SITE_BASE_URL}/${encodeURI(normalized)}`;
 }
 
-// Function to extract title from HTML file
-function extractTitleFromHTML(filePath) {
-    try {
-        const content = fs.readFileSync(filePath, 'utf8');
-        // Look for title tag
-        const titleMatch = content.match(/<title>(.*?)<\/title>/i);
-        if (titleMatch) {
-            return titleMatch[1];
-        }
-        
-        // If no title tag, use filename
-        return path.basename(filePath, '.html');
-    } catch (error) {
-        console.error(`Error reading ${filePath}: ${error.message}`);
-        return path.basename(filePath, '.html');
-    }
-}
+function collectDocsUrls(docsDir) {
+  const urls = [];
+  if (!fs.existsSync(docsDir)) {
+    return urls;
+  }
 
-// Main function
-function main() {
-    const markdownDir = "markdown";
-    const docsDir = "docs";
-    const htmlDir = "html";
-    const baseUrl = "https://www.caoayu.top"; // TODO: Replace with your actual domain
-    
-    // Collect all documents with their dates
-    const allDocuments = [];
-    
-    // Get all month directories for markdown files
-    if (fs.existsSync(markdownDir)) {
-        const monthDirs = fs.readdirSync(markdownDir)
-            .filter(file => fs.statSync(path.join(markdownDir, file)).isDirectory() && /^\d{4}-\d{2}$/.test(file))
-            .sort()
-            .reverse(); // Sort by newest first
-        
-        // Process each month directory for markdown files
-        monthDirs.forEach(monthDir => {
-            const monthPath = path.join(markdownDir, monthDir);
-            
-            // Get all Markdown files in the month directory
-            const markdownFiles = fs.readdirSync(monthPath)
-                .filter(file => path.extname(file) === '.md');
-            
-            if (markdownFiles.length === 0) {
-                console.log(`No Markdown files found in ${monthPath}`);
-                return;
-            }
-            
-            // Collect document info
-            markdownFiles.forEach(filename => {
-                const filePath = path.join(monthPath, filename);
-                const htmlFilename = filename.replace('.md', '.html');
-                const url = `${baseUrl}/docs/${monthDir}/${htmlFilename}`;
-                const date = getFileDate(filePath);
-                
-                allDocuments.push({
-                    type: 'markdown',
-                    url: url,
-                    date: date
-                });
-            });
-        });
-    }
-    
-    // Process HTML files
-    if (fs.existsSync(htmlDir)) {
-        const htmlFiles = fs.readdirSync(htmlDir)
-            .filter(file => path.extname(file) === '.html');
-        
-        htmlFiles.forEach(filename => {
-            const filePath = path.join(htmlDir, filename);
-            const url = `${baseUrl}/html/${filename}`;
-            const date = getFileDate(filePath);
-            
-            allDocuments.push({
-                type: 'html',
-                url: url,
-                date: date
-            });
-        });
-    }
-    
-    // Generate sitemap XML
-    let sitemapXml = '<?xml version="1.0" encoding="UTF-8"?>\n';
-    sitemapXml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
-    
-    // Add index page
-    sitemapXml += '  <url>\n';
-    sitemapXml += `    <loc>${baseUrl}/index.html</loc>\n`;
-    sitemapXml += `    <lastmod>${formatSitemapDate(new Date())}</lastmod>\n`;
-    sitemapXml += '    <changefreq>daily</changefreq>\n';
-    sitemapXml += '    <priority>1.0</priority>\n';
-    sitemapXml += '  </url>\n';
-    
-    // Add pagination pages (assuming 2 pages for now, in a real implementation you would calculate this)
-    sitemapXml += '  <url>\n';
-    sitemapXml += `    <loc>${baseUrl}/pages/index2.html</loc>\n`;
-    sitemapXml += `    <lastmod>${formatSitemapDate(new Date())}</lastmod>\n`;
-    sitemapXml += '    <changefreq>daily</changefreq>\n';
-    sitemapXml += '    <priority>0.9</priority>\n';
-    sitemapXml += '  </url>\n';
-    
-    // Add all documents
-    allDocuments.forEach(doc => {
-        sitemapXml += '  <url>\n';
-        sitemapXml += `    <loc>${doc.url}</loc>\n`;
-        sitemapXml += `    <lastmod>${formatSitemapDate(doc.date)}</lastmod>\n`;
-        sitemapXml += '    <changefreq>monthly</changefreq>\n';
-        sitemapXml += '    <priority>0.8</priority>\n';
-        sitemapXml += '  </url>\n';
+  const monthDirs = fs
+    .readdirSync(docsDir)
+    .filter((name) => {
+      const monthPath = path.join(docsDir, name);
+      return fs.statSync(monthPath).isDirectory() && /^\d{4}-\d{2}$/.test(name);
     });
-    
-    sitemapXml += '</urlset>\n';
-    
-    // Write sitemap.xml
-    fs.writeFileSync("sitemap.xml", sitemapXml, "utf8");
-    
-    console.log(`Generated sitemap.xml with ${allDocuments.length + 1} URLs`);
+
+  monthDirs.forEach((monthDir) => {
+    const monthPath = path.join(docsDir, monthDir);
+    const fullDocFiles = fs
+      .readdirSync(monthPath)
+      .filter(
+        (filename) =>
+          filename.endsWith(".html") && !filename.endsWith("-fragment.html"),
+      );
+    const fragmentDocFiles = fs
+      .readdirSync(monthPath)
+      .filter((filename) => filename.endsWith("-fragment.html"));
+    const docFiles = fullDocFiles.length > 0 ? fullDocFiles : fragmentDocFiles;
+
+    docFiles.forEach((filename) => {
+      const relativePath = `docs/${monthDir}/${filename}`;
+      const filePath = path.join(monthPath, filename);
+      urls.push({
+        url: joinSiteUrl(relativePath),
+        date: getFileDate(filePath),
+        changefreq: "monthly",
+        priority: "0.8",
+      });
+    });
+  });
+
+  return urls;
 }
 
-// Run the main function
+function getPageOrder(filename) {
+  if (filename === "index.html") {
+    return 1;
+  }
+  const match = filename.match(/^index(\d+)\.html$/);
+  return match ? Number(match[1]) : Number.MAX_SAFE_INTEGER;
+}
+
+function collectPaginationUrls(pagesDir) {
+  const urls = [];
+  if (!fs.existsSync(pagesDir)) {
+    return urls;
+  }
+
+  const pageFiles = fs
+    .readdirSync(pagesDir)
+    .filter((filename) => /^index(?:\d+)?\.html$/.test(filename))
+    .sort((a, b) => getPageOrder(a) - getPageOrder(b));
+
+  pageFiles.forEach((filename) => {
+    const relativePath = `pages/${filename}`;
+    const filePath = path.join(pagesDir, filename);
+    const order = getPageOrder(filename);
+
+    urls.push({
+      url: joinSiteUrl(relativePath),
+      date: getFileDate(filePath),
+      changefreq: "daily",
+      priority: order === 1 ? "0.9" : "0.8",
+    });
+  });
+
+  return urls;
+}
+
+function collectStandaloneHtmlUrls(htmlDir) {
+  const urls = [];
+  if (!fs.existsSync(htmlDir)) {
+    return urls;
+  }
+
+  const htmlFiles = fs
+    .readdirSync(htmlDir)
+    .filter((filename) => filename.endsWith(".html"));
+
+  htmlFiles.forEach((filename) => {
+    const relativePath = `html/${filename}`;
+    const filePath = path.join(htmlDir, filename);
+    urls.push({
+      url: joinSiteUrl(relativePath),
+      date: getFileDate(filePath),
+      changefreq: "monthly",
+      priority: "0.8",
+    });
+  });
+
+  return urls;
+}
+
+function buildUrlEntry(entry) {
+  return [
+    "  <url>",
+    `    <loc>${entry.url}</loc>`,
+    `    <lastmod>${formatSitemapDate(entry.date)}</lastmod>`,
+    `    <changefreq>${entry.changefreq}</changefreq>`,
+    `    <priority>${entry.priority}</priority>`,
+    "  </url>",
+  ].join("\n");
+}
+
+function main() {
+  const docsDir = "docs";
+  const htmlDir = "html";
+  const pagesDir = "pages";
+
+  const entries = [];
+
+  entries.push({
+    url: joinSiteUrl("index.html"),
+    date: getFileDate("index.html"),
+    changefreq: "daily",
+    priority: "1.0",
+  });
+
+  entries.push(...collectPaginationUrls(pagesDir));
+  entries.push(...collectDocsUrls(docsDir));
+  entries.push(...collectStandaloneHtmlUrls(htmlDir));
+
+  const xmlLines = ['<?xml version="1.0" encoding="UTF-8"?>'];
+  xmlLines.push('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
+  entries.forEach((entry) => xmlLines.push(buildUrlEntry(entry)));
+  xmlLines.push("</urlset>");
+
+  fs.writeFileSync("sitemap.xml", `${xmlLines.join("\n")}\n`, "utf8");
+
+  console.log(`Generated sitemap.xml with ${entries.length} URLs`);
+}
+
 main();

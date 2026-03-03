@@ -1,6 +1,39 @@
 const fs = require("fs");
 const path = require("path");
 const { execSync } = require("child_process");
+const marked = require("marked");
+const SITE_BASE_URL = process.env.SITE_BASE_URL || "https://www.caoayu.top";
+let pandocChecked = false;
+let pandocAvailable = false;
+
+function isPandocAvailable() {
+  if (pandocChecked) {
+    return pandocAvailable;
+  }
+  pandocChecked = true;
+  try {
+    execSync("pandoc --version", { stdio: "ignore" });
+    pandocAvailable = true;
+  } catch (error) {
+    pandocAvailable = false;
+  }
+  return pandocAvailable;
+}
+
+function buildMarkedRenderer() {
+  const defaultRenderer = new marked.Renderer();
+  const renderer = new marked.Renderer();
+  renderer.code = function (code, infostring, escaped) {
+    const lang = (infostring || "").trim().toLowerCase();
+    if (lang === "mermaid") {
+      return `<pre class="mermaid">${code}</pre>\n`;
+    }
+    return defaultRenderer.code.call(this, code, infostring, escaped);
+  };
+  return renderer;
+}
+
+const markedRenderer = buildMarkedRenderer();
 
 // Simple concurrency limiter
 class ConcurrencyLimiter {
@@ -43,13 +76,19 @@ function markdownToHtmlWithPandoc(
   filename
 ) {
   try {
-    // 使用 Pandoc 转换 Markdown 到 HTML
-    // 注意：我们使用 --mathjax 来支持数学公式，--highlight-style 来设置代码高亮
-    const pandocCommand = `pandoc "${markdownFilePath}" -f markdown -t html --mathjax --highlight-style=tango`;
-    const htmlContent = execSync(pandocCommand, { encoding: "utf8" });
-
-    // Generate GitHub URL - placeholder that users can replace
-    const githubUrl = `https://github.com/ayuayue/ai-note/blob/main/markdown/${monthDir}/${filename}`;
+    let htmlContent;
+    if (isPandocAvailable()) {
+      // 使用 Pandoc 转换 Markdown 到 HTML
+      // 注意：我们使用 --mathjax 来支持数学公式，--highlight-style 来设置代码高亮
+      const pandocCommand = `pandoc "${markdownFilePath}" -f markdown -t html --mathjax --highlight-style=tango`;
+      htmlContent = execSync(pandocCommand, { encoding: "utf8" });
+    } else {
+      // Fallback: no Pandoc in PATH, use marked to keep build/dev workflow available
+      const markdownContent = fs.readFileSync(markdownFilePath, "utf8");
+      htmlContent = marked.parse(markdownContent, {
+        renderer: markedRenderer,
+      });
+    }
 
     // Read SEO template
     const templatePath = path.join(__dirname, "..", "template_seo.html");
@@ -68,13 +107,13 @@ function markdownToHtmlWithPandoc(
       .join(", ");
 
     // Generate URL
-    const url = `https://caoayu.top/docs/${monthDir}/${path.basename(
+    const url = `${SITE_BASE_URL}/docs/${monthDir}/${path.basename(
       filename,
       ".md"
     )}.html`;
 
     // Generate OG image URL (placeholder)
-    const ogImage = "https://caoayu.top/images/og-image.png";
+    const ogImage = `${SITE_BASE_URL}/images/og-image.png`;
 
     // Replace placeholders in template
     return (
@@ -143,24 +182,35 @@ function generateArticleDetailFragment(htmlContent, title, date, monthDir) {
 }
 
 // Function to check if file needs to be converted (incremental build)
-function shouldConvertFile(markdownPath, htmlPath) {
-  // If HTML file doesn't exist, we need to convert
-  if (!fs.existsSync(htmlPath)) {
-    return true;
+function shouldConvertFile(markdownPath, outputPaths) {
+  const outputs = Array.isArray(outputPaths) ? outputPaths : [outputPaths];
+
+  // If any output file doesn't exist, we need to convert
+  for (const outputPath of outputs) {
+    if (!fs.existsSync(outputPath)) {
+      return true;
+    }
   }
 
-  // Compare modification times
+  // Convert if markdown file is newer than any output file
   const markdownStats = fs.statSync(markdownPath);
-  const htmlStats = fs.statSync(htmlPath);
+  for (const outputPath of outputs) {
+    const outputStats = fs.statSync(outputPath);
+    if (markdownStats.mtime > outputStats.mtime) {
+      return true;
+    }
+  }
 
-  // Convert if markdown file is newer than HTML file
-  return markdownStats.mtime > htmlStats.mtime;
+  return false;
 }
 
 // Main function
 async function main() {
   const markdownDir = "markdown";
   const docsDir = "docs";
+  if (!isPandocAvailable()) {
+    console.log("Pandoc not found, using marked fallback renderer.");
+  }
 
   // Check if markdown directory exists
   if (!fs.existsSync(markdownDir)) {
@@ -225,10 +275,11 @@ async function main() {
             const htmlFilename = path.basename(filename, ".md") + ".html";
             const fragmentFilename =
               path.basename(filename, ".md") + "-fragment.html";
+            const htmlPath = path.join(docsMonthPath, htmlFilename);
             const fragmentPath = path.join(docsMonthPath, fragmentFilename);
 
             // Check if we need to convert this file (incremental build)
-            if (!shouldConvertFile(filePath, fragmentPath)) {
+            if (!shouldConvertFile(filePath, [htmlPath, fragmentPath])) {
               skippedFiles++;
               resolve();
               return;
@@ -253,7 +304,10 @@ async function main() {
               filename
             );
 
-            // Generate ONLY fragment for SPA (no need for full HTML anymore)
+            fs.writeFileSync(htmlPath, htmlContent, "utf8");
+            console.log(`Generated ${monthDir}/${htmlFilename}`);
+
+            // Generate fragment for SPA
             try {
               // Extract the post-content div content from the full HTML
               // This is what will be displayed in the SPA

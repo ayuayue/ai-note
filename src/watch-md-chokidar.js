@@ -1,10 +1,13 @@
 const fs = require('fs');
 const path = require('path');
 const chokidar = require('chokidar');
-const { execSync } = require('child_process');
 
 // Import the conversion function from the existing script
-const { markdownToHtmlWithPandoc, shouldConvertFile } = require('./convert_md_to_html_pandoc.js');
+const {
+    markdownToHtmlWithPandoc,
+    generateArticleDetailFragment,
+    shouldConvertFile
+} = require('./convert_md_to_html_pandoc.js');
 
 console.log('Starting Markdown file watcher...');
 
@@ -28,12 +31,14 @@ function convertSingleFile(filePath) {
             return;
         }
         
-        // Create HTML filename
+        // Create output filenames
         const htmlFilename = path.basename(filename, '.md') + '.html';
+        const fragmentFilename = path.basename(filename, '.md') + '-fragment.html';
         const htmlPath = path.join('docs', monthDir, htmlFilename);
+        const fragmentPath = path.join('docs', monthDir, fragmentFilename);
         
-        // Check if we need to convert this file (incremental build)
-        if (!shouldConvertFile(filePath, htmlPath)) {
+        // Check if we need to convert this file (incremental build for both outputs)
+        if (!shouldConvertFile(filePath, [htmlPath, fragmentPath])) {
             console.log(`File ${monthDir}/${filename} is up to date, skipping conversion.`);
             return;
         }
@@ -58,9 +63,27 @@ function convertSingleFile(filePath) {
         // Convert to HTML using the existing function
         const htmlContent = markdownToHtmlWithPandoc(filePath, title, date, monthDir, filename);
         
-        // Write the HTML file
+        // Write full HTML file
         fs.writeFileSync(htmlPath, htmlContent, 'utf8');
-        console.log(`Converted ${monthDir}/${filename} to ${monthDir}/${htmlFilename}`);
+
+        // Extract article content for fragment
+        let contentToUse = htmlContent;
+        const postContentRegex =
+            /<div[^>]*class="post-content"[^>]*id="post-content"[^>]*>([\s\S]*?)<\/div>\s*<\/article>/;
+        const postMatch = htmlContent.match(postContentRegex);
+        if (postMatch && postMatch[1]) {
+            contentToUse = postMatch[1].replace(/<tr class="header">/g, "<tr>");
+        } else {
+            const bodyMatch = htmlContent.match(/<body[^>]*>([\s\S]*)<\/body>/i);
+            if (bodyMatch && bodyMatch[1]) {
+                contentToUse = bodyMatch[1];
+            }
+        }
+
+        // Write fragment file
+        const fragmentContent = generateArticleDetailFragment(contentToUse, title, date, monthDir);
+        fs.writeFileSync(fragmentPath, fragmentContent, 'utf8');
+        console.log(`Converted ${monthDir}/${filename} to ${monthDir}/${htmlFilename} and ${monthDir}/${fragmentFilename}`);
     } catch (error) {
         console.error(`Error converting ${filePath}: ${error.message}`);
     }
@@ -85,14 +108,22 @@ function handleFileDeletion(filePath) {
             return;
         }
         
-        // Create corresponding HTML filename
+        // Create corresponding output filenames
         const htmlFilename = path.basename(filename, '.md') + '.html';
         const htmlPath = path.join('docs', monthDir, htmlFilename);
+        const fragmentFilename = path.basename(filename, '.md') + '-fragment.html';
+        const fragmentPath = path.join('docs', monthDir, fragmentFilename);
         
-        // Delete the HTML file if it exists
+        // Delete the full HTML file if it exists
         if (fs.existsSync(htmlPath)) {
             fs.unlinkSync(htmlPath);
             console.log(`Deleted ${monthDir}/${htmlFilename}`);
+        }
+
+        // Delete fragment file if it exists
+        if (fs.existsSync(fragmentPath)) {
+            fs.unlinkSync(fragmentPath);
+            console.log(`Deleted ${monthDir}/${fragmentFilename}`);
         }
     } catch (error) {
         console.error(`Error deleting file ${filePath}: ${error.message}`);

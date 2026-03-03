@@ -1,0 +1,837 @@
+<style>
+  /* CSS Variables for fragment */
+  :root {
+    --primary-color: #2c3e50;
+    --secondary-color: #3498db;
+    --bg-color: #f8f9fa;
+    --text-color: #34495e;
+    --border-color: #e9ecef;
+    --card-bg: #ffffff;
+  }
+
+  /* TOC Sidebar Styles */
+  .article-layout {
+    display: flex;
+    max-width: 1400px;
+    margin: 0 auto;
+    gap: 30px;
+    padding: 0 20px;
+  }
+
+  .main-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .toc-sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 20px;
+    height: fit-content;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  }
+
+  .toc-header h3 {
+    margin: 0 0 15px 0;
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    border-bottom: 2px solid var(--secondary-color);
+    padding-bottom: 10px;
+  }
+
+  .toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toc-item {
+    margin-bottom: 8px;
+  }
+
+  .toc-link {
+    display: block;
+    padding: 6px 10px;
+    color: var(--text-color);
+    text-decoration: none;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    font-size: 0.95rem;
+  }
+
+  .toc-link:hover {
+    background: var(--secondary-color);
+    color: white;
+    padding-left: 15px;
+  }
+
+  .toc-link.active {
+    background: var(--secondary-color);
+    color: white;
+    font-weight: 500;
+  }
+
+  .toc-sublist {
+    list-style: none;
+    padding-left: 20px;
+    margin-top: 5px;
+  }
+
+  .toc-sublist .toc-link {
+    font-size: 0.9rem;
+    opacity: 0.9;
+  }
+
+  /* Post Styles */
+  .post {
+    background: var(--card-bg);
+    border-radius: 8px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
+  }
+
+  .post-header {
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .post-title {
+    color: var(--primary-color);
+    font-size: 2rem;
+    margin-bottom: 15px;
+  }
+
+  .post-meta {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    font-size: 0.95rem;
+    color: #6c757d;
+  }
+
+  .post-date {
+    background-color: #e3f2fd;
+    color: var(--secondary-color);
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  .post-category {
+    background-color: #e8f5e9;
+    color: #4caf50;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  .warning {
+    background-color: #fff3cd;
+    border: 1px solid #ffeaa7;
+    color: #856404;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 30px;
+    text-align: center;
+    font-size: 0.9rem;
+  }
+
+  .post-content {
+    font-size: 1.05rem;
+    line-height: 1.7;
+    color: var(--text-color);
+  }
+
+  .post-content h1,
+  .post-content h2,
+  .post-content h3,
+  .post-content h4,
+  .post-content h5,
+  .post-content h6 {
+    color: var(--primary-color);
+    margin-top: 35px;
+    margin-bottom: 20px;
+    scroll-margin-top: 20px;
+  }
+
+  .post-content h2 {
+    font-size: 1.5rem;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .post-content h3 {
+    font-size: 1.3rem;
+    color: #2980b9;
+  }
+
+  .post-content p {
+    margin-bottom: 18px;
+  }
+
+  .post-content code {
+    background-color: #e8eaed;
+    padding: 3px 7px;
+    border-radius: 4px;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier,
+      monospace;
+    color: #c0392b;
+    font-size: 0.9em;
+  }
+
+  .post-content pre {
+    background-color: #2d2d2d;
+    color: #f8f8f2;
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 25px 0;
+    font-size: 0.9em;
+    line-height: 1.5;
+    position: relative;
+  }
+
+  .post-content pre code {
+    background-color: transparent;
+    padding: 0;
+    color: inherit;
+  }
+
+  .copy-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: #3498db;
+    border: 1px solid #2980b9;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+  }
+
+  .copy-button:hover {
+    background: #2980b9;
+    border-color: #2471a3;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .copy-button.copied {
+    background: #4caf50;
+    border-color: #4caf50;
+  }
+
+  /* Mermaid diagram styles */
+  .mermaid {
+    background-color: #f8f9fa;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 25px 0;
+    text-align: center;
+  }
+
+  /* TABLE STYLES */
+  .post-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    border-radius: 8px;
+  }
+
+  .post-content table th,
+  .post-content table td {
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    text-align: left;
+  }
+
+  /* 确保表格头部样式正确 */
+  .post-content table thead {
+    background-color: var(--secondary-color);
+    color: white;
+  }
+
+  /* 覆盖pandoc生成的.header类样式 */
+  .post-content table tr.header {
+    background-color: var(--secondary-color) !important;
+    color: white !important;
+  }
+
+  .post-content table tr.header th {
+    color: white !important;
+  }
+
+  .post-content table tbody tr:nth-of-type(even) {
+    background-color: rgba(233, 236, 239, 0.5);
+  }
+
+  .post-content table tbody tr:hover {
+    background-color: rgba(52, 152, 219, 0.1);
+  }
+
+  /* 响应式表格 */
+  @media (max-width: 768px) {
+    .post-content table {
+      display: block;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+  }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .article-layout {
+      flex-direction: column;
+    }
+
+    .toc-sidebar {
+      width: 100%;
+      position: static;
+      max-height: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .post {
+      padding: 20px;
+    }
+
+    .post-title {
+      font-size: 1.6rem;
+    }
+
+    .post-content {
+      font-size: 1rem;
+    }
+
+    .article-layout {
+      padding: 0 15px;
+    }
+  }
+</style>
+
+<!-- 引入本地 Mermaid 库 -->
+<script src="../../js/mermaid.min.js"></script>
+<script>
+  // 关键修复：初始化时立即禁止自动渲染
+  if (typeof mermaid !== "undefined") {
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: "default",
+      securityLevel: "loose",
+    });
+  }
+</script>
+
+<div class="article-layout">
+  <div class="main-content">
+    <article class="post">
+      <header class="post-header">
+        <h1 class="post-title">Apifox多环境Token切换：前置脚本实战</h1>
+        <div class="post-meta">
+          <div class="post-date">2026/3/3</div>
+          <div class="post-category">2026-03</div>
+        </div>
+      </header>
+      <div class="warning">
+        ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
+      </div>
+      <div class="post-content" id="post-content"><p>在本地联调里，我们经常会遇到：<strong>服务端口相同，但环境不同（test-mysql / test-oracle / dev）且 Token 也不同</strong>。这篇文章给你一套“约定大于配置”的 Apifox 前置脚本方案，做到<strong>少改接口、快速切换、降低401误判</strong>。适合经常切 Nacos 环境、手动复制线上 Token 的同学。</p>
+<h2 id="目录">目录</h2>
+<ul>
+<li><a href="#%E9%97%AE%E9%A2%98%E8%83%8C%E6%99%AF%E4%B8%BA%E4%BB%80%E4%B9%88%E6%80%BB%E5%9C%A8%E9%87%8D%E5%A4%8D%E6%94%B9-token">问题背景：为什么总在重复改 Token</a></li>
+<li><a href="#%E6%96%B9%E6%A1%88%E7%9B%AE%E6%A0%87%E4%B8%80%E5%A5%97%E8%84%9A%E6%9C%AC%E9%80%82%E9%85%8D%E5%A4%9A%E7%8E%AF%E5%A2%83%E5%A4%9A%E7%94%A8%E6%88%B7">方案目标：一套脚本适配多环境多用户</a></li>
+<li><a href="#%E6%A0%B8%E5%BF%83%E8%84%9A%E6%9C%AC%E5%AE%9E%E7%8E%B0%E5%8F%AF%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8">核心脚本实现（可直接使用）</a></li>
+<li><a href="#%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E5%9B%BEmermaid">执行流程图（Mermaid）</a></li>
+<li><a href="#%E5%8F%98%E9%87%8F%E7%BA%A6%E5%AE%9A%E4%B8%8E%E5%AE%9E%E6%88%98%E7%A4%BA%E4%BE%8B">变量约定与实战示例</a></li>
+<li><a href="#%E8%BE%B9%E7%95%8C%E4%B8%8E%E5%9D%91%E4%BD%8D%E4%B8%80%E5%AE%9A%E8%A6%81%E7%9C%8B">边界与坑位（一定要看）</a></li>
+<li><a href="#%E8%BF%9B%E9%98%B6%E5%A4%9A%E7%94%A8%E6%88%B7%E5%88%87%E6%8D%A2%E4%B8%8E%E8%87%AA%E5%8A%A8%E5%9B%9E%E9%80%80">进阶：多用户切换与自动回退</a></li>
+<li><a href="#%E5%90%8C%E7%B1%BB%E5%B7%A5%E5%85%B7%E5%AF%B9%E6%AF%94%E6%80%9D%E8%B7%AFapifox--postman--insomnia">同类工具对比思路（Apifox / Postman / Insomnia）</a></li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+<li><a href="#%E5%BB%B6%E4%BC%B8%E9%98%85%E8%AF%BB">延伸阅读</a></li>
+<li><a href="#%E4%B8%80%E5%8F%A5%E8%AF%9D%E8%AE%B0%E5%BF%86">一句话记忆</a></li>
+</ul>
+<h2 id="问题背景：为什么总在重复改-token">问题背景：为什么总在重复改 Token</h2>
+<p>典型场景：</p>
+<ol>
+<li>本地服务端口固定（如 <code>localhost:8080</code>）</li>
+<li>你会切换 Nacos 配置环境（<code>test-mysql</code>、<code>test-oracle</code> 等）</li>
+<li>登录链路复杂，不方便每次调登录接口自动拿 Token</li>
+<li>实际做法常是“手动从线上复制 Token”</li>
+</ol>
+<p>结果就是：每次切环境都去改请求头，费时且容易漏改。</p>
+<h2 id="方案目标：一套脚本适配多环境多用户">方案目标：一套脚本适配多环境多用户</h2>
+<p>我们要达到：</p>
+<ul>
+<li><strong>不改每个接口的 Authorization</strong></li>
+<li>用一个变量 <code>token-env</code> 决定当前环境</li>
+<li>自动读取 <code>token-${token-env}</code> 的值注入通用变量 <code>token</code></li>
+<li>当 <code>token-env</code> 不存在时，<strong>脚本直接跳过</strong>（兼容旧流程）</li>
+</ul>
+<h2 id="核心脚本实现（可直接使用）">核心脚本实现（可直接使用）</h2>
+<blockquote>
+<p>建议放在 Apifox 的「项目级前置脚本」，全接口复用。</p>
+</blockquote>
+<pre><code class="language-javascript">// 约定：
+// token-env = test-mysql =&gt; 读取 token-test-mysql
+// 若 token-env 不存在/为空：直接结束脚本（不设置token）
+
+const env = (pm.environment.get(&quot;token-env&quot;) || &quot;&quot;).trim();
+
+// 1) 没有 token-env：直接结束
+if (!env) {
+  console.log(&quot;[Auth] token-env 未设置，跳过 token 注入。&quot;);
+  return;
+}
+
+// 2) 按约定拼接变量名
+const tokenVarName = `token-${env}`;
+let tokenValue = (pm.environment.get(tokenVarName) || &quot;&quot;).trim();
+
+// 3) 有 env 但没 token：提示
+if (!tokenValue) {
+  console.log(`[Auth] 变量 ${tokenVarName} 为空，请先粘贴 token`);
+  return;
+}
+
+// 4) 兼容手动复制时可能带 Bearer 前缀
+tokenValue = tokenValue.replace(/^Bearer\s+/i, &quot;&quot;).trim();
+
+// 5) 输出通用变量，供请求头统一引用
+pm.environment.set(&quot;token&quot;, tokenValue);
+console.log(`[Auth] 使用 ${env}`);
+</code></pre>
+<p>请求头统一写法：</p>
+<pre><code class="language-text">Authorization: Bearer {{token}}
+</code></pre>
+<h2 id="执行流程图（mermaid）">执行流程图（Mermaid）</h2>
+<pre class="mermaid">flowchart TD
+  A[读取 token-env] --> B{token-env 是否为空}
+  B -- 是 --> C[跳过注入并结束]
+  B -- 否 --> D[拼接变量名 token-${env}]
+  D --> E[读取 tokenValue]
+  E --> F{tokenValue 是否为空}
+  F -- 是 --> G[日志提示后结束]
+  F -- 否 --> H[去掉 Bearer 前缀]
+  H --> I[设置环境变量 token]
+  I --> J[请求头使用 Bearer {{token}}]</pre>
+<h2 id="变量约定与实战示例">变量约定与实战示例</h2>
+<p>假设你有这些环境变量：</p>
+<pre><code class="language-text">token-env = test-mysql
+token-test-mysql = Bearer eyJ...
+token-test-oracle = Bearer eyJ...
+token-dev = Bearer eyJ...
+</code></pre>
+<p>当 <code>token-env=test-mysql</code> 时，脚本会读取 <code>token-test-mysql</code>，并把结果写入 <code>token</code>。</p>
+<h3 id="多用户怎么做？">多用户怎么做？</h3>
+<p>可以继续扩展“环境 + 用户”双维度：</p>
+<pre><code class="language-text">token-env = test-mysql
+token-user = admin
+
+token-test-mysql-admin = Bearer xxx
+token-test-mysql-qa = Bearer yyy
+</code></pre>
+<p>脚本拼接改成：<code>token-${env}-${user}</code> 即可。</p>
+<h2 id="边界与坑位（一定要看）">边界与坑位（一定要看）</h2>
+<h3 id="1）不要在日志打印完整-token">1）不要在日志打印完整 Token</h3>
+<p>你原脚本里有：</p>
+<pre><code class="language-javascript">console.log(`[Auth] 使用 ${env} - ${tokenValue}`);
+</code></pre>
+<p>这会把敏感信息暴露到控制台日志，建议改成只打印环境名。</p>
+<h3 id="2）空-token-时要不要中断请求？">2）空 Token 时要不要中断请求？</h3>
+<p>两种策略：</p>
+<ul>
+<li><strong>宽松模式</strong>（本文默认）：只提示并 <code>return</code>，不主动 throw</li>
+<li><strong>严格模式</strong>：<code>throw new Error(...)</code>，直接阻断请求，避免无意义 401</li>
+</ul>
+<p>团队联调推荐严格模式，个人调试可用宽松模式。</p>
+<h3 id="3）bearer-前缀重复问题">3）Bearer 前缀重复问题</h3>
+<p>有人会把变量值保存成：<code>Bearer xxx</code>，请求头又写 <code>Bearer {{token}}</code>，最终变成 <code>Bearer Bearer xxx</code>。本文脚本已做兼容，先去前缀再写入 <code>token</code>。</p>
+<h3 id="4）命名统一性">4）命名统一性</h3>
+<p>请统一使用一种命名风格，建议全小写：</p>
+<ul>
+<li><code>token-env</code></li>
+<li><code>token-test-mysql</code></li>
+<li><code>token-test-oracle</code></li>
+</ul>
+<p>命名混乱会显著提高维护成本。</p>
+<h2 id="进阶：多用户切换与自动回退">进阶：多用户切换与自动回退</h2>
+<p>可再加一个回退逻辑：</p>
+<ul>
+<li>优先读 <code>token-${env}-${user}</code></li>
+<li>不存在时回退到 <code>token-${env}</code></li>
+</ul>
+<p>这对“同环境多个账号轮测”特别实用。</p>
+<pre><code class="language-javascript">const env = (pm.environment.get(&quot;token-env&quot;) || &quot;&quot;).trim();
+const user = (pm.environment.get(&quot;token-user&quot;) || &quot;&quot;).trim();
+if (!env) return;
+
+const primary = user ? `token-${env}-${user}` : &quot;&quot;;
+const fallback = `token-${env}`;
+
+let token = &quot;&quot;;
+if (primary) token = (pm.environment.get(primary) || &quot;&quot;).trim();
+if (!token) token = (pm.environment.get(fallback) || &quot;&quot;).trim();
+if (!token) return;
+
+token = token.replace(/^Bearer\s+/i, &quot;&quot;).trim();
+pm.environment.set(&quot;token&quot;, token);
+</code></pre>
+<h2 id="同类工具对比思路（apifox--postman--insomnia）">同类工具对比思路（Apifox / Postman / Insomnia）</h2>
+<ul>
+<li><strong>Apifox</strong>：项目协作与接口文档一体化强，前置脚本适合做“环境路由”</li>
+<li><strong>Postman</strong>：生态成熟，脚本能力完整，团队协作同样可行</li>
+<li><strong>Insomnia</strong>：轻量简洁，适合偏个人调试</li>
+</ul>
+<p>核心思想一致：<strong>通过环境变量命名约定 + 统一请求头变量，实现低成本切换</strong>。</p>
+<h2 id="总结">总结</h2>
+<p>这个方案的关键不是“魔法脚本”，而是三件事：</p>
+<ol>
+<li><strong>命名约定固定</strong>：<code>token-env</code> + <code>token-${env}</code></li>
+<li><strong>请求头统一引用</strong>：<code>Authorization: Bearer {{token}}</code></li>
+<li><strong>脚本只做路由</strong>：根据当前环境挑选 Token，而不是让每个接口自己管理</li>
+</ol>
+<p>当你频繁切换 Nacos 环境、又依赖手工复制 Token 时，这套方式是最稳、最省认知负担的。</p>
+<h2 id="延伸阅读">延伸阅读</h2>
+<ul>
+<li>Apifox 官方文档（环境变量/前置脚本）</li>
+<li>JWT 官方介绍（RFC 7519）</li>
+<li>OWASP API Security Top 10（API 认证与日志安全）</li>
+</ul>
+<h2 id="一句话记忆">一句话记忆</h2>
+<p><strong>把 Token 切换问题从“每个接口改一次”，变成“只改一个 <code>token-env</code> 变量”。</strong></p>
+</div>
+    </article>
+  </div>
+  <aside class="toc-sidebar" id="toc-sidebar">
+    <div class="toc-header">
+      <h3>文章目录</h3>
+    </div>
+    <nav class="toc-nav" id="toc-nav">
+      <!-- 目录内容将通过JavaScript自动生成 -->
+    </nav>
+  </aside>
+</div>
+
+<script>
+  // Add copy buttons to code blocks
+  function addCopyButtons() {
+    const sourceCodeBlocks = document.querySelectorAll(".sourceCode");
+    sourceCodeBlocks.forEach(function (block) {
+      if (block.querySelector(".copy-button")) return;
+      const preElement = block.querySelector("pre");
+      if (!preElement) return;
+
+      const button = document.createElement("button");
+      button.className = "copy-button";
+      button.textContent = "复制";
+      button.setAttribute("aria-label", "复制代码");
+
+      button.addEventListener("click", function () {
+        const code = preElement.querySelector("code");
+        const text = code ? code.innerText : preElement.innerText;
+
+        navigator.clipboard
+          .writeText(text)
+          .then(function () {
+            button.textContent = "已复制";
+            button.classList.add("copied");
+
+            setTimeout(function () {
+              button.textContent = "复制";
+              button.classList.remove("copied");
+            }, 3000);
+          })
+          .catch(function (err) {
+            console.error("复制失败: ", err);
+            button.textContent = "失败";
+            setTimeout(function () {
+              button.textContent = "复制";
+            }, 3000);
+          });
+      });
+
+      block.appendChild(button);
+    });
+
+    const allPreBlocks = document.querySelectorAll("pre:not(.mermaid)");
+    allPreBlocks.forEach(function (block) {
+      if (block.closest(".sourceCode") || block.querySelector(".copy-button"))
+        return;
+
+      const button = document.createElement("button");
+      button.className = "copy-button";
+      button.textContent = "复制";
+      button.setAttribute("aria-label", "复制代码");
+
+      button.addEventListener("click", function () {
+        const code = block.querySelector("code");
+        const text = code ? code.innerText : block.innerText;
+
+        navigator.clipboard
+          .writeText(text)
+          .then(function () {
+            button.textContent = "已复制";
+            button.classList.add("copied");
+
+            setTimeout(function () {
+              button.textContent = "复制";
+              button.classList.remove("copied");
+            }, 3000);
+          })
+          .catch(function (err) {
+            console.error("复制失败: ", err);
+            button.textContent = "失败";
+            setTimeout(function () {
+              button.textContent = "复制";
+            }, 3000);
+          });
+      });
+
+      block.appendChild(button);
+    });
+  }
+
+  // 生成文章目录
+  function generateTableOfContents() {
+    const postContent = document.getElementById("post-content");
+    const tocNav = document.getElementById("toc-nav");
+
+    if (!postContent || !tocNav) {
+      console.log("Missing postContent or tocNav element");
+      return;
+    }
+
+    // 查找所有标题元素
+    const headings = postContent.querySelectorAll("h1, h2, h3, h4, h5, h6");
+    console.log("Found headings:", headings.length);
+
+    if (headings.length === 0) {
+      // 如果没有标题，隐藏目录
+      console.log("No headings found, hiding TOC");
+      const tocSidebar = document.getElementById("toc-sidebar");
+      if (tocSidebar) tocSidebar.style.display = "none";
+      return;
+    }
+
+    // 清空目录容器
+    tocNav.innerHTML = "";
+
+    // 创建目录结构
+    const tocList = document.createElement("ul");
+    tocList.className = "toc-list";
+
+    let currentLevel = 1;
+    let currentList = tocList;
+    let listStack = [tocList];
+
+    headings.forEach((heading, index) => {
+      // 强制为每个标题设置标准化的ID（始终重写现有ID）
+      const normalizedId = "heading-" + index;
+      heading.id = normalizedId;
+
+      const level = parseInt(heading.tagName.charAt(1));
+      const title = heading.textContent.trim();
+
+      // 创建目录项
+      const tocItem = document.createElement("li");
+      tocItem.className = "toc-item toc-level-" + level;
+
+      const tocLink = document.createElement("a");
+      tocLink.href = "javascript:void(0)"; // 避免触发路由
+      tocLink.setAttribute("data-target", heading.id); // 存储目标ID
+      tocLink.textContent = title;
+      tocLink.className = "toc-link";
+
+      tocItem.appendChild(tocLink);
+
+      // 处理层级关系
+      if (level > currentLevel) {
+        // 创建新的子列表
+        const newList = document.createElement("ul");
+        newList.className = "toc-sublist";
+        // 检查是否有父元素
+        const parentList = listStack[listStack.length - 1];
+        if (parentList.lastElementChild) {
+          parentList.lastElementChild.appendChild(newList);
+        } else {
+          // 如果没有父元素，直接添加到当前列表
+          parentList.appendChild(newList);
+        }
+        listStack.push(newList);
+        currentList = newList;
+      } else if (level < currentLevel) {
+        // 返回到上一级
+        while (listStack.length > level) {
+          listStack.pop();
+        }
+        currentList = listStack[listStack.length - 1];
+      }
+
+      currentList.appendChild(tocItem);
+      currentLevel = level;
+    });
+
+    tocNav.appendChild(tocList);
+    console.log("TOC generated successfully");
+
+    // 高亮当前章节
+    highlightCurrentSection();
+
+    // 滚动监听
+    window.addEventListener("scroll", highlightCurrentSection);
+
+    // 为目录链接添加点击事件
+    setTimeout(() => {
+      const tocLinks = document.querySelectorAll(".toc-link");
+      tocLinks.forEach((link) => {
+        link.addEventListener("click", (e) => {
+          e.preventDefault();
+          const targetId = link.getAttribute("data-target");
+          if (targetId) {
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+              targetElement.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+                inline: "nearest",
+              });
+            }
+          }
+        });
+      });
+    }, 200); // 延迟确保目录已生成
+  }
+
+  // 高亮当前阅读的章节
+  function highlightCurrentSection() {
+    const headings = document.querySelectorAll(
+      ".post-content h1, .post-content h2, .post-content h3, .post-content h4, .post-content h5, .post-content h6"
+    );
+    const tocLinks = document.querySelectorAll(".toc-link");
+
+    let currentHeading = null;
+    const scrollPosition = window.pageYOffset + 100;
+
+    // 找到当前可见的标题
+    for (let i = headings.length - 1; i >= 0; i--) {
+      if (headings[i].offsetTop <= scrollPosition) {
+        currentHeading = headings[i];
+        break;
+      }
+    }
+
+    // 清除所有活动状态
+    tocLinks.forEach((link) => link.classList.remove("active"));
+
+    // 高亮当前章节
+    if (currentHeading) {
+      const activeLink = document.querySelector(
+        '.toc-link[data-target="' + currentHeading.id + '"]'
+      );
+      if (activeLink) {
+        activeLink.classList.add("active");
+      }
+    }
+  }
+
+  // Initialize mermaid diagrams - 只在直接访问 fragment 时运行
+  async function initMermaid() {
+    // 检查是否在 SPA 环境中
+    if (window.IN_SPA_MODE === true) {
+      console.log(
+        "[Mermaid Fragment] In SPA mode, skipping fragment initialization"
+      );
+      return;
+    }
+
+    if (typeof mermaid === "undefined") {
+      console.log("[Mermaid Fragment] Library not loaded");
+      return;
+    }
+
+    const mermaidPreElements = document.querySelectorAll(
+      "pre.mermaid, div.mermaid"
+    );
+    if (mermaidPreElements.length === 0) {
+      console.log("[Mermaid Fragment] No diagrams found");
+      return;
+    }
+
+    console.log(
+      "[Mermaid Fragment] 找到",
+      mermaidPreElements.length,
+      "个 Mermaid 图表，准备渲染..."
+    );
+
+    // 处理 DOM 结构
+    const elementsToRun = [];
+
+    mermaidPreElements.forEach((element) => {
+      // 获取原始图表代码
+      const graphDefinition = element.textContent.trim();
+      console.log(
+        "[Mermaid Fragment] First 100 chars:",
+        graphDefinition.substring(0, 100)
+      );
+
+      // 创建一个新的 div 来替换旧的 pre/div，确保它是"干净"的
+      const newDiv = document.createElement("div");
+      newDiv.className = "mermaid";
+      newDiv.textContent = graphDefinition;
+      newDiv.setAttribute("data-mermaid-code", graphDefinition);
+
+      element.parentNode.replaceChild(newDiv, element);
+      elementsToRun.push(newDiv);
+    });
+
+    // 手动触发渲染
+    try {
+      await mermaid.run({
+        nodes: elementsToRun,
+      });
+      console.log("[Mermaid Fragment] 渲染完成");
+    } catch (err) {
+      console.error("[Mermaid Fragment] 渲染失败:", err);
+      // 出错时显示原始代码，避免白屏
+      elementsToRun.forEach((el) => {
+        el.style.whiteSpace = "pre";
+        el.style.border = "1px solid red";
+      });
+    }
+  }
+
+  // Initialize copy buttons and TOC after content loads
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", function () {
+      console.log("DOM loading, initializing...");
+      addCopyButtons();
+      setTimeout(generateTableOfContents, 100);
+      setTimeout(initMermaid, 200);
+    });
+  } else {
+    console.log("DOM already loaded, initializing...");
+    addCopyButtons();
+    setTimeout(generateTableOfContents, 100);
+    setTimeout(initMermaid, 200);
+  }
+</script>

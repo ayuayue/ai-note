@@ -105,6 +105,7 @@ function main() {
           title: title,
           date: formattedDate,
           category: "Markdown 文档",
+          timestamp: date.getTime(),
         });
       });
     });
@@ -128,20 +129,18 @@ function main() {
         title: title,
         date: formattedDate,
         category: "HTML 文档",
+        timestamp: date.getTime(),
       });
     });
   }
 
   // Sort all documents by date (newest first)
-  allDocuments.sort((a, b) => {
-    // Convert date strings back to Date objects for comparison
-    const dateA = new Date(a.date.replace(/(\d+)\/(\d+)\/(\d+)/, "$1-$2-$3"));
-    const dateB = new Date(b.date.replace(/(\d+)\/(\d+)\/(\d+)/, "$1-$2-$3"));
-    return dateB - dateA;
-  });
+  allDocuments.sort((a, b) => b.timestamp - a.timestamp);
+
+  const outputDocuments = allDocuments.map(({ timestamp, ...doc }) => doc);
 
   // Generate JavaScript array for the overview page
-  const articlesJs = `const articles = ${JSON.stringify(allDocuments, null, 2)};`;
+  const articlesJs = `const articles = ${JSON.stringify(outputDocuments, null, 2)};`;
 
   // Read the overview.html file
   let overviewHtml = fs.readFileSync("overview.html", "utf8");

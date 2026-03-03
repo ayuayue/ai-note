@@ -358,45 +358,40 @@
       <div class="post-content" id="post-content"><blockquote>
 <p><strong>摘要</strong>：
 在面向对象编程中，多继承常常带来二义性和复杂性，最典型的问题就是“菱形继承”。
-本文将从 C++ 的多继承问题谈起，深入剖析 Java
-为什么禁止类的多继承、接口如何优雅地支持多继承，并结合 Spring 框架中的
-<code>ApplicationContext</code> 接口做实战分析。 读完后，你将彻底理解
-Java 的继承设计哲学。</p>
+本文将从 C++ 的多继承问题谈起，深入剖析 Java 为什么禁止类的多继承、接口如何优雅地支持多继承，并结合 Spring 框架中的 <code>ApplicationContext</code> 接口做实战分析。
+读完后，你将彻底理解 Java 的继承设计哲学。</p>
 </blockquote>
-<hr />
-<h2 id="目录">📑 目录</h2>
-<ol type="1">
-<li><a href="#继承与多继承的基本概念">继承与多继承的基本概念</a></li>
-<li><a href="#什么是菱形继承问题">什么是菱形继承问题</a></li>
-<li><a href="#java-为什么禁止类的多继承">Java
-为什么禁止类的多继承</a></li>
-<li><a href="#接口的多继承与默认方法">接口的多继承与默认方法</a></li>
-<li><a href="#如何在-java-中避免菱形问题">如何在 Java
-中避免菱形问题</a></li>
-<li><a href="#spring-框架中的实战案例">Spring 框架中的实战案例</a></li>
-<li><a href="#总结">总结</a></li>
-<li><a href="#延伸阅读">延伸阅读</a></li>
+<hr>
+<h2 id="📑-目录">📑 目录</h2>
+<ol>
+<li><a href="#%E7%BB%A7%E6%89%BF%E4%B8%8E%E5%A4%9A%E7%BB%A7%E6%89%BF%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5">继承与多继承的基本概念</a></li>
+<li><a href="#%E4%BB%80%E4%B9%88%E6%98%AF%E8%8F%B1%E5%BD%A2%E7%BB%A7%E6%89%BF%E9%97%AE%E9%A2%98">什么是菱形继承问题</a></li>
+<li><a href="#java-%E4%B8%BA%E4%BB%80%E4%B9%88%E7%A6%81%E6%AD%A2%E7%B1%BB%E7%9A%84%E5%A4%9A%E7%BB%A7%E6%89%BF">Java 为什么禁止类的多继承</a></li>
+<li><a href="#%E6%8E%A5%E5%8F%A3%E7%9A%84%E5%A4%9A%E7%BB%A7%E6%89%BF%E4%B8%8E%E9%BB%98%E8%AE%A4%E6%96%B9%E6%B3%95">接口的多继承与默认方法</a></li>
+<li><a href="#%E5%A6%82%E4%BD%95%E5%9C%A8-java-%E4%B8%AD%E9%81%BF%E5%85%8D%E8%8F%B1%E5%BD%A2%E9%97%AE%E9%A2%98">如何在 Java 中避免菱形问题</a></li>
+<li><a href="#spring-%E6%A1%86%E6%9E%B6%E4%B8%AD%E7%9A%84%E5%AE%9E%E6%88%98%E6%A1%88%E4%BE%8B">Spring 框架中的实战案例</a></li>
+<li><a href="#%E6%80%BB%E7%BB%93">总结</a></li>
+<li><a href="#%E5%BB%B6%E4%BC%B8%E9%98%85%E8%AF%BB">延伸阅读</a></li>
 </ol>
-<hr />
+<hr>
 <h2 id="继承与多继承的基本概念">继承与多继承的基本概念</h2>
 <ul>
 <li><strong>继承</strong>：一个类（子类）可以继承另一个类（父类）的属性和方法。</li>
 <li><strong>多继承</strong>：一个类可以同时继承多个父类。</li>
 </ul>
-<p>在 <strong>C++</strong> 中，多继承是允许的；而在
-<strong>Java</strong> 中，类只允许单继承，但接口可以多继承。</p>
-<hr />
+<p>在 <strong>C++</strong> 中，多继承是允许的；而在 <strong>Java</strong> 中，类只允许单继承，但接口可以多继承。</p>
+<hr>
 <h2 id="什么是菱形继承问题">什么是菱形继承问题</h2>
 <p>先看一个 <strong>C++ 风格</strong> 的例子：</p>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> A <span class="op">{</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> hello<span class="op">()</span> <span class="op">{</span> cout <span class="op">&lt;&lt;</span> <span class="st">&quot;Hello from A&quot;</span><span class="op">;</span> <span class="op">}</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> B <span class="op">:</span> <span class="kw">public</span> A <span class="op">{};</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> C <span class="op">:</span> <span class="kw">public</span> A <span class="op">{};</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> D <span class="op">:</span> <span class="kw">public</span> B<span class="op">,</span> <span class="kw">public</span> C <span class="op">{};</span></span></code></pre></div>
+<pre><code class="language-cpp">class A {
+public:
+    void hello() { cout &lt;&lt; &quot;Hello from A&quot;; }
+};
+
+class B : public A {};
+class C : public A {};
+class D : public B, public C {};
+</code></pre>
 <p>继承关系示意图：</p>
 <pre class="mermaid">classDiagram
     class A {
@@ -406,67 +401,63 @@ class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#c
     class C
     class D
 
-    A &lt;|-- B
-    A &lt;|-- C
-    B &lt;|-- D
-    C &lt;|-- D</pre>
+    A <|-- B
+    A <|-- C
+    B <|-- D
+    C <|-- D</pre>
 <p>⚠️ 问题：</p>
 <ul>
-<li><code>D</code> 通过 <code>B</code> 和 <code>C</code> 继承了
-<strong>两份 <code>A</code></strong>。</li>
-<li>当调用 <code>D.hello()</code> 时，编译器不知道该调用哪一个
-<code>A.hello()</code>。</li>
-<li>这就是 <strong>菱形继承问题（Diamond
-Problem）</strong>：多继承带来的<strong>二义性和重复继承</strong>。</li>
+<li><code>D</code> 通过 <code>B</code> 和 <code>C</code> 继承了 **两份 <code>A</code>**。</li>
+<li>当调用 <code>D.hello()</code> 时，编译器不知道该调用哪一个 <code>A.hello()</code>。</li>
+<li>这就是 <strong>菱形继承问题（Diamond Problem）</strong>：多继承带来的<strong>二义性和重复继承</strong>。</li>
 </ul>
-<hr />
+<hr>
 <h2 id="java-为什么禁止类的多继承">Java 为什么禁止类的多继承</h2>
 <p>在 Java 中，<strong>类只允许单继承</strong>：</p>
-<div class="sourceCode" id="cb3"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> A <span class="op">{}</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> B <span class="kw">extends</span> A <span class="op">{}</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> C <span class="kw">extends</span> A <span class="op">{}</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">// class D extends B, C {} // ❌ 编译错误</span></span></code></pre></div>
-<p>这样，<code>D</code> 无法同时继承 <code>B</code> 和
-<code>C</code>，避免了 C++ 中的菱形问题。</p>
+<pre><code class="language-java">class A {}
+class B extends A {}
+class C extends A {}
+
+// class D extends B, C {} // ❌ 编译错误
+</code></pre>
+<p>这样，<code>D</code> 无法同时继承 <code>B</code> 和 <code>C</code>，避免了 C++ 中的菱形问题。</p>
 <p><strong>Java 设计者的考虑</strong>：</p>
-<ol type="1">
+<ol>
 <li>避免二义性（简化语义）。</li>
 <li>减少复杂性（不用考虑多份父类拷贝）。</li>
 <li>保持代码清晰（推荐接口和组合）。</li>
 </ol>
-<hr />
+<hr>
 <h2 id="接口的多继承与默认方法">接口的多继承与默认方法</h2>
 <p>虽然类不能多继承，但 <strong>接口可以多继承</strong>。</p>
 <h3 id="示例代码">示例代码</h3>
-<div class="sourceCode" id="cb4"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> A <span class="op">{</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">default</span> <span class="dt">void</span> <span class="fu">hello</span><span class="op">()</span> <span class="op">{</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Hello from A&quot;</span><span class="op">);</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> B <span class="kw">extends</span> A <span class="op">{</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">default</span> <span class="dt">void</span> <span class="fu">hello</span><span class="op">()</span> <span class="op">{</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Hello from B&quot;</span><span class="op">);</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> C <span class="kw">extends</span> A <span class="op">{</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">default</span> <span class="dt">void</span> <span class="fu">hello</span><span class="op">()</span> <span class="op">{</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Hello from C&quot;</span><span class="op">);</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> D <span class="kw">implements</span> B<span class="op">,</span> C <span class="op">{</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Override</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">hello</span><span class="op">()</span> <span class="op">{</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>        B<span class="op">.</span><span class="fu">super</span><span class="op">.</span><span class="fu">hello</span><span class="op">();</span> <span class="co">// 必须显式选择</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<pre><code class="language-java">interface A {
+    default void hello() {
+        System.out.println(&quot;Hello from A&quot;);
+    }
+}
+
+interface B extends A {
+    @Override
+    default void hello() {
+        System.out.println(&quot;Hello from B&quot;);
+    }
+}
+
+interface C extends A {
+    @Override
+    default void hello() {
+        System.out.println(&quot;Hello from C&quot;);
+    }
+}
+
+class D implements B, C {
+    @Override
+    public void hello() {
+        B.super.hello(); // 必须显式选择
+    }
+}
+</code></pre>
 <p>继承关系示意图：</p>
 <pre class="mermaid">classDiagram
     class A {
@@ -482,50 +473,45 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="
         +hello()
     }
 
-    A &lt;|-- B
-    A &lt;|-- C
-    B &lt;|.. D
-    C &lt;|.. D</pre>
-<p>👉 Java 要求 <code>D</code>
-<strong>显式指定调用哪一个父接口的方法</strong>，从而避免了菱形问题带来的二义性。</p>
-<hr />
+    A <|-- B
+    A <|-- C
+    B <|.. D
+    C <|.. D</pre>
+<p>👉 Java 要求 <code>D</code> <strong>显式指定调用哪一个父接口的方法</strong>，从而避免了菱形问题带来的二义性。</p>
+<hr>
 <h2 id="如何在-java-中避免菱形问题">如何在 Java 中避免菱形问题</h2>
-<h3 id="接口-默认方法">1. 接口 + 默认方法</h3>
+<h3 id="1-接口--默认方法">1. 接口 + 默认方法</h3>
 <p>通过 <code>default</code> 方法，让实现类来选择调用的父接口实现。</p>
-<h3 id="组合优于继承">2. 组合优于继承</h3>
+<h3 id="2-组合优于继承">2. 组合优于继承</h3>
 <p>使用组合（has-a）代替继承（is-a）：</p>
-<div class="sourceCode" id="cb6"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> D <span class="op">{</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> B b <span class="op">=</span> <span class="kw">new</span> <span class="fu">B</span><span class="op">();</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> C c <span class="op">=</span> <span class="kw">new</span> <span class="fu">C</span><span class="op">();</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> <span class="fu">helloFromB</span><span class="op">()</span> <span class="op">{</span> b<span class="op">.</span><span class="fu">hello</span><span class="op">();</span> <span class="op">}</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> <span class="fu">helloFromC</span><span class="op">()</span> <span class="op">{</span> c<span class="op">.</span><span class="fu">hello</span><span class="op">();</span> <span class="op">}</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<h3 id="抽象类统一继承路径">3. 抽象类统一继承路径</h3>
+<pre><code class="language-java">class D {
+    private B b = new B();
+    private C c = new C();
+
+    void helloFromB() { b.hello(); }
+    void helloFromC() { c.hello(); }
+}
+</code></pre>
+<h3 id="3-抽象类统一继承路径">3. 抽象类统一继承路径</h3>
 <p>使用抽象类来保证继承链的单一性，避免多份祖先类。</p>
-<hr />
+<hr>
 <h2 id="spring-框架中的实战案例">Spring 框架中的实战案例</h2>
-<p>在 <strong>Spring</strong> 框架中，很多核心接口都体现了 Java
-接口多继承的特性。 一个典型的例子就是
-<code>ApplicationContext</code>：</p>
-<div class="sourceCode" id="cb7"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">interface</span> ApplicationContext </span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>        <span class="kw">extends</span> EnvironmentCapable<span class="op">,</span> </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                ListableBeanFactory<span class="op">,</span> </span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                HierarchicalBeanFactory<span class="op">,</span> </span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                MessageSource<span class="op">,</span> </span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>                ApplicationEventPublisher<span class="op">,</span> </span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>                ResourcePatternResolver <span class="op">{</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// ...</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<h3 id="继承关系">🧐 继承关系</h3>
+<p>在 <strong>Spring</strong> 框架中，很多核心接口都体现了 Java 接口多继承的特性。
+一个典型的例子就是 <code>ApplicationContext</code>：</p>
+<pre><code class="language-java">public interface ApplicationContext 
+        extends EnvironmentCapable, 
+                ListableBeanFactory, 
+                HierarchicalBeanFactory, 
+                MessageSource, 
+                ApplicationEventPublisher, 
+                ResourcePatternResolver {
+    // ...
+}
+</code></pre>
+<h3 id="🧐-继承关系">🧐 继承关系</h3>
 <ul>
-<li><code>ApplicationContext</code> 继承了 <strong>6
-个接口</strong>。</li>
-<li>其中，<code>ListableBeanFactory</code> 和
-<code>HierarchicalBeanFactory</code> 都继承自
-<code>BeanFactory</code>。</li>
+<li><code>ApplicationContext</code> 继承了 <strong>6 个接口</strong>。</li>
+<li>其中，<code>ListableBeanFactory</code> 和 <code>HierarchicalBeanFactory</code> 都继承自 <code>BeanFactory</code>。</li>
 <li>这就天然形成了 <strong>菱形继承结构</strong>。</li>
 </ul>
 <p>可视化关系图：</p>
@@ -535,51 +521,40 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb7-1"><a href="
     class HierarchicalBeanFactory
     class ApplicationContext
 
-    BeanFactory &lt;|-- ListableBeanFactory
-    BeanFactory &lt;|-- HierarchicalBeanFactory
-    ListableBeanFactory &lt;|-- ApplicationContext
-    HierarchicalBeanFactory &lt;|-- ApplicationContext</pre>
-<h3 id="为什么不会有菱形问题">⚡ 为什么不会有菱形问题？</h3>
+    BeanFactory <|-- ListableBeanFactory
+    BeanFactory <|-- HierarchicalBeanFactory
+    ListableBeanFactory <|-- ApplicationContext
+    HierarchicalBeanFactory <|-- ApplicationContext</pre>
+<h3 id="⚡-为什么不会有菱形问题？">⚡ 为什么不会有菱形问题？</h3>
 <p>因为在 <strong>Java 接口继承</strong> 的规则下：</p>
-<ol type="1">
-<li>接口 <strong>只定义方法签名</strong>（以及 JDK8 之后的
-<code>default</code> 方法）。</li>
-<li>如果多个父接口提供了相同的默认方法，<strong>必须由实现类（如
-<code>AnnotationConfigApplicationContext</code>）来显式解决冲突</strong>。</li>
+<ol>
+<li>接口 <strong>只定义方法签名</strong>（以及 JDK8 之后的 <code>default</code> 方法）。</li>
+<li>如果多个父接口提供了相同的默认方法，<strong>必须由实现类（如 <code>AnnotationConfigApplicationContext</code>）来显式解决冲突</strong>。</li>
 </ol>
 <p>因此，即使有菱形结构，Java 也能保证不会出现二义性。</p>
-<hr />
+<hr>
 <h2 id="总结">总结</h2>
 <ul>
-<li><strong>C++</strong>：支持多继承，但容易出现菱形继承问题，需要虚拟继承来解决。</li>
+<li>**C++**：支持多继承，但容易出现菱形继承问题，需要虚拟继承来解决。</li>
 <li><strong>Java</strong>：禁止类的多继承，避免了二义性。</li>
 <li><strong>接口</strong>：允许多继承，但必须在实现类中解决冲突。</li>
-<li><strong>Spring 框架</strong>：<code>ApplicationContext</code>
-等核心接口就是典型的接口多继承案例，但通过 Java
-规则避免了菱形问题。</li>
-<li><strong>开发实践</strong>：推荐使用 <strong>接口 +
-组合</strong>，保持继承体系清晰。</li>
+<li><strong>Spring 框架</strong>：<code>ApplicationContext</code> 等核心接口就是典型的接口多继承案例，但通过 Java 规则避免了菱形问题。</li>
+<li><strong>开发实践</strong>：推荐使用 <strong>接口 + 组合</strong>，保持继承体系清晰。</li>
 </ul>
-<hr />
+<hr>
 <h2 id="延伸阅读">延伸阅读</h2>
 <ul>
-<li><a
-href="https://docs.oracle.com/javase/tutorial/java/IandI/createinterface.html">Java
-官方文档：接口（Interfaces）</a></li>
+<li><a href="https://docs.oracle.com/javase/tutorial/java/IandI/createinterface.html">Java 官方文档：接口（Interfaces）</a></li>
 <li>《Effective Java》第三版：第 18 条 —— 接口优于抽象类</li>
-<li>Spring Framework 源码：<code>ApplicationContext</code>
-接口层级结构</li>
-<li><a
-href="https://en.cppreference.com/w/cpp/language/derived_class">C++
-菱形继承与虚拟继承</a></li>
+<li>Spring Framework 源码：<code>ApplicationContext</code> 接口层级结构</li>
+<li><a href="https://en.cppreference.com/w/cpp/language/derived_class">C++ 菱形继承与虚拟继承</a></li>
 </ul>
-<hr />
+<hr>
 <p>📌 <strong>一句话记忆</strong>：</p>
 <blockquote>
-<p>Java 用 <strong>类单继承 + 接口多继承</strong>
-的方式，巧妙避开了菱形陷阱，并在 Spring 等框架中得到了优雅的应用。</p>
+<p>Java 用 <strong>类单继承 + 接口多继承</strong> 的方式，巧妙避开了菱形陷阱，并在 Spring 等框架中得到了优雅的应用。</p>
 </blockquote>
-<hr />
+<hr>
 </div>
     </article>
   </div>

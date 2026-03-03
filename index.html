@@ -1822,7 +1822,10 @@
             const href = link.getAttribute("href");
             if (href && href !== "#") {
               // Check if this is a feed page (pages/index{N}.html) or article
-              if (href.startsWith("pages/index")) {
+              if (
+                href.startsWith("pages/index") ||
+                href.startsWith("/pages/index")
+              ) {
                 // Load feed page
                 let pageNum = 1;
                 if (href.includes("index")) {

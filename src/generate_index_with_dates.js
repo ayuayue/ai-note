@@ -72,7 +72,7 @@ function formatDate(date) {
 }
 
 // Function to generate a document card HTML snippet for feed style
-function generateDocCard(doc, currentPage) {
+function generateDocCard(doc) {
     const formattedDate = formatDate(doc.date);
     
     // Different handling for markdown and html files
@@ -90,13 +90,12 @@ function generateDocCard(doc, currentPage) {
                     <p>${doc.excerpt}...</p>
                 </div>
                 <div class="feed-item-footer">
-                    <a href="docs/${doc.monthDir}/${fragmentFilename}" class="read-more">阅读更多 →</a>
+                    <a href="/docs/${doc.monthDir}/${fragmentFilename}" class="read-more">阅读更多 →</a>
                 </div>
             </div>`;
     } else {
         // HTML files
-        // Adjust path based on current page location
-        const htmlPath = currentPage === 1 ? `/html/${doc.filename}` : `/html/${doc.filename}`;
+        const htmlPath = `/html/${doc.filename}`;
         return `            <div class="feed-item">
                 <div class="feed-item-header">
                     <h2 class="feed-item-title"><a href="${htmlPath}">${doc.title}</a></h2>
@@ -210,7 +209,7 @@ function main() {
         
         // Generate feed items for this page
         const feedItems = pageDocuments.map(doc => 
-            generateDocCard(doc, page)
+            generateDocCard(doc)
         );
         
         // Generate pagination HTML for this specific page
@@ -219,7 +218,7 @@ function main() {
             paginationHtml += '<div class="pagination">\n';
             // Previous page link
             if (page > 1) {
-                const prevPage = page === 2 ? 'pages/index.html' : `pages/index${page-1}.html`;
+                const prevPage = page === 2 ? '/pages/index.html' : `/pages/index${page-1}.html`;
                 paginationHtml += `            <a href="${prevPage}">← 上一页</a>\n`;
             }
 
@@ -230,11 +229,9 @@ function main() {
                 } else {
                     let pageLink;
                     if (i === 1) {
-                        // First page with pages/ prefix for absolute path compatibility
-                        pageLink = 'pages/index.html';
+                        pageLink = '/pages/index.html';
                     } else {
-                        // Other pages with pages/ prefix
-                        pageLink = `pages/index${i}.html`;
+                        pageLink = `/pages/index${i}.html`;
                     }
                     paginationHtml += `            <a href="${pageLink}">${i}</a>\n`;
                 }
@@ -242,42 +239,14 @@ function main() {
 
             // Next page link
             if (page < totalPages) {
-                const nextPage = `pages/index${page+1}.html`;
+                const nextPage = `/pages/index${page+1}.html`;
                 paginationHtml += `            <a href="${nextPage}">下一页 →</a>\n`;
             }
             paginationHtml += '        </div>';
         } else {
             // This case shouldn't happen since we're generating multiple pages
-            paginationHtml = '<div class="pagination">\n            <a href="pages/index.html" class="current">1</a>\n        </div>';
+            paginationHtml = '<div class="pagination">\n            <a href="/pages/index.html" class="current">1</a>\n        </div>';
         }
-        
-        // Add SEO meta tags for index pages
-        const seoMetaTags = `
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="AI 个人笔记 - 记录 AI 协助解决的各种技术问题和学习笔记">
-    <meta name="keywords" content="AI, 技术笔记, 学习笔记, 编程, 开发">
-    <meta name="author" content="AI 个人笔记">
-    <meta name="robots" content="index, follow">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="AI 个人笔记">
-    <meta property="og:description" content="AI 个人笔记 - 记录 AI 协助解决的各种技术问题和学习笔记">
-    <meta property="og:image" content="https://your-domain.com/images/og-image.png">
-    <meta property="og:url" content="https://your-domain.com/index.html">
-    <meta property="og:site_name" content="AI 个人笔记">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:title" content="AI 个人笔记">
-    <meta property="twitter:description" content="AI 个人笔记 - 记录 AI 协助解决的各种技术问题和学习笔记">
-    <meta property="twitter:image" content="https://your-domain.com/images/og-image.png">
-    
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://your-domain.com/index.html">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico">`;
         
         // Replace placeholder with feed items
         let updatedContent = template.replace("{{DOC_CARDS}}", feedItems.join('\n'));
