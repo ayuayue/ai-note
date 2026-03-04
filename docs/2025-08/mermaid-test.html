@@ -9,13 +9,12 @@
 这是一个测试 Mermaid 图表功能的示例文档。
 流程图示例
 graph TD
-    A[开始] --> B[初始化]
-    B --> C[处理数据]
-    C --> D[输出结果]
-    D --> E[结束]
+    A[开始] --&gt; B[初始化]
+    B --&gt; C[处理数据]
+    C --&gt; D[输出结果]
+    D --&gt; E[结束]
 序列图示例
-sequenceDiagram
-    partici..." />
+sequen..." />
     <meta name="keywords" content="Mermaid, 图表测试" />
     <meta name="author" content="AI 个人笔记" />
     <meta name="robots" content="index, follow" />
@@ -27,13 +26,12 @@ sequenceDiagram
 这是一个测试 Mermaid 图表功能的示例文档。
 流程图示例
 graph TD
-    A[开始] --> B[初始化]
-    B --> C[处理数据]
-    C --> D[输出结果]
-    D --> E[结束]
+    A[开始] --&gt; B[初始化]
+    B --&gt; C[处理数据]
+    C --&gt; D[输出结果]
+    D --&gt; E[结束]
 序列图示例
-sequenceDiagram
-    partici..." />
+sequen..." />
     <meta property="og:image" content="https://www.caoayu.top/images/og-image.png" />
     <meta property="og:url" content="https://www.caoayu.top/docs/2025-08/mermaid-test.html" />
     <meta property="og:site_name" content="AI 个人笔记" />
@@ -45,13 +43,12 @@ sequenceDiagram
 这是一个测试 Mermaid 图表功能的示例文档。
 流程图示例
 graph TD
-    A[开始] --> B[初始化]
-    B --> C[处理数据]
-    C --> D[输出结果]
-    D --> E[结束]
+    A[开始] --&gt; B[初始化]
+    B --&gt; C[处理数据]
+    C --&gt; D[输出结果]
+    D --&gt; E[结束]
 序列图示例
-sequenceDiagram
-    partici..." />
+sequen..." />
     <meta property="twitter:image" content="https://www.caoayu.top/images/og-image.png" />
 
     <!-- Canonical URL -->
@@ -754,24 +751,24 @@ sequenceDiagram
           <div class="post-content" id="post-content"><h1 id="mermaid-图表测试">Mermaid 图表测试</h1>
 <p>这是一个测试 Mermaid 图表功能的示例文档。</p>
 <h2 id="流程图示例">流程图示例</h2>
-<pre class="mermaid">graph TD
-    A[开始] --> B[初始化]
-    B --> C[处理数据]
-    C --> D[输出结果]
-    D --> E[结束]</pre>
+<pre class="mermaid"><code>graph TD
+    A[开始] --&gt; B[初始化]
+    B --&gt; C[处理数据]
+    C --&gt; D[输出结果]
+    D --&gt; E[结束]</code></pre>
 <h2 id="序列图示例">序列图示例</h2>
-<pre class="mermaid">sequenceDiagram
+<pre class="mermaid"><code>sequenceDiagram
     participant 用户
     participant 系统
-    用户->>系统: 登录请求
-    系统->>用户: 验证通过
-    用户->>系统: 数据请求
-    系统->>用户: 返回数据</pre>
+    用户-&gt;&gt;系统: 登录请求
+    系统-&gt;&gt;用户: 验证通过
+    用户-&gt;&gt;系统: 数据请求
+    系统-&gt;&gt;用户: 返回数据</code></pre>
 <h2 id="类图示例">类图示例</h2>
-<pre class="mermaid">classDiagram
-    Animal <|-- Duck
-    Animal <|-- Fish
-    Animal <|-- Zebra
+<pre class="mermaid"><code>classDiagram
+    Animal &lt;|-- Duck
+    Animal &lt;|-- Fish
+    Animal &lt;|-- Zebra
     Animal : +int age
     Animal : +String gender
     Animal: +isMammal()
@@ -790,25 +787,25 @@ sequenceDiagram
     class Zebra{
         +bool is_wild
         +run()
-    }</pre>
+    }</code></pre>
 <h2 id="状态图示例">状态图示例</h2>
-<pre class="mermaid">stateDiagram-v2
-    [*] --> Still
-    Still --> [*]
+<pre class="mermaid"><code>stateDiagram-v2
+    [*] --&gt; Still
+    Still --&gt; [*]
     
-    Still --> Moving
-    Moving --> Still
-    Moving --> Crash
-    Crash --> [*]</pre>
+    Still --&gt; Moving
+    Moving --&gt; Still
+    Moving --&gt; Crash
+    Crash --&gt; [*]</code></pre>
 <h2 id="饼图示例">饼图示例</h2>
-<pre class="mermaid">pie title 2025年技术趋势分布
-    "人工智能" : 42.86
-    "云计算" : 14.29
-    "大数据" : 14.29
-    "物联网" : 14.29
-    "区块链" : 14.29</pre>
+<pre class="mermaid"><code>pie title 2025年技术趋势分布
+    &quot;人工智能&quot; : 42.86
+    &quot;云计算&quot; : 14.29
+    &quot;大数据&quot; : 14.29
+    &quot;物联网&quot; : 14.29
+    &quot;区块链&quot; : 14.29</code></pre>
 <h2 id="甘特图示例">甘特图示例</h2>
-<pre class="mermaid">gantt
+<pre class="mermaid"><code>gantt
     title 项目开发计划
     dateFormat  YYYY-MM-DD
     section 设计
@@ -817,30 +814,30 @@ sequenceDiagram
     UI设计            :         des3, after des2, 5d
     section 开发
     前端开发           :2025-01-12, 10d
-    后端开发           :2025-01-15, 12d</pre>
+    后端开发           :2025-01-15, 12d</code></pre>
 <h2 id="实体关系图示例">实体关系图示例</h2>
-<pre class="mermaid">erDiagram
+<pre class="mermaid"><code>erDiagram
     CUSTOMER ||--o{ ORDER : places
     ORDER ||--|{ LINE-ITEM : contains
-    CUSTOMER }|..|{ DELIVERY-ADDRESS : uses</pre>
+    CUSTOMER }|..|{ DELIVERY-ADDRESS : uses</code></pre>
 <h2 id="spring框架核心组件uml类图">spring框架核心组件UML类图</h2>
-<pre class="mermaid">classDiagram
+<pre class="mermaid"><code>classDiagram
     direction TB
 
     %% --- 顶层结构 ---
     class JVM {
-        <<JVM Memory Model>>
+        &lt;&lt;JVM Memory Model&gt;&gt;
     }
 
     class ThreadPrivateArea {
-        <<Thread-Private Area>>
+        &lt;&lt;Thread-Private Area&gt;&gt;
         + Program Counter (PC) Register
         + JVM Stack
         + Native Method Stack
     }
 
     class ThreadSharedArea {
-        <<Thread-Shared Area>>
+        &lt;&lt;Thread-Shared Area&gt;&gt;
     }
 
     JVM *-- ThreadPrivateArea : contains
@@ -848,12 +845,12 @@ sequenceDiagram
 
     %% --- 线程共享区分解 ---
     class Heap {
-        <<Heap>>
+        &lt;&lt;Heap&gt;&gt;
         + Stores all object instances
     }
 
     class Metaspace {
-        <<Metaspace / Permanent Generation (pre-JDK8)>>
+        &lt;&lt;Metaspace / Permanent Generation (pre-JDK8)&gt;&gt;
         + Stores class metadata
         + Stores static variables
         + Runtime constant pool
@@ -864,11 +861,11 @@ sequenceDiagram
 
     %% --- 堆内存分解 ---
     class YoungGeneration {
-        <<Young Generation>>
+        &lt;&lt;Young Generation&gt;&gt;
     }
 
     class OldGeneration {
-        <<Old Generation>>
+        &lt;&lt;Old Generation&gt;&gt;
         + Stores long-lived objects
         + Stores large objects
     }
@@ -878,18 +875,18 @@ sequenceDiagram
 
     %% --- 年轻代分解 ---
     class EdenSpace {
-        <<Eden Space>>
+        &lt;&lt;Eden Space&gt;&gt;
         + Where new objects are allocated
     }
 
     class SurvivorSpace {
-        <<Survivor Space (S0 & S1)>>
+        &lt;&lt;Survivor Space (S0 &amp; S1)&gt;&gt;
         + Stores objects surviving Minor GC
     }
 
     YoungGeneration *-- EdenSpace : composed of
-    YoungGeneration *-- SurvivorSpace : composed of</pre>
-<pre class="mermaid">timeline
+    YoungGeneration *-- SurvivorSpace : composed of</code></pre>
+<pre class="mermaid"><code>timeline
     title 大模型发展史
     section 萌芽期 (2017-2018)
         Transformer架构提出 : 2017: Vaswani等提出自注意力机制
@@ -902,7 +899,7 @@ sequenceDiagram
         ChatGPT发布 : 2022: 对话能力突破
     section 生态竞争期 (2023-)
         开源模型爆发 : LLaMA/PaLM等竞品
-        多模态大模型 : GPT-4V/Gemini</pre>
+        多模态大模型 : GPT-4V/Gemini</code></pre>
 </div>
         </article>
       </div>

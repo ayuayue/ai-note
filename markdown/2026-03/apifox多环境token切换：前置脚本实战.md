@@ -1,167 +1,151 @@
-# Apifox多环境Token切换：前置脚本实战
+# Apifox 多环境 Token 切换实践：基于前置脚本的约定式方案
 
-在本地联调里，我们经常会遇到：**服务端口相同，但环境不同（test-mysql / test-oracle / dev）且 Token 也不同**。这篇文章给你一套“约定大于配置”的 Apifox 前置脚本方案，做到**少改接口、快速切换、降低401误判**。适合经常切 Nacos 环境、手动复制线上 Token 的同学。
+在本地联调场景中，服务地址通常保持不变，但运行环境（如 `test-mysql`、`test-oracle`、`dev`）和认证 Token 会频繁切换。若在每个接口中手动修改 `Authorization`，容易产生漏改、误用和调试噪音。本文给出一套可直接落地的 Apifox 前置脚本方案，用于统一管理多环境 Token。
+
+## 摘要
+
+本文通过“约定大于配置”的方式，将 Token 选择逻辑集中到项目级前置脚本：由 `token-env` 指定当前环境，脚本自动读取 `token-${env}` 并注入统一变量 `token`。该方案适用于手动复制 Token、登录链路复杂、且本地服务需频繁切换环境的团队。
 
 ## 目录
 
-- [问题背景：为什么总在重复改 Token](#问题背景为什么总在重复改-token)
-- [方案目标：一套脚本适配多环境多用户](#方案目标一套脚本适配多环境多用户)
-- [核心脚本实现（可直接使用）](#核心脚本实现可直接使用)
-- [执行流程图（Mermaid）](#执行流程图mermaid)
-- [变量约定与实战示例](#变量约定与实战示例)
-- [边界与坑位（一定要看）](#边界与坑位一定要看)
-- [进阶：多用户切换与自动回退](#进阶多用户切换与自动回退)
-- [同类工具对比思路（Apifox / Postman / Insomnia）](#同类工具对比思路apifox--postman--insomnia)
-- [总结](#总结)
-- [延伸阅读](#延伸阅读)
-- [一句话记忆](#一句话记忆)
+- [问题定义](#问题定义)
+- [设计目标](#设计目标)
+- [变量约定](#变量约定)
+- [前置脚本实现](#前置脚本实现)
+- [执行流程（文本版）](#执行流程文本版)
+- [请求头统一策略](#请求头统一策略)
+- [安全与边界处理](#安全与边界处理)
+- [扩展：多用户并行切换](#扩展多用户并行切换)
+- [对比与适用性分析](#对比与适用性分析)
+- [结论](#结论)
+- [参考资料](#参考资料)
 
-## 问题背景：为什么总在重复改 Token
+## 问题定义
 
-典型场景：
+典型联调链路如下：
 
-1. 本地服务端口固定（如 `localhost:8080`）
-2. 你会切换 Nacos 配置环境（`test-mysql`、`test-oracle` 等）
-3. 登录链路复杂，不方便每次调登录接口自动拿 Token
-4. 实际做法常是“手动从线上复制 Token”
+1. 本地服务端口固定（例如 `localhost:8080`）。
+2. 本地启动参数切换到不同配置中心环境（如 Nacos 的 `test-mysql`、`test-oracle`）。
+3. 认证 Token 通常通过线上系统手工复制，而非调用登录接口自动获取。
+4. Token 与环境强绑定，切换环境后若未同步切换 Token，会直接触发 401 或误判后端问题。
 
-结果就是：每次切环境都去改请求头，费时且容易漏改。
+该问题的本质不是“如何获取 Token”，而是“如何在请求发送前可靠选择正确 Token”。
 
-## 方案目标：一套脚本适配多环境多用户
+## 设计目标
 
-我们要达到：
+方案需满足以下目标：
 
-- **不改每个接口的 Authorization**
-- 用一个变量 `token-env` 决定当前环境
-- 自动读取 `token-${token-env}` 的值注入通用变量 `token`
-- 当 `token-env` 不存在时，**脚本直接跳过**（兼容旧流程）
+- 不在每个接口重复维护 Token 逻辑。
+- 仅通过环境变量切换当前 Token。
+- 与现有流程兼容：`token-env` 缺失时不强制注入 Token。
+- 对手工复制值中可能包含 `Bearer ` 前缀进行兼容处理。
 
-## 核心脚本实现（可直接使用）
+## 变量约定
 
-> 建议放在 Apifox 的「项目级前置脚本」，全接口复用。
+采用以下命名规则：
+
+```text
+token-env              // 当前环境标识，例如 test-mysql
+token-test-mysql       // test-mysql 对应 Token
+token-test-oracle      // test-oracle 对应 Token
+token-dev              // dev 对应 Token
+token                  // 前置脚本输出的统一变量
+```
+
+该约定的核心是：**由 `token-env` 计算目标变量名 `token-${env}`**。
+
+## 前置脚本实现
+
+建议放置于 Apifox 项目级前置脚本：
 
 ```javascript
 // 约定：
 // token-env = test-mysql => 读取 token-test-mysql
-// 若 token-env 不存在/为空：直接结束脚本（不设置token）
+// 若 token-env 不存在/为空：直接结束脚本（不设置 token）
 
 const env = (pm.environment.get("token-env") || "").trim();
 
-// 1) 没有 token-env：直接结束
+// 1) token-env 为空：兼容现有流程，直接结束
 if (!env) {
   console.log("[Auth] token-env 未设置，跳过 token 注入。");
   return;
 }
 
-// 2) 按约定拼接变量名
+// 2) 拼接目标变量名
 const tokenVarName = `token-${env}`;
 let tokenValue = (pm.environment.get(tokenVarName) || "").trim();
 
-// 3) 有 env 但没 token：提示
+// 3) 未配置 token：记录提示并结束
 if (!tokenValue) {
   console.log(`[Auth] 变量 ${tokenVarName} 为空，请先粘贴 token`);
   return;
 }
 
-// 4) 兼容手动复制时可能带 Bearer 前缀
+// 4) 兼容手工复制场景（可能包含 Bearer 前缀）
 tokenValue = tokenValue.replace(/^Bearer\s+/i, "").trim();
 
-// 5) 输出通用变量，供请求头统一引用
+// 5) 写入统一变量，供请求头引用
 pm.environment.set("token", tokenValue);
-console.log(`[Auth] 使用 ${env}`);
+console.log(`[Auth] 使用环境: ${env}`);
 ```
 
-请求头统一写法：
+## 执行流程（文本版）
+
+由于部分渲染器对 Mermaid 支持不一致，流程使用文本描述：
+
+1. 读取 `token-env`。
+2. 若为空，脚本结束，不修改任何 Token 变量。
+3. 若不为空，拼接变量名 `token-${env}`。
+4. 读取该变量值。
+5. 若为空，输出日志并结束。
+6. 若非空，移除可能存在的 `Bearer ` 前缀。
+7. 将结果写入统一变量 `token`。
+8. 请求头统一读取 `{{token}}`。
+
+## 请求头统一策略
+
+所有需鉴权接口统一配置：
 
 ```text
 Authorization: Bearer {{token}}
 ```
 
-## 执行流程图（Mermaid）
+这样可将“鉴权值来源”与“接口定义”解耦：接口本身不再关注当前环境，只依赖统一变量输出。
 
-```mermaid
-flowchart TD
-  A[读取 token-env] --> B{token-env 是否为空}
-  B -- 是 --> C[跳过注入并结束]
-  B -- 否 --> D[拼接变量名 token-${env}]
-  D --> E[读取 tokenValue]
-  E --> F{tokenValue 是否为空}
-  F -- 是 --> G[日志提示后结束]
-  F -- 否 --> H[去掉 Bearer 前缀]
-  H --> I[设置环境变量 token]
-  I --> J[请求头使用 Bearer {{token}}]
+## 安全与边界处理
+
+### 1. 避免输出敏感信息
+
+不建议打印完整 Token。日志应仅记录环境名或变量名，避免 Token 泄露到调试日志或共享截图。
+
+### 2. 空 Token 的处理策略
+
+当前实现为“宽松模式”（记录日志后返回）。若团队希望减少无效请求，可改为“严格模式”：
+
+```javascript
+throw new Error(`[Auth] 变量 ${tokenVarName} 为空`);
 ```
 
-## 变量约定与实战示例
+### 3. 前缀重复问题
 
-假设你有这些环境变量：
+若环境变量值已包含 `Bearer `，而请求头又写 `Bearer {{token}}`，会出现重复前缀。脚本中的正则清洗用于解决该问题。
 
-```text
-token-env = test-mysql
-token-test-mysql = Bearer eyJ...
-token-test-oracle = Bearer eyJ...
-token-dev = Bearer eyJ...
-```
+### 4. 命名一致性
 
-当 `token-env=test-mysql` 时，脚本会读取 `token-test-mysql`，并把结果写入 `token`。
+建议统一小写中划线风格（`token-env`、`token-test-mysql`），避免协作中出现同义变量并行。
 
-### 多用户怎么做？
+## 扩展：多用户并行切换
 
-可以继续扩展“环境 + 用户”双维度：
+若同一环境需要多个账号并行调试，可增加 `token-user`：
 
 ```text
 token-env = test-mysql
 token-user = admin
-
 token-test-mysql-admin = Bearer xxx
 token-test-mysql-qa = Bearer yyy
 ```
 
-脚本拼接改成：`token-${env}-${user}` 即可。
-
-## 边界与坑位（一定要看）
-
-### 1）不要在日志打印完整 Token
-
-你原脚本里有：
-
-```javascript
-console.log(`[Auth] 使用 ${env} - ${tokenValue}`);
-```
-
-这会把敏感信息暴露到控制台日志，建议改成只打印环境名。
-
-### 2）空 Token 时要不要中断请求？
-
-两种策略：
-
-- **宽松模式**（本文默认）：只提示并 `return`，不主动 throw
-- **严格模式**：`throw new Error(...)`，直接阻断请求，避免无意义 401
-
-团队联调推荐严格模式，个人调试可用宽松模式。
-
-### 3）Bearer 前缀重复问题
-
-有人会把变量值保存成：`Bearer xxx`，请求头又写 `Bearer {{token}}`，最终变成 `Bearer Bearer xxx`。本文脚本已做兼容，先去前缀再写入 `token`。
-
-### 4）命名统一性
-
-请统一使用一种命名风格，建议全小写：
-
-- `token-env`
-- `token-test-mysql`
-- `token-test-oracle`
-
-命名混乱会显著提高维护成本。
-
-## 进阶：多用户切换与自动回退
-
-可再加一个回退逻辑：
-
-- 优先读 `token-${env}-${user}`
-- 不存在时回退到 `token-${env}`
-
-这对“同环境多个账号轮测”特别实用。
+扩展读取策略：优先 `token-${env}-${user}`，缺失时回退 `token-${env}`。
 
 ```javascript
 const env = (pm.environment.get("token-env") || "").trim();
@@ -180,30 +164,22 @@ token = token.replace(/^Bearer\s+/i, "").trim();
 pm.environment.set("token", token);
 ```
 
-## 同类工具对比思路（Apifox / Postman / Insomnia）
+## 对比与适用性分析
 
-- **Apifox**：项目协作与接口文档一体化强，前置脚本适合做“环境路由”
-- **Postman**：生态成熟，脚本能力完整，团队协作同样可行
-- **Insomnia**：轻量简洁，适合偏个人调试
+该方案适用于以下条件：
 
-核心思想一致：**通过环境变量命名约定 + 统一请求头变量，实现低成本切换**。
+- 认证 Token 主要靠手工维护；
+- 环境切换频繁；
+- 期望在不改接口定义的前提下完成切换。
 
-## 总结
+其优势是实现成本低、迁移成本低、可逐步升级；局限是 Token 生命周期管理仍依赖人工，需要配合有效期治理和最小权限控制。
 
-这个方案的关键不是“魔法脚本”，而是三件事：
+## 结论
 
-1. **命名约定固定**：`token-env` + `token-${env}`
-2. **请求头统一引用**：`Authorization: Bearer {{token}}`
-3. **脚本只做路由**：根据当前环境挑选 Token，而不是让每个接口自己管理
+在多环境联调中，Token 管理的关键在于“路由统一”，而不是“在每个接口重复设置”。采用 `token-env + token-${env}` 的约定式前置脚本后，可将切换操作收敛到单一入口，显著降低维护成本和误操作概率。
 
-当你频繁切换 Nacos 环境、又依赖手工复制 Token 时，这套方式是最稳、最省认知负担的。
+## 参考资料
 
-## 延伸阅读
-
-- Apifox 官方文档（环境变量/前置脚本）
-- JWT 官方介绍（RFC 7519）
-- OWASP API Security Top 10（API 认证与日志安全）
-
-## 一句话记忆
-
-**把 Token 切换问题从“每个接口改一次”，变成“只改一个 `token-env` 变量”。**
+- Apifox 文档：环境变量与前置脚本
+- RFC 7519：JSON Web Token (JWT)
+- OWASP API Security Top 10

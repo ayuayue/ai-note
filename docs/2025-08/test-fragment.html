@@ -365,12 +365,12 @@
 <li>支持引用</li>
 </ul>
 <h2 id="代码示例">代码示例</h2>
-<pre><code class="language-java">public class HelloWorld {
-    public static void main(String[] args) {
-        System.out.println(&quot;Hello, World!&quot;);
-    }
-}
-</code></pre>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> HelloWorld <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Hello, World!&quot;</span><span class="op">);</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h2 id="表格示例">表格示例</h2>
 <table>
 <thead>
@@ -379,7 +379,8 @@
 <th>状态</th>
 </tr>
 </thead>
-<tbody><tr>
+<tbody>
+<tr>
 <td>标题转换</td>
 <td>✅</td>
 </tr>
@@ -395,68 +396,67 @@
 <td>表格</td>
 <td>✅</td>
 </tr>
-</tbody></table>
+</tbody>
+</table>
 <blockquote>
 <p>这是一个引用块，用于显示重要信息。</p>
 </blockquote>
 <p>更新时间: 2025年8月15日</p>
 <h2 id="mermaid-示例">mermaid 示例</h2>
-<pre class="mermaid">classDiagram
-    direction TB
+<p>```mermaid classDiagram direction TB</p>
+<pre><code>%% JVM 内存整体结构
+class JVM {
+    &lt;&lt;Java虚拟机内存模型&gt;&gt;
+}
 
-    %% JVM 内存整体结构
-    class JVM {
-        <<Java虚拟机内存模型>>
-    }
+%% 线程私有区
+class ThreadPrivateArea {
+    &lt;&lt;线程私有内存&gt;&gt;
+    +程序计数器(PC Register): 当前指令地址
+    +虚拟机栈(VM Stack): 方法调用栈帧
+    +本地方法栈(Native Stack): JNI方法调用
+}
 
-    %% 线程私有区
-    class ThreadPrivateArea {
-        <<线程私有内存>>
-        +程序计数器(PC Register): 当前指令地址
-        +虚拟机栈(VM Stack): 方法调用栈帧
-        +本地方法栈(Native Stack): JNI方法调用
-    }
+%% 线程共享区
+class ThreadSharedArea {
+    &lt;&lt;线程共享内存&gt;&gt;
+    +堆(Heap): 对象实例存储
+    +方法区(Method Area): 类元数据/静态变量
+}
 
-    %% 线程共享区
-    class ThreadSharedArea {
-        <<线程共享内存>>
-        +堆(Heap): 对象实例存储
-        +方法区(Method Area): 类元数据/静态变量
-    }
+%% 堆内存细分
+class Heap {
+    +年轻代(Young Generation)
+    +老年代(Old Generation)
+}
 
-    %% 堆内存细分
-    class Heap {
-        +年轻代(Young Generation)
-        +老年代(Old Generation)
-    }
+class YoungGeneration {
+    +Eden区: 新对象分配
+    +Survivor0(S0): MinorGC存活对象
+    +Survivor1(S1): MinorGC存活对象
+}
 
-    class YoungGeneration {
-        +Eden区: 新对象分配
-        +Survivor0(S0): MinorGC存活对象
-        +Survivor1(S1): MinorGC存活对象
-    }
+class OldGeneration {
+    +长期存活对象
+}
 
-    class OldGeneration {
-        +长期存活对象
-    }
+%% 方法区细分（JDK8+）
+class MethodArea {
+    +元空间(Metaspace): 类元数据
+    +运行时常量池: 字面量/符号引用
+}
 
-    %% 方法区细分（JDK8+）
-    class MethodArea {
-        +元空间(Metaspace): 类元数据
-        +运行时常量池: 字面量/符号引用
-    }
-
-    %% 关系定义
-    JVM --> ThreadPrivateArea : 包含
-    JVM --> ThreadSharedArea : 包含
-    ThreadSharedArea --> Heap : 主存储区
-    ThreadSharedArea --> MethodArea : 类/常量存储
-    Heap --> YoungGeneration : 新生代
-    Heap --> OldGeneration : 老年代
-    YoungGeneration --> Eden区
-    YoungGeneration --> Survivor0
-    YoungGeneration --> Survivor1
-```Test content</pre>
+%% 关系定义
+JVM --&gt; ThreadPrivateArea : 包含
+JVM --&gt; ThreadSharedArea : 包含
+ThreadSharedArea --&gt; Heap : 主存储区
+ThreadSharedArea --&gt; MethodArea : 类/常量存储
+Heap --&gt; YoungGeneration : 新生代
+Heap --&gt; OldGeneration : 老年代
+YoungGeneration --&gt; Eden区
+YoungGeneration --&gt; Survivor0
+YoungGeneration --&gt; Survivor1</code></pre>
+<p>```Test content</p>
 </div>
     </article>
   </div>

@@ -359,43 +359,51 @@
 <p>本文深入探讨了Java项目中关于<code>main</code>方法的两个核心问题：一个项目能否拥有多个<code>main</code>方法，以及这些方法如何共享依赖。文章旨在帮助Java初学者和中级开发者彻底理解程序入口的本质、JVM的执行机制以及类路径的共享原理，从而更灵活地组织项目结构、进行代码测试和实现多功能启动模式。</p>
 <h2 id="目录">目录</h2>
 <ul>
-<li><a href="#1-%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5main%E6%96%B9%E6%B3%95%E7%9A%84%E6%9C%AC%E8%B4%A8">1. 核心概念：main方法的本质</a></li>
-<li><a href="#2-jvm%E7%9A%84%E6%8A%89%E6%8B%A9%E5%A6%82%E4%BD%95%E6%8C%87%E5%AE%9A%E5%94%AF%E4%B8%80%E7%9A%84%E5%85%A5%E5%8F%A3">2. JVM的抉择：如何指定唯一的入口</a></li>
-<li><a href="#3-%E8%B5%84%E6%BA%90%E5%85%B1%E4%BA%AB%E4%BE%9D%E8%B5%96%E4%B8%8E%E5%8C%85%E7%9A%84%E5%85%B1%E7%94%A8%E6%9C%BA%E5%88%B6">3. 资源共享：依赖与包的共用机制</a></li>
-<li><a href="#4-%E8%B7%A8%E8%AF%AD%E8%A8%80%E8%A7%86%E8%A7%92%E5%85%B6%E4%BB%96%E8%AF%AD%E8%A8%80%E5%A6%82%E4%BD%95%E5%A4%84%E7%90%86%E7%A8%8B%E5%BA%8F%E5%85%A5%E5%8F%A3">4. 跨语言视角：其他语言如何处理程序入口</a></li>
-<li><a href="#5-%E5%AE%9E%E6%88%98%E6%A1%88%E4%BE%8Bspring-boot%E4%B8%8E%E5%A4%9A%E5%85%A5%E5%8F%A3%E6%A8%A1%E5%BC%8F">5. 实战案例：Spring Boot与多入口模式</a></li>
-<li><a href="#6-%E6%80%BB%E7%BB%93">6. 总结</a></li>
-<li><a href="#7-%E5%BB%B6%E4%BC%B8%E9%98%85%E8%AF%BB">7. 延伸阅读</a></li>
-<li><a href="#8-%E4%B8%80%E5%8F%A5%E8%AF%9D%E8%AE%B0%E5%BF%86">8. 一句话记忆</a></li>
+<li><a href="#1-核心概念main方法的本质">1.
+核心概念：main方法的本质</a></li>
+<li><a href="#2-jvm的抉择如何指定唯一的入口">2.
+JVM的抉择：如何指定唯一的入口</a></li>
+<li><a href="#3-资源共享依赖与包的共用机制">3.
+资源共享：依赖与包的共用机制</a></li>
+<li><a href="#4-跨语言视角其他语言如何处理程序入口">4.
+跨语言视角：其他语言如何处理程序入口</a></li>
+<li><a href="#5-实战案例spring-boot与多入口模式">5. 实战案例：Spring
+Boot与多入口模式</a></li>
+<li><a href="#6-总结">6. 总结</a></li>
+<li><a href="#7-延伸阅读">7. 延伸阅读</a></li>
+<li><a href="#8-一句话记忆">8. 一句话记忆</a></li>
 </ul>
-<hr>
-<h3 id="1-核心概念：main方法的本质">1. 核心概念：main方法的本质</h3>
+<hr />
+<h3 id="核心概念main方法的本质">1. 核心概念：main方法的本质</h3>
 <h4 id="概念解释">概念解释</h4>
-<p>在Java中，<code>public static void main(String[] args)</code> 并非一个全局的、项目唯一的函数，而是一个<strong>特殊的静态方法</strong>，它属于某个特定的类。JVM（Java虚拟机）在启动一个应用程序时，会寻找一个符合此签名的方法作为程序的执行入口。这个设计源于Java的纯面向对象思想：一切皆对象，代码必须存在于类中。这与C/C++等语言拥有一个全局的、独立的<code>main</code>函数形成了鲜明对比。因此，<strong>“一个项目有多少个main方法”</strong> 这个问题，实际上等同于 <strong>“这个项目里有多少个类定义了<code>main</code>方法”</strong>。只要在不同的类中，你就可以定义任意数量的<code>main</code>方法。</p>
+<p>在Java中，<code>public static void main(String[] args)</code>
+并非一个全局的、项目唯一的函数，而是一个<strong>特殊的静态方法</strong>，它属于某个特定的类。JVM（Java虚拟机）在启动一个应用程序时，会寻找一个符合此签名的方法作为程序的执行入口。这个设计源于Java的纯面向对象思想：一切皆对象，代码必须存在于类中。这与C/C++等语言拥有一个全局的、独立的<code>main</code>函数形成了鲜明对比。因此，<strong>“一个项目有多少个main方法”</strong>
+这个问题，实际上等同于
+<strong>“这个项目里有多少个类定义了<code>main</code>方法”</strong>。只要在不同的类中，你就可以定义任意数量的<code>main</code>方法。</p>
 <h4 id="示例代码">示例代码</h4>
-<pre><code class="language-java">// File: src/com/example/MainApp.java
-package com.example;
-
-public class MainApp {
-    public static void main(String[] args) {
-        System.out.println(&quot;MainApp.main() 启动，这是应用程序的主入口。&quot;);
-    }
-}
-
-// File: src/com/example/UtilityClass.java
-package com.example;
-
-public class UtilityClass {
-    public static void main(String[] args) {
-        System.out.println(&quot;UtilityClass.main() 启动，用于独立测试工具类。&quot;);
-        // 在这里可以调用 UtilityClass 的其他静态方法进行测试
-    }
-    
-    public static String format(String input) {
-        return &quot;[&quot; + input + &quot;]&quot;;
-    }
-}
-</code></pre>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// File: src/com/example/MainApp.java</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span><span class="im"> com</span><span class="op">.</span><span class="im">example</span><span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> MainApp <span class="op">{</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;MainApp.main() 启动，这是应用程序的主入口。&quot;</span><span class="op">);</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co">// File: src/com/example/UtilityClass.java</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span><span class="im"> com</span><span class="op">.</span><span class="im">example</span><span class="op">;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> UtilityClass <span class="op">{</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;UtilityClass.main() 启动，用于独立测试工具类。&quot;</span><span class="op">);</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 在这里可以调用 UtilityClass 的其他静态方法进行测试</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="bu">String</span> <span class="fu">format</span><span class="op">(</span><span class="bu">String</span> input<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">&quot;[&quot;</span> <span class="op">+</span> input <span class="op">+</span> <span class="st">&quot;]&quot;</span><span class="op">;</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h4 id="mermaid-图">Mermaid 图</h4>
 <p>下面的类图清晰地展示了<code>main</code>方法与类的归属关系：</p>
 <pre class="mermaid">classDiagram
@@ -426,106 +434,109 @@ public class UtilityClass {
 <li><strong>功能演示</strong>：在库或框架项目中，创建多个<code>Example</code>类，每个类都有自己的<code>main</code>方法，用于向用户展示不同功能的使用方法。</li>
 <li><strong>多模式启动</strong>：一个项目可能需要以不同角色启动，如Web服务器、批处理任务、命令行工具等，可以将这些入口放在不同的<code>main</code>方法中。</li>
 </ul>
-<hr>
-<h3 id="2-jvm的抉择：如何指定唯一的入口">2. JVM的抉择：如何指定唯一的入口</h3>
+<hr />
+<h3 id="jvm的抉择如何指定唯一的入口">2.
+JVM的抉择：如何指定唯一的入口</h3>
 <h4 id="概念解释-1">概念解释</h4>
 <p>虽然一个项目可以包含多个<code>main</code>方法，但JVM在单次执行中，<strong>必须且只能选择一个</strong>作为程序的起点。JVM本身不会智能猜测，它需要一个明确的指令。这个指令可以通过两种方式传递：</p>
-<ol>
+<ol type="1">
 <li><strong>命令行</strong>：使用<code>java</code>命令，并在其后跟上包含目标<code>main</code>方法的类的<strong>完全限定名</strong>。</li>
-<li><strong>IDE（集成开发环境）</strong>：现代IDE（如IntelliJ IDEA, Eclipse）提供了图形化的“运行配置”管理。当你右键点击一个类并选择“Run”时，IDE会自动创建一个配置，指明主类。你可以在IDE的界面上轻松切换和管理这些配置。</li>
+<li><strong>IDE（集成开发环境）</strong>：现代IDE（如IntelliJ IDEA,
+Eclipse）提供了图形化的“运行配置”管理。当你右键点击一个类并选择“Run”时，IDE会自动创建一个配置，指明主类。你可以在IDE的界面上轻松切换和管理这些配置。</li>
 </ol>
 <h4 id="示例代码-1">示例代码</h4>
 <p>假设上述代码已编译，<code>.class</code>文件位于<code>out</code>目录下。</p>
-<pre><code class="language-bash"># 运行 MainApp 的 main 方法
-java -cp out com.example.MainApp
-# 输出: MainApp.main() 启动，这是应用程序的主入口。
-
-# 运行 UtilityClass 的 main 方法
-java -cp out com.example.UtilityClass
-# 输出: UtilityClass.main() 启动，用于独立测试工具类。
-</code></pre>
-<p><code>-cp out</code> 参数指定了类路径，告诉JVM去哪里寻找<code>com.example</code>包下的类。</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 运行 MainApp 的 main 方法</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">java</span> <span class="at">-cp</span> out com.example.MainApp</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 输出: MainApp.main() 启动，这是应用程序的主入口。</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># 运行 UtilityClass 的 main 方法</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="ex">java</span> <span class="at">-cp</span> out com.example.UtilityClass</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 输出: UtilityClass.main() 启动，用于独立测试工具类。</span></span></code></pre></div>
+<p><code>-cp out</code>
+参数指定了类路径，告诉JVM去哪里寻找<code>com.example</code>包下的类。</p>
 <h4 id="mermaid-图-1">Mermaid 图</h4>
 <p>下面的流程图描述了从开发者意图到JVM执行的选择过程：</p>
 <pre class="mermaid">flowchart TD
-    A[开发者] --> B{选择运行哪个入口?};
-    B -- "Web服务器" --> C[配置运行主类为 com.example.MainApp];
-    B -- "工具测试" --> D[配置运行主类为 com.example.UtilityClass];
+    A[开发者] --&gt; B{选择运行哪个入口?};
+    B -- &quot;Web服务器&quot; --&gt; C[配置运行主类为 com.example.MainApp];
+    B -- &quot;工具测试&quot; --&gt; D[配置运行主类为 com.example.UtilityClass];
     
-    C --> E[IDE/命令行启动JVM];
-    D --> E;
+    C --&gt; E[IDE/命令行启动JVM];
+    D --&gt; E;
     
-    E --> F[JVM加载指定类并执行其main方法];
-    F --> G[程序运行];</pre>
+    E --&gt; F[JVM加载指定类并执行其main方法];
+    F --&gt; G[程序运行];</pre>
 <h4 id="问题分析-1">问题分析</h4>
 <ul>
-<li><strong>常见错误</strong>：<code>Error: Could not find or load main class</code>。这是最经典的错误之一，原因通常是：<ul>
+<li><strong>常见错误</strong>：<code>Error: Could not find or load main class</code>。这是最经典的错误之一，原因通常是：
+<ul>
 <li>类名拼写错误。</li>
 <li>类路径配置错误，JVM找不到对应的<code>.class</code>文件。</li>
 <li>包名与目录结构不匹配。</li>
-</ul>
-</li>
+</ul></li>
 <li><strong>边界情况</strong>：如果一个类没有<code>public</code>修饰符，但包含<code>main</code>方法，它仍然可以被JVM执行（只要类不是私有的），但这违反了常规约定，不推荐使用。</li>
 </ul>
 <h4 id="应用场景-1">应用场景</h4>
 <p>在持续集成/持续部署（CI/CD）流水线中，可以通过不同的脚本或命令来调用同一个项目的不同<code>main</code>方法，以实现自动化测试、数据迁移、服务启动等不同任务。</p>
-<hr>
-<h3 id="3-资源共享：依赖与包的共用机制">3. 资源共享：依赖与包的共用机制</h3>
+<hr />
+<h3 id="资源共享依赖与包的共用机制">3. 资源共享：依赖与包的共用机制</h3>
 <h4 id="概念解释-2">概念解释</h4>
-<p>这是第二个核心问题的答案：<strong>是的，所有<code>main</code>方法都共享项目中的所有包和依赖</strong>。其背后的原理是<strong>类路径</strong>。当JVM启动时，它会根据项目配置（如Maven的<code>pom.xml</code>或Gradle的<code>build.gradle</code>）构建一个统一的类路径。这个类路径包含了：</p>
-<ol>
-<li>项目自身所有源代码编译后的<code>.class</code>文件。</li>
-<li>项目所依赖的所有第三方库（JAR包）。</li>
-</ol>
+<p>这是第二个核心问题的答案：<strong>是的，所有<code>main</code>方法都共享项目中的所有包和依赖</strong>。其背后的原理是<strong>类路径</strong>。当JVM启动时，它会根据项目配置（如Maven的<code>pom.xml</code>或Gradle的<code>build.gradle</code>）构建一个统一的类路径。这个类路径包含了：
+1. 项目自身所有源代码编译后的<code>.class</code>文件。 2.
+项目所依赖的所有第三方库（JAR包）。</p>
 <p>这个类路径是<strong>JVM实例级别的</strong>，一旦JVM启动，其中运行的任何代码（无论是哪个<code>main</code>方法触发的）都可以访问类路径上的任何资源。因此，切换不同的<code>main</code>方法入口，并不会改变底层的依赖环境。</p>
 <h4 id="示例代码-2">示例代码</h4>
 <p>我们使用Maven管理项目，并添加<code>Jackson</code>库来处理JSON。</p>
 <p><strong><code>pom.xml</code> (部分)</strong></p>
-<pre><code class="language-xml">&lt;dependencies&gt;
-    &lt;dependency&gt;
-        &lt;groupId&gt;com.fasterxml.jackson.core&lt;/groupId&gt;
-        &lt;artifactId&gt;jackson-databind&lt;/artifactId&gt;
-        &lt;version&gt;2.15.2&lt;/version&gt;
-    &lt;/dependency&gt;
-&lt;/dependencies&gt;
-</code></pre>
-<p><strong><code>JsonProcessor.java</code> (一个可以被共享的工具类)</strong></p>
-<pre><code class="language-java">package com.example;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Map;
-
-public class JsonProcessor {
-    private static final ObjectMapper mapper = new ObjectMapper();
-
-    @SuppressWarnings(&quot;unchecked&quot;)
-    public static Map&lt;String, Object&gt; parseToMap(String json) throws Exception {
-        return mapper.readValue(json, Map.class);
-    }
-}
-</code></pre>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">dependencies</span>&gt;</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">dependency</span>&gt;</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">groupId</span>&gt;com.fasterxml.jackson.core&lt;/<span class="kw">groupId</span>&gt;</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">artifactId</span>&gt;jackson-databind&lt;/<span class="kw">artifactId</span>&gt;</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">version</span>&gt;2.15.2&lt;/<span class="kw">version</span>&gt;</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">dependency</span>&gt;</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">dependencies</span>&gt;</span></code></pre></div>
+<p><strong><code>JsonProcessor.java</code>
+(一个可以被共享的工具类)</strong></p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span><span class="im"> com</span><span class="op">.</span><span class="im">example</span><span class="op">;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">com</span><span class="op">.</span><span class="im">fasterxml</span><span class="op">.</span><span class="im">jackson</span><span class="op">.</span><span class="im">databind</span><span class="op">.</span><span class="im">ObjectMapper</span><span class="op">;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">java</span><span class="op">.</span><span class="im">util</span><span class="op">.</span><span class="im">Map</span><span class="op">;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> JsonProcessor <span class="op">{</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">static</span> <span class="dt">final</span> ObjectMapper mapper <span class="op">=</span> <span class="kw">new</span> <span class="fu">ObjectMapper</span><span class="op">();</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">@SuppressWarnings</span><span class="op">(</span><span class="st">&quot;unchecked&quot;</span><span class="op">)</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="bu">Map</span><span class="op">&lt;</span><span class="bu">String</span><span class="op">,</span> <span class="bu">Object</span><span class="op">&gt;</span> <span class="fu">parseToMap</span><span class="op">(</span><span class="bu">String</span> json<span class="op">)</span> <span class="kw">throws</span> <span class="bu">Exception</span> <span class="op">{</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> mapper<span class="op">.</span><span class="fu">readValue</span><span class="op">(</span>json<span class="op">,</span> <span class="bu">Map</span><span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p><strong><code>MainApp.java</code> (使用共享依赖)</strong></p>
-<pre><code class="language-java">package com.example;
-
-public class MainApp {
-    public static void main(String[] args) throws Exception {
-        System.out.println(&quot;MainApp: 使用共享的JsonProcessor。&quot;);
-        String json = &quot;{\&quot;user\&quot;:\&quot;admin\&quot;, \&quot;status\&quot;:\&quot;active\&quot;}&quot;;
-        System.out.println(JsonProcessor.parseToMap(json));
-    }
-}
-</code></pre>
-<p><strong><code>UtilityClass.java</code> (同样使用共享依赖)</strong></p>
-<pre><code class="language-java">package com.example;
-
-public class UtilityClass {
-    public static void main(String[] args) throws Exception {
-        System.out.println(&quot;UtilityClass: 同样使用共享的JsonProcessor。&quot;);
-        String json = &quot;{\&quot;task\&quot;:\&quot;cleanup\&quot;, \&quot;id\&quot;:123}&quot;;
-        System.out.println(JsonProcessor.parseToMap(json));
-    }
-}
-</code></pre>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span><span class="im"> com</span><span class="op">.</span><span class="im">example</span><span class="op">;</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> MainApp <span class="op">{</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="kw">throws</span> <span class="bu">Exception</span> <span class="op">{</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;MainApp: 使用共享的JsonProcessor。&quot;</span><span class="op">);</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">String</span> json <span class="op">=</span> <span class="st">&quot;{</span><span class="sc">\&quot;</span><span class="st">user</span><span class="sc">\&quot;</span><span class="st">:</span><span class="sc">\&quot;</span><span class="st">admin</span><span class="sc">\&quot;</span><span class="st">, </span><span class="sc">\&quot;</span><span class="st">status</span><span class="sc">\&quot;</span><span class="st">:</span><span class="sc">\&quot;</span><span class="st">active</span><span class="sc">\&quot;</span><span class="st">}&quot;</span><span class="op">;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span>JsonProcessor<span class="op">.</span><span class="fu">parseToMap</span><span class="op">(</span>json<span class="op">));</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong><code>UtilityClass.java</code>
+(同样使用共享依赖)</strong></p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span><span class="im"> com</span><span class="op">.</span><span class="im">example</span><span class="op">;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> UtilityClass <span class="op">{</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="kw">throws</span> <span class="bu">Exception</span> <span class="op">{</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;UtilityClass: 同样使用共享的JsonProcessor。&quot;</span><span class="op">);</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">String</span> json <span class="op">=</span> <span class="st">&quot;{</span><span class="sc">\&quot;</span><span class="st">task</span><span class="sc">\&quot;</span><span class="st">:</span><span class="sc">\&quot;</span><span class="st">cleanup</span><span class="sc">\&quot;</span><span class="st">, </span><span class="sc">\&quot;</span><span class="st">id</span><span class="sc">\&quot;</span><span class="st">:123}&quot;</span><span class="op">;</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span>JsonProcessor<span class="op">.</span><span class="fu">parseToMap</span><span class="op">(</span>json<span class="op">));</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h4 id="mermaid-图-2">Mermaid 图</h4>
 <p>下图展示了共享类路径的结构（已修复）：</p>
 <pre class="mermaid">graph TD
@@ -535,7 +546,7 @@ public class UtilityClass {
 
     subgraph 项目资源
         PO[项目编译输出 .class文件]
-        JAR["外部依赖 JAR包 (e.g., jackson-databind.jar)"]
+        JAR[&quot;外部依赖 JAR包 (e.g., jackson-databind.jar)&quot;]
     end
 
     subgraph Main方法
@@ -543,11 +554,11 @@ public class UtilityClass {
         M2[UtilityClass.main]
     end
 
-    CP --> PO
-    CP --> JAR
+    CP --&gt; PO
+    CP --&gt; JAR
     
-    M1 --> CP
-    M2 --> CP
+    M1 --&gt; CP
+    M2 --&gt; CP
 
     style M1 fill:#cde4ff
     style M2 fill:#cde4ff
@@ -559,140 +570,153 @@ public class UtilityClass {
 </ul>
 <h4 id="应用场景-2">应用场景</h4>
 <p>一个典型的应用是：一个<code>main</code>方法启动一个轻量级的批处理作业，另一个<code>main</code>方法启动一个重量级的Web服务器。两者可以共享数据访问层（DAO）、业务逻辑层和所有工具类，极大地提高了代码复用率。</p>
-<hr>
-<h3 id="4-跨语言视角：其他语言如何处理程序入口">4. 跨语言视角：其他语言如何处理程序入口</h3>
+<hr />
+<h3 id="跨语言视角其他语言如何处理程序入口">4.
+跨语言视角：其他语言如何处理程序入口</h3>
 <h4 id="概念解释-3">概念解释</h4>
 <p>不同编程语言对程序入口的设计反映了其设计哲学。</p>
 <ul>
-<li><strong>C/C++<strong>：拥有一个</strong>全局的、唯一的<code>main</code>函数</strong>。链接器在生成可执行文件时，会将其设置为程序的起点。这种方式简单直接，但缺乏Java的灵活性。</li>
+<li><strong>C/C++</strong>：拥有一个<strong>全局的、唯一的<code>main</code>函数</strong>。链接器在生成可执行文件时，会将其设置为程序的起点。这种方式简单直接，但缺乏Java的灵活性。</li>
 <li><strong>Go</strong>：与Java类似，但与包系统强绑定。一个可执行程序必须有一个<code>main</code>包，且该包中必须有一个<code>main</code>函数。你可以有多个包含<code>main</code>函数的包，但一次只能构建并运行其中一个。<code>go run path/to/main/package</code>。</li>
-<li><strong>Python</strong>：没有强制性的<code>main</code>函数。执行一个<code>.py</code>脚本时，代码从上到下顺序执行。<code>if __name__ == &quot;__main__&quot;:</code>是一个广为接受的<strong>编程惯用法</strong>，它使得一个文件既可以作为脚本被直接执行，也可以作为模块被其他文件导入。这是一种基于约定的灵活设计。</li>
+<li><strong>Python</strong>：没有强制性的<code>main</code>函数。执行一个<code>.py</code>脚本时，代码从上到下顺序执行。<code>if __name__ == "__main__":</code>是一个广为接受的<strong>编程惯用法</strong>，它使得一个文件既可以作为脚本被直接执行，也可以作为模块被其他文件导入。这是一种基于约定的灵活设计。</li>
 </ul>
 <h4 id="示例代码-3">示例代码</h4>
 <p><strong>C++</strong></p>
-<pre><code class="language-cpp">#include &lt;iostream&gt;
-
-int main() {
-    std::cout &lt;&lt; &quot;Hello, World! (唯一的入口)&quot; &lt;&lt; std::endl;
-    return 0;
-}
-</code></pre>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;iostream&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>cout <span class="op">&lt;&lt;</span> <span class="st">&quot;Hello, World! (唯一的入口)&quot;</span> <span class="op">&lt;&lt;</span> <span class="bu">std::</span>endl<span class="op">;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p><strong>Go</strong></p>
-<pre><code class="language-go">// file: main.go
-package main
-
-import &quot;fmt&quot;
-
-func main() {
-    fmt.Println(&quot;Hello, Go! (main包中的main函数)&quot;)
-}
-</code></pre>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode go"><code class="sourceCode go"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">// file: main.go</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span> main</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="st">&quot;fmt&quot;</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="kw">func</span> main<span class="op">()</span> <span class="op">{</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    fmt<span class="op">.</span>Println<span class="op">(</span><span class="st">&quot;Hello, Go! (main包中的main函数)&quot;</span><span class="op">)</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p><strong>Python</strong></p>
-<pre><code class="language-python"># file: my_script.py
-def some_function():
-    print(&quot;This is a function.&quot;)
-
-if __name__ == &quot;__main__&quot;:
-    print(&quot;Script is run directly.&quot;)
-    some_function()
-else:
-    print(&quot;Script is imported as a module.&quot;)
-</code></pre>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># file: my_script.py</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> some_function():</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">&quot;This is a function.&quot;</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&quot;__main__&quot;</span>:</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">&quot;Script is run directly.&quot;</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    some_function()</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">&quot;Script is imported as a module.&quot;</span>)</span></code></pre></div>
 <h4 id="对比分析">对比分析</h4>
 <table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
 <thead>
 <tr>
-<th align="left">语言</th>
-<th align="left">入口机制</th>
-<th align="left">优点</th>
-<th align="left">缺点</th>
+<th style="text-align: left;">语言</th>
+<th style="text-align: left;">入口机制</th>
+<th style="text-align: left;">优点</th>
+<th style="text-align: left;">缺点</th>
 </tr>
 </thead>
-<tbody><tr>
-<td align="left"><strong>Java</strong></td>
-<td align="left">类中的静态方法</td>
-<td align="left">面向对象，高度灵活，支持多入口</td>
-<td align="left">对于简单脚本略显繁琐</td>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Java</strong></td>
+<td style="text-align: left;">类中的静态方法</td>
+<td style="text-align: left;">面向对象，高度灵活，支持多入口</td>
+<td style="text-align: left;">对于简单脚本略显繁琐</td>
 </tr>
 <tr>
-<td align="left"><strong>C/C++</strong></td>
-<td align="left">全局函数</td>
-<td align="left">简单，性能高</td>
-<td align="left">不够灵活，难以在一个项目中组织多个可执行程序</td>
+<td style="text-align: left;"><strong>C/C++</strong></td>
+<td style="text-align: left;">全局函数</td>
+<td style="text-align: left;">简单，性能高</td>
+<td
+style="text-align: left;">不够灵活，难以在一个项目中组织多个可执行程序</td>
 </tr>
 <tr>
-<td align="left"><strong>Go</strong></td>
-<td align="left"><code>main</code>包中的函数</td>
-<td align="left">与模块化结合良好，编译部署简单</td>
-<td align="left">依赖包结构，不如Java类级别灵活</td>
+<td style="text-align: left;"><strong>Go</strong></td>
+<td style="text-align: left;"><code>main</code>包中的函数</td>
+<td style="text-align: left;">与模块化结合良好，编译部署简单</td>
+<td style="text-align: left;">依赖包结构，不如Java类级别灵活</td>
 </tr>
 <tr>
-<td align="left"><strong>Python</strong></td>
-<td align="left">脚本约定</td>
-<td align="left">极其灵活，代码复用性强</td>
-<td align="left">依赖约定，缺乏强制性，可能导致结构混乱</td>
+<td style="text-align: left;"><strong>Python</strong></td>
+<td style="text-align: left;">脚本约定</td>
+<td style="text-align: left;">极其灵活，代码复用性强</td>
+<td
+style="text-align: left;">依赖约定，缺乏强制性，可能导致结构混乱</td>
 </tr>
-</tbody></table>
-<hr>
-<h3 id="5-实战案例：spring-boot与多入口模式">5. 实战案例：Spring Boot与多入口模式</h3>
+</tbody>
+</table>
+<hr />
+<h3 id="实战案例spring-boot与多入口模式">5. 实战案例：Spring
+Boot与多入口模式</h3>
 <h4 id="概念解释-4">概念解释</h4>
-<p>Spring Boot极大地简化了Java应用的开发，其标准入口是一个带有<code>@SpringBootApplication</code>注解的类。但在实际项目中，我们经常需要一些不启动Web服务器、不加载完整Spring上下文的轻量级任务，例如数据迁移、报告生成等。这时，创建第二个<code>main</code>方法入口就非常有价值。</p>
+<p>Spring
+Boot极大地简化了Java应用的开发，其标准入口是一个带有<code>@SpringBootApplication</code>注解的类。但在实际项目中，我们经常需要一些不启动Web服务器、不加载完整Spring上下文的轻量级任务，例如数据迁移、报告生成等。这时，创建第二个<code>main</code>方法入口就非常有价值。</p>
 <h4 id="示例代码-4">示例代码</h4>
 <p><strong>标准Web应用入口</strong></p>
-<pre><code class="language-java">// File: src/main/java/com/example/demo/DemoApplication.java
-package com.example.demo;
-
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-@SpringBootApplication
-public class DemoApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(DemoApplication.class, args);
-        System.out.println(&quot;Web server started!&quot;);
-    }
-}
-</code></pre>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">// File: src/main/java/com/example/demo/DemoApplication.java</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span><span class="im"> com</span><span class="op">.</span><span class="im">example</span><span class="op">.</span><span class="im">demo</span><span class="op">;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">boot</span><span class="op">.</span><span class="im">SpringApplication</span><span class="op">;</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">boot</span><span class="op">.</span><span class="im">autoconfigure</span><span class="op">.</span><span class="im">SpringBootApplication</span><span class="op">;</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="at">@SpringBootApplication</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> DemoApplication <span class="op">{</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>        SpringApplication<span class="op">.</span><span class="fu">run</span><span class="op">(</span>DemoApplication<span class="op">.</span><span class="fu">class</span><span class="op">,</span> args<span class="op">);</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Web server started!&quot;</span><span class="op">);</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p><strong>独立的数据迁移工具入口</strong></p>
-<pre><code class="language-java">// File: src/main/java/com/example/demo/DataMigrationTool.java
-package com.example.demo;
-
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.stereotype.Component;
-
-@Component
-public class DataMigrationTool {
-
-    // 假设我们有一个需要迁移的服务
-    private final UserService userService;
-
-    public DataMigrationTool(UserService userService) {
-        this.userService = userService;
-    }
-
-    public void run() {
-        System.out.println(&quot;Starting data migration...&quot;);
-        // 执行迁移逻辑，例如从旧系统同步数据
-        userService.migrateUsers();
-        System.out.println(&quot;Data migration completed.&quot;);
-    }
-
-    // 这是一个独立的main方法入口
-    public static void main(String[] args) {
-        // 使用SpringApplicationBuilder来创建一个非Web环境的上下文
-        ConfigurableApplicationContext context = new SpringApplicationBuilder(DataMigrationTool.class)
-                .web(org.springframework.boot.WebApplicationType.NONE) // 关键：不启动Web服务器
-                .run(args);
-
-        // 从上下文中获取Bean并执行任务
-        context.getBean(DataMigrationTool.class).run();
-        
-        // 关闭上下文，释放资源
-        context.close();
-    }
-}
-</code></pre>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">// File: src/main/java/com/example/demo/DataMigrationTool.java</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span><span class="im"> com</span><span class="op">.</span><span class="im">example</span><span class="op">.</span><span class="im">demo</span><span class="op">;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">boot</span><span class="op">.</span><span class="im">builder</span><span class="op">.</span><span class="im">SpringApplicationBuilder</span><span class="op">;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">context</span><span class="op">.</span><span class="im">ConfigurableApplicationContext</span><span class="op">;</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">org</span><span class="op">.</span><span class="im">springframework</span><span class="op">.</span><span class="im">stereotype</span><span class="op">.</span><span class="im">Component</span><span class="op">;</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="at">@Component</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> DataMigrationTool <span class="op">{</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 假设我们有一个需要迁移的服务</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> UserService userService<span class="op">;</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="fu">DataMigrationTool</span><span class="op">(</span>UserService userService<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="fu">userService</span> <span class="op">=</span> userService<span class="op">;</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">run</span><span class="op">()</span> <span class="op">{</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Starting data migration...&quot;</span><span class="op">);</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 执行迁移逻辑，例如从旧系统同步数据</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>        userService<span class="op">.</span><span class="fu">migrateUsers</span><span class="op">();</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;Data migration completed.&quot;</span><span class="op">);</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 这是一个独立的main方法入口</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 使用SpringApplicationBuilder来创建一个非Web环境的上下文</span></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>        ConfigurableApplicationContext context <span class="op">=</span> <span class="kw">new</span> <span class="fu">SpringApplicationBuilder</span><span class="op">(</span>DataMigrationTool<span class="op">.</span><span class="fu">class</span><span class="op">)</span></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">web</span><span class="op">(</span>org<span class="op">.</span><span class="fu">springframework</span><span class="op">.</span><span class="fu">boot</span><span class="op">.</span><span class="fu">WebApplicationType</span><span class="op">.</span><span class="fu">NONE</span><span class="op">)</span> <span class="co">// 关键：不启动Web服务器</span></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">run</span><span class="op">(</span>args<span class="op">);</span></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 从上下文中获取Bean并执行任务</span></span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>        context<span class="op">.</span><span class="fu">getBean</span><span class="op">(</span>DataMigrationTool<span class="op">.</span><span class="fu">class</span><span class="op">).</span><span class="fu">run</span><span class="op">();</span></span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 关闭上下文，释放资源</span></span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>        context<span class="op">.</span><span class="fu">close</span><span class="op">();</span></span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h4 id="mermaid-图-3">Mermaid 图</h4>
 <p>下面的时序图展示了<code>DataMigrationTool</code>的启动流程：</p>
 <pre class="mermaid">sequenceDiagram
@@ -702,54 +726,62 @@ public class DataMigrationTool {
     participant CTX as Spring Context
     participant DMT as DataMigrationTool Bean
 
-    Dev->>JVM: 执行 java com.example.demo.DataMigrationTool
-    JVM->>SAB: 调用 main 方法
-    SAB->>CTX: 创建非Web应用上下文
-    CTX->>CTX: 扫描Bean, 创建DataMigrationTool实例
-    CTX->>DMT: 注入UserService等依赖
-    SAB->>DMT: 获取Bean并调用 run()
-    DMT->>DMT: 执行迁移逻辑
-    DMT-->>SAB: 任务完成
-    SAB->>CTX: 关闭上下文
-    JVM-->>Dev: 程序结束</pre>
+    Dev-&gt;&gt;JVM: 执行 java com.example.demo.DataMigrationTool
+    JVM-&gt;&gt;SAB: 调用 main 方法
+    SAB-&gt;&gt;CTX: 创建非Web应用上下文
+    CTX-&gt;&gt;CTX: 扫描Bean, 创建DataMigrationTool实例
+    CTX-&gt;&gt;DMT: 注入UserService等依赖
+    SAB-&gt;&gt;DMT: 获取Bean并调用 run()
+    DMT-&gt;&gt;DMT: 执行迁移逻辑
+    DMT--&gt;&gt;SAB: 任务完成
+    SAB-&gt;&gt;CTX: 关闭上下文
+    JVM--&gt;&gt;Dev: 程序结束</pre>
 <h4 id="应用场景分析">应用场景分析</h4>
-<p>这种模式在企业级开发中非常实用。它允许我们：</p>
-<ul>
-<li><strong>复用基础设施</strong>：数据迁移工具可以直接使用<code>UserService</code>、<code>Repository</code>等所有由Spring管理的Bean，而无需重新编写数据库连接、事务管理等代码。</li>
-<li><strong>提高效率</strong>：由于<code>WebApplicationType.NONE</code>，Spring Boot不会启动内嵌的Tomcat服务器，也不会加载Web相关的配置，启动速度更快，资源消耗更少。</li>
-<li><strong>职责分离</strong>：将一次性任务与长期运行的服务分离，使项目结构更清晰。</li>
-</ul>
-<hr>
-<h3 id="6-总结">6. 总结</h3>
+<p>这种模式在企业级开发中非常实用。它允许我们： *
+<strong>复用基础设施</strong>：数据迁移工具可以直接使用<code>UserService</code>、<code>Repository</code>等所有由Spring管理的Bean，而无需重新编写数据库连接、事务管理等代码。
+*
+<strong>提高效率</strong>：由于<code>WebApplicationType.NONE</code>，Spring
+Boot不会启动内嵌的Tomcat服务器，也不会加载Web相关的配置，启动速度更快，资源消耗更少。
+*
+<strong>职责分离</strong>：将一次性任务与长期运行的服务分离，使项目结构更清晰。</p>
+<hr />
+<h3 id="总结">6. 总结</h3>
 <ul>
 <li><strong>数量上</strong>：一个Java项目可以有<strong>任意多个</strong><code>main</code>方法，因为<code>main</code>方法是类级别的，而非项目级别。</li>
 <li><strong>执行上</strong>：JVM每次运行时，必须通过命令行或IDE配置<strong>指定一个</strong><code>main</code>方法作为唯一入口。</li>
 <li><strong>资源上</strong>：所有<code>main</code>方法共享<strong>同一个类路径</strong>，因此可以无差别地访问项目中的所有类和外部依赖。</li>
 <li><strong>价值上</strong>：多<code>main</code>方法模式为代码测试、功能演示、多模式启动（如Web服务、批处理、CLI工具）提供了极大的灵活性和便利性。</li>
-<li><strong>实践中</strong>：在Spring Boot等框架中，可以通过手动创建<code>ApplicationContext</code>的方式，构建一个轻量级的独立入口，以复用框架能力同时避免不必要的开销。</li>
+<li><strong>实践中</strong>：在Spring
+Boot等框架中，可以通过手动创建<code>ApplicationContext</code>的方式，构建一个轻量级的独立入口，以复用框架能力同时避免不必要的开销。</li>
 </ul>
-<hr>
-<h3 id="7-延伸阅读">7. 延伸阅读</h3>
+<hr />
+<h3 id="延伸阅读">7. 延伸阅读</h3>
 <ul>
-<li><strong>官方文档</strong>：<ul>
-<li><a href="https://docs.oracle.com/javase/tutorial/getStarted/application/index.html">The <code>main</code> Method (Oracle)</a></li>
-<li><a href="https://docs.oracle.com/en/java/javase/21/docs/specs/man/java.html">The <code>java</code> command tool (Oracle)</a></li>
-<li><a href="https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.spring-application">Spring Boot Reference Documentation - Spring Application</a></li>
-</ul>
-</li>
-<li><strong>经典书籍</strong>：<ul>
+<li><strong>官方文档</strong>：
+<ul>
+<li><a
+href="https://docs.oracle.com/javase/tutorial/getStarted/application/index.html">The
+<code>main</code> Method (Oracle)</a></li>
+<li><a
+href="https://docs.oracle.com/en/java/javase/21/docs/specs/man/java.html">The
+<code>java</code> command tool (Oracle)</a></li>
+<li><a
+href="https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.spring-application">Spring
+Boot Reference Documentation - Spring Application</a></li>
+</ul></li>
+<li><strong>经典书籍</strong>：
+<ul>
 <li>《Effective Java》by Joshua Bloch - 深入理解Java设计哲学。</li>
 <li>《Java核心技术》- 卷I：基础知识，对JVM和类路径有详细解释。</li>
-</ul>
-</li>
-<li><strong>源码探索</strong>：<ul>
+</ul></li>
+<li><strong>源码探索</strong>：
+<ul>
 <li>可以查看<code>java.lang.Thread</code>类的<code>main</code>方法，了解JVM如何创建主线程。</li>
 <li>研究<code>SpringApplication.java</code>的源码，理解其run方法的启动流程。</li>
+</ul></li>
 </ul>
-</li>
-</ul>
-<hr>
-<h3 id="8-一句话记忆">8. 一句话记忆</h3>
+<hr />
+<h3 id="一句话记忆">8. 一句话记忆</h3>
 <p><strong>一个项目多个<code>main</code>，类是归属JVM选；依赖共享类路径，入口灵活用途宽。</strong></p>
 </div>
     </article>
