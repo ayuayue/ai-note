@@ -7,7 +7,7 @@
     <!-- SEO Meta Tags -->
     <meta name="description" content="深入理解JVM运行机制：从启动到退出的完整生命周期
 开头摘要
-本文深入探讨Java虚拟机（JVM）的完整运行机制，涵盖JVM启动过程、生命周期管理、资源分配及监控原理。无论你是多年Java开发还是刚入门，都能通过本文全面理解JVM如何执行Java程序、何时退出以及如何管理多个程序。本文将解答关于JVM实例隔离性、进..." />
+本文深入探讨Java虚拟机（JVM）的完整运行机制，涵盖JVM启动过程、生命周期管理、资源分配及监控原理。无论你是多年Java开发还是刚入门，都能通过本文全面理解JVM如何执行Java程序、何时退出以及如何管理多个程序。本文将解答关于JVM实例隔离性、进程间..." />
     <meta name="keywords" content="深入理解JVM运行机制, 从启动到退出的完整生命周期" />
     <meta name="author" content="AI 个人笔记" />
     <meta name="robots" content="index, follow" />
@@ -17,7 +17,7 @@
     <meta property="og:title" content="深入理解JVM运行机制：从启动到退出的完整生命周期" />
     <meta property="og:description" content="深入理解JVM运行机制：从启动到退出的完整生命周期
 开头摘要
-本文深入探讨Java虚拟机（JVM）的完整运行机制，涵盖JVM启动过程、生命周期管理、资源分配及监控原理。无论你是多年Java开发还是刚入门，都能通过本文全面理解JVM如何执行Java程序、何时退出以及如何管理多个程序。本文将解答关于JVM实例隔离性、进..." />
+本文深入探讨Java虚拟机（JVM）的完整运行机制，涵盖JVM启动过程、生命周期管理、资源分配及监控原理。无论你是多年Java开发还是刚入门，都能通过本文全面理解JVM如何执行Java程序、何时退出以及如何管理多个程序。本文将解答关于JVM实例隔离性、进程间..." />
     <meta property="og:image" content="https://www.caoayu.top/images/og-image.png" />
     <meta property="og:url" content="https://www.caoayu.top/docs/2026-01/深入理解jvm运行机制：从启动到退出的完整生命周期.html" />
     <meta property="og:site_name" content="AI 个人笔记" />
@@ -27,7 +27,7 @@
     <meta property="twitter:title" content="深入理解JVM运行机制：从启动到退出的完整生命周期" />
     <meta property="twitter:description" content="深入理解JVM运行机制：从启动到退出的完整生命周期
 开头摘要
-本文深入探讨Java虚拟机（JVM）的完整运行机制，涵盖JVM启动过程、生命周期管理、资源分配及监控原理。无论你是多年Java开发还是刚入门，都能通过本文全面理解JVM如何执行Java程序、何时退出以及如何管理多个程序。本文将解答关于JVM实例隔离性、进..." />
+本文深入探讨Java虚拟机（JVM）的完整运行机制，涵盖JVM启动过程、生命周期管理、资源分配及监控原理。无论你是多年Java开发还是刚入门，都能通过本文全面理解JVM如何执行Java程序、何时退出以及如何管理多个程序。本文将解答关于JVM实例隔离性、进程间..." />
     <meta property="twitter:image" content="https://www.caoayu.top/images/og-image.png" />
 
     <!-- Canonical URL -->
@@ -727,12 +727,11 @@
           <div class="warning">
             ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
           </div>
-          <div class="post-content" id="post-content"><h1
-id="深入理解jvm运行机制从启动到退出的完整生命周期">深入理解JVM运行机制：从启动到退出的完整生命周期</h1>
+          <div class="post-content" id="post-content"><h1 id="深入理解jvm运行机制：从启动到退出的完整生命周期">深入理解JVM运行机制：从启动到退出的完整生命周期</h1>
 <h2 id="开头摘要">开头摘要</h2>
 <p>本文深入探讨Java虚拟机（JVM）的完整运行机制，涵盖JVM启动过程、生命周期管理、资源分配及监控原理。无论你是多年Java开发还是刚入门，都能通过本文全面理解JVM如何执行Java程序、何时退出以及如何管理多个程序。本文将解答关于JVM实例隔离性、进程间通信和监控工具实现原理等核心问题。</p>
 <h2 id="目录">目录</h2>
-<ol type="1">
+<ol>
 <li>#jvm概述与核心职责</li>
 <li>#jvm启动过程详解</li>
 <li>#jvm实例与java程序的关系</li>
@@ -744,39 +743,39 @@ id="深入理解jvm运行机制从启动到退出的完整生命周期">深入�
 </ol>
 <h2 id="jvm概述与核心职责">JVM概述与核心职责</h2>
 <p>Java虚拟机（JVM）是Java技术的核心，它是一个虚拟的计算机，具有独立的指令集和运行时数据区。JVM的主要职责是<strong>加载Java代码</strong>、<strong>验证代码</strong>、<strong>执行代码</strong>和<strong>管理内存</strong>。</p>
-<p>当我们运行Java程序时，实际上是在启动一个JVM实例，这个实例负责将Java字节码转换为特定平台的机器指令并执行。JVM的这种”一次编写，到处运行”的能力，得益于它作为中间层抽象了底层操作系统的差异。</p>
+<p>当我们运行Java程序时，实际上是在启动一个JVM实例，这个实例负责将Java字节码转换为特定平台的机器指令并执行。JVM的这种&quot;一次编写，到处运行&quot;的能力，得益于它作为中间层抽象了底层操作系统的差异。</p>
 <p>与普遍认知不同，JVM并不是一个持续运行的后台守护进程，而是<strong>按需启动的独立进程</strong>。每个Java应用程序都对应一个独立的JVM实例，这些实例之间相互隔离，不共享堆内存等关键资源。</p>
 <h2 id="jvm启动过程详解">JVM启动过程详解</h2>
 <h3 id="从java命令到jvm实例">从java命令到JVM实例</h3>
 <p>当你在终端执行<code>java HelloWorld</code>命令时，操作系统会启动以下序列：</p>
-<ol type="1">
+<ol>
 <li><strong>环境准备</strong>：JVM首先会校验传入的参数，包括类路径、JVM参数等。</li>
 <li><strong>系统资源探测</strong>：JVM检测可用的系统资源，如处理器数量、内存大小。</li>
 <li><strong>创建JVM实例</strong>：通过JNI方法<code>JNI_CreateJavaVM()</code>创建JVM实例。</li>
 </ol>
 <h3 id="类加载机制">类加载机制</h3>
 <p>类加载是JVM启动过程中的关键环节，采用<strong>双亲委派模型</strong>进行类加载：</p>
-<div class="sourceCode" id="cb1"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 示例：类加载器层次结构</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> ClassLoaderDemo <span class="op">{</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>        <span class="bu">ClassLoader</span> appClassLoader <span class="op">=</span> <span class="bu">ClassLoader</span><span class="op">.</span><span class="fu">getSystemClassLoader</span><span class="op">();</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>        <span class="bu">ClassLoader</span> extClassLoader <span class="op">=</span> appClassLoader<span class="op">.</span><span class="fu">getParent</span><span class="op">();</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">ClassLoader</span> bootstrapClassLoader <span class="op">=</span> extClassLoader<span class="op">.</span><span class="fu">getParent</span><span class="op">();</span> <span class="co">// 通常为null</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;应用类加载器: &quot;</span> <span class="op">+</span> appClassLoader<span class="op">);</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;扩展类加载器: &quot;</span> <span class="op">+</span> extClassLoader<span class="op">);</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;启动类加载器: &quot;</span> <span class="op">+</span> bootstrapClassLoader<span class="op">);</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<pre class="mermaid"><code>graph TD
-    A[自定义类加载器] --&gt; B[系统类加载器]
-    B --&gt; C[扩展类加载器]
-    C --&gt; D[启动类加载器]
-    D --&gt; E[类加载请求]
-    E --&gt; F{父加载器能否加载?}
-    F --&gt;|是| G[父加载器加载]
-    F --&gt;|否| H[当前加载器加载]</code></pre>
+<pre><code class="language-java">// 示例：类加载器层次结构
+public class ClassLoaderDemo {
+    public static void main(String[] args) {
+        ClassLoader appClassLoader = ClassLoader.getSystemClassLoader();
+        ClassLoader extClassLoader = appClassLoader.getParent();
+        ClassLoader bootstrapClassLoader = extClassLoader.getParent(); // 通常为null
+        
+        System.out.println(&quot;应用类加载器: &quot; + appClassLoader);
+        System.out.println(&quot;扩展类加载器: &quot; + extClassLoader);
+        System.out.println(&quot;启动类加载器: &quot; + bootstrapClassLoader);
+    }
+}
+</code></pre>
+<pre class="mermaid">graph TD
+    A[自定义类加载器] --> B[系统类加载器]
+    B --> C[扩展类加载器]
+    C --> D[启动类加载器]
+    D --> E[类加载请求]
+    E --> F{父加载器能否加载?}
+    F -->|是| G[父加载器加载]
+    F -->|否| H[当前加载器加载]</pre>
 <p>类加载过程分为三个步骤：<strong>加载</strong>（Loading）、<strong>链接</strong>（Linking）和<strong>初始化</strong>（Initialization）。</p>
 <ul>
 <li><strong>加载</strong>：查找并加载类的二进制数据到方法区</li>
@@ -793,8 +792,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="
 <th>线程共享性</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>程序计数器</td>
 <td>存储线程下一条指令地址</td>
 <td>线程私有</td>
@@ -819,70 +817,69 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb1-1"><a href="
 <td>支持native方法执行</td>
 <td>线程私有</td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 <h2 id="jvm实例与java程序的关系">JVM实例与Java程序的关系</h2>
 <h3 id="单程序单jvm模型">单程序单JVM模型</h3>
 <p><strong>每个Java应用程序都对应一个独立的JVM实例</strong>。当你同时运行两个Java程序时，操作系统会创建两个独立的JVM进程。这种设计提供了以下优势：</p>
-<ol type="1">
+<ol>
 <li><strong>资源隔离</strong>：一个Java程序的崩溃不会影响其他Java程序</li>
 <li><strong>独立配置</strong>：每个JVM实例可以有独立的内存配置和垃圾回收策略</li>
 <li><strong>安全边界</strong>：避免了程序间的非法内存访问</li>
 </ol>
 <h3 id="资源分配机制">资源分配机制</h3>
 <p>当多个JVM实例在同一台机器上运行时，每个JVM会独立分配堆内存，默认大小由JVM根据系统资源启发式决定。这意味着如果不显式设置堆大小，多个JVM实例可能会竞争系统内存资源。</p>
-<div class="sourceCode" id="cb3"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 示例：显示设置JVM内存参数</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">// 启动时使用-Xms和-Xmx参数指定堆大小</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">// java -Xms512m -Xmx1024m HelloWorld</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> MemoryDemo <span class="op">{</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 获取JVM内存信息</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">long</span> maxMemory <span class="op">=</span> <span class="bu">Runtime</span><span class="op">.</span><span class="fu">getRuntime</span><span class="op">().</span><span class="fu">maxMemory</span><span class="op">();</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">long</span> totalMemory <span class="op">=</span> <span class="bu">Runtime</span><span class="op">.</span><span class="fu">getRuntime</span><span class="op">().</span><span class="fu">totalMemory</span><span class="op">();</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">long</span> freeMemory <span class="op">=</span> <span class="bu">Runtime</span><span class="op">.</span><span class="fu">getRuntime</span><span class="op">().</span><span class="fu">freeMemory</span><span class="op">();</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;最大内存: &quot;</span> <span class="op">+</span> <span class="op">(</span>maxMemory <span class="op">/</span> <span class="op">(</span><span class="dv">1024</span> <span class="op">*</span> <span class="dv">1024</span><span class="op">))</span> <span class="op">+</span> <span class="st">&quot;MB&quot;</span><span class="op">);</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;总内存: &quot;</span> <span class="op">+</span> <span class="op">(</span>totalMemory <span class="op">/</span> <span class="op">(</span><span class="dv">1024</span> <span class="op">*</span> <span class="dv">1024</span><span class="op">))</span> <span class="op">+</span> <span class="st">&quot;MB&quot;</span><span class="op">);</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;空闲内存: &quot;</span> <span class="op">+</span> <span class="op">(</span>freeMemory <span class="op">/</span> <span class="op">(</span><span class="dv">1024</span> <span class="op">*</span> <span class="dv">1024</span><span class="op">))</span> <span class="op">+</span> <span class="st">&quot;MB&quot;</span><span class="op">);</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<pre><code class="language-java">// 示例：显示设置JVM内存参数
+// 启动时使用-Xms和-Xmx参数指定堆大小
+// java -Xms512m -Xmx1024m HelloWorld
+
+public class MemoryDemo {
+    public static void main(String[] args) {
+        // 获取JVM内存信息
+        long maxMemory = Runtime.getRuntime().maxMemory();
+        long totalMemory = Runtime.getRuntime().totalMemory();
+        long freeMemory = Runtime.getRuntime().freeMemory();
+        
+        System.out.println(&quot;最大内存: &quot; + (maxMemory / (1024 * 1024)) + &quot;MB&quot;);
+        System.out.println(&quot;总内存: &quot; + (totalMemory / (1024 * 1024)) + &quot;MB&quot;);
+        System.out.println(&quot;空闲内存: &quot; + (freeMemory / (1024 * 1024)) + &quot;MB&quot;);
+    }
+}
+</code></pre>
 <h2 id="jvm的退出机制">JVM的退出机制</h2>
 <h3 id="正常关闭">正常关闭</h3>
 <p>JVM在以下情况下会正常关闭：</p>
-<ol type="1">
+<ol>
 <li><strong>所有非守护线程结束</strong>：当程序中所有非守护线程执行完毕后，JVM会自动退出</li>
-<li><strong>调用System.exit()</strong>：程序显式调用退出方法</li>
+<li>**调用System.exit()**：程序显式调用退出方法</li>
 <li><strong>平台特定信号</strong>：如Ctrl+C中断信号</li>
 </ol>
 <h3 id="强制关闭">强制关闭</h3>
 <p>以下情况会导致JVM强制关闭：</p>
-<ol type="1">
+<ol>
 <li><strong>杀死JVM进程</strong>：在操作系统中强制终止JVM进程</li>
-<li><strong>Runtime.halt()</strong>：调用halt方法立即终止JVM</li>
+<li>**Runtime.halt()**：调用halt方法立即终止JVM</li>
 <li><strong>系统崩溃</strong>：操作系统或硬件故障</li>
 </ol>
-<h3 id="关闭钩子shutdown-hook">关闭钩子（Shutdown Hook）</h3>
+<h3 id="关闭钩子（shutdown-hook）">关闭钩子（Shutdown Hook）</h3>
 <p>JVM允许注册关闭钩子，在JVM正常关闭时执行清理工作：</p>
-<div class="sourceCode" id="cb4"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> ShutdownHookDemo <span class="op">{</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Runtime</span><span class="op">.</span><span class="fu">getRuntime</span><span class="op">().</span><span class="fu">addShutdownHook</span><span class="op">(</span><span class="kw">new</span> <span class="bu">Thread</span><span class="op">(()</span> <span class="op">-&gt;</span> <span class="op">{</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>            <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;执行清理工作...&quot;</span><span class="op">);</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>            <span class="co">// 关闭资源、删除临时文件等</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        <span class="op">}));</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;程序运行中...&quot;</span><span class="op">);</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 模拟程序工作</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span> <span class="op">{</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>            <span class="bu">Thread</span><span class="op">.</span><span class="fu">sleep</span><span class="op">(</span><span class="dv">3000</span><span class="op">);</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span> <span class="cf">catch</span> <span class="op">(</span><span class="bu">InterruptedException</span> e<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>            e<span class="op">.</span><span class="fu">printStackTrace</span><span class="op">();</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">// JVM退出时会自动调用关闭钩子</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<pre><code class="language-java">public class ShutdownHookDemo {
+    public static void main(String[] args) {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -&gt; {
+            System.out.println(&quot;执行清理工作...&quot;);
+            // 关闭资源、删除临时文件等
+        }));
+        
+        System.out.println(&quot;程序运行中...&quot;);
+        // 模拟程序工作
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        // JVM退出时会自动调用关闭钩子
+    }
+}
+</code></pre>
 <p><strong>注意</strong>：关闭钩子应该线程安全且尽快执行，因为它们会延迟JVM的关闭时间。</p>
 <h3 id="守护线程与非守护线程">守护线程与非守护线程</h3>
 <p>JVM的线程分为<strong>守护线程</strong>和<strong>非守护线程</strong>两种：</p>
@@ -894,58 +891,60 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="
 <h2 id="jvm的程序管理机制">JVM的程序管理机制</h2>
 <h3 id="执行引擎工作原理">执行引擎工作原理</h3>
 <p>JVM执行引擎负责执行字节码，主要采用两种技术：</p>
-<ol type="1">
+<ol>
 <li><strong>解释执行</strong>：逐条读取并执行字节码指令</li>
 <li><strong>即时编译</strong>：将热点代码编译成本地机器码直接执行</li>
 </ol>
 <p>现代JVM（如HotSpot）使用<strong>自适应优化</strong>技术，结合了解释执行和即时编译的优点。</p>
 <h3 id="垃圾回收机制">垃圾回收机制</h3>
 <p>JVM的垃圾回收器负责自动内存管理，主要针对堆内存进行回收：</p>
-<pre class="mermaid"><code>graph LR
-    A[新创建的对象] --&gt; B[Eden区]
-    B --&gt; C[Survivor区]
-    C --&gt; D[老年代]
-    D --&gt; E[垃圾回收]
-    E --&gt; B</code></pre>
-<p>垃圾回收分为多种类型： - <strong>Minor
-GC</strong>：针对新生代的垃圾回收 - <strong>Full
-GC</strong>：针对整个堆内存的垃圾回收</p>
+<pre class="mermaid">graph LR
+    A[新创建的对象] --> B[Eden区]
+    B --> C[Survivor区]
+    C --> D[老年代]
+    D --> E[垃圾回收]
+    E --> B</pre>
+<p>垃圾回收分为多种类型：</p>
+<ul>
+<li><strong>Minor GC</strong>：针对新生代的垃圾回收</li>
+<li><strong>Full GC</strong>：针对整个堆内存的垃圾回收</li>
+</ul>
 <h3 id="jvm进程间通信">JVM进程间通信</h3>
 <p>由于每个JVM实例是独立的进程，它们之间不能直接共享内存。JVM进程间通信需要通过传统IPC机制实现：</p>
-<ol type="1">
+<ol>
 <li><strong>套接字通信</strong></li>
 <li><strong>文件系统</strong></li>
 <li><strong>远程方法调用</strong></li>
 </ol>
-<div class="sourceCode" id="cb6"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 示例：使用Socket进行JVM进程间通信</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">// 服务器端</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> JVMServer <span class="op">{</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="kw">throws</span> <span class="bu">IOException</span> <span class="op">{</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="bu">ServerSocket</span> serverSocket <span class="op">=</span> <span class="kw">new</span> <span class="bu">ServerSocket</span><span class="op">(</span><span class="dv">12345</span><span class="op">);</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;JVM服务器端启动...&quot;</span><span class="op">);</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Socket</span> clientSocket <span class="op">=</span> serverSocket<span class="op">.</span><span class="fu">accept</span><span class="op">();</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="bu">PrintWriter</span> out <span class="op">=</span> <span class="kw">new</span> <span class="bu">PrintWriter</span><span class="op">(</span>clientSocket<span class="op">.</span><span class="fu">getOutputStream</span><span class="op">(),</span> <span class="kw">true</span><span class="op">);</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        out<span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;来自JVM进程的消息&quot;</span><span class="op">);</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        clientSocket<span class="op">.</span><span class="fu">close</span><span class="op">();</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        serverSocket<span class="op">.</span><span class="fu">close</span><span class="op">();</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="co">// 客户端</span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> JVMClient <span class="op">{</span></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">static</span> <span class="dt">void</span> <span class="fu">main</span><span class="op">(</span><span class="bu">String</span><span class="op">[]</span> args<span class="op">)</span> <span class="kw">throws</span> <span class="bu">IOException</span> <span class="op">{</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>        <span class="bu">Socket</span> socket <span class="op">=</span> <span class="kw">new</span> <span class="bu">Socket</span><span class="op">(</span><span class="st">&quot;localhost&quot;</span><span class="op">,</span> <span class="dv">12345</span><span class="op">);</span></span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        <span class="bu">BufferedReader</span> in <span class="op">=</span> <span class="kw">new</span> <span class="bu">BufferedReader</span><span class="op">(</span><span class="kw">new</span> <span class="bu">InputStreamReader</span><span class="op">(</span>socket<span class="op">.</span><span class="fu">getInputStream</span><span class="op">()));</span></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>        <span class="bu">String</span> message <span class="op">=</span> in<span class="op">.</span><span class="fu">readLine</span><span class="op">();</span></span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>        <span class="bu">System</span><span class="op">.</span><span class="fu">out</span><span class="op">.</span><span class="fu">println</span><span class="op">(</span><span class="st">&quot;收到消息: &quot;</span> <span class="op">+</span> message<span class="op">);</span></span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>        socket<span class="op">.</span><span class="fu">close</span><span class="op">();</span></span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<pre><code class="language-java">// 示例：使用Socket进行JVM进程间通信
+// 服务器端
+public class JVMServer {
+    public static void main(String[] args) throws IOException {
+        ServerSocket serverSocket = new ServerSocket(12345);
+        System.out.println(&quot;JVM服务器端启动...&quot;);
+        
+        Socket clientSocket = serverSocket.accept();
+        PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+        out.println(&quot;来自JVM进程的消息&quot;);
+        
+        clientSocket.close();
+        serverSocket.close();
+    }
+}
+
+// 客户端
+public class JVMClient {
+    public static void main(String[] args) throws IOException {
+        Socket socket = new Socket(&quot;localhost&quot;, 12345);
+        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        
+        String message = in.readLine();
+        System.out.println(&quot;收到消息: &quot; + message);
+        
+        socket.close();
+    }
+}
+</code></pre>
 <h2 id="jvm监控工具原理">JVM监控工具原理</h2>
 <h3 id="jps命令实现机制">jps命令实现机制</h3>
 <p><code>jps</code>命令用于查看当前系统中运行的JVM进程，其实现原理基于Java的<strong>临时目录机制</strong>。</p>
@@ -959,8 +958,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="
 <th>作用</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td>jstat</td>
 <td>JVM统计信息监控</td>
 </tr>
@@ -980,12 +978,11 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="
 <td>jconsole</td>
 <td>图形化监控界面</td>
 </tr>
-</tbody>
-</table>
+</tbody></table>
 <p>这些工具大多通过JVM的<strong>JMX接口</strong>或<strong>本地接口</strong>获取运行时数据，使开发者能够监控JVM的性能和状态。</p>
 <h2 id="总结">总结</h2>
 <p>通过本文的详细讲解，我们可以得出以下核心结论：</p>
-<ol type="1">
+<ol>
 <li><strong>JVM是进程级实例</strong>：每个Java应用程序都对应一个独立的JVM进程，它们之间资源隔离</li>
 <li><strong>JVM非守护进程</strong>：JVM随Java程序启动而启动，随程序结束而退出，不是持续运行的后台守护进程</li>
 <li><strong>启动过程复杂</strong>：从执行java命令到main方法运行，JVM经历了参数校验、资源探测、类加载等多个阶段</li>
@@ -994,14 +991,14 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="
 </ol>
 <p>理解JVM的运行机制对于Java开发者至关重要，它不仅有助于性能调优和故障诊断，还能帮助开发者编写更高效、稳定的Java应用程序。</p>
 <h2 id="延伸阅读">延伸阅读</h2>
-<ol type="1">
-<li>https://docs.oracle.com/javase/specs/jvms/se17/html/index.html</li>
+<ol>
+<li><a href="https://docs.oracle.com/javase/specs/jvms/se17/html/index.html">https://docs.oracle.com/javase/specs/jvms/se17/html/index.html</a></li>
 <li>《深入理解Java虚拟机》- 周志明</li>
-<li>https://openjdk.java.net/</li>
-<li>https://www.oreilly.com/library/view/java-performance-the/9781449363512/</li>
+<li><a href="https://openjdk.java.net/">https://openjdk.java.net/</a></li>
+<li><a href="https://www.oreilly.com/library/view/java-performance-the/9781449363512/">https://www.oreilly.com/library/view/java-performance-the/9781449363512/</a></li>
 </ol>
 <h2 id="一句话记忆">一句话记忆</h2>
-<p>JVM是Java程序的独立运行沙箱，每个程序独享一个JVM实例，随程序启停而生死，通过复杂的内部分工实现”一次编写，到处运行”的承诺。</p>
+<p>JVM是Java程序的独立运行沙箱，每个程序独享一个JVM实例，随程序启停而生死，通过复杂的内部分工实现&quot;一次编写，到处运行&quot;的承诺。</p>
 </div>
         </article>
       </div>

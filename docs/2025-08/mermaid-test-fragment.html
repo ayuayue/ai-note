@@ -358,23 +358,23 @@
       <div class="post-content" id="post-content"><p>这是一个测试 Mermaid 图表功能的示例文档。</p>
 <h2 id="流程图示例">流程图示例</h2>
 <pre class="mermaid">graph TD
-    A[开始] --&gt; B[初始化]
-    B --&gt; C[处理数据]
-    C --&gt; D[输出结果]
-    D --&gt; E[结束]</pre>
+    A[开始] --> B[初始化]
+    B --> C[处理数据]
+    C --> D[输出结果]
+    D --> E[结束]</pre>
 <h2 id="序列图示例">序列图示例</h2>
 <pre class="mermaid">sequenceDiagram
     participant 用户
     participant 系统
-    用户-&gt;&gt;系统: 登录请求
-    系统-&gt;&gt;用户: 验证通过
-    用户-&gt;&gt;系统: 数据请求
-    系统-&gt;&gt;用户: 返回数据</pre>
+    用户->>系统: 登录请求
+    系统->>用户: 验证通过
+    用户->>系统: 数据请求
+    系统->>用户: 返回数据</pre>
 <h2 id="类图示例">类图示例</h2>
 <pre class="mermaid">classDiagram
-    Animal &lt;|-- Duck
-    Animal &lt;|-- Fish
-    Animal &lt;|-- Zebra
+    Animal <|-- Duck
+    Animal <|-- Fish
+    Animal <|-- Zebra
     Animal : +int age
     Animal : +String gender
     Animal: +isMammal()
@@ -396,20 +396,20 @@
     }</pre>
 <h2 id="状态图示例">状态图示例</h2>
 <pre class="mermaid">stateDiagram-v2
-    [*] --&gt; Still
-    Still --&gt; [*]
+    [*] --> Still
+    Still --> [*]
     
-    Still --&gt; Moving
-    Moving --&gt; Still
-    Moving --&gt; Crash
-    Crash --&gt; [*]</pre>
+    Still --> Moving
+    Moving --> Still
+    Moving --> Crash
+    Crash --> [*]</pre>
 <h2 id="饼图示例">饼图示例</h2>
 <pre class="mermaid">pie title 2025年技术趋势分布
-    &quot;人工智能&quot; : 42.86
-    &quot;云计算&quot; : 14.29
-    &quot;大数据&quot; : 14.29
-    &quot;物联网&quot; : 14.29
-    &quot;区块链&quot; : 14.29</pre>
+    "人工智能" : 42.86
+    "云计算" : 14.29
+    "大数据" : 14.29
+    "物联网" : 14.29
+    "区块链" : 14.29</pre>
 <h2 id="甘特图示例">甘特图示例</h2>
 <pre class="mermaid">gantt
     title 项目开发计划
@@ -432,18 +432,18 @@
 
     %% --- 顶层结构 ---
     class JVM {
-        &lt;&lt;JVM Memory Model&gt;&gt;
+        <<JVM Memory Model>>
     }
 
     class ThreadPrivateArea {
-        &lt;&lt;Thread-Private Area&gt;&gt;
+        <<Thread-Private Area>>
         + Program Counter (PC) Register
         + JVM Stack
         + Native Method Stack
     }
 
     class ThreadSharedArea {
-        &lt;&lt;Thread-Shared Area&gt;&gt;
+        <<Thread-Shared Area>>
     }
 
     JVM *-- ThreadPrivateArea : contains
@@ -451,12 +451,12 @@
 
     %% --- 线程共享区分解 ---
     class Heap {
-        &lt;&lt;Heap&gt;&gt;
+        <<Heap>>
         + Stores all object instances
     }
 
     class Metaspace {
-        &lt;&lt;Metaspace / Permanent Generation (pre-JDK8)&gt;&gt;
+        <<Metaspace / Permanent Generation (pre-JDK8)>>
         + Stores class metadata
         + Stores static variables
         + Runtime constant pool
@@ -467,11 +467,11 @@
 
     %% --- 堆内存分解 ---
     class YoungGeneration {
-        &lt;&lt;Young Generation&gt;&gt;
+        <<Young Generation>>
     }
 
     class OldGeneration {
-        &lt;&lt;Old Generation&gt;&gt;
+        <<Old Generation>>
         + Stores long-lived objects
         + Stores large objects
     }
@@ -481,12 +481,12 @@
 
     %% --- 年轻代分解 ---
     class EdenSpace {
-        &lt;&lt;Eden Space&gt;&gt;
+        <<Eden Space>>
         + Where new objects are allocated
     }
 
     class SurvivorSpace {
-        &lt;&lt;Survivor Space (S0 &amp; S1)&gt;&gt;
+        <<Survivor Space (S0 & S1)>>
         + Stores objects surviving Minor GC
     }
 

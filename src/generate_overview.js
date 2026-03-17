@@ -142,8 +142,24 @@ function main() {
   // Generate JavaScript array for the overview page
   const articlesJs = `const articles = ${JSON.stringify(outputDocuments, null, 2)};`;
 
-  // Read the overview.html file
-  let overviewHtml = fs.readFileSync("overview.html", "utf8");
+  const overviewPath = "overview.html";
+  const templatePath = "template_overview.html";
+
+  // Read the overview.html file (fallback to template if missing)
+  let overviewHtml = "";
+  if (fs.existsSync(overviewPath)) {
+    overviewHtml = fs.readFileSync(overviewPath, "utf8");
+  } else if (fs.existsSync(templatePath)) {
+    console.log(
+      "overview.html 不存在，使用 template_overview.html 作为模板生成。",
+    );
+    overviewHtml = fs.readFileSync(templatePath, "utf8");
+  } else {
+    console.error(
+      "overview.html 不存在，且未找到 template_overview.html，无法生成概览页。",
+    );
+    process.exit(1);
+  }
 
   // Replace the placeholder script with the actual data
   const placeholderScriptStart = "const articles = [";
@@ -172,7 +188,7 @@ function main() {
   }
 
   // Write the updated overview.html file
-  fs.writeFileSync("overview.html", overviewHtml, "utf8");
+  fs.writeFileSync(overviewPath, overviewHtml, "utf8");
 
   console.log(`Generated overview.html with ${allDocuments.length} articles`);
   console.log("Articles included:");

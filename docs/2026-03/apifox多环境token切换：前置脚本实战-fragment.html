@@ -355,143 +355,131 @@
       <div class="warning">
         ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
       </div>
-      <div class="post-content" id="post-content"><p>在本地联调场景中，服务地址通常保持不变，但运行环境（如
-<code>test-mysql</code>、<code>test-oracle</code>、<code>dev</code>）和认证
-Token 会频繁切换。若在每个接口中手动修改
-<code>Authorization</code>，容易产生漏改、误用和调试噪音。本文给出一套可直接落地的
-Apifox 前置脚本方案，用于统一管理多环境 Token。</p>
+      <div class="post-content" id="post-content"><p>在本地联调场景中，服务地址通常保持不变，但运行环境（如 <code>test-mysql</code>、<code>test-oracle</code>、<code>dev</code>）和认证 Token 会频繁切换。若在每个接口中手动修改 <code>Authorization</code>，容易产生漏改、误用和调试噪音。本文给出一套可直接落地的 Apifox 前置脚本方案，用于统一管理多环境 Token。</p>
 <h2 id="摘要">摘要</h2>
-<p>本文通过“约定大于配置”的方式，将 Token
-选择逻辑集中到项目级前置脚本：由 <code>token-env</code>
-指定当前环境，脚本自动读取 <code>token-${env}</code> 并注入统一变量
-<code>token</code>。该方案适用于手动复制
-Token、登录链路复杂、且本地服务需频繁切换环境的团队。</p>
+<p>本文通过“约定大于配置”的方式，将 Token 选择逻辑集中到项目级前置脚本：由 <code>token-env</code> 指定当前环境，脚本自动读取 <code>token-${env}</code> 并注入统一变量 <code>token</code>。该方案适用于手动复制 Token、登录链路复杂、且本地服务需频繁切换环境的团队。</p>
 <h2 id="目录">目录</h2>
 <ul>
-<li><a href="#问题定义">问题定义</a></li>
-<li><a href="#设计目标">设计目标</a></li>
-<li><a href="#变量约定">变量约定</a></li>
-<li><a href="#前置脚本实现">前置脚本实现</a></li>
-<li><a href="#执行流程文本版">执行流程（文本版）</a></li>
-<li><a href="#请求头统一策略">请求头统一策略</a></li>
-<li><a href="#安全与边界处理">安全与边界处理</a></li>
-<li><a href="#扩展多用户并行切换">扩展：多用户并行切换</a></li>
-<li><a href="#对比与适用性分析">对比与适用性分析</a></li>
-<li><a href="#结论">结论</a></li>
-<li><a href="#参考资料">参考资料</a></li>
+<li><a href="#%E9%97%AE%E9%A2%98%E5%AE%9A%E4%B9%89">问题定义</a></li>
+<li><a href="#%E8%AE%BE%E8%AE%A1%E7%9B%AE%E6%A0%87">设计目标</a></li>
+<li><a href="#%E5%8F%98%E9%87%8F%E7%BA%A6%E5%AE%9A">变量约定</a></li>
+<li><a href="#%E5%89%8D%E7%BD%AE%E8%84%9A%E6%9C%AC%E5%AE%9E%E7%8E%B0">前置脚本实现</a></li>
+<li><a href="#%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B%E6%96%87%E6%9C%AC%E7%89%88">执行流程（文本版）</a></li>
+<li><a href="#%E8%AF%B7%E6%B1%82%E5%A4%B4%E7%BB%9F%E4%B8%80%E7%AD%96%E7%95%A5">请求头统一策略</a></li>
+<li><a href="#%E5%AE%89%E5%85%A8%E4%B8%8E%E8%BE%B9%E7%95%8C%E5%A4%84%E7%90%86">安全与边界处理</a></li>
+<li><a href="#%E6%89%A9%E5%B1%95%E5%A4%9A%E7%94%A8%E6%88%B7%E5%B9%B6%E8%A1%8C%E5%88%87%E6%8D%A2">扩展：多用户并行切换</a></li>
+<li><a href="#%E5%AF%B9%E6%AF%94%E4%B8%8E%E9%80%82%E7%94%A8%E6%80%A7%E5%88%86%E6%9E%90">对比与适用性分析</a></li>
+<li><a href="#%E7%BB%93%E8%AE%BA">结论</a></li>
+<li><a href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99">参考资料</a></li>
 </ul>
 <h2 id="问题定义">问题定义</h2>
 <p>典型联调链路如下：</p>
-<ol type="1">
+<ol>
 <li>本地服务端口固定（例如 <code>localhost:8080</code>）。</li>
-<li>本地启动参数切换到不同配置中心环境（如 Nacos 的
-<code>test-mysql</code>、<code>test-oracle</code>）。</li>
+<li>本地启动参数切换到不同配置中心环境（如 Nacos 的 <code>test-mysql</code>、<code>test-oracle</code>）。</li>
 <li>认证 Token 通常通过线上系统手工复制，而非调用登录接口自动获取。</li>
-<li>Token 与环境强绑定，切换环境后若未同步切换 Token，会直接触发 401
-或误判后端问题。</li>
+<li>Token 与环境强绑定，切换环境后若未同步切换 Token，会直接触发 401 或误判后端问题。</li>
 </ol>
-<p>该问题的本质不是“如何获取 Token”，而是“如何在请求发送前可靠选择正确
-Token”。</p>
+<p>该问题的本质不是“如何获取 Token”，而是“如何在请求发送前可靠选择正确 Token”。</p>
 <h2 id="设计目标">设计目标</h2>
 <p>方案需满足以下目标：</p>
 <ul>
 <li>不在每个接口重复维护 Token 逻辑。</li>
 <li>仅通过环境变量切换当前 Token。</li>
 <li>与现有流程兼容：<code>token-env</code> 缺失时不强制注入 Token。</li>
-<li>对手工复制值中可能包含 <code>Bearer</code> 前缀进行兼容处理。</li>
+<li>对手工复制值中可能包含 <code>Bearer </code> 前缀进行兼容处理。</li>
 </ul>
 <h2 id="变量约定">变量约定</h2>
 <p>采用以下命名规则：</p>
-<pre class="text"><code>token-env              // 当前环境标识，例如 test-mysql
+<pre><code class="language-text">token-env              // 当前环境标识，例如 test-mysql
 token-test-mysql       // test-mysql 对应 Token
 token-test-oracle      // test-oracle 对应 Token
 token-dev              // dev 对应 Token
-token                  // 前置脚本输出的统一变量</code></pre>
-<p>该约定的核心是：<strong>由 <code>token-env</code> 计算目标变量名
-<code>token-${env}</code></strong>。</p>
+token                  // 前置脚本输出的统一变量
+</code></pre>
+<p>该约定的核心是：**由 <code>token-env</code> 计算目标变量名 <code>token-${env}</code>**。</p>
 <h2 id="前置脚本实现">前置脚本实现</h2>
 <p>建议放置于 Apifox 项目级前置脚本：</p>
-<div class="sourceCode" id="cb2"><pre
-class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 约定：</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">// token-env = test-mysql =&gt; 读取 token-test-mysql</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">// 若 token-env 不存在/为空：直接结束脚本（不设置 token）</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> env <span class="op">=</span> (pm<span class="op">.</span><span class="at">environment</span><span class="op">.</span><span class="fu">get</span>(<span class="st">&quot;token-env&quot;</span>) <span class="op">||</span> <span class="st">&quot;&quot;</span>)<span class="op">.</span><span class="fu">trim</span>()<span class="op">;</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">// 1) token-env 为空：兼容现有流程，直接结束</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="op">!</span>env) {</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="st">&quot;[Auth] token-env 未设置，跳过 token 注入。&quot;</span>)<span class="op">;</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span><span class="op">;</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">// 2) 拼接目标变量名</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> tokenVarName <span class="op">=</span> <span class="vs">`token-</span><span class="sc">${</span>env<span class="sc">}</span><span class="vs">`</span><span class="op">;</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> tokenValue <span class="op">=</span> (pm<span class="op">.</span><span class="at">environment</span><span class="op">.</span><span class="fu">get</span>(tokenVarName) <span class="op">||</span> <span class="st">&quot;&quot;</span>)<span class="op">.</span><span class="fu">trim</span>()<span class="op">;</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co">// 3) 未配置 token：记录提示并结束</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="op">!</span>tokenValue) {</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="vs">`[Auth] 变量 </span><span class="sc">${</span>tokenVarName<span class="sc">}</span><span class="vs"> 为空，请先粘贴 token`</span>)<span class="op">;</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span><span class="op">;</span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">// 4) 兼容手工复制场景（可能包含 Bearer 前缀）</span></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>tokenValue <span class="op">=</span> tokenValue<span class="op">.</span><span class="fu">replace</span>(<span class="ss">/</span><span class="sc">^</span><span class="ss">Bearer</span><span class="sc">\s+</span><span class="ss">/i</span><span class="op">,</span> <span class="st">&quot;&quot;</span>)<span class="op">.</span><span class="fu">trim</span>()<span class="op">;</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co">// 5) 写入统一变量，供请求头引用</span></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>pm<span class="op">.</span><span class="at">environment</span><span class="op">.</span><span class="fu">set</span>(<span class="st">&quot;token&quot;</span><span class="op">,</span> tokenValue)<span class="op">;</span></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="bu">console</span><span class="op">.</span><span class="fu">log</span>(<span class="vs">`[Auth] 使用环境: </span><span class="sc">${</span>env<span class="sc">}</span><span class="vs">`</span>)<span class="op">;</span></span></code></pre></div>
-<h2 id="执行流程文本版">执行流程（文本版）</h2>
+<pre><code class="language-javascript">// 约定：
+// token-env = test-mysql =&gt; 读取 token-test-mysql
+// 若 token-env 不存在/为空：直接结束脚本（不设置 token）
+
+const env = (pm.environment.get(&quot;token-env&quot;) || &quot;&quot;).trim();
+
+// 1) token-env 为空：兼容现有流程，直接结束
+if (!env) {
+  console.log(&quot;[Auth] token-env 未设置，跳过 token 注入。&quot;);
+  return;
+}
+
+// 2) 拼接目标变量名
+const tokenVarName = `token-${env}`;
+let tokenValue = (pm.environment.get(tokenVarName) || &quot;&quot;).trim();
+
+// 3) 未配置 token：记录提示并结束
+if (!tokenValue) {
+  console.log(`[Auth] 变量 ${tokenVarName} 为空，请先粘贴 token`);
+  return;
+}
+
+// 4) 兼容手工复制场景（可能包含 Bearer 前缀）
+tokenValue = tokenValue.replace(/^Bearer\s+/i, &quot;&quot;).trim();
+
+// 5) 写入统一变量，供请求头引用
+pm.environment.set(&quot;token&quot;, tokenValue);
+console.log(`[Auth] 使用环境: ${env}`);
+</code></pre>
+<h2 id="执行流程（文本版）">执行流程（文本版）</h2>
 <p>由于部分渲染器对 Mermaid 支持不一致，流程使用文本描述：</p>
-<ol type="1">
+<ol>
 <li>读取 <code>token-env</code>。</li>
 <li>若为空，脚本结束，不修改任何 Token 变量。</li>
 <li>若不为空，拼接变量名 <code>token-${env}</code>。</li>
 <li>读取该变量值。</li>
 <li>若为空，输出日志并结束。</li>
-<li>若非空，移除可能存在的 <code>Bearer</code> 前缀。</li>
+<li>若非空，移除可能存在的 <code>Bearer </code> 前缀。</li>
 <li>将结果写入统一变量 <code>token</code>。</li>
 <li>请求头统一读取 <code>{{token}}</code>。</li>
 </ol>
 <h2 id="请求头统一策略">请求头统一策略</h2>
 <p>所有需鉴权接口统一配置：</p>
-<pre class="text"><code>Authorization: Bearer {{token}}</code></pre>
+<pre><code class="language-text">Authorization: Bearer {{token}}
+</code></pre>
 <p>这样可将“鉴权值来源”与“接口定义”解耦：接口本身不再关注当前环境，只依赖统一变量输出。</p>
 <h2 id="安全与边界处理">安全与边界处理</h2>
-<h3 id="避免输出敏感信息">1. 避免输出敏感信息</h3>
-<p>不建议打印完整 Token。日志应仅记录环境名或变量名，避免 Token
-泄露到调试日志或共享截图。</p>
-<h3 id="空-token-的处理策略">2. 空 Token 的处理策略</h3>
+<h3 id="1-避免输出敏感信息">1. 避免输出敏感信息</h3>
+<p>不建议打印完整 Token。日志应仅记录环境名或变量名，避免 Token 泄露到调试日志或共享截图。</p>
+<h3 id="2-空-token-的处理策略">2. 空 Token 的处理策略</h3>
 <p>当前实现为“宽松模式”（记录日志后返回）。若团队希望减少无效请求，可改为“严格模式”：</p>
-<div class="sourceCode" id="cb4"><pre
-class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">throw</span> <span class="kw">new</span> <span class="bu">Error</span>(<span class="vs">`[Auth] 变量 </span><span class="sc">${</span>tokenVarName<span class="sc">}</span><span class="vs"> 为空`</span>)<span class="op">;</span></span></code></pre></div>
-<h3 id="前缀重复问题">3. 前缀重复问题</h3>
-<p>若环境变量值已包含 <code>Bearer</code>，而请求头又写
-<code>Bearer {{token}}</code>，会出现重复前缀。脚本中的正则清洗用于解决该问题。</p>
-<h3 id="命名一致性">4. 命名一致性</h3>
+<pre><code class="language-javascript">throw new Error(`[Auth] 变量 ${tokenVarName} 为空`);
+</code></pre>
+<h3 id="3-前缀重复问题">3. 前缀重复问题</h3>
+<p>若环境变量值已包含 <code>Bearer </code>，而请求头又写 <code>Bearer {{token}}</code>，会出现重复前缀。脚本中的正则清洗用于解决该问题。</p>
+<h3 id="4-命名一致性">4. 命名一致性</h3>
 <p>建议统一小写中划线风格（<code>token-env</code>、<code>token-test-mysql</code>），避免协作中出现同义变量并行。</p>
-<h2 id="扩展多用户并行切换">扩展：多用户并行切换</h2>
+<h2 id="扩展：多用户并行切换">扩展：多用户并行切换</h2>
 <p>若同一环境需要多个账号并行调试，可增加 <code>token-user</code>：</p>
-<pre class="text"><code>token-env = test-mysql
+<pre><code class="language-text">token-env = test-mysql
 token-user = admin
 token-test-mysql-admin = Bearer xxx
-token-test-mysql-qa = Bearer yyy</code></pre>
-<p>扩展读取策略：优先 <code>token-${env}-${user}</code>，缺失时回退
-<code>token-${env}</code>。</p>
-<div class="sourceCode" id="cb6"><pre
-class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> env <span class="op">=</span> (pm<span class="op">.</span><span class="at">environment</span><span class="op">.</span><span class="fu">get</span>(<span class="st">&quot;token-env&quot;</span>) <span class="op">||</span> <span class="st">&quot;&quot;</span>)<span class="op">.</span><span class="fu">trim</span>()<span class="op">;</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> user <span class="op">=</span> (pm<span class="op">.</span><span class="at">environment</span><span class="op">.</span><span class="fu">get</span>(<span class="st">&quot;token-user&quot;</span>) <span class="op">||</span> <span class="st">&quot;&quot;</span>)<span class="op">.</span><span class="fu">trim</span>()<span class="op">;</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="op">!</span>env) <span class="cf">return</span><span class="op">;</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> primary <span class="op">=</span> user <span class="op">?</span> <span class="vs">`token-</span><span class="sc">${</span>env<span class="sc">}</span><span class="vs">-</span><span class="sc">${</span>user<span class="sc">}</span><span class="vs">`</span> <span class="op">:</span> <span class="st">&quot;&quot;</span><span class="op">;</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="kw">const</span> fallback <span class="op">=</span> <span class="vs">`token-</span><span class="sc">${</span>env<span class="sc">}</span><span class="vs">`</span><span class="op">;</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="kw">let</span> token <span class="op">=</span> <span class="st">&quot;&quot;</span><span class="op">;</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (primary) token <span class="op">=</span> (pm<span class="op">.</span><span class="at">environment</span><span class="op">.</span><span class="fu">get</span>(primary) <span class="op">||</span> <span class="st">&quot;&quot;</span>)<span class="op">.</span><span class="fu">trim</span>()<span class="op">;</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="op">!</span>token) token <span class="op">=</span> (pm<span class="op">.</span><span class="at">environment</span><span class="op">.</span><span class="fu">get</span>(fallback) <span class="op">||</span> <span class="st">&quot;&quot;</span>)<span class="op">.</span><span class="fu">trim</span>()<span class="op">;</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="op">!</span>token) <span class="cf">return</span><span class="op">;</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>token <span class="op">=</span> token<span class="op">.</span><span class="fu">replace</span>(<span class="ss">/</span><span class="sc">^</span><span class="ss">Bearer</span><span class="sc">\s+</span><span class="ss">/i</span><span class="op">,</span> <span class="st">&quot;&quot;</span>)<span class="op">.</span><span class="fu">trim</span>()<span class="op">;</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>pm<span class="op">.</span><span class="at">environment</span><span class="op">.</span><span class="fu">set</span>(<span class="st">&quot;token&quot;</span><span class="op">,</span> token)<span class="op">;</span></span></code></pre></div>
+token-test-mysql-qa = Bearer yyy
+</code></pre>
+<p>扩展读取策略：优先 <code>token-${env}-${user}</code>，缺失时回退 <code>token-${env}</code>。</p>
+<pre><code class="language-javascript">const env = (pm.environment.get(&quot;token-env&quot;) || &quot;&quot;).trim();
+const user = (pm.environment.get(&quot;token-user&quot;) || &quot;&quot;).trim();
+if (!env) return;
+
+const primary = user ? `token-${env}-${user}` : &quot;&quot;;
+const fallback = `token-${env}`;
+
+let token = &quot;&quot;;
+if (primary) token = (pm.environment.get(primary) || &quot;&quot;).trim();
+if (!token) token = (pm.environment.get(fallback) || &quot;&quot;).trim();
+if (!token) return;
+
+token = token.replace(/^Bearer\s+/i, &quot;&quot;).trim();
+pm.environment.set(&quot;token&quot;, token);
+</code></pre>
 <h2 id="对比与适用性分析">对比与适用性分析</h2>
 <p>该方案适用于以下条件：</p>
 <ul>
@@ -499,13 +487,9 @@ class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb6-
 <li>环境切换频繁；</li>
 <li>期望在不改接口定义的前提下完成切换。</li>
 </ul>
-<p>其优势是实现成本低、迁移成本低、可逐步升级；局限是 Token
-生命周期管理仍依赖人工，需要配合有效期治理和最小权限控制。</p>
+<p>其优势是实现成本低、迁移成本低、可逐步升级；局限是 Token 生命周期管理仍依赖人工，需要配合有效期治理和最小权限控制。</p>
 <h2 id="结论">结论</h2>
-<p>在多环境联调中，Token
-管理的关键在于“路由统一”，而不是“在每个接口重复设置”。采用
-<code>token-env + token-${env}</code>
-的约定式前置脚本后，可将切换操作收敛到单一入口，显著降低维护成本和误操作概率。</p>
+<p>在多环境联调中，Token 管理的关键在于“路由统一”，而不是“在每个接口重复设置”。采用 <code>token-env + token-${env}</code> 的约定式前置脚本后，可将切换操作收敛到单一入口，显著降低维护成本和误操作概率。</p>
 <h2 id="参考资料">参考资料</h2>
 <ul>
 <li>Apifox 文档：环境变量与前置脚本</li>

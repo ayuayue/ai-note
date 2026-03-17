@@ -5,11 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Git 历史重构利器：使用 mailmap 与 filter-repo 统一提交者信息</title>
     <!-- SEO Meta Tags -->
-    <meta name="description" content="Git
-历史重构利器：使用 mailmap 与 filter-repo 统一提交者信息
+    <meta name="description" content="Git 历史重构利器：使用 mailmap 与 filter-repo 统一提交者信息
 摘要
-在团队协作的 Git
-项目中，我们经常会遇到提交历史中作者信息混乱的问题——同一贡献者使用多个姓名或邮箱地址，导致历史记录难以追踪。本文将深入解析如何利用git filter-repo --force --mailma..." />
+在团队协作的 Git 项目中，我们经常会遇到提交历史中作者信息混乱的问题——同一贡献者使用多个姓名或邮箱地址，导致历史记录难以追踪。本文将深入解析如何利用git filter-repo --force --mailmap .m..." />
     <meta name="keywords" content="Git, 历史重构利器, 使用, mailmap, filter, repo, 统一提交者信息" />
     <meta name="author" content="AI 个人笔记" />
     <meta name="robots" content="index, follow" />
@@ -17,11 +15,9 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article" />
     <meta property="og:title" content="Git 历史重构利器：使用 mailmap 与 filter-repo 统一提交者信息" />
-    <meta property="og:description" content="Git
-历史重构利器：使用 mailmap 与 filter-repo 统一提交者信息
+    <meta property="og:description" content="Git 历史重构利器：使用 mailmap 与 filter-repo 统一提交者信息
 摘要
-在团队协作的 Git
-项目中，我们经常会遇到提交历史中作者信息混乱的问题——同一贡献者使用多个姓名或邮箱地址，导致历史记录难以追踪。本文将深入解析如何利用git filter-repo --force --mailma..." />
+在团队协作的 Git 项目中，我们经常会遇到提交历史中作者信息混乱的问题——同一贡献者使用多个姓名或邮箱地址，导致历史记录难以追踪。本文将深入解析如何利用git filter-repo --force --mailmap .m..." />
     <meta property="og:image" content="https://www.caoayu.top/images/og-image.png" />
     <meta property="og:url" content="https://www.caoayu.top/docs/2026-01/Git历史重构利器：使用mailmap与filter-repo统一提交者信息.html" />
     <meta property="og:site_name" content="AI 个人笔记" />
@@ -29,11 +25,9 @@
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:title" content="Git 历史重构利器：使用 mailmap 与 filter-repo 统一提交者信息" />
-    <meta property="twitter:description" content="Git
-历史重构利器：使用 mailmap 与 filter-repo 统一提交者信息
+    <meta property="twitter:description" content="Git 历史重构利器：使用 mailmap 与 filter-repo 统一提交者信息
 摘要
-在团队协作的 Git
-项目中，我们经常会遇到提交历史中作者信息混乱的问题——同一贡献者使用多个姓名或邮箱地址，导致历史记录难以追踪。本文将深入解析如何利用git filter-repo --force --mailma..." />
+在团队协作的 Git 项目中，我们经常会遇到提交历史中作者信息混乱的问题——同一贡献者使用多个姓名或邮箱地址，导致历史记录难以追踪。本文将深入解析如何利用git filter-repo --force --mailmap .m..." />
     <meta property="twitter:image" content="https://www.caoayu.top/images/og-image.png" />
 
     <!-- Canonical URL -->
@@ -733,121 +727,130 @@
           <div class="warning">
             ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
           </div>
-          <div class="post-content" id="post-content"><h1 id="git-历史重构利器使用-mailmap-与-filter-repo-统一提交者信息">Git
-历史重构利器：使用 mailmap 与 filter-repo 统一提交者信息</h1>
+          <div class="post-content" id="post-content"><h1 id="git-历史重构利器：使用-mailmap-与-filter-repo-统一提交者信息">Git 历史重构利器：使用 mailmap 与 filter-repo 统一提交者信息</h1>
 <h2 id="摘要">摘要</h2>
-<p>在团队协作的 Git
-项目中，我们经常会遇到提交历史中作者信息混乱的问题——同一贡献者使用多个姓名或邮箱地址，导致历史记录难以追踪。本文将深入解析如何利用<code>git filter-repo --force --mailmap .mailmap</code>命令，结合
-mailmap 文件批量规范化 Git
-历史提交信息，提升仓库历史的清晰度和可维护性。适合需要清理提交历史、统一团队标识或准备开源项目的开发者阅读。</p>
+<p>在团队协作的 Git 项目中，我们经常会遇到提交历史中作者信息混乱的问题——同一贡献者使用多个姓名或邮箱地址，导致历史记录难以追踪。本文将深入解析如何利用<code>git filter-repo --force --mailmap .mailmap</code>命令，结合 mailmap 文件批量规范化 Git 历史提交信息，提升仓库历史的清晰度和可维护性。适合需要清理提交历史、统一团队标识或准备开源项目的开发者阅读。</p>
 <h2 id="目录">目录</h2>
 <ul>
-<li>#git 历史重构利器使用 mailmap 与 filter-repo 统一提交者信息
-<ul>
+<li>#git 历史重构利器使用 mailmap 与 filter-repo 统一提交者信息<ul>
 <li>#摘要</li>
 <li>#目录</li>
-<li>#正文
-<ul>
+<li>#正文<ul>
 <li>#问题背景为什么需要统一提交信息</li>
 <li>#mailmap 文件标准化提交信息的核心</li>
 <li>#git-filter-repo 历史重写的工业级工具</li>
-<li>#命令深入解析–force—mailmap-mailmap</li>
+<li>#命令深入解析--force---mailmap-mailmap</li>
 <li>#实战案例企业项目历史清理</li>
 <li>#注意事项与风险控制</li>
-</ul></li>
+</ul>
+</li>
 <li>#总结</li>
 <li>#延伸阅读</li>
 <li>#一句话记忆</li>
-</ul></li>
+</ul>
+</li>
 </ul>
 <h2 id="正文">正文</h2>
-<h3
-id="问题背景为什么需要统一提交信息">问题背景：为什么需要统一提交信息</h3>
-<p>在真实的软件开发过程中，同一开发者可能使用不同的身份信息进行提交：公司邮箱与个人邮箱混用、姓名拼写不一致（如”张三”、“张叁”、“zhang
-san”）、用户名缩写变化等。这种混乱不仅影响历史追踪，还会在统计贡献量时造成偏差。</p>
-<p>Git 虽然记录了每次提交的原始作者信息，但提供了一种标准化机制——mailmap
-文件。通过合理的配置，可以将不同的署名映射到统一标识，让历史记录更加清晰整洁。</p>
-<h3 id="mailmap-文件标准化提交信息的核心">mailmap
-文件：标准化提交信息的核心</h3>
-<p>mailmap
-文件是一个纯文本文件，遵循特定格式，用于将多个作者标识映射到规范形式。其基本语法规则如下：</p>
-<pre><code>规范名称 &lt;规范邮箱&gt; 其他名称 &lt;其他邮箱&gt;</code></pre>
+<h3 id="问题背景：为什么需要统一提交信息">问题背景：为什么需要统一提交信息</h3>
+<p>在真实的软件开发过程中，同一开发者可能使用不同的身份信息进行提交：公司邮箱与个人邮箱混用、姓名拼写不一致（如&quot;张三&quot;、&quot;张叁&quot;、&quot;zhang san&quot;）、用户名缩写变化等。这种混乱不仅影响历史追踪，还会在统计贡献量时造成偏差。</p>
+<p>Git 虽然记录了每次提交的原始作者信息，但提供了一种标准化机制——mailmap 文件。通过合理的配置，可以将不同的署名映射到统一标识，让历史记录更加清晰整洁。</p>
+<h3 id="mailmap-文件：标准化提交信息的核心">mailmap 文件：标准化提交信息的核心</h3>
+<p>mailmap 文件是一个纯文本文件，遵循特定格式，用于将多个作者标识映射到规范形式。其基本语法规则如下：</p>
+<pre><code>规范名称 &lt;规范邮箱&gt; 其他名称 &lt;其他邮箱&gt;
+</code></pre>
 <p>实际示例：</p>
 <pre><code>张三 &lt;zhang.san@company.com&gt; zhangsan &lt;zs@personal.com&gt;
 张三 &lt;zhang.san@company.com&gt; 张叁 &lt;san.zhang@old-company.com&gt;
-李四 &lt;li.si@company.com&gt; lisi &lt;lisi123@gmail.com&gt;</code></pre>
+李四 &lt;li.si@company.com&gt; lisi &lt;lisi123@gmail.com&gt;
+</code></pre>
 <p>mailmap 支持多种映射模式：</p>
 <ul>
 <li><strong>姓名+邮箱映射</strong>：最完整的映射方式，同时匹配姓名和邮箱</li>
 <li><strong>仅姓名映射</strong>：统一不同拼写的姓名</li>
 <li><strong>仅邮箱映射</strong>：将多个邮箱映射到同一规范邮箱</li>
 </ul>
-<div class="sourceCode" id="cb3"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 查看应用mailmap后的历史记录</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log <span class="at">--use-mailmap</span></span></code></pre></div>
-<p>通过
-mailmap，我们可以将分散的提交信息聚合到统一的身份下，为后续的历史重写操作奠定基础。</p>
-<h3
-id="git-filter-repo历史重写的工业级工具">git-filter-repo：历史重写的工业级工具</h3>
-<p>git-filter-repo 是 Git 官方推荐的历史修改工具，相比传统的
-filter-branch 具有显著优势。它采用流式处理架构，内存占用降低
-90%以上，处理速度提升 10-100 倍。</p>
-<p><strong>核心特性对比</strong>： | 特性 | git-filter-branch |
-git-filter-repo | |——|——————-|—————–| | 处理速度 | 慢（小型仓库 30-60
-秒） | 快（小型仓库 3-5 秒） | | 内存占用 | 高 | 降低 90%以上 | | 安全性
-| 易出错 | 内置多重检查 | | 易用性 | 复杂脚本 | 简单命令接口 |</p>
-<p>git-filter-repo
-提供多种回调函数用于修改提交元数据，其中<code>--mailmap</code>参数专门用于批量应用
-mailmap 映射规则。</p>
-<h3 id="命令深入解析force-mailmap-.mailmap">命令深入解析：–force
-–mailmap .mailmap</h3>
+<pre><code class="language-bash"># 查看应用mailmap后的历史记录
+git log --use-mailmap
+</code></pre>
+<p>通过 mailmap，我们可以将分散的提交信息聚合到统一的身份下，为后续的历史重写操作奠定基础。</p>
+<h3 id="git-filter-repo：历史重写的工业级工具">git-filter-repo：历史重写的工业级工具</h3>
+<p>git-filter-repo 是 Git 官方推荐的历史修改工具，相比传统的 filter-branch 具有显著优势。它采用流式处理架构，内存占用降低 90%以上，处理速度提升 10-100 倍。</p>
+<p><strong>核心特性对比</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>git-filter-branch</th>
+<th>git-filter-repo</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>处理速度</td>
+<td>慢（小型仓库 30-60 秒）</td>
+<td>快（小型仓库 3-5 秒）</td>
+</tr>
+<tr>
+<td>内存占用</td>
+<td>高</td>
+<td>降低 90%以上</td>
+</tr>
+<tr>
+<td>安全性</td>
+<td>易出错</td>
+<td>内置多重检查</td>
+</tr>
+<tr>
+<td>易用性</td>
+<td>复杂脚本</td>
+<td>简单命令接口</td>
+</tr>
+</tbody></table>
+<p>git-filter-repo 提供多种回调函数用于修改提交元数据，其中<code>--mailmap</code>参数专门用于批量应用 mailmap 映射规则。</p>
+<h3 id="命令深入解析：--force---mailmap-mailmap">命令深入解析：--force --mailmap .mailmap</h3>
 <p><code>git filter-repo --force --mailmap .mailmap</code>命令的各部分作用如下：</p>
-<p><strong>–mailmap .mailmap</strong>：</p>
+<p><strong>--mailmap .mailmap</strong>：</p>
 <ul>
 <li>指定使用当前目录下的.mailmap 文件</li>
 <li>读取文件中的映射规则，重写所有提交的作者/提交者信息</li>
 <li>保持提交内容不变，仅修改提交元数据</li>
 </ul>
-<p><strong>–force</strong>：</p>
+<p><strong>--force</strong>：</p>
 <ul>
 <li>跳过安全检查，强制在非全新克隆的仓库上执行操作</li>
 <li>删除所有现有的 remote 关联（重要副作用）</li>
 <li>必要但需谨慎使用，因为历史重写会影响所有协作者</li>
 </ul>
 <p><strong>重要提示</strong>：执行此命令后，必须手动重新添加远程仓库关联并使用<code>--set-upstream</code>参数设置分支追踪关系。</p>
-<div class="sourceCode" id="cb4"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 完整执行流程</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. 创建.mailmap文件</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> <span class="op">&gt;</span> .mailmap <span class="op">&lt;&lt; EOF</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="st">张三 &lt;zhang.san@company.com&gt; zhangsan &lt;zs@personal.com&gt;</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="st">李四 &lt;li.si@company.com&gt; lisi &lt;lisi123@gmail.com&gt;</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="op">EOF</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. 执行历史重写（会删除remote关联）</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> filter-repo <span class="at">--force</span> <span class="at">--mailmap</span> .mailmap</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. 重新设置远程仓库关联</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote add origin git@github.com:your-username/your-repo.git</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># 4. 设置上游分支并强制推送</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push <span class="at">--set-upstream</span> origin main <span class="at">--force</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 5. 验证结果</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> log <span class="at">--oneline</span> <span class="at">--use-mailmap</span></span></code></pre></div>
+<pre><code class="language-bash"># 完整执行流程
+# 1. 创建.mailmap文件
+cat &gt; .mailmap &lt;&lt; EOF
+张三 &lt;zhang.san@company.com&gt; zhangsan &lt;zs@personal.com&gt;
+李四 &lt;li.si@company.com&gt; lisi &lt;lisi123@gmail.com&gt;
+EOF
+
+# 2. 执行历史重写（会删除remote关联）
+git filter-repo --force --mailmap .mailmap
+
+# 3. 重新设置远程仓库关联
+git remote add origin git@github.com:your-username/your-repo.git
+
+# 4. 设置上游分支并强制推送
+git push --set-upstream origin main --force
+
+# 5. 验证结果
+git log --oneline --use-mailmap
+</code></pre>
 <p>执行后，所有匹配的提交者信息将被更新，提交哈希值也会改变（因为提交内容包含元数据）。</p>
-<h3 id="实战案例企业项目历史清理">实战案例：企业项目历史清理</h3>
+<h3 id="实战案例：企业项目历史清理">实战案例：企业项目历史清理</h3>
 <p>假设某公司有一个发展多年的项目，期间经历了：</p>
 <ul>
-<li>员工邮箱域名变更（<span class="citation"
-data-cites="old-company.com">@old-company.com</span> → <span
-class="citation"
-data-cites="new-company.com">@new-company.com</span>）</li>
+<li>员工邮箱域名变更（@old-company.com → @new-company.com）</li>
 <li>员工姓名拼写标准化（英文名 → 中文名）</li>
 <li>实习生转正后邮箱变更</li>
 </ul>
 <p><strong>步骤 1：分析现有提交历史</strong></p>
-<div class="sourceCode" id="cb5"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> shortlog <span class="at">-sne</span> <span class="at">--all</span></span></code></pre></div>
+<pre><code class="language-bash">git shortlog -sne --all
+</code></pre>
 <p><strong>步骤 2：创建全面的.mailmap 文件</strong></p>
 <pre><code># 邮箱域名变更
 张三 &lt;zhang.san@new-company.com&gt; 张三 &lt;zhang.san@old-company.com&gt;
@@ -858,86 +861,81 @@ class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="
 王五 &lt;wang.wu@new-company.com&gt; WWang &lt;w.wang@new-company.com&gt;
 
 # 实习生转正
-赵六 &lt;zhao.liu@new-company.com&gt; 实习生赵六 &lt;intern.zhao@new-company.com&gt;</code></pre>
+赵六 &lt;zhao.liu@new-company.com&gt; 实习生赵六 &lt;intern.zhao@new-company.com&gt;
+</code></pre>
 <p><strong>步骤 3：执行重写操作</strong></p>
-<div class="sourceCode" id="cb7"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 备份原始仓库</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone <span class="at">--mirror</span> original-repo.git backup-repo.git</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 应用mailmap重写（注意：此操作会删除所有remote关联）</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> filter-repo <span class="at">--force</span> <span class="at">--mailmap</span> .mailmap</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 重新添加远程仓库关联</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote add origin git@github.com:your-username/your-repo.git</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co"># 强制推送到远程仓库（需要指定上游分支）</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> push <span class="at">--set-upstream</span> origin main <span class="at">--force</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 或如果使用其他分支名称（如master）</span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># git push --set-upstream origin master --force</span></span></code></pre></div>
+<pre><code class="language-bash"># 备份原始仓库
+git clone --mirror original-repo.git backup-repo.git
+
+# 应用mailmap重写（注意：此操作会删除所有remote关联）
+git filter-repo --force --mailmap .mailmap
+
+# 重新添加远程仓库关联
+git remote add origin git@github.com:your-username/your-repo.git
+
+# 强制推送到远程仓库（需要指定上游分支）
+git push --set-upstream origin main --force
+# 或如果使用其他分支名称（如master）
+# git push --set-upstream origin master --force
+</code></pre>
 <p><strong>步骤 4：处理关联关系更新</strong>
 执行<code>git filter-repo</code>命令后，仓库会发生以下重要变化：</p>
 <ul>
-<li><strong>远程关联被删除</strong>：所有原有的 remote
-关联都会被清除</li>
+<li><strong>远程关联被删除</strong>：所有原有的 remote 关联都会被清除</li>
 <li><strong>需要重新建立连接</strong>：必须手动添加远程仓库地址</li>
 <li><strong>分支关联重置</strong>：需要重新设置上游分支</li>
 </ul>
 <p><strong>步骤 5：团队协作处理</strong>
 由于历史重写改变了所有提交的哈希值，所有协作者必须重新克隆仓库：</p>
-<div class="sourceCode" id="cb8"><pre
-class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 删除旧的本地仓库</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span> <span class="at">-rf</span> project-directory</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 重新克隆更新后的仓库</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone git@github.com:your-username/your-repo.git</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 或者如果保留旧目录，重新设置remote和拉取</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> remote set-url origin git@github.com:your-username/your-repo.git</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> fetch origin</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> reset <span class="at">--hard</span> origin/main</span></code></pre></div>
+<pre><code class="language-bash"># 删除旧的本地仓库
+rm -rf project-directory
+
+# 重新克隆更新后的仓库
+git clone git@github.com:your-username/your-repo.git
+
+# 或者如果保留旧目录，重新设置remote和拉取
+git remote set-url origin git@github.com:your-username/your-repo.git
+git fetch origin
+git reset --hard origin/main
+</code></pre>
 <p>通过此流程，企业项目的提交历史变得清晰统一，便于后续的维护和贡献统计。</p>
 <h3 id="注意事项与风险控制">注意事项与风险控制</h3>
 <p>历史重写操作具有破坏性，必须谨慎执行：</p>
-<ol type="1">
+<ol>
 <li><strong>完整备份</strong>：操作前必须完整备份仓库，防止数据丢失</li>
 <li><strong>团队协调</strong>：通知所有协作者，确保同步更新本地仓库</li>
-<li><strong>测试验证</strong>：先在测试仓库验证 mailmap
-规则，确认无误后再应用于生产仓库</li>
+<li><strong>测试验证</strong>：先在测试仓库验证 mailmap 规则，确认无误后再应用于生产仓库</li>
 <li><strong>时机选择</strong>：最好在项目相对稳定、没有大量并行开发时执行</li>
 </ol>
-<pre class="mermaid"><code>flowchart TD
-    A[分析现有提交历史] --&gt; B[创建备份仓库]
-    B --&gt; C[编写mailmap规则]
-    C --&gt; D[在测试仓库验证]
-    D --&gt; E{验证是否通过?}
-    E --&gt;|否| F[调整mailmap规则]
-    E --&gt;|是| G[在生产仓库执行]
-    F --&gt; C
-    G --&gt; H[通知团队成员]
-    H --&gt; I[协作者重新克隆]
-    I --&gt; J[验证历史一致性]</code></pre>
+<pre class="mermaid">flowchart TD
+    A[分析现有提交历史] --> B[创建备份仓库]
+    B --> C[编写mailmap规则]
+    C --> D[在测试仓库验证]
+    D --> E{验证是否通过?}
+    E -->|否| F[调整mailmap规则]
+    E -->|是| G[在生产仓库执行]
+    F --> C
+    G --> H[通知团队成员]
+    H --> I[协作者重新克隆]
+    I --> J[验证历史一致性]</pre>
 <p>遵循上述流程，可以最大限度降低历史重写带来的风险。</p>
 <h2 id="总结">总结</h2>
 <ul>
-<li><strong>mailmap 文件</strong>是标准化 Git
-提交信息的核心机制，支持多种映射规则</li>
+<li><strong>mailmap 文件</strong>是标准化 Git 提交信息的核心机制，支持多种映射规则</li>
 <li><strong>git-filter-repo</strong>是高效、安全的历史重写工具，显著优于传统方案</li>
-<li><strong>–mailmap 参数</strong>结合.mailmap
-文件可以批量统一作者信息</li>
-<li><strong>–force
-参数</strong>必要但需谨慎使用，必须配合完善的备份策略</li>
+<li><strong>--mailmap 参数</strong>结合.mailmap 文件可以批量统一作者信息</li>
+<li><strong>--force 参数</strong>必要但需谨慎使用，必须配合完善的备份策略</li>
 <li><strong>团队协作项目</strong>需要周密的协调和同步计划</li>
 <li><strong>测试验证</strong>是确保操作成功的关键环节</li>
 </ul>
 <h2 id="延伸阅读">延伸阅读</h2>
-<ol type="1">
-<li>https://git-scm.com/docs/gitmailmap</li>
-<li>https://github.com/newren/git-filter-repo</li>
-<li>https://docs.github.com/cn/get-started/using-git/splitting-a-subfolder-out-into-a-new-repository</li>
+<ol>
+<li><a href="https://git-scm.com/docs/gitmailmap">https://git-scm.com/docs/gitmailmap</a></li>
+<li><a href="https://github.com/newren/git-filter-repo">https://github.com/newren/git-filter-repo</a></li>
+<li><a href="https://docs.github.com/cn/get-started/using-git/splitting-a-subfolder-out-into-a-new-repository">https://docs.github.com/cn/get-started/using-git/splitting-a-subfolder-out-into-a-new-repository</a></li>
 </ol>
 <h2 id="一句话记忆">一句话记忆</h2>
-<p>mailmap 文件定义映射规则，git-filter-repo
-应用规则重写历史，强制操作需备份且团队协调。</p>
+<p>mailmap 文件定义映射规则，git-filter-repo 应用规则重写历史，强制操作需备份且团队协调。</p>
 </div>
         </article>
       </div>

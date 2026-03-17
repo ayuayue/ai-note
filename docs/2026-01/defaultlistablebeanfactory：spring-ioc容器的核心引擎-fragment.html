@@ -356,12 +356,7 @@
         ⚠️ 注意：此内容由 AI 协助生成，准确性未经验证，请谨慎使用
       </div>
       <div class="post-content" id="post-content"><h2 id="开头摘要">开头摘要</h2>
-<p>DefaultListableBeanFactory 是 Spring 框架中
-<strong>IoC（控制反转）容器的最核心实现</strong>，它负责管理应用中所有
-Bean 的注册、依赖注入和生命周期。几乎所有 Spring 应用（包括
-ApplicationContext）最终都依赖于这个类来管理 Bean
-。本文将深入剖析其设计原理、使用方法和实际应用场景，适合有一定 Spring
-基础、希望深入理解 IoC 底层机制的开发者。</p>
+<p>DefaultListableBeanFactory 是 Spring 框架中 <strong>IoC（控制反转）容器的最核心实现</strong>，它负责管理应用中所有 Bean 的注册、依赖注入和生命周期。几乎所有 Spring 应用（包括 ApplicationContext）最终都依赖于这个类来管理 Bean 。本文将深入剖析其设计原理、使用方法和实际应用场景，适合有一定 Spring 基础、希望深入理解 IoC 底层机制的开发者。</p>
 <h2 id="目录">目录</h2>
 <ul>
 <li>#defaultlistablebeanfactory-是什么</li>
@@ -375,144 +370,114 @@ ApplicationContext）最终都依赖于这个类来管理 Bean
 <li>#延伸阅读</li>
 <li>#一句话记忆</li>
 </ul>
-<h2 id="defaultlistablebeanfactory-是什么">DefaultListableBeanFactory
-是什么？</h2>
-<p>DefaultListableBeanFactory 是 Spring IoC
-容器的<strong>默认且最完整的底层实现</strong>。它同时实现了
-<code>ListableBeanFactory</code>（支持枚举所有 Bean）和
-<code>BeanDefinitionRegistry</code>（支持动态注册 Bean
-定义）等接口，是一个成熟的 Bean 工厂 。</p>
-<p>Spring 容器的实现从根源上是通过 BeanFactory
-实现的，但真正可以作为一个独立使用的容器还是 DefaultListableBeanFactory
-。最典型的应用是：在访问 Bean 前，先注册所有的 definition（可能从 Bean
-定义配置文件中），使用预先建立的 Bean 定义元数据对象，从本地的 Bean
-定义表中查询 Bean 定义，这样不会花费太多成本 。</p>
+<h2 id="defaultlistablebeanfactory-是什么？">DefaultListableBeanFactory 是什么？</h2>
+<p>DefaultListableBeanFactory 是 Spring IoC 容器的<strong>默认且最完整的底层实现</strong>。它同时实现了 <code>ListableBeanFactory</code>（支持枚举所有 Bean）和 <code>BeanDefinitionRegistry</code>（支持动态注册 Bean 定义）等接口，是一个成熟的 Bean 工厂 。</p>
+<p>Spring 容器的实现从根源上是通过 BeanFactory 实现的，但真正可以作为一个独立使用的容器还是 DefaultListableBeanFactory 。最典型的应用是：在访问 Bean 前，先注册所有的 definition（可能从 Bean 定义配置文件中），使用预先建立的 Bean 定义元数据对象，从本地的 Bean 定义表中查询 Bean 定义，这样不会花费太多成本 。</p>
 <h2 id="核心架构与设计动机">核心架构与设计动机</h2>
 <h3 id="类继承关系">类继承关系</h3>
-<p>要理解
-DefaultListableBeanFactory，首先需要了解其层次结构。下图展示了其核心继承关系：</p>
+<p>要理解 DefaultListableBeanFactory，首先需要了解其层次结构。下图展示了其核心继承关系：</p>
 <pre class="mermaid">classDiagram
-    BeanFactory &lt;|-- ListableBeanFactory
-    BeanFactory &lt;|-- HierarchicalBeanFactory
-    HierarchicalBeanFactory &lt;|-- ConfigurableBeanFactory
-    ConfigurableBeanFactory &lt;|-- ConfigurableListableBeanFactory
-    BeanFactory &lt;|-- AutowireCapableBeanFactory
-    AutowireCapableBeanFactory &lt;|-- AbstractAutowireCapableBeanFactory
-    AbstractAutowireCapableBeanFactory &lt;|-- DefaultListableBeanFactory
-    BeanDefinitionRegistry &lt;|.. DefaultListableBeanFactory
+    BeanFactory <|-- ListableBeanFactory
+    BeanFactory <|-- HierarchicalBeanFactory
+    HierarchicalBeanFactory <|-- ConfigurableBeanFactory
+    ConfigurableBeanFactory <|-- ConfigurableListableBeanFactory
+    BeanFactory <|-- AutowireCapableBeanFactory
+    AutowireCapableBeanFactory <|-- AbstractAutowireCapableBeanFactory
+    AbstractAutowireCapableBeanFactory <|-- DefaultListableBeanFactory
+    BeanDefinitionRegistry <|.. DefaultListableBeanFactory
 
     class BeanFactory {
-        &lt;&lt;interface&gt;&gt;
+        <<interface>>
         +getBean(name)
     }
     class ListableBeanFactory {
-        &lt;&lt;interface&gt;&gt;
+        <<interface>>
         +getBeansOfType(type)
     }
     class BeanDefinitionRegistry {
-        &lt;&lt;interface&gt;&gt;
+        <<interface>>
         +registerBeanDefinition(name, bd)
     }
     class DefaultListableBeanFactory {
         +registerBeanDefinition()
         +preInstantiateSingletons()
     }</pre>
-<p>这种设计遵循<strong>接口隔离原则</strong>，将不同维度的功能拆解到特定接口，再通过
-DefaultListableBeanFactory 整合，确保灵活性和可扩展性 。</p>
+<p>这种设计遵循<strong>接口隔离原则</strong>，将不同维度的功能拆解到特定接口，再通过 DefaultListableBeanFactory 整合，确保灵活性和可扩展性 。</p>
 <h3 id="关键接口的角色">关键接口的角色</h3>
 <ul>
-<li><strong>BeanDefinitionRegistry</strong>：允许动态注册、修改或删除
-Bean 的定义（<code>BeanDefinition</code>），这是只有
-DefaultListableBeanFactory 实现的接口</li>
-<li><strong>ListableBeanFactory</strong>：提供批量操作 Bean
-的能力（如按类型获取所有 Bean）</li>
-<li><strong>AutowireCapableBeanFactory</strong>：支持自动装配（如
-<code>@Autowired</code>）和依赖解析</li>
+<li><strong>BeanDefinitionRegistry</strong>：允许动态注册、修改或删除 Bean 的定义（<code>BeanDefinition</code>），这是只有 DefaultListableBeanFactory 实现的接口 </li>
+<li><strong>ListableBeanFactory</strong>：提供批量操作 Bean 的能力（如按类型获取所有 Bean）</li>
+<li><strong>AutowireCapableBeanFactory</strong>：支持自动装配（如 <code>@Autowired</code>）和依赖解析</li>
 </ul>
-<p>DefaultListableBeanFactory
-功能的实现是通过实现特定功能的接口来完成：AbstractAutowireCapableBeanFactory
-实现属性的自动绑定功能；ConfigurableListableBeanFactory 提供对 Bean
-定义的分析和修改的便利方法；ListableBeanFactory 提供枚举所有的 Bean
-实例的能力；BeanDefinitionRegistry 提供 BeanDefinition 的管理 。</p>
+<p>DefaultListableBeanFactory 功能的实现是通过实现特定功能的接口来完成：AbstractAutowireCapableBeanFactory 实现属性的自动绑定功能；ConfigurableListableBeanFactory 提供对 Bean 定义的分析和修改的便利方法；ListableBeanFactory 提供枚举所有的 Bean 实例的能力；BeanDefinitionRegistry 提供 BeanDefinition 的管理 。</p>
 <h2 id="核心功能详解">核心功能详解</h2>
-<h3 id="bean-注册与管理">1. Bean 注册与管理</h3>
-<p>DefaultListableBeanFactory 的核心是作为 <strong>Bean
-注册中心</strong>，维护 Bean 名称到 BeanDefinition
-的映射，支持别名管理，并存储 Bean 的元数据（作用域、依赖、属性等）。</p>
-<p><strong>注册 Bean 定义</strong>：通过 <code>BeanDefinition</code>
-描述 Bean 的元数据（类名、作用域、属性等），并注册到容器中。</p>
-<div class="sourceCode" id="cb2"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 创建工厂实例</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>DefaultListableBeanFactory beanFactory <span class="op">=</span> <span class="kw">new</span> <span class="fu">DefaultListableBeanFactory</span><span class="op">();</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">// 创建 BeanDefinition</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>GenericBeanDefinition definition <span class="op">=</span> <span class="kw">new</span> <span class="fu">GenericBeanDefinition</span><span class="op">();</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>definition<span class="op">.</span><span class="fu">setBeanClass</span><span class="op">(</span>UserService<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>definition<span class="op">.</span><span class="fu">setScope</span><span class="op">(</span>BeanDefinition<span class="op">.</span><span class="fu">SCOPE_SINGLETON</span><span class="op">);</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">// 设置属性（相当于 &lt;property name=&quot;userDao&quot; ref=&quot;userDao&quot;/&gt;）</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>MutablePropertyValues props <span class="op">=</span> <span class="kw">new</span> <span class="fu">MutablePropertyValues</span><span class="op">();</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>props<span class="op">.</span><span class="fu">addPropertyValue</span><span class="op">(</span><span class="st">&quot;userDao&quot;</span><span class="op">,</span> <span class="kw">new</span> <span class="fu">RuntimeBeanReference</span><span class="op">(</span><span class="st">&quot;userDao&quot;</span><span class="op">));</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>definition<span class="op">.</span><span class="fu">setPropertyValues</span><span class="op">(</span>props<span class="op">);</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">// 注册 BeanDefinition</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>beanFactory<span class="op">.</span><span class="fu">registerBeanDefinition</span><span class="op">(</span><span class="st">&quot;userService&quot;</span><span class="op">,</span> definition<span class="op">);</span></span></code></pre></div>
-<p><strong>单例缓存</strong>：单例 Bean 的实例存储在
-<code>DefaultSingletonBeanRegistry</code> 的
-<code>singletonObjects</code>（ConcurrentHashMap）中，保证线程安全
-。</p>
-<h3 id="依赖注入di与循环依赖处理">2. 依赖注入（DI）与循环依赖处理</h3>
-<p>DefaultListableBeanFactory
-作为<strong>依赖注入引擎</strong>，能解析构造函数参数，通过
-setter/字段注入依赖，并处理循环依赖（三级缓存机制）。</p>
-<p><strong>依赖注入</strong>：通过 <code>resolveDependency()</code>
-方法解析依赖，支持按类型（byType）、按名称（byName）或构造函数注入。</p>
-<p><strong>三级缓存解决循环依赖</strong>： 1. 一级缓存
-<code>singletonObjects</code>：存储完整的单例 Bean 2. 二级缓存
-<code>earlySingletonObjects</code>：存储提前暴露的原始对象（未填充属性）
-3. 三级缓存 <code>singletonFactories</code>：存储 Bean
-的工厂对象，用于生成早期引用</p>
-<p>当 A 依赖 B、B 又依赖 A 时，Spring 通过提前暴露 A
-的早期引用（三级缓存）打破循环 。</p>
-<h3 id="生命周期管理">3. 生命周期管理</h3>
-<p>DefaultListableBeanFactory 负责完整的 Bean
-<strong>生命周期管理</strong>： -
-<strong>实例化</strong>：调用构造函数或工厂方法创建 Bean -
-<strong>初始化</strong>：执行
-<code>@PostConstruct</code>、<code>InitializingBean</code> 的回调 -
-<strong>销毁</strong>：容器关闭时调用 <code>@PreDestroy</code> 或
-<code>DisposableBean</code> 的方法</p>
+<h3 id="1-bean-注册与管理">1. Bean 注册与管理</h3>
+<p>DefaultListableBeanFactory 的核心是作为 <strong>Bean 注册中心</strong>，维护 Bean 名称到 BeanDefinition 的映射，支持别名管理，并存储 Bean 的元数据（作用域、依赖、属性等）。</p>
+<p><strong>注册 Bean 定义</strong>：通过 <code>BeanDefinition</code> 描述 Bean 的元数据（类名、作用域、属性等），并注册到容器中。</p>
+<pre><code class="language-java">// 创建工厂实例
+DefaultListableBeanFactory beanFactory = new DefaultListableBeanFactory();
+
+// 创建 BeanDefinition
+GenericBeanDefinition definition = new GenericBeanDefinition();
+definition.setBeanClass(UserService.class);
+definition.setScope(BeanDefinition.SCOPE_SINGLETON);
+
+// 设置属性（相当于 &lt;property name=&quot;userDao&quot; ref=&quot;userDao&quot;/&gt;）
+MutablePropertyValues props = new MutablePropertyValues();
+props.addPropertyValue(&quot;userDao&quot;, new RuntimeBeanReference(&quot;userDao&quot;));
+definition.setPropertyValues(props);
+
+// 注册 BeanDefinition
+beanFactory.registerBeanDefinition(&quot;userService&quot;, definition);
+</code></pre>
+<p><strong>单例缓存</strong>：单例 Bean 的实例存储在 <code>DefaultSingletonBeanRegistry</code> 的 <code>singletonObjects</code>（ConcurrentHashMap）中，保证线程安全 。</p>
+<h3 id="2-依赖注入（di）与循环依赖处理">2. 依赖注入（DI）与循环依赖处理</h3>
+<p>DefaultListableBeanFactory 作为<strong>依赖注入引擎</strong>，能解析构造函数参数，通过 setter/字段注入依赖，并处理循环依赖（三级缓存机制）。</p>
+<p><strong>依赖注入</strong>：通过 <code>resolveDependency()</code> 方法解析依赖，支持按类型（byType）、按名称（byName）或构造函数注入。</p>
+<p><strong>三级缓存解决循环依赖</strong>：</p>
+<ol>
+<li>一级缓存 <code>singletonObjects</code>：存储完整的单例 Bean</li>
+<li>二级缓存 <code>earlySingletonObjects</code>：存储提前暴露的原始对象（未填充属性）</li>
+<li>三级缓存 <code>singletonFactories</code>：存储 Bean 的工厂对象，用于生成早期引用</li>
+</ol>
+<p>当 A 依赖 B、B 又依赖 A 时，Spring 通过提前暴露 A 的早期引用（三级缓存）打破循环 。</p>
+<h3 id="3-生命周期管理">3. 生命周期管理</h3>
+<p>DefaultListableBeanFactory 负责完整的 Bean <strong>生命周期管理</strong>：</p>
+<ul>
+<li><strong>实例化</strong>：调用构造函数或工厂方法创建 Bean</li>
+<li><strong>初始化</strong>：执行 <code>@PostConstruct</code>、<code>InitializingBean</code> 的回调</li>
+<li><strong>销毁</strong>：容器关闭时调用 <code>@PreDestroy</code> 或 <code>DisposableBean</code> 的方法</li>
+</ul>
 <h2 id="编程式使用示例">编程式使用示例</h2>
-<h3 id="手动创建容器并注册-bean">1. 手动创建容器并注册 Bean</h3>
-<div class="sourceCode" id="cb3"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>DefaultListableBeanFactory factory <span class="op">=</span> <span class="kw">new</span> <span class="fu">DefaultListableBeanFactory</span><span class="op">();</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">// 使用 BeanDefinitionBuilder 快速构建 BeanDefinition</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>BeanDefinition definition <span class="op">=</span> BeanDefinitionBuilder</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">genericBeanDefinition</span><span class="op">(</span>UserService<span class="op">.</span><span class="fu">class</span><span class="op">)</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">addPropertyReference</span><span class="op">(</span><span class="st">&quot;userDao&quot;</span><span class="op">,</span> <span class="st">&quot;userDao&quot;</span><span class="op">)</span>  <span class="co">// 注入依赖</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">setInitMethodName</span><span class="op">(</span><span class="st">&quot;init&quot;</span><span class="op">)</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">getBeanDefinition</span><span class="op">();</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>factory<span class="op">.</span><span class="fu">registerBeanDefinition</span><span class="op">(</span><span class="st">&quot;userService&quot;</span><span class="op">,</span> definition<span class="op">);</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>factory<span class="op">.</span><span class="fu">preInstantiateSingletons</span><span class="op">();</span> <span class="co">// 触发单例初始化</span></span></code></pre></div>
-<h3 id="集成注解配置">2. 集成注解配置</h3>
+<h3 id="1-手动创建容器并注册-bean">1. 手动创建容器并注册 Bean</h3>
+<pre><code class="language-java">DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
+
+// 使用 BeanDefinitionBuilder 快速构建 BeanDefinition
+BeanDefinition definition = BeanDefinitionBuilder
+    .genericBeanDefinition(UserService.class)
+    .addPropertyReference(&quot;userDao&quot;, &quot;userDao&quot;)  // 注入依赖
+    .setInitMethodName(&quot;init&quot;)
+    .getBeanDefinition();
+
+factory.registerBeanDefinition(&quot;userService&quot;, definition);
+factory.preInstantiateSingletons(); // 触发单例初始化
+</code></pre>
+<h3 id="2-集成注解配置">2. 集成注解配置</h3>
 <p>需手动注册后置处理器以支持 <code>@Autowired</code> 等注解：</p>
-<div class="sourceCode" id="cb4"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 添加注解处理器</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>factory<span class="op">.</span><span class="fu">addBeanPostProcessor</span><span class="op">(</span><span class="kw">new</span> <span class="fu">AutowiredAnnotationBeanPostProcessor</span><span class="op">());</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>factory<span class="op">.</span><span class="fu">addBeanPostProcessor</span><span class="op">(</span><span class="kw">new</span> <span class="fu">CommonAnnotationBeanPostProcessor</span><span class="op">());</span></span></code></pre></div>
-<p>如果不手动添加这些处理器，注解不会生效，这是与 ApplicationContext
-的一个重要区别 。</p>
-<h3 id="从-xml-或注解配置加载">3. 从 XML 或注解配置加载</h3>
-<div class="sourceCode" id="cb5"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 从 XML 加载</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>XmlBeanDefinitionReader reader <span class="op">=</span> <span class="kw">new</span> <span class="fu">XmlBeanDefinitionReader</span><span class="op">(</span>factory<span class="op">);</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>reader<span class="op">.</span><span class="fu">loadBeanDefinitions</span><span class="op">(</span><span class="st">&quot;classpath:beans.xml&quot;</span><span class="op">);</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">// 从配置类加载（需 spring-context 依赖）</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>AnnotatedBeanDefinitionReader annotatedReader <span class="op">=</span> <span class="kw">new</span> <span class="fu">AnnotatedBeanDefinitionReader</span><span class="op">(</span>factory<span class="op">);</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>annotatedReader<span class="op">.</span><span class="fu">register</span><span class="op">(</span>AppConfig<span class="op">.</span><span class="fu">class</span><span class="op">);</span></span></code></pre></div>
+<pre><code class="language-java">// 添加注解处理器
+factory.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
+factory.addBeanPostProcessor(new CommonAnnotationBeanPostProcessor());
+</code></pre>
+<p>如果不手动添加这些处理器，注解不会生效，这是与 ApplicationContext 的一个重要区别 。</p>
+<h3 id="3-从-xml-或注解配置加载">3. 从 XML 或注解配置加载</h3>
+<pre><code class="language-java">// 从 XML 加载
+XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(factory);
+reader.loadBeanDefinitions(&quot;classpath:beans.xml&quot;);
+
+// 从配置类加载（需 spring-context 依赖）
+AnnotatedBeanDefinitionReader annotatedReader = new AnnotatedBeanDefinitionReader(factory);
+annotatedReader.register(AppConfig.class);
+</code></pre>
 <h2 id="与-applicationcontext-的对比">与 ApplicationContext 的对比</h2>
 <table>
 <thead>
@@ -522,8 +487,7 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb5-1"><a href="
 <th>ApplicationContext</th>
 </tr>
 </thead>
-<tbody>
-<tr>
+<tbody><tr>
 <td><strong>事件发布</strong></td>
 <td>❌ 不支持</td>
 <td>✅ 支持 ApplicationEvent</td>
@@ -563,147 +527,125 @@ class="sourceCode java"><code class="sourceCode java"><span id="cb5-1"><a href="
 <td>🛠️ 需手动配置</td>
 <td>🎯 开箱即用</td>
 </tr>
-</tbody>
-</table>
-<p><strong>核心建议</strong>：除非有特殊需求（如性能优化、动态注册、框架集成），否则优先使用
-ApplicationContext 。</p>
+</tbody></table>
+<p><strong>核心建议</strong>：除非有特殊需求（如性能优化、动态注册、框架集成），否则优先使用 ApplicationContext 。</p>
 <h2 id="典型应用场景">典型应用场景</h2>
-<h3 id="测试场景精确控制">1. 测试场景（精确控制）</h3>
-<div class="sourceCode" id="cb6"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> MyServiceTest <span class="op">{</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> DefaultListableBeanFactory factory<span class="op">;</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">@Before</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">setup</span><span class="op">()</span> <span class="op">{</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        factory <span class="op">=</span> <span class="kw">new</span> <span class="fu">DefaultListableBeanFactory</span><span class="op">();</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 仅注册需要的 Bean，避免加载整个上下文</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        factory<span class="op">.</span><span class="fu">registerBeanDefinition</span><span class="op">(</span><span class="st">&quot;myService&quot;</span><span class="op">,</span> </span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>            BeanDefinitionBuilder<span class="op">.</span><span class="fu">genericBeanDefinition</span><span class="op">(</span>MyService<span class="op">.</span><span class="fu">class</span><span class="op">)</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">addPropertyReference</span><span class="op">(</span><span class="st">&quot;dao&quot;</span><span class="op">,</span> <span class="st">&quot;mockDao&quot;</span><span class="op">)</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>                <span class="op">.</span><span class="fu">getBeanDefinition</span><span class="op">());</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 注册 Mock 对象</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        factory<span class="op">.</span><span class="fu">registerSingleton</span><span class="op">(</span><span class="st">&quot;mockDao&quot;</span><span class="op">,</span> Mockito<span class="op">.</span><span class="fu">mock</span><span class="op">(</span>MyDao<span class="op">.</span><span class="fu">class</span><span class="op">));</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p>单元测试中，使用 DefaultListableBeanFactory 可以精确控制要注册的
-Bean，避免加载整个 Spring 上下文，提高测试性能 。</p>
-<h3 id="动态插件系统">2. 动态插件系统</h3>
+<h3 id="1-测试场景（精确控制）">1. 测试场景（精确控制）</h3>
+<pre><code class="language-java">public class MyServiceTest {
+    private DefaultListableBeanFactory factory;
+    
+    @Before
+    public void setup() {
+        factory = new DefaultListableBeanFactory();
+        // 仅注册需要的 Bean，避免加载整个上下文
+        factory.registerBeanDefinition(&quot;myService&quot;, 
+            BeanDefinitionBuilder.genericBeanDefinition(MyService.class)
+                .addPropertyReference(&quot;dao&quot;, &quot;mockDao&quot;)
+                .getBeanDefinition());
+        
+        // 注册 Mock 对象
+        factory.registerSingleton(&quot;mockDao&quot;, Mockito.mock(MyDao.class));
+    }
+}
+</code></pre>
+<p>单元测试中，使用 DefaultListableBeanFactory 可以精确控制要注册的 Bean，避免加载整个 Spring 上下文，提高测试性能 。</p>
+<h3 id="2-动态插件系统">2. 动态插件系统</h3>
 <p>可以根据运行时条件动态注册或移除 Bean：</p>
-<div class="sourceCode" id="cb7"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 根据运行时条件动态注册 Bean</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>featureEnabled<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    beanFactory<span class="op">.</span><span class="fu">registerBeanDefinition</span><span class="op">(</span><span class="st">&quot;featureService&quot;</span><span class="op">,</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>        BeanDefinitionBuilder<span class="op">.</span><span class="fu">genericBeanDefinition</span><span class="op">(</span>FeatureService<span class="op">.</span><span class="fu">class</span><span class="op">).</span><span class="fu">getBeanDefinition</span><span class="op">());</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p>这种动态注册能力使得 DefaultListableBeanFactory
-非常适合需要动态加载插件或模块的系统 。</p>
-<h3 id="框架集成">3. 框架集成</h3>
+<pre><code class="language-java">// 根据运行时条件动态注册 Bean
+if (featureEnabled) {
+    beanFactory.registerBeanDefinition(&quot;featureService&quot;,
+        BeanDefinitionBuilder.genericBeanDefinition(FeatureService.class).getBeanDefinition());
+}
+</code></pre>
+<p>这种动态注册能力使得 DefaultListableBeanFactory 非常适合需要动态加载插件或模块的系统 。</p>
+<h3 id="3-框架集成">3. 框架集成</h3>
 <p>在自定义框架中嵌入 Spring IoC 功能：</p>
-<div class="sourceCode" id="cb8"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> MyFramework <span class="op">{</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">final</span> DefaultListableBeanFactory beanFactory<span class="op">;</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="fu">MyFramework</span><span class="op">()</span> <span class="op">{</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">this</span><span class="op">.</span><span class="fu">beanFactory</span> <span class="op">=</span> <span class="kw">new</span> <span class="fu">DefaultListableBeanFactory</span><span class="op">();</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        <span class="co">// 自动扫描框架内部的 Bean</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">new</span> <span class="fu">ClassPathBeanDefinitionScanner</span><span class="op">(</span>beanFactory<span class="op">)</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">scan</span><span class="op">(</span><span class="st">&quot;com.myframework.internal&quot;</span><span class="op">);</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p>许多集成框架（如 MyBatis-Spring）在内部使用
-DefaultListableBeanFactory 来嵌入 Spring 的 IoC 功能 。</p>
-<h3 id="性能优化延迟加载">4. 性能优化（延迟加载）</h3>
-<p>当只需要核心功能时，使用 DefaultListableBeanFactory 可以避免
-ApplicationContext 的额外开销：</p>
-<div class="sourceCode" id="cb9"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 只加载必要的 Bean，避免 ApplicationContext 的额外开销</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>DefaultListableBeanFactory factory <span class="op">=</span> <span class="kw">new</span> <span class="fu">DefaultListableBeanFactory</span><span class="op">();</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>XmlBeanDefinitionReader reader <span class="op">=</span> <span class="kw">new</span> <span class="fu">XmlBeanDefinitionReader</span><span class="op">(</span>factory<span class="op">);</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>reader<span class="op">.</span><span class="fu">loadBeanDefinitions</span><span class="op">(</span><span class="st">&quot;core-beans.xml&quot;</span><span class="op">);</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">// 按需加载其他模块</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="op">(</span>needModuleA<span class="op">)</span> <span class="op">{</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    reader<span class="op">.</span><span class="fu">loadBeanDefinitions</span><span class="op">(</span><span class="st">&quot;module-a-beans.xml&quot;</span><span class="op">);</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<pre><code class="language-java">public class MyFramework {
+    private final DefaultListableBeanFactory beanFactory;
+    
+    public MyFramework() {
+        this.beanFactory = new DefaultListableBeanFactory();
+        // 自动扫描框架内部的 Bean
+        new ClassPathBeanDefinitionScanner(beanFactory)
+            .scan(&quot;com.myframework.internal&quot;);
+    }
+}
+</code></pre>
+<p>许多集成框架（如 MyBatis-Spring）在内部使用 DefaultListableBeanFactory 来嵌入 Spring 的 IoC 功能 。</p>
+<h3 id="4-性能优化（延迟加载）">4. 性能优化（延迟加载）</h3>
+<p>当只需要核心功能时，使用 DefaultListableBeanFactory 可以避免 ApplicationContext 的额外开销：</p>
+<pre><code class="language-java">// 只加载必要的 Bean，避免 ApplicationContext 的额外开销
+DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
+XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(factory);
+reader.loadBeanDefinitions(&quot;core-beans.xml&quot;);
+
+// 按需加载其他模块
+if (needModuleA) {
+    reader.loadBeanDefinitions(&quot;module-a-beans.xml&quot;);
+}
+</code></pre>
 <h2 id="注意事项与常见陷阱">注意事项与常见陷阱</h2>
-<h3 id="生命周期需手动触发">1. 生命周期需手动触发</h3>
-<p>与 ApplicationContext 不同，DefaultListableBeanFactory
-需要手动触发生命周期方法：</p>
-<div class="sourceCode" id="cb10"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>DefaultListableBeanFactory factory <span class="op">=</span> <span class="kw">new</span> <span class="fu">DefaultListableBeanFactory</span><span class="op">();</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">// 错误：忘记调用 preInstantiateSingletons()</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>factory<span class="op">.</span><span class="fu">registerBeanDefinition</span><span class="op">(</span><span class="kw">...</span><span class="op">);</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">// 此时单例 Bean 还未初始化！</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">// 正确：手动触发初始化</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>factory<span class="op">.</span><span class="fu">preInstantiateSingletons</span><span class="op">();</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">// 应用结束时需要调用销毁方法</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>factory<span class="op">.</span><span class="fu">destroySingletons</span><span class="op">();</span> <span class="co">// 销毁所有单例</span></span></code></pre></div>
-<p>忘记调用 <code>preInstantiateSingletons()</code> 会导致单例 Bean
-没有初始化，而忘记调用 <code>destroySingletons()</code> 可能导致资源泄漏
-。</p>
-<h3 id="注解支持需手动配置">2. 注解支持需手动配置</h3>
-<p>ApplicationContext 会自动检测并注册后置处理器，但
-DefaultListableBeanFactory 不会，必须手动添加常用处理器：</p>
-<div class="sourceCode" id="cb11"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">// 必须手动添加常用处理器</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>factory<span class="op">.</span><span class="fu">addBeanPostProcessor</span><span class="op">(</span><span class="kw">new</span> <span class="fu">AutowiredAnnotationBeanPostProcessor</span><span class="op">());</span> <span class="co">// 处理 @Autowired</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>factory<span class="op">.</span><span class="fu">addBeanPostProcessor</span><span class="op">(</span><span class="kw">new</span> <span class="fu">CommonAnnotationBeanPostProcessor</span><span class="op">());</span>    <span class="co">// 处理 @Resource @PostConstruct</span></span></code></pre></div>
+<h3 id="1-生命周期需手动触发">1. 生命周期需手动触发</h3>
+<p>与 ApplicationContext 不同，DefaultListableBeanFactory 需要手动触发生命周期方法：</p>
+<pre><code class="language-java">DefaultListableBeanFactory factory = new DefaultListableBeanFactory();
+
+// 错误：忘记调用 preInstantiateSingletons()
+factory.registerBeanDefinition(...);
+// 此时单例 Bean 还未初始化！
+
+// 正确：手动触发初始化
+factory.preInstantiateSingletons();
+
+// 应用结束时需要调用销毁方法
+factory.destroySingletons(); // 销毁所有单例
+</code></pre>
+<p>忘记调用 <code>preInstantiateSingletons()</code> 会导致单例 Bean 没有初始化，而忘记调用 <code>destroySingletons()</code> 可能导致资源泄漏 。</p>
+<h3 id="2-注解支持需手动配置">2. 注解支持需手动配置</h3>
+<p>ApplicationContext 会自动检测并注册后置处理器，但 DefaultListableBeanFactory 不会，必须手动添加常用处理器：</p>
+<pre><code class="language-java">// 必须手动添加常用处理器
+factory.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor()); // 处理 @Autowired
+factory.addBeanPostProcessor(new CommonAnnotationBeanPostProcessor());    // 处理 @Resource @PostConstruct
+</code></pre>
 <p>否则注解如 <code>@Autowired</code> 等不会生效 。</p>
-<h3 id="配置元数据丢失问题">3. 配置元数据丢失问题</h3>
+<h3 id="3-配置元数据丢失问题">3. 配置元数据丢失问题</h3>
 <p>直接注册单例实例会丢失配置信息：</p>
-<div class="sourceCode" id="cb12"><pre
-class="sourceCode java"><code class="sourceCode java"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>UserService service <span class="op">=</span> <span class="kw">new</span> <span class="fu">UserService</span><span class="op">();</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>factory<span class="op">.</span><span class="fu">registerSingleton</span><span class="op">(</span><span class="st">&quot;userService&quot;</span><span class="op">,</span> service<span class="op">);</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co">// ✅ 速度快</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co">// ❌ 无法应用 BeanPostProcessor</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">// ❌ 无法处理依赖注入</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="co">// ❌ 无法调用生命周期方法</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co">// 推荐：通过 BeanDefinition 注册</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>BeanDefinition definition <span class="op">=</span> BeanDefinitionBuilder</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">genericBeanDefinition</span><span class="op">(</span>UserService<span class="op">.</span><span class="fu">class</span><span class="op">)</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span><span class="fu">getBeanDefinition</span><span class="op">();</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>factory<span class="op">.</span><span class="fu">registerBeanDefinition</span><span class="op">(</span><span class="st">&quot;userService&quot;</span><span class="op">,</span> definition<span class="op">);</span></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co">// ✅ 完整生命周期支持</span></span></code></pre></div>
-<h3 id="线程安全考虑">4. 线程安全考虑</h3>
+<pre><code class="language-java">UserService service = new UserService();
+factory.registerSingleton(&quot;userService&quot;, service);
+// ✅ 速度快
+// ❌ 无法应用 BeanPostProcessor
+// ❌ 无法处理依赖注入
+// ❌ 无法调用生命周期方法
+
+// 推荐：通过 BeanDefinition 注册
+BeanDefinition definition = BeanDefinitionBuilder
+    .genericBeanDefinition(UserService.class)
+    .getBeanDefinition();
+factory.registerBeanDefinition(&quot;userService&quot;, definition);
+// ✅ 完整生命周期支持
+</code></pre>
+<h3 id="4-线程安全考虑">4. 线程安全考虑</h3>
 <ul>
 <li>Bean 注册阶段：非线程安全，应在单线程中完成所有注册</li>
 <li>Bean 获取阶段：线程安全，支持并发访问</li>
 </ul>
-<p>推荐在应用启动时完成所有注册操作，之后将 BeanFactory
-作为只读对象使用。</p>
+<p>推荐在应用启动时完成所有注册操作，之后将 BeanFactory 作为只读对象使用。</p>
 <h2 id="总结">总结</h2>
 <ul>
-<li><strong>DefaultListableBeanFactory 是 Spring IoC
-的底层基石</strong>，提供了完整的 Bean 管理能力，是整个 Spring IoC
-的始祖 。</li>
-<li>其设计通过<strong>接口分层</strong>实现关注点分离，支持灵活扩展
-。</li>
-<li>支持完整的 Bean
-<strong>生命周期管理</strong>、<strong>依赖注入</strong>和<strong>循环依赖解决</strong>机制
-。</li>
-<li>适用于<strong>精细化控制、测试或嵌入式场景</strong>，但多数业务开发更推荐使用
-ApplicationContext 。</li>
-<li>使用时需注意<strong>手动触发生命周期</strong>、<strong>显式配置注解支持</strong>和<strong>线程安全</strong>等问题
-。</li>
+<li><strong>DefaultListableBeanFactory 是 Spring IoC 的底层基石</strong>，提供了完整的 Bean 管理能力，是整个 Spring IoC 的始祖 。</li>
+<li>其设计通过<strong>接口分层</strong>实现关注点分离，支持灵活扩展 。</li>
+<li>支持完整的 Bean <strong>生命周期管理</strong>、<strong>依赖注入</strong>和<strong>循环依赖解决</strong>机制 。</li>
+<li>适用于<strong>精细化控制、测试或嵌入式场景</strong>，但多数业务开发更推荐使用 ApplicationContext 。</li>
+<li>使用时需注意<strong>手动触发生命周期</strong>、<strong>显式配置注解支持</strong>和<strong>线程安全</strong>等问题 。</li>
 </ul>
 <h2 id="延伸阅读">延伸阅读</h2>
-<ol type="1">
-<li><strong>Spring
-官方文档</strong>：https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-beanfactory</li>
+<ol>
+<li><strong>Spring 官方文档</strong>：<a href="https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-beanfactory">https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-beanfactory</a></li>
 <li><strong>源码位置</strong>：<code>org.springframework.beans.factory.support.DefaultListableBeanFactory</code></li>
 <li><strong>相关设计模式</strong>：工厂模式、模板方法模式、单例模式</li>
-<li><strong>进阶学习</strong>：Spring 容器启动流程、Bean
-生命周期完整过程、循环依赖解决原理</li>
+<li><strong>进阶学习</strong>：Spring 容器启动流程、Bean 生命周期完整过程、循环依赖解决原理</li>
 </ol>
 <h2 id="一句话记忆">一句话记忆</h2>
-<p>DefaultListableBeanFactory 是 Spring 容器的”发动机”，负责 Bean
-的注册、装配与生命周期管理，但日常开发中通常被更高级的
-ApplicationContext 所封装 。</p>
+<p>DefaultListableBeanFactory 是 Spring 容器的&quot;发动机&quot;，负责 Bean 的注册、装配与生命周期管理，但日常开发中通常被更高级的 ApplicationContext 所封装 。</p>
 </div>
     </article>
   </div>
