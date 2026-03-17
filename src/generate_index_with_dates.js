@@ -1,5 +1,9 @@
 const fs = require('fs');
 const path = require('path');
+const isQuiet = process.env.QUIET === "1";
+const log = (...args) => {
+    if (!isQuiet) console.log(...args);
+};
 
 // Function to extract title from Markdown file
 function extractTitleFromMarkdown(filePath) {
@@ -145,7 +149,7 @@ function main() {
             .filter(file => path.extname(file) === '.md');
         
         if (markdownFiles.length === 0) {
-            console.log(`No Markdown files found in ${monthPath}`);
+            log(`No Markdown files found in ${monthPath}`);
             return;
         }
         
@@ -269,7 +273,7 @@ function main() {
         }
 
         if (!replaced) {
-            console.log("Warning: Could not find pagination placeholder in template");
+            console.warn("Warning: Could not find pagination placeholder in template");
         }
         
         // Generate pagination pages in pages/ directory
@@ -282,20 +286,20 @@ function main() {
             // For page 1, generate pages/index.html
             const pageFilename = "pages/index.html";
             fs.writeFileSync(pageFilename, updatedContent, "utf8");
-            console.log(`Generated ${pageFilename} with ${pageDocuments.length} documents`);
+            log(`Generated ${pageFilename} with ${pageDocuments.length} documents`);
         } else {
             // For other pages, generate pages/index${page}.html
             const pageFilename = `pages/index${page}.html`;
             fs.writeFileSync(pageFilename, updatedContent, "utf8");
-            console.log(`Generated ${pageFilename} with ${pageDocuments.length} documents`);
+            log(`Generated ${pageFilename} with ${pageDocuments.length} documents`);
         }
     }
     
     console.log(`Generated ${totalPages} pages with ${allDocuments.length} total documents`);
-    console.log("Files included:");
+    log("Files included:");
     allDocuments.forEach(doc => {
         const dir = doc.type === 'markdown' ? `${doc.monthDir}/` : 'html/';
-        console.log(`  - ${dir}${doc.filename} (${formatDate(doc.date)})`);
+        log(`  - ${dir}${doc.filename} (${formatDate(doc.date)})`);
     });
 
     // index.html is now the primary file, no replacement needed

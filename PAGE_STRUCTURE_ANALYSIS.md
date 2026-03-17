@@ -180,7 +180,7 @@ backToTopButton.addEventListener('click', (e) => {
 
 ```
 markdown/2025-10/article.md
-    ↓ (convert_md_to_html.js)
+    ↓ (convert_md_to_html_pandoc.js)
 docs/2025-10/article.html  ← 完整的独立文章页面
     ↓ (generate_index_with_dates.js)
 index.html         ← 第 1 页（15 篇）
@@ -233,7 +233,7 @@ const totalPages = Math.ceil(allDocuments.length / ITEMS_PER_PAGE);
 
 ## 6. Markdown 转 HTML 流程
 
-**脚本**: `src/convert_md_to_html.js`、`src/convert_md_to_html_pandoc.js`
+**脚本**: `src/convert_md_to_html_pandoc.js`
 
 ### 核心转换函数
 
@@ -278,14 +278,10 @@ renderer.code = function(code, infostring, escaped) {
 ### 可用命令
 
 ```bash
-npm run convert-md      # Markdown → HTML (使用 marked)
-npm run convert-md-pandoc  # Markdown → HTML (使用 Pandoc)
-npm run generate-index  # 生成索引页面
-npm run generate-sitemap  # 生成 sitemap.xml
-npm run generate-overview  # 生成文档归档页
-npm run build          # 完整构建（所有上述命令）
-npm run dev            # 开发模式 + 本地服务器
+npm run build          # 完整构建（转换 + 分页 + 站点地图 + 概览）
+npm run dev            # 开发模式 + 本地服务器 + 监听
 npm run watch          # 文件监听和自动转换
+npm run clean          # 清理构建产物
 ```
 
 ### 标准构建流程
@@ -293,10 +289,10 @@ npm run watch          # 文件监听和自动转换
 ```bash
 npm run build
 # 执行顺序：
-# 1. convert-md-pandoc
-# 2. generate-index
-# 3. generate-sitemap
-# 4. generate-overview
+# 1. convert_md_to_html_pandoc.js
+# 2. generate_index_with_dates.js
+# 3. generate_sitemap.js
+# 4. generate_overview.js
 ```
 
 ---
@@ -327,11 +323,9 @@ ai-note/
 │
 ├── src/                     # Node.js 脚本
 │   ├── generate_index_with_dates.js
-│   ├── convert_md_to_html.js
 │   ├── convert_md_to_html_pandoc.js
 │   ├── generate_overview.js
 │   ├── generate_sitemap.js
-│   ├── watch-md-chokidar.js
 │   └── ...
 │
 ├── template_with_dates.html # 主模板

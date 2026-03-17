@@ -79,7 +79,6 @@
 │   ├── generate_index_with_dates.js    # 主页生成脚本
 │   ├── generate_sitemap.js            # Sitemap 生成脚本
 │   ├── generate_overview.js           # 概览页生成脚本
-│   ├── watch-md-chokidar.js           # 文件监听脚本(Chokidar)
 │   └── ...
 │
 ├── template_seo.html             # SEO 完整页面模板
@@ -97,8 +96,6 @@
 
 ### 开发工具
 - **Chokidar**: 高性能文件监听
-- **Nodemon**: 开发模式文件监控
-- **concurrently**: 多进程并发执行
 - **http-server**: 本地开发服务器
 - **Husky**: Git Hooks 管理
 
@@ -123,13 +120,8 @@ npm install
 ```bash
 # 完整构建（推荐）
 npm run build
-
-# 分步执行构建
-npm run convert-md-pandoc    # Markdown → HTML 转换
-npm run generate-index       # 生成主页和分页
-npm run generate-sitemap     # 生成站点地图
-npm run generate-overview    # 更新概览页
 ```
+构建会依次完成 Markdown 转换、分页生成、站点地图与概览页更新。
 
 ### 开发模式
 ```bash
@@ -137,8 +129,7 @@ npm run generate-overview    # 更新概览页
 npm run dev
 
 # 仅文件监听模式
-npm run watch-chokidar       # 使用 Chokidar（推荐）
-npm run watch-nodemon        # 使用 Nodemon
+npm run watch
 ```
 
 ### 创建新文档
@@ -154,23 +145,23 @@ npm run new-html "文档标题"
 
 ### 构建命令详解
 
-| 命令 | 功能 | 输出 | 耗时 |
-|------|------|------|------|
-| `convert-md-pandoc` | Markdown → HTML | `docs/{年月}/` | 10-15秒 |
-| `generate-index` | 生成列表分页 | `pages/index{N}.html` | 0.5秒 |
-| `generate-sitemap` | SEO 站点地图 | `sitemap.xml` | 0.2秒 |
-| `generate-overview` | 更新搜索索引 | `overview.html` | 0.3秒 |
+| 命令 | 功能 | 输出 |
+|------|------|------|
+| `build` | 全量构建 | `docs/` + `pages/` + `sitemap.xml` + `overview.html` |
+| `dev` | 初始构建 + 监听 + 本地服务 | `http://localhost:3003` |
+| `watch` | 仅监听构建 | 同 `build` |
+| `clean` | 清理构建产物 | `docs/` + `pages/` + `sitemap.xml` + `overview.html` |
 
 ### 数据流向图
 ```
 markdown/2025-10/article.md
-    ↓ [convert-md-pandoc]
+    ↓ [build: convert]
 docs/2025-10/article.html (完整页) + article-fragment.html (片段)
-    ↓ [generate-index]
+    ↓ [build: index]
 pages/index.html (第1页)
-    ↓ [generate-sitemap]
+    ↓ [build: sitemap]
 sitemap.xml
-    ↓ [generate-overview]
+    ↓ [build: overview]
 overview.html (更新搜索数据)
 ```
 
@@ -181,16 +172,7 @@ overview.html (更新搜索数据)
 ## 🔄 开发工作流
 
 ### 自动文件监听
-项目支持两种监听方案：
-
-1. **Chokidar 方案** (`npm run watch-chokidar`)
-   - 支持文件添加、修改、删除事件
-   - 支持目录创建和删除事件  
-   - 只转换发生变化的文件（增量构建）
-
-2. **Nodemon 方案** (`npm run watch-nodemon`)
-   - 监视 `.md` 文件的修改
-   - 文件修改时自动调用转换脚本
+使用 `npm run watch` 监听 `markdown/` 变化，触发增量构建并更新索引与站点地图。
 
 ### Git Hooks (Husky)
 项目使用 Husky 管理 Git 钩子：
@@ -280,11 +262,9 @@ npm run dev              # 启动开发服务器 + 文件监听
 
 # 构建命令  
 npm run build            # 完整构建（推荐）
-npm run convert-md-pandoc # 仅转换 Markdown
 
 # 文件监听
-npm run watch-chokidar   # Chokidar 监听（推荐）
-npm run watch-nodemon    # Nodemon 监听
+npm run watch            # 仅监听构建
 
 # 创建新文档
 npm run new-md "标题"     # 创建 Markdown 文章

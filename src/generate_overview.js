@@ -1,5 +1,9 @@
 const fs = require("fs");
 const path = require("path");
+const isQuiet = process.env.QUIET === "1";
+const log = (...args) => {
+  if (!isQuiet) console.log(...args);
+};
 
 // Function to get file modification date
 function getFileDate(filePath) {
@@ -87,7 +91,7 @@ function main() {
         .filter((file) => path.extname(file) === ".md");
 
       if (markdownFiles.length === 0) {
-        console.log(`No Markdown files found in ${monthPath}`);
+        log(`No Markdown files found in ${monthPath}`);
         return;
       }
 
@@ -184,16 +188,16 @@ function main() {
     // Reconstruct the HTML with the new articles array
     overviewHtml = beforeScript + newScript + afterScript;
   } else {
-    console.log("Warning: Could not find placeholder script in overview.html");
+    console.warn("Warning: Could not find placeholder script in overview.html");
   }
 
   // Write the updated overview.html file
   fs.writeFileSync(overviewPath, overviewHtml, "utf8");
 
   console.log(`Generated overview.html with ${allDocuments.length} articles`);
-  console.log("Articles included:");
+  log("Articles included:");
   allDocuments.forEach((doc) => {
-    console.log(`  - ${doc.title} (${doc.date})`);
+    log(`  - ${doc.title} (${doc.date})`);
   });
 }
 

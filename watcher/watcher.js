@@ -1,7 +1,14 @@
 const chokidar = require("chokidar");
-const { exec } = require("child_process");
+const { spawn } = require("child_process");
 const fs = require("fs");
 const path = require("path");
+const isQuiet =
+  process.env.WATCH_QUIET === "1" ||
+  process.env.QUIET === "1" ||
+  process.argv.includes("--quiet");
+const log = (...args) => {
+  if (!isQuiet) console.log(...args);
+};
 
 // 读取配置
 const configPath = path.join(__dirname, "config.json");
@@ -22,19 +29,36 @@ config.tasks.forEach(task => {
   });
 
   watcher.on("all", (event, changedPath) => {
-    console.log(`[${absWatchPath}] 变化: ${event} -> ${changedPath}`);
-    const child = exec(task.command, { cwd: taskRoot }, (err, stdout, stderr) => {
-      if (err) {
-        console.error(`❌ 执行失败: ${err.message}`);
+    const relativePath = path.relative(taskRoot, changedPath) || changedPath;
+    if (isQuiet) {
+      console.log(`[watch] ${event}: ${relativePath}`);
+    } else {
+      console.log(`[${absWatchPath}] 变化: ${event} -> ${changedPath}`);
+    }
+
+    const childEnv = { ...process.env };
+    if (isQuiet) {
+      childEnv.QUIET = "1";
+    }
+
+    const child = spawn(task.command, {
+      cwd: taskRoot,
+      env: childEnv,
+      shell: true,
+      stdio: "inherit",
+    });
+
+    child.on("exit", (code) => {
+      if (code !== 0) {
+        console.error(`❌ 执行失败: ${task.command} (code=${code})`);
         return;
       }
-      if (stderr) console.error(stderr.trim());
-      if (stdout) console.log(stdout.trim());
+
+      if (isQuiet) {
+        console.log("[watch] 构建完成");
+      }
     });
-    // 实时输出
-    child.stdout.pipe(process.stdout);
-    child.stderr.pipe(process.stderr);
   });
 
-  console.log(`👀 正在监听: ${absWatchPath} -> 执行 "${task.command}" (cwd=${taskRoot})`);
+  log(`👀 正在监听: ${absWatchPath} -> 执行 "${task.command}" (cwd=${taskRoot})`);
 });

@@ -9,8 +9,6 @@
 - **marked**：备用的 Markdown 解析器
 - **cheerio**：HTML DOM 操作
 - **Chokidar**：文件监听（增量构建）
-- **Nodemon**：开发时文件监听
-- **concurrently**：并行执行命令
 - **http-server**：本地开发服务器
 - **Husky**：Git Hooks 管理
 
@@ -36,7 +34,7 @@
 
 ## 5. 开发与工作流
 - **开发模式**：运行 `npm run dev` 启动本地服务器并监听文件变化，自动重新构建。
-- **文件监听**：使用 Chokidar 或 Nodemon 监听 Markdown 文件变动，触发增量转换。
+- **文件监听**：使用 Chokidar 监听 Markdown 文件变动，触发增量转换。
 - **创建新文档**：通过 `npm run new-md "标题"` 或 `npm run new-html "标题"` 快速创建文档模板。
 - **Git Hooks**：Husky 配置了 pre-commit 钩子，提交前自动构建并暂存结果，确保构建状态一致。
 
@@ -54,7 +52,7 @@
 - **README.md**：项目详细介绍，包含特点、结构、快速开始、构建命令等。
 - **CLAUDE.md**：为 AI 助手提供的指导，说明仓库中 HTML 文件的用途。
 - **package.json**：Node.js 项目配置，定义依赖和脚本命令。
-- **src/ 下脚本**：如 `convert_md_to_html_pandoc.js`（核心转换）、`generate_index_with_dates.js`（生成分页）、`watch-md-chokidar.js`（监听）等。
+- **src/ 下脚本**：如 `convert_md_to_html_pandoc.js`（核心转换）、`generate_index_with_dates.js`（生成分页）、`generate_overview.js`（概览）等。
 
 ## 9. 总结
 该项目是一个功能完善、设计精巧的静态博客生成器，充分利用了 Node.js 和 Pandoc 的能力，实现了高效构建、SEO 友好和良好的用户体验。文档组织清晰，适合个人技术笔记和知识库的建设。

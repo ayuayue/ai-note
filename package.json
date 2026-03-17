@@ -2,25 +2,14 @@
   "name": "ai-note-converter",
   "version": "1.0.0",
   "description": "Convert HTML documentation to Markdown and generate static site",
-  "main": "src/generate_index.js",
+  "main": "src/dev.js",
   "scripts": {
-    "convert-html": "node src/convert_html_to_md.js",
-    "convert-md": "node src/convert_md_to_html.js",
-    "convert-md-pandoc": "node src/convert_md_to_html_pandoc.js",
-    "convert-single-md": "node src/convert-single-md.js",
-    "generate-index": "node src/generate_index_with_dates.js",
-    "generate-sitemap": "node src/generate_sitemap.js",
-    "generate-overview": "node src/generate_overview.js",
+    "build": "node src/convert_md_to_html_pandoc.js && node src/generate_index_with_dates.js && node src/generate_sitemap.js && node src/generate_overview.js",
+    "dev": "node src/dev.js",
+    "watch": "node watcher/watcher.js --quiet",
     "new-md": "node src/new_markdown.js",
     "new-html": "node src/new_html.js",
     "clean": "node src/clean.js docs pages sitemap.xml overview.html",
-    "build": "npm run convert-md-pandoc && npm run generate-index && npm run generate-sitemap && npm run generate-overview",
-    "rebuild": "node src/clean.js docs && npm run build",
-    "rebuild:clean": "npm run clean && npm run build",
-    "dev": "concurrently \"npm run rebuild\" \"npm run watch\" \"http-server -p 3003\"",
-    "watch-chokidar": "node src/watch-md-chokidar.js",
-    "watch-nodemon": "nodemon --watch markdown --ext md --exec \"npm run convert-md-pandoc && npm run generate-index && npm run generate-sitemap && npm run generate-overview\"",
-    "watch": "node watcher/watcher.js",
     "prepare": "husky"
   },
   "keywords": [
@@ -39,9 +28,7 @@
   },
   "devDependencies": {
     "chokidar": "^4.0.3",
-    "concurrently": "^9.2.1",
     "http-server": "^14.1.1",
-    "husky": "^9.1.7",
-    "nodemon": "^3.1.10"
+    "husky": "^9.1.7"
   }
 }

@@ -5,6 +5,10 @@ const marked = require("marked");
 const SITE_BASE_URL = process.env.SITE_BASE_URL || "https://www.caoayu.top";
 let pandocChecked = false;
 let pandocAvailable = false;
+const isQuiet = process.env.QUIET === "1";
+const log = (...args) => {
+  if (!isQuiet) console.log(...args);
+};
 
 function isPandocAvailable() {
   if (pandocChecked) {
@@ -209,7 +213,7 @@ async function main() {
   const markdownDir = "markdown";
   const docsDir = "docs";
   if (!isPandocAvailable()) {
-    console.log("Pandoc not found, using marked fallback renderer.");
+    console.warn("Pandoc not found, using marked fallback renderer.");
   }
 
   // Check if markdown directory exists
@@ -233,7 +237,7 @@ async function main() {
     );
 
   if (monthDirs.length === 0) {
-    console.log("No month directories found in the markdown directory");
+    log("No month directories found in the markdown directory");
     return;
   }
 
@@ -260,7 +264,7 @@ async function main() {
       .filter((file) => path.extname(file) === ".md");
 
     if (markdownFiles.length === 0) {
-      console.log(`No Markdown files found in ${monthPath}`);
+      log(`No Markdown files found in ${monthPath}`);
       return;
     }
 
@@ -305,7 +309,7 @@ async function main() {
             );
 
             fs.writeFileSync(htmlPath, htmlContent, "utf8");
-            console.log(`Generated ${monthDir}/${htmlFilename}`);
+            log(`Generated ${monthDir}/${htmlFilename}`);
 
             // Generate fragment for SPA
             try {
@@ -330,7 +334,7 @@ async function main() {
               if (postMatch) {
                 // Found post-content - use only its content
                 contentToUse = postMatch[1];
-                console.log(
+                log(
                   `Extracted post-content, size: ${contentToUse.length}`
                 );
               } else {
@@ -340,7 +344,7 @@ async function main() {
                 );
                 if (bodyMatch) {
                   contentToUse = bodyMatch[1];
-                  console.log(
+                  log(
                     `Using body content, size: ${contentToUse.length}`
                   );
                 }
@@ -353,7 +357,7 @@ async function main() {
                 monthDir
               );
               fs.writeFileSync(fragmentPath, fragmentContent, "utf8");
-              console.log(`Generated ${monthDir}/${fragmentFilename}`);
+              log(`Generated ${monthDir}/${fragmentFilename}`);
             } catch (fragmentError) {
               console.error(
                 `Error generating fragment for ${monthDir}/${filename}: ${fragmentError.message}`
