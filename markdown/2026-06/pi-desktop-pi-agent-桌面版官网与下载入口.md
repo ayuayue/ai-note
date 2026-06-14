@@ -1,16 +1,16 @@
-# pi-desktop：pi 桌面版与 pi Agent 多项目工作台，官网与下载入口
+# PiDeck：pi 桌面版与 pi Agent 多项目工作台，官网与下载入口
 
 ## 摘要
 
-`pi-desktop` 是我做的一个 pi 桌面版工具，也可以按 `pi desktop`、`pi agent desktop` 或常见误拼 `pi dekstop` 来理解：它用来在本地开发环境中管理多个 `pi agent` 会话。它不是 pi 的分支，也不替代 pi CLI，而是通过 Electron 启动多个 `pi --mode rpc` 进程，把项目管理、会话管理、文件抽屉、Git 分支、终端 Dock、模型配置、Skills 管理和工具调用展示整合到一个桌面应用里。
+`PiDeck` 是我做的一个 pi 桌面版工具，也可以按 `pi desktop`、`pi agent desktop` 或常见误拼 `pi dekstop` 来理解：它用来在本地开发环境中管理多个 `pi agent` 会话。它不是 pi 的分支，也不替代 pi CLI，而是通过 Electron 启动多个 `pi --mode rpc` 进程，把项目管理、会话管理、文件抽屉、Git 分支、终端 Dock、模型配置、Skills 管理和工具调用展示整合到一个桌面应用里。
 
-如果你在搜索 `pi desktop`、`pi-desktop`、`pi agent`、`pi 桌面版`、`pi 编码助手桌面端`，甚至手滑搜成 `pi dekstop`，这篇文章就是入口说明。官网已经发布到 GitHub Pages：
+如果你在搜索 `pi desktop`、`PiDeck`、`pi agent`、`pi 桌面版`、`pi 编码助手桌面端`，甚至手滑搜成 `pi dekstop`，这篇文章就是入口说明。官网已经发布到 GitHub Pages：
 
-- pi-desktop 官网：<https://ayuayue.github.io/pi-desktop/>
-- GitHub 仓库：<https://github.com/ayuayue/pi-desktop>
-- 下载地址：<https://github.com/ayuayue/pi-desktop/releases>
+- PiDeck 官网：<https://ayuayue.github.io/PiDeck/>
+- GitHub 仓库：<https://github.com/ayuayue/PiDeck>
+- 下载地址：<https://github.com/ayuayue/PiDeck/releases>
 
-## 为什么做 pi-desktop
+## 为什么做 pideck
 
 日常使用 pi 做本地编码任务时，我遇到的主要问题不是 Agent 能力不够，而是会话和项目管理越来越分散。
 
@@ -23,13 +23,13 @@
 - 想统一管理 models、auth、settings 和 Skills，而不是频繁打开配置文件。
 - 想在同一个界面里保留终端，方便执行命令和观察输出。
 
-所以 `pi-desktop` 的定位很明确：**给 pi agent 加一个本地桌面工作台**。Agent 能力仍然由 pi 原生提供，桌面端只负责把开发工作流组织得更清楚。
+所以 `PiDeck` 的定位很明确：**给 pi agent 加一个本地桌面工作台**。Agent 能力仍然由 pi 原生提供，桌面端只负责把开发工作流组织得更清楚。
 
-## pi-desktop 是什么
+## pideck 是什么
 
 一句话概括：
 
-> pi-desktop 是一个面向本地开发工作的 Electron 桌面应用，用于管理多个项目目录中的 pi RPC Agent 会话。
+> PiDeck 是一个面向本地开发工作的 Electron 桌面应用，用于管理多个项目目录中的 pi RPC Agent 会话。
 
 它的核心设计是：
 
@@ -43,17 +43,17 @@
 
 ### 多项目工作区
 
-你可以把多个本地项目目录加入 pi-desktop，在左侧工作区里搜索、排序和切换。每个项目都可以独立启动 pi agent，会话之间保持隔离。
+你可以把多个本地项目目录加入 PiDeck，在左侧工作区里搜索、排序和切换。每个项目都可以独立启动 pi agent，会话之间保持隔离。
 
 这对同时处理多个仓库的人很有用。比如一个项目在修线上问题，另一个项目在写新功能，不需要来回切终端、切目录、找历史命令。
 
 ### Chat 入口
 
-除了项目目录，pi-desktop 还提供一个内置 Chat 入口。它适合用来做不绑定具体代码仓库的通用对话，例如整理思路、生成命令、解释报错、写文档草稿。
+除了项目目录，PiDeck 还提供一个内置 Chat 入口。它适合用来做不绑定具体代码仓库的通用对话，例如整理思路、生成命令、解释报错、写文档草稿。
 
 ### 会话历史与恢复
 
-pi-desktop 会把历史会话放到更容易浏览的位置。你可以从项目历史里恢复旧会话，也可以重命名、导出 HTML 或关闭 Agent。
+PiDeck 会把历史会话放到更容易浏览的位置。你可以从项目历史里恢复旧会话，也可以重命名、导出 HTML 或关闭 Agent。
 
 对于长任务来说，这比只在命令行里找 session 文件更直观。
 
@@ -69,7 +69,7 @@ pi-desktop 会把历史会话放到更容易浏览的位置。你可以从项目
 
 ### 模型、配置与 Skills 管理
 
-pi-desktop 提供配置弹窗，可以可视化管理：
+PiDeck 提供配置弹窗，可以可视化管理：
 
 - `models.json`
 - `auth.json`
@@ -86,9 +86,9 @@ Skills 页面支持查看、创建模板、启用或禁用、删除和打开目�
 
 ## 官网已经上线
 
-这次也给 pi-desktop 做了一个简单的官网和文档站，使用 VitePress 构建，并发布到了 GitHub Pages：
+这次也给 PiDeck 做了一个简单的官网和文档站，使用 VitePress 构建，并发布到了 GitHub Pages：
 
-<https://ayuayue.github.io/pi-desktop/>
+<https://ayuayue.github.io/PiDeck/>
 
 官网主要包含：
 
@@ -106,7 +106,7 @@ Skills 页面支持查看、创建模板、启用或禁用、删除和打开目�
 
 预构建包发布在 GitHub Releases：
 
-<https://github.com/ayuayue/pi-desktop/releases>
+<https://github.com/ayuayue/PiDeck/releases>
 
 当前目标是支持：
 
@@ -123,15 +123,15 @@ pi --version
 pi --mode rpc
 ```
 
-如果自动检测不到 pi 路径，可以在 pi-desktop 设置里手动填写。
+如果自动检测不到 pi 路径，可以在 PiDeck 设置里手动填写。
 
 ## 从源码运行
 
 如果你想自己构建或参与开发，可以从源码运行：
 
 ```bash
-git clone https://github.com/ayuayue/pi-desktop.git
-cd pi-desktop
+git clone https://github.com/ayuayue/PiDeck.git
+cd PiDeck
 npm install
 npm run make-icon
 npm run dev
@@ -153,22 +153,22 @@ npm run docs:build
 npm run docs:preview
 ```
 
-## pi desktop、pi-desktop、pi dekstop 的区别
+## pi desktop、PiDeck、pi dekstop 的区别
 
 这里顺便把几个容易混的关键词说明一下，方便搜索引擎和读者理解：
 
 - `pi`：原始 CLI 工具，负责 Agent 能力。
 - `pi agent`：通过 pi 启动的编码助手会话。
 - `pi desktop`：很多人会用这个词搜索 pi 的桌面端工作台。
-- `pi-desktop`：这个项目的正式名称。
+- `PiDeck`：这个项目的正式名称。
 - `pi 桌面版`：中文搜索时更常见的叫法。
-- `pi dekstop`：`desktop` 的常见拼写错误，如果你是这样搜到的，实际要找的也是 `pi desktop` 或 `pi-desktop`。
+- `pi dekstop`：`desktop` 的常见拼写错误，如果你是这样搜到的，实际要找的也是 `pi desktop` 或 `PiDeck`。
 
-pi-desktop 的重点不是重新实现 pi agent，而是让 pi agent 在本地多项目开发时更容易管理。
+PiDeck 的重点不是重新实现 pi agent，而是让 pi agent 在本地多项目开发时更容易管理。
 
 ## 适合谁使用
 
-pi-desktop 更适合这些场景：
+PiDeck 更适合这些场景：
 
 - 经常同时打开多个代码仓库。
 - 希望每个项目都有独立的 pi agent 会话。
@@ -180,12 +180,12 @@ pi-desktop 更适合这些场景：
 
 ## 总结
 
-`pi-desktop` 是一个围绕 pi agent 本地开发体验做的桌面工作台。它不替代 pi，也不改变 pi 的 Agent 能力，而是把多项目、会话、文件、Git、配置、Skills 和终端组织到一个更稳定的桌面界面里。
+`PiDeck` 是一个围绕 pi agent 本地开发体验做的桌面工作台。它不替代 pi，也不改变 pi 的 Agent 能力，而是把多项目、会话、文件、Git、配置、Skills 和终端组织到一个更稳定的桌面界面里。
 
 入口汇总：
 
-- 官网：<https://ayuayue.github.io/pi-desktop/>
-- GitHub：<https://github.com/ayuayue/pi-desktop>
-- Releases 下载：<https://github.com/ayuayue/pi-desktop/releases>
+- 官网：<https://ayuayue.github.io/PiDeck/>
+- GitHub：<https://github.com/ayuayue/PiDeck>
+- Releases 下载：<https://github.com/ayuayue/PiDeck/releases>
 
 后续如果继续更新 pi 桌面版能力，我也会优先同步到官网和 GitHub Releases。
